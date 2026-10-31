@@ -185,6 +185,12 @@ export function App() {
       case 'box':
         el = { id: uniqueId(doc, sceneIndex, 'box'), type: 'box', ...at, width: 280, height: 150, color: 'green', label: 'box' };
         break;
+      case 'chart':
+        el = {
+          id: uniqueId(doc, sceneIndex, 'chart'), type: 'chart', kind: 'bar', ...at, width: 640, height: 380, color: 'cyan',
+          data: [{ label: 'A', value: 3 }, { label: 'B', value: 5 }, { label: 'C', value: 2 }],
+        };
+        break;
       case 'arrow':
         if (picked.length !== 2) return;
         el = { id: uniqueId(doc, sceneIndex, `${picked[0]}-${picked[1]}`), type: 'arrow', from: picked[0], to: picked[1] };

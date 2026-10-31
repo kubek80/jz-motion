@@ -26,6 +26,8 @@ export function shapeBox(el: Element, lookup: (id: string) => Element | undefine
       const left = el.align === 'start' ? el.x : el.align === 'end' ? el.x - w : el.x - w / 2;
       return { x: left, y: el.y - el.size / 2, width: w, height: el.size };
     }
+    case 'chart':
+      return { x: el.x - el.width / 2, y: el.y - el.height / 2, width: el.width, height: el.height };
     case 'iso': {
       const b = projectIso(resolveIsoParts(el), { rotate: el.rotate, explode: 0 }, el.scale).box;
       return { x: el.x + b.x, y: el.y + b.y, width: b.width, height: b.height };

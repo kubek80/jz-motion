@@ -23,7 +23,7 @@ A web app for technical explainer presentations and videos: a dark blackboard, l
 ```
 Presentation
  └─ Scene            a board with elements
-     ├─ elements     icon, text, box, arrow (charts later)
+     ├─ elements     icon, text, box, arrow, iso (3D), chart
      ├─ camera       x, y, zoom (where the viewer looks)
      └─ beats        ordered steps; each has timed actions
 ```
@@ -40,6 +40,7 @@ Presentation
 | `src/engine/schema.ts` | The format (zod). Source of truth. |
 | `src/engine/compile.ts` | Validates and turns a presentation into a timed plan per scene (pure, unit tested). |
 | `src/engine/geometry.ts` | Bounds, anchors, arrow paths, camera framing. |
+| `src/engine/chart.ts` | Bar, line and pie charts, redrawn from animated values. |
 | `src/engine/iso.ts`, `iso-models.json` | Isometric 3D: projection, hidden faces, paint order; preset models. |
 | `src/engine/render.ts` | `Stage`: builds SVG, the glow and board texture, and a GSAP timeline per scene; presenter navigation. |
 | `src/engine/library.ts`, `icons.generated.ts`, `icons.custom.json` | Icon library. `npm run icons` merges Tabler, Simple Icons and the hand-drawn JSON into `icons.generated.ts` and `docs/library.md`. |
@@ -56,7 +57,7 @@ Presentation
 | 1 | Library v1: more clipart (made together as needed), groups, reusable composite elements | |
 | 2 | Editor: place and move elements on the board, property panel, beat timeline editing | Done (first version) |
 | 3 | Present mode polish: speaker notes view, scene transitions | Basic version done |
-| 4 | Charts (bars grow, line draws, counters) and hand-drawn custom clipart | |
+| 4 | Charts (bars grow, line draws, counters) and hand-drawn custom clipart | Charts done (bar, line, pie, set-values) |
 | 5 | LLM docs and generation: a model writes scenes that load; model switching via OpenRouter / RunPod | First version: AI tab, compare, repair loop |
 | Later | Video: export through HyperFrames, presenter camera overlays, layouts (picture-in-picture, side by side) | |
 

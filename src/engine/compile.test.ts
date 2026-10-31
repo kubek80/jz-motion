@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import intro from '../examples/intro.json';
-import { compile, type CompiledPresentation } from './compile';
+import { compile, niceMax, type CompiledPresentation } from './compile';
 
 const ok = (input: unknown): CompiledPresentation => {
   const r = compile(input);
@@ -158,6 +158,29 @@ describe('compile', () => {
       'scenes.0.elements.0: unknown icon "nope" (see docs/library.md)',
       'scenes.0.elements.2 (ab): unknown element "a"',
     ]);
+  });
+
+  it('animates chart values and scales the axis to cover them', () => {
+    const s = ok(deck({
+      elements: [{ id: 'c', type: 'chart', x: 0, y: 0, data: [{ label: 'a', value: 10 }, { label: 'b', value: 20 }] }],
+      beats: [{ actions: [{ do: 'draw', target: 'c' }, { do: 'set-values', target: 'c', values: [5, 47] }] }],
+    })).scenes[0];
+    expect(s.ops.at(-1)).toMatchObject({ kind: 'values', from: [10, 20], to: [5, 47] });
+    expect(s.initial.c.chart).toEqual({ values: [10, 20], max: 50 });
+    expect(s.final.c.chart).toEqual({ values: [5, 47], max: 50 });
+
+    const bad = compile(deck({
+      elements: [{ id: 'c', type: 'chart', x: 0, y: 0, data: [{ label: 'a', value: 1 }] }, { id: 't', type: 'text', text: 'x', x: 0, y: 0 }],
+      beats: [{ actions: [{ do: 'set-values', target: 'c', values: [1, 2] }, { do: 'set-values', target: 't', values: [1] }] }],
+    }));
+    expect(bad.ok ? [] : bad.errors).toEqual([
+      'scenes.0.beats.0.actions.0: "c" has 1 data items but got 2 values',
+      'scenes.0.beats.0.actions.1: set-values only works on charts, "t" is a text',
+    ]);
+  });
+
+  it('picks round axis maxima', () => {
+    expect([0, 1, 9, 20, 47, 95, 120, 180].map(niceMax)).toEqual([1, 1.2, 10, 25, 50, 100, 150, 200]);
   });
 
   it('reports schema errors with paths', () => {

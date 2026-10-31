@@ -1,4 +1,6 @@
 import gsap from 'gsap';
+import { buildChart, renderChart, type ChartNodes } from './chart';
+import { svgEl } from './dom';
 import type { CompiledElement, CompiledPresentation, CompiledScene, ElementState, Op } from './compile';
 import { arrowCurve, arrowEnds, arrowHead, iconLabelSize, ISO_LABEL_SIZE, VIEW } from './geometry';
 import { projectIso, resolveIsoParts, type IsoPart } from './iso';
@@ -6,22 +8,15 @@ import { ICON_GRID, icons } from './library';
 import { board, palette } from './palette';
 import type { Camera } from './schema';
 
-const NS = 'http://www.w3.org/2000/svg';
 
-function svgEl<K extends keyof SVGElementTagNameMap>(tag: K, attrs: Record<string, string | number> = {}, parent?: SVGElement): SVGElementTagNameMap[K] {
-  const node = document.createElementNS(NS, tag);
-  for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, String(v));
-  if (parent) parent.appendChild(node);
-  return node;
-}
 
 /** One step of drawing an element: a stroke traced along its length, or text revealed left to right. */
-type DrawPart =
-  | { kind: 'stroke'; node: SVGGeometryElement; length: number; scale: number }
+export type DrawPart =
+  | { kind: 'stroke'; node: SVGGeometryElement; length: number; scale: number; weight?: number }
   | { kind: 'write'; rect: SVGRectElement; x: number; width: number }
   | { kind: 'fill'; node: SVGElement; opacity: number }
-  /** One part of an iso object; `cell.v` goes 0 → 1 as it is drawn. */
-  | { kind: 'iso'; cell: { v: number } };
+  /** Something drawn by code from `cell.v` going 0 → 1 (an iso part, a bar, a pie slice). */
+  | { kind: 'cell'; cell: { v: number }; weight?: number };
 
 /** Target and values for a part fully drawn or not drawn at all. */
 function partState(p: DrawPart, drawn: boolean): [gsap.TweenTarget, gsap.TweenVars] {
@@ -32,7 +27,7 @@ function partState(p: DrawPart, drawn: boolean): [gsap.TweenTarget, gsap.TweenVa
       return [p.rect, { attr: { width: drawn ? p.width : 0 } }];
     case 'fill':
       return [p.node, { fillOpacity: drawn ? p.opacity : 0 }];
-    case 'iso':
+    case 'cell':
       return [p.cell, { v: drawn ? 1 : 0 }];
   }
 }
@@ -45,6 +40,7 @@ interface ElementNodes {
   pivot: { x: number; y: number };
   flowPath?: SVGPathElement;
   iso?: IsoNodes;
+  chart?: ChartNodes;
 }
 
 interface IsoNodes {
@@ -277,6 +273,7 @@ export class Stage {
     }
     this.applyCamera();
     for (const n of this.nodes.values()) {
+      if (n.chart) renderChart(n.chart);
       if (!n.iso) continue;
       if (n.iso.spin.on > 0.5) n.iso.phase += (Math.min(deltaMs, 100) / 1000) * n.iso.spin.speed;
       renderIso(n.iso);
@@ -450,7 +447,7 @@ export class Stage {
     this.defs.querySelectorAll('[data-scene]').forEach((n) => n.remove());
 
     const lookup = (id: string) => scene.elements.find((e) => e.id === id);
-    for (const el of scene.elements) this.nodes.set(el.id, this.buildElement(el, lookup));
+    for (const el of scene.elements) this.nodes.set(el.id, this.buildElement(el, lookup, scene.initial[el.id]));
 
     this.applyState(scene.initial);
     this.cam = { ...scene.camera };
@@ -470,11 +467,16 @@ export class Stage {
         n.iso.phase = 0;
         n.iso.progress.forEach((c) => (c.v = 1));
       }
+      if (n.chart && s.chart) {
+        s.chart.values.forEach((v, i) => (n.chart!.values[i].v = v));
+        n.chart.growth.forEach((c) => (c.v = 1));
+        renderChart(n.chart);
+      }
       if (n.flowPath) this.flows.set(id, { on: s.flow ? 1 : 0, dir: s.flow?.reverse ? -1 : 1, speed: s.flow?.speed ?? 160 });
     }
   }
 
-  private buildElement(el: CompiledElement, lookup: (id: string) => CompiledElement | undefined): ElementNodes {
+  private buildElement(el: CompiledElement, lookup: (id: string) => CompiledElement | undefined, initial?: ElementState): ElementNodes {
     const outer = svgEl('g', { 'data-id': el.id, class: `jzm-el jzm-${el.type}` }, this.layer);
     const fx = svgEl('g', {}, outer);
     const parts: DrawPart[] = [];
@@ -533,6 +535,7 @@ export class Stage {
     let pivot = { x: 0, y: 0 };
     let flowPath: SVGPathElement | undefined;
     let iso: IsoNodes | undefined;
+    let chart: ChartNodes | undefined;
 
     switch (el.type) {
       case 'icon': {
@@ -599,6 +602,9 @@ export class Stage {
       case 'ring':
         stroke(ringPath(el.rx, el.ry, el.id), board.stroke * 0.9);
         break;
+      case 'chart':
+        chart = buildChart(el, initial?.chart?.max ?? el.max ?? 1, { fx, stroke, write, parts });
+        break;
       case 'iso': {
         const isoParts = resolveIsoParts(el);
         iso = {
@@ -611,7 +617,7 @@ export class Stage {
           spin: { on: 0, speed: 30 },
           phase: 0,
         };
-        for (const cell of iso.progress) parts.push({ kind: 'iso', cell });
+        for (const cell of iso.progress) parts.push({ kind: 'cell', cell });
         if (el.label) {
           const { box } = projectIso(isoParts, iso.view, el.scale);
           write(el.label, 0, box.y + box.height + ISO_LABEL_SIZE * 0.85, ISO_LABEL_SIZE);
@@ -620,7 +626,7 @@ export class Stage {
         break;
       }
     }
-    return { outer, fx, parts, pivot, flowPath, iso };
+    return { outer, fx, parts, pivot, flowPath, iso, chart };
   }
 
   private addOp(op: Op) {
@@ -642,7 +648,7 @@ export class Stage {
         if (op.mode === 'draw') {
           // Each part gets time in proportion to its size, with a floor so dots and short ticks still show.
           // A fill fades in over a quarter of the time the strokes before it took.
-          const lineWeights = n.parts.map((p) => (p.kind === 'stroke' ? p.length * p.scale : p.kind === 'write' ? p.width * 0.7 : p.kind === 'iso' ? 60 : 0));
+          const lineWeights = n.parts.map((p) => (p.kind === 'stroke' ? p.weight ?? p.length * p.scale : p.kind === 'write' ? p.width * 0.7 : p.kind === 'cell' ? p.weight ?? 60 : 0));
           const weights = n.parts.map((p, i) => (p.kind === 'fill'
             ? lineWeights.slice(0, i).reduce((a, b) => a + b, 0) * 0.25
             : Math.max(lineWeights[i], 12)));
@@ -689,6 +695,11 @@ export class Stage {
         break;
       case 'iso':
         if (n.iso) tl.fromTo(n.iso.view, { ...op.from }, { ...op.to, duration: op.dur, ease: 'power2.inOut', immediateRender: false }, op.t);
+        break;
+      case 'values':
+        if (n.chart) {
+          op.to.forEach((v, i) => tl.fromTo(n.chart!.values[i], { v: op.from[i] }, { v, duration: op.dur, ease: 'power2.inOut', immediateRender: false }, op.t));
+        }
         break;
       case 'spin':
         if (n.iso) {

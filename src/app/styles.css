@@ -45,8 +45,8 @@ input, textarea, select { font: inherit; color: var(--text); background: var(--b
 .add-scene, .add-beat, .add { border-style: dashed; color: var(--muted); }
 
 .library { flex: 1; display: flex; flex-direction: column; gap: 8px; padding: 10px; border-top: 1px solid var(--line); min-height: 0; overflow: auto; }
-.basics { display: flex; gap: 6px; }
-.basics button { flex: 1; }
+.basics { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+
 .icon-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
 .icon-tile { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 2px; font-size: 10px; color: var(--muted); }
 .icon-tile svg { color: var(--accent); }

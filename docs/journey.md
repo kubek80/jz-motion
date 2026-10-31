@@ -117,3 +117,15 @@ Built an **AI** tab:
 No real model has been tried yet: there are no API keys in the cloud environment. That is the next thing for Jakub to try.
 
 ![AI compare](journey/13-ai-compare.jpg)
+
+## Step 9: Charts
+
+Added a `chart` element (bar, line, donut pie) and a `set-values` action:
+- `draw` writes the title, draws the axes, then grows the bars, traces the line or sweeps the slices while the values count up.
+- `set-values` animates to new numbers, for "before / after" moments. The compiler sizes the value axis to fit every value the chart shows in the scene, so bars never overflow.
+- Like the 3D objects, charts are redrawn every frame from a few animated numbers, so scrubbing and stepping back stay exact.
+- The editor got a "Chart" button; data is edited in the properties panel (switching bar → line is one dropdown).
+
+**Checked by:** tests for the value animation, axis rounding and errors (wrong number of values, set-values on a non-chart), and screenshots of each chart while drawing and after a change.
+
+![Charts](journey/14-charts.jpg)

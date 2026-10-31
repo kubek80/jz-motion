@@ -5,7 +5,7 @@ import { icons } from '../../engine/library';
 export type AddRequest =
   | { kind: 'icon'; name: string }
   | { kind: 'iso'; name: string }
-  | { kind: 'text' | 'box' | 'arrow' };
+  | { kind: 'text' | 'box' | 'arrow' | 'chart' };
 
 /** Palette of things to put on the board. Clicking adds the item in the middle of the view. */
 export function Library({ onAdd, canConnect }: { onAdd: (r: AddRequest) => void; canConnect: boolean }) {
@@ -20,6 +20,7 @@ export function Library({ onAdd, canConnect }: { onAdd: (r: AddRequest) => void;
       <div className="basics">
         <button onClick={() => onAdd({ kind: 'text' })}>Text</button>
         <button onClick={() => onAdd({ kind: 'box' })}>Box</button>
+        <button onClick={() => onAdd({ kind: 'chart' })}>Chart</button>
         <button
           onClick={() => onAdd({ kind: 'arrow' })}
           disabled={!canConnect}

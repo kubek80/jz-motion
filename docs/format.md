@@ -38,6 +38,7 @@ All elements take `id`, `color` and optionally `visible`. An element that a beat
 | `box` | `x`, `y`, `width`, `height`, `radius` (18), `label`, `dashed` | `x`, `y` is the center. Label is written inside. |
 | `arrow` | `from`, `to`, `curve` (0), `head` (`end`, `start`, `both`, `none`), `label`, `dashed` | See below. |
 | `iso` | `model` or `parts`, `x`, `y`, `scale` (70), `rotate` (0), `label` | Isometric 3D object, see below. `x`, `y` is its middle. |
+| `chart` | `kind` (`bar`, `line`, `pie`), `data`, `x`, `y`, `width` (640), `height` (380), `title`, `unit` (""), `max`, `values` (true) | See below. `x`, `y` is its middle. |
 
 ### Arrows
 
@@ -65,6 +66,19 @@ A 3D object drawn in the same marker style: outlines in its color, faces filled 
 - Parts are boxes and cylinders that should not overlap each other. A part's own `color` overrides the element color.
 - `draw` builds the object part by part, in the order of `parts`.
 
+### Charts
+
+```json
+{ "id": "speed", "type": "chart", "kind": "bar", "x": 960, "y": 560, "width": 1000, "height": 600, "color": "cyan",
+  "title": "tokens per second", "unit": "",
+  "data": [ { "label": "GPU", "value": 120 }, { "label": "Mac", "value": 45, "color": "pink" } ] }
+```
+
+- `data` is a list of `{ "label", "value", "color" }`; values are 0 or more. A data item's `color` overrides the chart color; pie slices without a color get different colors automatically.
+- `draw` writes the title, draws the axes and labels, then grows the bars (or traces the line, or sweeps the slices) while the values count up.
+- `set-values` animates the chart to new numbers. The value axis is scaled to fit every value the chart shows in the scene; set `max` to fix it.
+- `unit` is appended to the value labels, for example `"%"` or `" GB"`.
+
 ## Beats and actions
 
 A beat is one click while presenting. Its actions run in order: each starts when the previous one ends, unless it says `"start": "with"` (start together with the previous action). Every action also takes `delay` (seconds) and `duration` (seconds, default depends on the action). A beat with `"auto": true` plays straight after the previous beat.
@@ -83,6 +97,7 @@ Actions with `target` accept one id or a list. With a list, targets start `stagg
 | `recolor` | `color` | 0.4 | |
 | `circle` | `color` (yellow), `id` | 0.7 | Draws a hand-drawn loop around the target(s). The loop is an element with id `id` or `<target>-circle`, so it can be erased later. |
 | `flow` | `on` (true), `reverse` (false), `speed` (160) | instant | Dots travel along an arrow and keep going between beats. `"on": false` stops them. Arrows only. |
+| `set-values` | `values` (one number per data item) | 1.2 | Animates a chart to new values. |
 | `rotate` | `to` or `by` (90) | 1.2 | Turns an iso object to an angle or by an amount, in degrees. |
 | `spin` | `on` (true), `speed` (30) | instant | Keeps an iso object turning (degrees per second) between beats. `"on": false` stops it. |
 | `explode` | `amount` (0.6) | 1.2 | Pushes an iso object's parts apart from its middle; `0` puts them back together. |

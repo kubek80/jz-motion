@@ -1,0 +1,63 @@
+{
+  "version": 1,
+  "title": "Charts on the board",
+  "scenes": [
+    {
+      "id": "speed",
+      "title": "Bar chart",
+      "elements": [
+        { "id": "heading", "type": "text", "text": "how fast is local inference?", "x": 960, "y": 110, "size": 80, "color": "yellow" },
+        { "id": "speed", "type": "chart", "kind": "bar", "x": 960, "y": 580, "width": 1100, "height": 640, "color": "cyan",
+          "title": "tokens per second (example numbers)",
+          "data": [
+            { "label": "GPU", "value": 120 },
+            { "label": "Mac Studio", "value": 45, "color": "pink" },
+            { "label": "DGX Spark", "value": 60, "color": "green" }
+          ] },
+        { "id": "note", "type": "text", "text": "with a 4-bit model", "x": 1640, "y": 330, "size": 48, "color": "orange" }
+      ],
+      "beats": [
+        { "title": "Question", "actions": [{ "do": "draw", "target": "heading" }] },
+        { "title": "The numbers", "actions": [{ "do": "draw", "target": "speed", "duration": 3 }] },
+        { "title": "Quantized", "actions": [
+          { "do": "draw", "target": "note" },
+          { "do": "set-values", "target": "speed", "values": [180, 70, 95], "start": "with" }
+        ] },
+        { "title": "Winner", "actions": [{ "do": "camera", "focus": "speed", "padding": 60 }, { "do": "pulse", "target": "speed" }] }
+      ]
+    },
+    {
+      "id": "traffic",
+      "title": "Line chart",
+      "elements": [
+        { "id": "traffic", "type": "chart", "kind": "line", "x": 960, "y": 540, "width": 1300, "height": 700, "color": "green",
+          "title": "requests per day (thousands)",
+          "data": [
+            { "label": "Mon", "value": 12 }, { "label": "Tue", "value": 18 }, { "label": "Wed", "value": 15 },
+            { "label": "Thu", "value": 26 }, { "label": "Fri", "value": 31 }, { "label": "Sat", "value": 9 }, { "label": "Sun", "value": 7 }
+          ] }
+      ],
+      "beats": [
+        { "title": "The week", "actions": [{ "do": "draw", "target": "traffic", "duration": 3.5 }] },
+        { "title": "After launch", "actions": [{ "do": "set-values", "target": "traffic", "values": [14, 22, 30, 41, 52, 20, 16], "duration": 1.6 }] }
+      ]
+    },
+    {
+      "id": "time",
+      "title": "Pie chart",
+      "elements": [
+        { "id": "time", "type": "chart", "kind": "pie", "x": 960, "y": 560, "width": 1200, "height": 760, "color": "cyan",
+          "title": "where an agent's time goes", "unit": "%",
+          "data": [
+            { "label": "model", "value": 55 },
+            { "label": "tools", "value": 30 },
+            { "label": "network", "value": 15 }
+          ] }
+      ],
+      "beats": [
+        { "title": "Split", "actions": [{ "do": "draw", "target": "time", "duration": 2.5 }] },
+        { "title": "With caching", "actions": [{ "do": "set-values", "target": "time", "values": [35, 45, 20] }] }
+      ]
+    }
+  ]
+}

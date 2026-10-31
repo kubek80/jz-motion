@@ -91,7 +91,26 @@ export const IsoElement = z.object({
   label: z.string().optional(),
 });
 
-export const Element = z.discriminatedUnion('type', [IconElement, TextElement, BoxElement, ArrowElement, IsoElement]);
+export const ChartElement = z.object({
+  ...base,
+  type: z.literal('chart'),
+  kind: z.enum(['bar', 'line', 'pie']).default('bar'),
+  /** Center of the chart. */
+  x: z.number(),
+  y: z.number(),
+  width: z.number().positive().default(640),
+  height: z.number().positive().default(380),
+  data: z.array(z.object({ label: z.string(), value: z.number().min(0), color: Color.optional() })).min(1),
+  /** Top of the value axis (bar and line). Defaults to a round number above the largest value. */
+  max: z.number().positive().optional(),
+  /** Appended to value labels, e.g. "%" or " GB". */
+  unit: z.string().default(''),
+  title: z.string().optional(),
+  /** Show the value of each bar, point or slice. */
+  values: z.boolean().default(true),
+});
+
+export const Element = z.discriminatedUnion('type', [IconElement, TextElement, BoxElement, ArrowElement, IsoElement, ChartElement]);
 
 const Targets = z.union([Id, z.array(Id).min(1)]);
 const timing = {
@@ -111,6 +130,8 @@ export const Action = z.discriminatedUnion('do', [
   z.object({ do: z.literal('pulse'), ...targeted, times: z.number().int().positive().default(1) }),
   z.object({ do: z.literal('move'), ...targeted, to: Point }),
   z.object({ do: z.literal('recolor'), ...targeted, color: Color }),
+  /** Animates a chart to new values, one per data item. */
+  z.object({ do: z.literal('set-values'), ...targeted, values: z.array(z.number().min(0)).min(1) }),
   z.object({ do: z.literal('rotate'), ...targeted, to: z.number().optional(), by: z.number().optional() }),
   z.object({ do: z.literal('explode'), ...targeted, amount: z.number().min(0).default(0.6) }),
   z.object({
@@ -180,6 +201,7 @@ export type TextElement = z.infer<typeof TextElement>;
 export type BoxElement = z.infer<typeof BoxElement>;
 export type ArrowElement = z.infer<typeof ArrowElement>;
 export type IsoElement = z.infer<typeof IsoElement>;
+export type ChartElement = z.infer<typeof ChartElement>;
 export type Action = z.infer<typeof Action>;
 export type Beat = z.infer<typeof Beat>;
 export type Camera = z.infer<typeof Camera>;

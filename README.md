@@ -1,6 +1,6 @@
 # jz-motion
 
-A glowing blackboard for technical explainer presentations and videos. Scenes are JSON: clipart, text, boxes and arrows drawn stroke by stroke in luminous marker colors, with flows, highlights and camera zooms, stepped through beat by beat.
+A glowing blackboard for technical explainer presentations and videos. Scenes are JSON: clipart, logos, text, boxes, arrows, charts and isometric 3D objects drawn stroke by stroke in luminous marker colors, with flows, highlights and camera zooms, stepped through beat by beat. Edit them visually, or have an LLM write them.
 
 ![The example presentation](docs/img/board.png)
 
@@ -19,7 +19,7 @@ Open the printed URL. The example presentation explains this project; more are u
 |---|---|
 | Select, move | Click an element and drag it. Shift+click selects several. |
 | Pan, zoom | Drag the empty board; scroll. |
-| Add | Click an icon, Text, Box or a 3D model in the library. Select two elements, then **Arrow** to connect them. |
+| Add | Click an icon, Text, Box, Chart or a 3D model in the library. Select two elements, then **Arrow** to connect them. |
 | Animate | **+ beat** under the board (it draws the selected elements), or **+ action** inside a beat. |
 | Edit details | Properties panel on the right. |
 | Delete, duplicate, undo | Delete key, Ctrl+D, Ctrl+Z / Ctrl+Shift+Z |
