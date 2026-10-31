@@ -102,3 +102,18 @@ Built an **Edit** mode next to **Play**:
 
 ![Camera bug](journey/12-editor-camera-bug.jpg)
 ![Editor](journey/11-editor.jpg)
+
+## Step 8: Generating scenes with LLMs
+
+Built an **AI** tab:
+- **Models** are any OpenAI-compatible endpoint: presets for OpenRouter and RunPod (vLLM), plus custom. Tick several to compare them on the same request.
+- **The prompt is our own docs**: `docs/format.md` and the generated `docs/library.md` go into the system prompt, so keeping the docs accurate is what keeps generation accurate.
+- **Repair loop:** the reply is compiled; if it does not load, the compiler's readable errors go back to the model, up to two times.
+- **Results** show a live preview, time, tries, tokens and cost (OpenRouter reports cost); "Use this" replaces the presentation, and undo brings the old one back.
+- Requests go through a small proxy in the local dev server (browsers can't call most model APIs directly), so API keys stay in the browser and on this machine.
+
+**Checked by:** unit tests with a fake model (repair loop, giving up, edit mode, failures) and an end-to-end browser run against a **mock model server** (`npm run mock-llm`, also useful for trying the flow without keys). The unit tests found a real bug: an arrow pointing at an invalid element made the compiler throw instead of listing the error, which would have sent the model a confusing message. The compiler now never throws.
+
+No real model has been tried yet: there are no API keys in the cloud environment. That is the next thing for Jakub to try.
+
+![AI compare](journey/13-ai-compare.jpg)

@@ -107,6 +107,15 @@ export function compile(input: unknown): CompileResult {
   const scenes: CompiledScene[] = [];
 
   source.scenes.forEach((scene, si) => {
+    try {
+      compileScene(scene, si);
+    } catch (e) {
+      // Errors are reported, never thrown: an LLM gets them back as a list it can fix.
+      errors.push(`scenes.${si}: ${(e as Error).message}`);
+    }
+  });
+
+  function compileScene(scene: Presentation['scenes'][number], si: number) {
     const where = `scenes.${si}`;
     const prev = scenes[si - 1];
     const elements: CompiledElement[] = [];
@@ -165,6 +174,10 @@ export function compile(input: unknown): CompileResult {
         fullBox(el, lookup);
       } catch (e) {
         errors.push(`${where}.elements.${ei} (${el.id}): ${(e as Error).message}`);
+        // Leave the broken arrow out so later steps (framing, circles) don't trip over it.
+        elements.splice(elements.indexOf(el), 1);
+        byId.delete(el.id);
+        delete state[el.id];
       }
     }
 
@@ -371,7 +384,7 @@ export function compile(input: unknown): CompileResult {
       beats,
       duration: time,
     });
-  });
+  }
 
   if (errors.length) return { ok: false, errors };
   return { ok: true, presentation: { title: source.title, scenes }, source };

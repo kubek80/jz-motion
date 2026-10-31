@@ -145,6 +145,21 @@ describe('compile', () => {
     ]);
   });
 
+  it('reports an arrow to an invalid element instead of throwing later', () => {
+    const r = compile(deck({
+      elements: [
+        { id: 'a', type: 'icon', icon: 'nope', x: 0, y: 0 },
+        { id: 'b', type: 'icon', icon: 'user', x: 400, y: 0 },
+        { id: 'ab', type: 'arrow', from: 'a', to: 'b' },
+      ],
+      beats: [{ actions: [{ do: 'camera', focus: 'all' }, { do: 'circle', target: 'b' }] }],
+    }));
+    expect(r.ok ? [] : r.errors).toEqual([
+      'scenes.0.elements.0: unknown icon "nope" (see docs/library.md)',
+      'scenes.0.elements.2 (ab): unknown element "a"',
+    ]);
+  });
+
   it('reports schema errors with paths', () => {
     const r = compile({ version: 1, title: 't', scenes: [{ id: 's', elements: [{ id: 'a', type: 'blob' }] }] });
     expect(r.ok).toBe(false);

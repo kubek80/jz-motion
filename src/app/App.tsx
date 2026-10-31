@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { compile, Stage, type StagePosition } from '../engine';
 import type { Camera } from '../engine/schema';
 import intro from '../examples/intro.json';
+import { AiPanel } from './AiPanel';
 import { Beats } from './editor/Beats';
 import {
   addElement, addScene, deleteElement, deleteScene, idsInScope, moveItem, renameElement, uniqueId,
@@ -34,7 +35,7 @@ function saveDraft(text: string) {
 }
 
 type Mode = 'edit' | 'play';
-type Panel = 'props' | 'json';
+type Panel = 'props' | 'json' | 'ai';
 
 interface Drag {
   pointer: number;
@@ -436,9 +437,12 @@ export function App() {
         <aside className="right">
           <div className="tabs">
             <button className={panel === 'props' ? 'on' : ''} onClick={() => setPanel('props')} disabled={mode !== 'edit'}>Properties</button>
-            <button className={panel === 'json' || mode !== 'edit' ? 'on' : ''} onClick={() => setPanel('json')}>JSON</button>
+            <button className={panel === 'json' || (mode !== 'edit' && panel !== 'ai') ? 'on' : ''} onClick={() => setPanel('json')}>JSON</button>
+            <button className={panel === 'ai' ? 'on' : ''} onClick={() => setPanel('ai')}>AI</button>
           </div>
-          {mode === 'edit' && panel === 'props' && doc ? (
+          {panel === 'ai' ? (
+            <AiPanel current={text} onUse={replaceAll} />
+          ) : mode === 'edit' && panel === 'props' && doc ? (
             <Inspector
               doc={doc}
               scene={sceneIndex}

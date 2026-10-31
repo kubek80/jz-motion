@@ -24,6 +24,10 @@ Open the printed URL. The example presentation explains this project; more are u
 | Edit details | Properties panel on the right. |
 | Delete, duplicate, undo | Delete key, Ctrl+D, Ctrl+Z / Ctrl+Shift+Z |
 
+**AI tab**
+
+Add a model (OpenRouter, RunPod or any OpenAI-compatible endpoint, with its API key), tick the models to compare, describe the presentation or the change, and pick a result. Keys stay in your browser and go only to the model's API through the local dev server (`npm run dev` or `npm run preview`). To try it without a key: `npm run mock-llm`, then add the "Local mock" model.
+
 **Play mode**
 
 | Key | Does |
@@ -39,6 +43,7 @@ Open the printed URL. The example presentation explains this project; more are u
 | `npm test` | Unit tests |
 | `npm run typecheck` | TypeScript |
 | `npm run build` | Production build into `dist/` |
+| `npm run mock-llm` | A fake model on port 5199 for trying the AI tab without a key |
 | `npm run icons` | Regenerate the icon library and `docs/library.md` (Tabler clipart, Simple Icons logos, `src/engine/icons.custom.json`) |
 
 ## Docs
