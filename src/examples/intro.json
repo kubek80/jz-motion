@@ -1,0 +1,107 @@
+{
+  "version": 1,
+  "title": "jz-motion: how this app works",
+  "scenes": [
+    {
+      "id": "idea",
+      "title": "The idea",
+      "elements": [
+        { "id": "title", "type": "text", "text": "jz-motion", "x": 960, "y": 190, "size": 120, "color": "yellow" },
+        { "id": "subtitle", "type": "text", "text": "explainer videos on a glowing blackboard", "x": 960, "y": 300, "size": 54 },
+        { "id": "me", "type": "icon", "icon": "user", "x": 380, "y": 620, "size": 150, "color": "pink", "label": "me" },
+        { "id": "board", "type": "icon", "icon": "browser", "x": 960, "y": 620, "size": 170, "color": "cyan", "label": "the board" },
+        { "id": "video", "type": "icon", "icon": "sparkles", "x": 1540, "y": 620, "size": 150, "color": "green", "label": "YouTube video" },
+        { "id": "script", "type": "arrow", "from": "me", "to": "board", "label": "script" },
+        { "id": "record", "type": "arrow", "from": "board", "to": "video", "label": "record" }
+      ],
+      "beats": [
+        { "title": "Title", "actions": [
+          { "do": "draw", "target": "title" },
+          { "do": "draw", "target": "subtitle" }
+        ] },
+        { "title": "Me and the board", "actions": [
+          { "do": "draw", "target": "me" },
+          { "do": "draw", "target": "script" },
+          { "do": "draw", "target": "board" }
+        ] },
+        { "title": "The video", "actions": [
+          { "do": "draw", "target": "record" },
+          { "do": "draw", "target": "video" },
+          { "do": "flow", "target": ["script", "record"] }
+        ] },
+        { "title": "Zoom to the board", "actions": [
+          { "do": "camera", "focus": "board", "padding": 260 },
+          { "do": "pulse", "target": "board", "times": 2 }
+        ] },
+        { "title": "Back out", "actions": [
+          { "do": "camera", "focus": "all" }
+        ] }
+      ]
+    },
+    {
+      "id": "how",
+      "title": "How it works",
+      "elements": [
+        { "id": "heading", "type": "text", "text": "how it works", "x": 960, "y": 140, "size": 84, "color": "yellow" },
+        { "id": "json", "type": "icon", "icon": "file", "x": 290, "y": 560, "size": 140, "color": "yellow", "label": "scene.json" },
+        { "id": "compile", "type": "box", "x": 760, "y": 560, "width": 270, "height": 150, "color": "cyan", "label": "compile" },
+        { "id": "render", "type": "box", "x": 1220, "y": 560, "width": 290, "height": 160, "color": "green", "label": "render" },
+        { "id": "out", "type": "icon", "icon": "browser", "x": 1650, "y": 560, "size": 140, "color": "pink", "label": "board" },
+        { "id": "a1", "type": "arrow", "from": "json", "to": "compile" },
+        { "id": "a2", "type": "arrow", "from": "compile", "to": "render" },
+        { "id": "a3", "type": "arrow", "from": "render", "to": "out" },
+        { "id": "d1", "type": "text", "text": "SVG strokes", "x": 1220, "y": 700, "size": 38 },
+        { "id": "d2", "type": "text", "text": "GSAP timeline", "x": 1220, "y": 750, "size": 38 },
+        { "id": "d3", "type": "text", "text": "glow filter", "x": 1220, "y": 800, "size": 38 }
+      ],
+      "beats": [
+        { "title": "Heading and input", "actions": [
+          { "do": "draw", "target": "heading" },
+          { "do": "draw", "target": "json" }
+        ] },
+        { "title": "Compile", "actions": [
+          { "do": "draw", "target": ["a1", "compile"], "stagger": 0.6 }
+        ] },
+        { "title": "Render to the board", "actions": [
+          { "do": "draw", "target": ["a2", "render", "a3", "out"], "stagger": 0.7 },
+          { "do": "flow", "target": ["a1", "a2", "a3"] }
+        ] },
+        { "title": "Inside the renderer", "actions": [
+          { "do": "camera", "focus": ["render", "d1", "d2", "d3"], "padding": 200 },
+          { "do": "draw", "target": ["d1", "d2", "d3"], "stagger": 0.5 }
+        ] },
+        { "title": "The key part", "actions": [
+          { "do": "circle", "target": "d2", "color": "pink" }
+        ] },
+        { "title": "Back out", "actions": [
+          { "do": "camera", "focus": "all" }
+        ] }
+      ]
+    },
+    {
+      "id": "next",
+      "title": "Next: LLMs write the scenes",
+      "inherit": true,
+      "elements": [
+        { "id": "llm", "type": "icon", "icon": "brain", "x": 290, "y": 900, "size": 130, "color": "pink", "label": "LLM" },
+        { "id": "models", "type": "icon", "icon": "cloud", "x": 760, "y": 900, "size": 130, "color": "cyan", "label": "OpenRouter / RunPod" },
+        { "id": "writes", "type": "arrow", "from": "llm", "to": "json.bottom", "label": "writes" },
+        { "id": "pick", "type": "arrow", "from": "models", "to": "llm", "dashed": true, "label": "pick a model" }
+      ],
+      "beats": [
+        { "title": "Clean up", "actions": [
+          { "do": "erase", "target": ["d1", "d2", "d3", "d2-circle"], "stagger": 0.1 },
+          { "do": "camera", "x": 960, "y": 620, "zoom": 0.9, "start": "with" }
+        ] },
+        { "title": "The LLM", "actions": [
+          { "do": "draw", "target": ["llm", "writes"], "stagger": 0.8 },
+          { "do": "flow", "target": "writes" }
+        ] },
+        { "title": "Any model", "actions": [
+          { "do": "draw", "target": ["models", "pick"], "stagger": 0.8 },
+          { "do": "circle", "target": "llm" }
+        ] }
+      ]
+    }
+  ]
+}

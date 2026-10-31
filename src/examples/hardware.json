@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "title": "Where do models run",
+  "scenes": [
+    {
+      "id": "hardware",
+      "title": "Local hardware",
+      "elements": [
+        { "id": "heading", "type": "text", "text": "where do the models run?", "x": 960, "y": 110, "size": 84, "color": "yellow" },
+        { "id": "weights", "type": "icon", "icon": "file", "x": 260, "y": 560, "size": 150, "color": "yellow", "label": "model weights" },
+        { "id": "gpu", "type": "icon", "icon": "gpu", "x": 860, "y": 300, "size": 160, "color": "cyan", "label": "GPU" },
+        { "id": "mac", "type": "icon", "icon": "mac-studio", "x": 860, "y": 580, "size": 160, "color": "pink", "label": "Mac Studio" },
+        { "id": "spark", "type": "icon", "icon": "dgx-spark", "x": 860, "y": 860, "size": 160, "color": "green", "label": "DGX Spark" },
+        { "id": "to-gpu", "type": "arrow", "from": "weights", "to": "gpu", "curve": -0.12 },
+        { "id": "to-mac", "type": "arrow", "from": "weights", "to": "mac" },
+        { "id": "to-spark", "type": "arrow", "from": "weights", "to": "spark", "curve": 0.12 },
+        { "id": "nvidia1", "type": "icon", "icon": "nvidia", "x": 1120, "y": 290, "size": 80, "color": "cyan" },
+        { "id": "apple", "type": "icon", "icon": "apple", "x": 1120, "y": 570, "size": 80, "color": "pink" },
+        { "id": "nvidia2", "type": "icon", "icon": "nvidia", "x": 1120, "y": 850, "size": 80, "color": "green" },
+        { "id": "gpu-note", "type": "text", "text": "fastest, but VRAM limits model size", "x": 1200, "y": 290, "size": 44, "align": "start" },
+        { "id": "mac-note", "type": "text", "text": "big unified memory, quiet", "x": 1200, "y": 570, "size": 44, "align": "start" },
+        { "id": "spark-note", "type": "text", "text": "128 GB unified memory + CUDA", "x": 1200, "y": 850, "size": 44, "align": "start" }
+      ],
+      "beats": [
+        { "title": "Question", "actions": [
+          { "do": "draw", "target": "heading" },
+          { "do": "draw", "target": "weights" }
+        ] },
+        { "title": "GPU", "actions": [
+          { "do": "draw", "target": ["to-gpu", "gpu", "nvidia1", "gpu-note"], "stagger": 0.7 }
+        ] },
+        { "title": "Mac", "actions": [
+          { "do": "draw", "target": ["to-mac", "mac", "apple", "mac-note"], "stagger": 0.7 }
+        ] },
+        { "title": "DGX Spark", "actions": [
+          { "do": "draw", "target": ["to-spark", "spark", "nvidia2", "spark-note"], "stagger": 0.7 },
+          { "do": "flow", "target": ["to-gpu", "to-mac", "to-spark"] }
+        ] },
+        { "title": "Zoom to the Spark", "actions": [
+          { "do": "camera", "focus": ["spark", "spark-note"], "padding": 160 },
+          { "do": "circle", "target": ["nvidia2", "spark-note"], "color": "yellow" }
+        ] },
+        { "title": "Overview", "actions": [{ "do": "camera", "focus": "all", "padding": 70 }] }
+      ]
+    }
+  ]
+}
