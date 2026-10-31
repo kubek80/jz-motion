@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "title": "Who builds the models",
+  "scenes": [
+    {
+      "id": "labs",
+      "title": "The labs",
+      "elements": [
+        { "id": "heading", "type": "text", "text": "who builds the models?", "x": 960, "y": 150, "size": 90, "color": "yellow" },
+        { "id": "anthropic", "type": "icon", "icon": "anthropic", "x": 300, "y": 520, "size": 150, "color": "orange", "label": "Anthropic" },
+        { "id": "openai", "type": "icon", "icon": "openai", "x": 630, "y": 520, "size": 150, "color": "white", "label": "OpenAI" },
+        { "id": "google", "type": "icon", "icon": "google", "x": 960, "y": 520, "size": 150, "color": "cyan", "label": "Google" },
+        { "id": "qwen", "type": "icon", "icon": "qwen", "x": 1340, "y": 520, "size": 150, "color": "pink", "label": "Qwen" },
+        { "id": "deepseek", "type": "icon", "icon": "deepseek", "x": 1650, "y": 520, "size": 150, "color": "green", "label": "DeepSeek" },
+        { "id": "usa", "type": "box", "x": 630, "y": 545, "width": 1010, "height": 400, "color": "white", "dashed": true },
+        { "id": "china", "type": "box", "x": 1495, "y": 545, "width": 650, "height": 400, "color": "white", "dashed": true },
+        { "id": "usa-label", "type": "text", "text": "USA", "x": 630, "y": 800, "size": 52 },
+        { "id": "china-label", "type": "text", "text": "China", "x": 1495, "y": 800, "size": 52 },
+        { "id": "claude", "type": "icon", "icon": "claude", "x": 300, "y": 960, "size": 90, "color": "orange", "label": "Claude" }
+      ],
+      "beats": [
+        { "title": "Question", "actions": [{ "do": "draw", "target": "heading" }] },
+        { "title": "The labs", "actions": [
+          { "do": "draw", "target": ["anthropic", "openai", "google", "qwen", "deepseek"], "stagger": 0.9, "duration": 1.6 }
+        ] },
+        { "title": "Where they are", "actions": [
+          { "do": "draw", "target": ["usa", "china"], "stagger": 0.3 },
+          { "do": "draw", "target": ["usa-label", "china-label"], "stagger": 0.3, "start": "with", "delay": 0.6 }
+        ] },
+        { "title": "Zoom to Anthropic", "actions": [
+          { "do": "camera", "focus": "anthropic", "padding": 280 },
+          { "do": "pulse", "target": "anthropic", "times": 2 }
+        ] },
+        { "title": "Its model", "actions": [
+          { "do": "camera", "focus": ["anthropic", "claude"], "padding": 140 },
+          { "do": "draw", "target": "claude" }
+        ] },
+        { "title": "All of them", "actions": [{ "do": "camera", "focus": "all", "padding": 60 }] }
+      ]
+    }
+  ]
+}

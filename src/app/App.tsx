@@ -4,6 +4,8 @@ import intro from '../examples/intro.json';
 
 const DRAFT_KEY = 'jzm.draft';
 const example = JSON.stringify(intro, null, 2);
+const examples = Object.entries(import.meta.glob<{ title: string }>('../examples/*.json', { eager: true, import: 'default' }))
+  .map(([path, data]) => ({ name: path.split('/').pop()!.replace('.json', ''), title: data.title, text: JSON.stringify(data, null, 2) }));
 
 function loadDraft(): string {
   try {
@@ -164,7 +166,19 @@ export function App() {
                 <input type="file" accept="application/json,.json" onChange={(e) => e.target.files?.[0] && importJson(e.target.files[0])} />
               </label>
               <button onClick={exportJson}>Export</button>
-              <button onClick={() => onEdit(example)}>Reset to example</button>
+              <select
+                value=""
+                onChange={(e) => {
+                  const ex = examples.find((x) => x.name === e.target.value);
+                  if (ex && (text === ex.text || confirm(`Replace your current JSON with "${ex.title}"?`))) {
+                    stage.current?.showScene(0);
+                    onEdit(ex.text);
+                  }
+                }}
+              >
+                <option value="" disabled>Load example…</option>
+                {examples.map((x) => <option key={x.name} value={x.name}>{x.title}</option>)}
+              </select>
             </div>
             <textarea spellCheck={false} value={text} onChange={(e) => onEdit(e.target.value)} />
             {!result.ok && (

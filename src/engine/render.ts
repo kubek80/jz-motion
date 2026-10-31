@@ -17,7 +17,20 @@ function svgEl<K extends keyof SVGElementTagNameMap>(tag: K, attrs: Record<strin
 /** One step of drawing an element: a stroke traced along its length, or text revealed left to right. */
 type DrawPart =
   | { kind: 'stroke'; node: SVGGeometryElement; length: number; scale: number }
-  | { kind: 'write'; rect: SVGRectElement; x: number; width: number };
+  | { kind: 'write'; rect: SVGRectElement; x: number; width: number }
+  | { kind: 'fill'; node: SVGElement; opacity: number };
+
+/** Target and values for a part fully drawn or not drawn at all. */
+function partState(p: DrawPart, drawn: boolean): [gsap.TweenTarget, gsap.TweenVars] {
+  switch (p.kind) {
+    case 'stroke':
+      return [p.node, { strokeDashoffset: drawn ? 0 : p.length }];
+    case 'write':
+      return [p.rect, { attr: { width: drawn ? p.width : 0 } }];
+    case 'fill':
+      return [p.node, { fillOpacity: drawn ? p.opacity : 0 }];
+  }
+}
 
 interface ElementNodes {
   outer: SVGGElement;
@@ -109,7 +122,7 @@ export class Stage {
     this.presentation = p;
     await Promise.all([
       document.fonts.load(`40px Caveat`),
-      document.fonts.load(`bold 40px Caveat`),
+      document.fonts.load(`700 40px Caveat`),
     ]).catch(() => undefined);
     const scene = Math.min(at.scene, p.scenes.length - 1);
     this.showScene(scene, Math.min(at.beat, p.scenes[scene].beats.length));
@@ -252,10 +265,13 @@ export class Stage {
     const p = this.prefix;
     this.defs.innerHTML = `
       <filter id="${p}-glow" x="-20%" y="-20%" width="140%" height="140%">
-        <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="near"/>
-        <feGaussianBlur in="SourceGraphic" stdDeviation="12" result="far"/>
+        <!-- Tight inner glow plus a soft, dimmed halo; the crisp stroke stays on top so text keeps its shape. -->
+        <feGaussianBlur in="SourceGraphic" stdDeviation="1.6" result="nearBlur"/>
+        <feComponentTransfer in="nearBlur" result="near"><feFuncA type="linear" slope="0.7"/></feComponentTransfer>
+        <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="farBlur"/>
+        <feComponentTransfer in="farBlur" result="far"><feFuncA type="linear" slope="0.45"/></feComponentTransfer>
         <feMerge>
-          <feMergeNode in="far"/><feMergeNode in="near"/><feMergeNode in="near"/><feMergeNode in="SourceGraphic"/>
+          <feMergeNode in="far"/><feMergeNode in="near"/><feMergeNode in="SourceGraphic"/>
         </feMerge>
       </filter>
       <filter id="${p}-grain" x="0" y="0" width="100%" height="100%">
@@ -302,10 +318,7 @@ export class Stage {
       const n = this.nodes.get(id);
       if (!n) continue;
       gsap.set(n.outer, { x: s.x, y: s.y, opacity: s.visible ? 1 : 0, color: palette[s.color], filter: 'blur(0px)' });
-      for (const part of n.parts) {
-        if (part.kind === 'stroke') gsap.set(part.node, { strokeDashoffset: 0 });
-        else gsap.set(part.rect, { attr: { width: part.width } });
-      }
+      for (const part of n.parts) gsap.set(...partState(part, true));
       if (n.flowPath) this.flows.set(id, { on: s.flow ? 1 : 0, dir: s.flow?.reverse ? -1 : 1, speed: s.flow?.speed ?? 160 });
     }
   }
@@ -326,7 +339,8 @@ export class Stage {
       if (dashed) {
         // Dashed strokes are drawn through a mask so the dash pattern and the draw-on don't fight.
         const id = `${this.prefix}-m${uid++}`;
-        const mask = svgEl('mask', { id, maskUnits: 'userSpaceOnUse', 'data-scene': '' }, this.defs);
+        // The default mask region is a percentage of the viewport, which cuts off shapes drawn around their center.
+        const mask = svgEl('mask', { id, maskUnits: 'userSpaceOnUse', x: -1e5, y: -1e5, width: 2e5, height: 2e5, 'data-scene': '' }, this.defs);
         // userSpaceOnUse: the mask follows the element's own transforms.
         const reveal = svgEl('path', { d, fill: 'none', stroke: '#fff', 'stroke-width': width + 6, 'stroke-linecap': 'round' }, mask);
         path.setAttribute('stroke-dasharray', `${width * 3} ${width * 3}`);
@@ -348,7 +362,7 @@ export class Stage {
         y,
         'font-size': size,
         'font-family': board.font,
-        'font-weight': 600,
+        'font-weight': 700,
         'text-anchor': anchor,
         'dominant-baseline': 'central',
         fill: 'currentColor',
@@ -373,8 +387,17 @@ export class Stage {
         const def = icons[el.icon];
         const scale = el.size / ICON_GRID;
         const g = svgEl('g', { transform: `scale(${scale}) translate(${-ICON_GRID / 2} ${-ICON_GRID / 2})` }, fx);
-        const w = Math.max(3.5, el.size * 0.045) / scale;
-        for (const d of def.paths) stroke(d, w, g, false, scale);
+        if (def.style === 'logo') {
+          // Brand logos are filled shapes: trace their outline thinly, then fade in a faint fill.
+          const w = Math.max(2, el.size * 0.02) / scale;
+          for (const d of def.paths) stroke(d, w, g, false, scale);
+          const fill = svgEl('g', { fill: 'currentColor', 'fill-rule': 'evenodd', stroke: 'none' }, g);
+          for (const d of def.paths) svgEl('path', { d }, fill);
+          parts.push({ kind: 'fill', node: fill, opacity: 0.22 });
+        } else {
+          const w = def.stroke ?? Math.max(3.5, el.size * 0.045) / scale;
+          for (const d of def.paths) stroke(d, w, g, false, scale);
+        }
         if (el.label) {
           const ls = iconLabelSize(el.size);
           write(el.label, 0, el.size / 2 + ls * 0.75, ls);
@@ -446,28 +469,24 @@ export class Stage {
         }
         if (op.mode === 'draw') {
           // Each part gets time in proportion to its size, with a floor so dots and short ticks still show.
-          const weights = n.parts.map((p) => Math.max(p.kind === 'stroke' ? p.length * p.scale : p.width * 0.7, 12));
+          // A fill fades in over a quarter of the time the strokes before it took.
+          const lineWeights = n.parts.map((p) => (p.kind === 'stroke' ? p.length * p.scale : p.kind === 'write' ? p.width * 0.7 : 0));
+          const weights = n.parts.map((p, i) => (p.kind === 'fill'
+            ? lineWeights.slice(0, i).reduce((a, b) => a + b, 0) * 0.25
+            : Math.max(lineWeights[i], 12)));
           const total = weights.reduce((a, b) => a + b, 0);
           // Undraw every part up front, otherwise later parts show fully drawn until their turn.
-          for (const p of n.parts) {
-            if (p.kind === 'stroke') tl.set(p.node, { strokeDashoffset: p.length }, op.t);
-            else tl.set(p.rect, { attr: { width: 0 } }, op.t);
-          }
+          for (const p of n.parts) tl.set(...partState(p, false), op.t);
           let at = op.t;
           n.parts.forEach((p, i) => {
             const d = (op.dur * weights[i]) / total;
-            if (p.kind === 'stroke') {
-              tl.fromTo(p.node, { strokeDashoffset: p.length }, { strokeDashoffset: 0, duration: d, ease: 'power1.inOut', immediateRender: false }, at);
-            } else {
-              tl.fromTo(p.rect, { attr: { width: 0 } }, { attr: { width: p.width }, duration: d, ease: 'none', immediateRender: false }, at);
-            }
+            const [target, from] = partState(p, false);
+            const ease = p.kind === 'stroke' ? 'power1.inOut' : 'none';
+            tl.fromTo(target, from, { ...partState(p, true)[1], duration: d, ease, immediateRender: false }, at);
             at += d;
           });
         } else {
-          for (const p of n.parts) {
-            if (p.kind === 'stroke') tl.set(p.node, { strokeDashoffset: 0 }, op.t);
-            else tl.set(p.rect, { attr: { width: p.width } }, op.t);
-          }
+          for (const p of n.parts) tl.set(...partState(p, true), op.t);
         }
         break;
       }

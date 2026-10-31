@@ -16,6 +16,10 @@ describe('compile', () => {
     expect(p.scenes.map((s) => s.id)).toEqual(['idea', 'how', 'next']);
   });
 
+  it.each(Object.entries(import.meta.glob('../examples/*.json', { eager: true, import: 'default' })))('compiles %s', (_, data) => {
+    ok(data);
+  });
+
   it('sequences actions and beats', () => {
     const s = ok(deck({
       elements: [

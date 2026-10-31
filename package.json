@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "icons": "node scripts/import-tabler.mjs"
+    "icons": "node scripts/import-icons.mjs"
   },
   "dependencies": {
     "@fontsource/caveat": "^5.3.0",
@@ -24,6 +24,7 @@
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.2",
+    "simple-icons": "^16.36.0",
     "typescript": "~5.9",
     "vite": "^8.3.5",
     "vitest": "^4.1.12"

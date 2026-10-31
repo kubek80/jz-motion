@@ -26,7 +26,7 @@ Open the printed URL. The example presentation explains this project. Edit the J
 | `npm test` | Unit tests for the compiler |
 | `npm run typecheck` | TypeScript |
 | `npm run build` | Production build into `dist/` |
-| `npm run icons` | Regenerate the icon library and `docs/library.md` from `scripts/import-tabler.mjs` |
+| `npm run icons` | Regenerate the icon library and `docs/library.md` (Tabler clipart, Simple Icons logos, `src/engine/icons.custom.json`) |
 
 ## Docs
 
@@ -34,4 +34,4 @@ Open the printed URL. The example presentation explains this project. Edit the J
 - [Presentation format](docs/format.md): the reference for writing scenes, by hand or with an LLM
 - [Element library](docs/library.md)
 
-Icons are from [Tabler Icons](https://tabler.io/icons) (MIT).
+Clipart from [Tabler Icons](https://tabler.io/icons) (MIT), logos from [Simple Icons](https://simpleicons.org) (CC0). Logos are trademarks of their owners.

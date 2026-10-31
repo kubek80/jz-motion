@@ -11,11 +11,11 @@
 }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--text); }
-button, .file {
+button, .file, select {
   background: var(--panel); color: var(--text); border: 1px solid var(--line);
   border-radius: 6px; padding: 5px 10px; cursor: pointer; font: inherit;
 }
-button:hover, .file:hover { border-color: var(--accent); }
+button:hover, .file:hover, select:hover { border-color: var(--accent); }
 .file input { display: none; }
 .muted { color: var(--muted); }
 
