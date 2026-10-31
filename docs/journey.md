@@ -85,6 +85,51 @@ Jakub asked for animated previews; Claude rendered the timeline frame by frame (
 
 **Approved:** glow level, the hand-drawn OpenAI logo, the hardware drawings, the 3D look.
 
-## Step 6: Next
+## Step 6: Into `main`, and this log
 
-Jakub asked to put everything on `main`, then build: (1) a visual editor, (2) LLM generation with switchable models, (3) charts. And to keep this log.
+Jakub asked to put everything on `main` (pull request #1, merged), to keep this log of the steps, and to build next: (1) a visual editor, (2) LLM generation with switchable models, (3) charts.
+
+## Step 7: The editor
+
+Built an **Edit** mode next to **Play**:
+- The board shows every element of a scene fully drawn. Click to select, shift+click for several, drag to move, scroll to zoom, drag the empty board to pan.
+- A library palette (searchable icons with previews, text, box, 3D models); "Arrow" connects two selected elements.
+- Beats as cards under the board: add, reorder, delete beats and actions; clicking an action highlights its targets on the board.
+- A properties panel **generated from the schema** (zod → JSON Schema), so new fields and element types appear in the editor without extra work. Renaming an element updates every reference to it; deleting one also removes its arrows and its mentions in beats.
+- Undo/redo for every change. The JSON stays the single source of truth, so the JSON tab and the visual editor are always in sync.
+
+**Checked by:** unit tests for the edit operations (rename, delete, unique ids), and a browser script that selects, drags, adds a GPU, connects it with an arrow, adds a beat, undoes three times and switches to Play. The first screenshot showed an empty, mis-framed board: in development React mounts components twice, and the discarded board finished loading later and stored a bogus camera. Fixed by ignoring results from a board that is no longer current.
+
+![Camera bug](journey/12-editor-camera-bug.jpg)
+![Editor](journey/11-editor.jpg)
+
+## Step 8: Generating scenes with LLMs
+
+Built an **AI** tab:
+- **Models** are any OpenAI-compatible endpoint: presets for OpenRouter and RunPod (vLLM), plus custom. Tick several to compare them on the same request.
+- **The prompt is our own docs**: `docs/format.md` and the generated `docs/library.md` go into the system prompt, so keeping the docs accurate is what keeps generation accurate.
+- **Repair loop:** the reply is compiled; if it does not load, the compiler's readable errors go back to the model, up to two times.
+- **Results** show a live preview, time, tries, tokens and cost (OpenRouter reports cost); "Use this" replaces the presentation, and undo brings the old one back.
+- Requests go through a small proxy in the local dev server (browsers can't call most model APIs directly), so API keys stay in the browser and on this machine.
+
+**Checked by:** unit tests with a fake model (repair loop, giving up, edit mode, failures) and an end-to-end browser run against a **mock model server** (`npm run mock-llm`, also useful for trying the flow without keys). The unit tests found a real bug: an arrow pointing at an invalid element made the compiler throw instead of listing the error, which would have sent the model a confusing message. The compiler now never throws.
+
+No real model has been tried yet: there are no API keys in the cloud environment. That is the next thing for Jakub to try.
+
+![AI compare](journey/13-ai-compare.jpg)
+
+## Step 9: Charts
+
+Added a `chart` element (bar, line, donut pie) and a `set-values` action:
+- `draw` writes the title, draws the axes, then grows the bars, traces the line or sweeps the slices while the values count up.
+- `set-values` animates to new numbers, for "before / after" moments. The compiler sizes the value axis to fit every value the chart shows in the scene, so bars never overflow.
+- Like the 3D objects, charts are redrawn every frame from a few animated numbers, so scrubbing and stepping back stay exact.
+- The editor got a "Chart" button; data is edited in the properties panel (switching bar → line is one dropdown).
+
+**Checked by:** tests for the value animation, axis rounding and errors (wrong number of values, set-values on a non-chart), and screenshots of each chart while drawing and after a change.
+
+![Charts](journey/14-charts.jpg)
+
+## Step 10: Into `main` again
+
+The editor, LLM generation and charts went to `main` as pull request #2. Next for Jakub: try the AI tab with real models (OpenRouter or RunPod keys), and decide what the first real video covers.

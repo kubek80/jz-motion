@@ -1,4 +1,6 @@
 import gsap from 'gsap';
+import { buildChart, renderChart, type ChartNodes } from './chart';
+import { svgEl } from './dom';
 import type { CompiledElement, CompiledPresentation, CompiledScene, ElementState, Op } from './compile';
 import { arrowCurve, arrowEnds, arrowHead, iconLabelSize, ISO_LABEL_SIZE, VIEW } from './geometry';
 import { projectIso, resolveIsoParts, type IsoPart } from './iso';
@@ -6,22 +8,15 @@ import { ICON_GRID, icons } from './library';
 import { board, palette } from './palette';
 import type { Camera } from './schema';
 
-const NS = 'http://www.w3.org/2000/svg';
 
-function svgEl<K extends keyof SVGElementTagNameMap>(tag: K, attrs: Record<string, string | number> = {}, parent?: SVGElement): SVGElementTagNameMap[K] {
-  const node = document.createElementNS(NS, tag);
-  for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, String(v));
-  if (parent) parent.appendChild(node);
-  return node;
-}
 
 /** One step of drawing an element: a stroke traced along its length, or text revealed left to right. */
-type DrawPart =
-  | { kind: 'stroke'; node: SVGGeometryElement; length: number; scale: number }
+export type DrawPart =
+  | { kind: 'stroke'; node: SVGGeometryElement; length: number; scale: number; weight?: number }
   | { kind: 'write'; rect: SVGRectElement; x: number; width: number }
   | { kind: 'fill'; node: SVGElement; opacity: number }
-  /** One part of an iso object; `cell.v` goes 0 → 1 as it is drawn. */
-  | { kind: 'iso'; cell: { v: number } };
+  /** Something drawn by code from `cell.v` going 0 → 1 (an iso part, a bar, a pie slice). */
+  | { kind: 'cell'; cell: { v: number }; weight?: number };
 
 /** Target and values for a part fully drawn or not drawn at all. */
 function partState(p: DrawPart, drawn: boolean): [gsap.TweenTarget, gsap.TweenVars] {
@@ -32,7 +27,7 @@ function partState(p: DrawPart, drawn: boolean): [gsap.TweenTarget, gsap.TweenVa
       return [p.rect, { attr: { width: drawn ? p.width : 0 } }];
     case 'fill':
       return [p.node, { fillOpacity: drawn ? p.opacity : 0 }];
-    case 'iso':
+    case 'cell':
       return [p.cell, { v: drawn ? 1 : 0 }];
   }
 }
@@ -45,6 +40,7 @@ interface ElementNodes {
   pivot: { x: number; y: number };
   flowPath?: SVGPathElement;
   iso?: IsoNodes;
+  chart?: ChartNodes;
 }
 
 interface IsoNodes {
@@ -77,6 +73,7 @@ export class Stage {
   readonly svg: SVGSVGElement;
   private camGroup: SVGGElement;
   private layer: SVGGElement;
+  private overlay: SVGGElement;
   private defs: SVGDefsElement;
   private presentation?: CompiledPresentation;
   private sceneIndex = 0;
@@ -105,6 +102,8 @@ export class Stage {
     this.buildBoard();
     this.camGroup = svgEl('g', {}, this.svg);
     this.layer = svgEl('g', { filter: `url(#${this.prefix}-glow)` }, this.camGroup);
+    // Editor selection boxes: above the drawing, without the glow.
+    this.overlay = svgEl('g', { 'pointer-events': 'none' }, this.camGroup);
     container.appendChild(this.svg);
     gsap.ticker.add(this.tick);
   }
@@ -254,6 +253,11 @@ export class Stage {
     this.emit();
   }
 
+  private applyCamera() {
+    const { x, y, zoom } = this.cam;
+    this.camGroup.setAttribute('transform', `translate(${VIEW.width / 2} ${VIEW.height / 2}) scale(${zoom}) translate(${-x} ${-y})`);
+  }
+
   private emit() {
     const p = this.position();
     this.listeners.forEach((fn) => fn(p));
@@ -267,9 +271,9 @@ export class Stage {
     } else if (!this.tl.paused()) {
       this.emit();
     }
-    const { x, y, zoom } = this.cam;
-    this.camGroup.setAttribute('transform', `translate(${VIEW.width / 2} ${VIEW.height / 2}) scale(${zoom}) translate(${-x} ${-y})`);
+    this.applyCamera();
     for (const n of this.nodes.values()) {
+      if (n.chart) renderChart(n.chart);
       if (!n.iso) continue;
       if (n.iso.spin.on > 0.5) n.iso.phase += (Math.min(deltaMs, 100) / 1000) * n.iso.spin.speed;
       renderIso(n.iso);
@@ -281,6 +285,120 @@ export class Stage {
       path.style.strokeDashoffset = String(-((this.ambient * f.speed * f.dir) % FLOW_PERIOD));
     }
   };
+
+  // ---------------------------------------------------------------- editing
+
+  /**
+   * Editing view of a scene: every element fully drawn where the scene places it, nothing animated.
+   * Elements not in `editable` (inherited from an earlier scene, or made by actions) are dimmed.
+   */
+  showLayout(index: number, editable: Set<string>, camera?: Camera) {
+    if (!this.presentation) return;
+    this.sceneIndex = index;
+    this.stopAt = null;
+    this.playThrough = false;
+    const scene = this.presentation.scenes[index];
+    this.buildScene(scene);
+    this.tl.pause(0);
+    for (const [id, n] of this.nodes) {
+      const isRing = scene.elements.find((e) => e.id === id)?.type === 'ring';
+      gsap.set(n.outer, { opacity: isRing ? 0 : editable.has(id) ? 1 : 0.3 });
+      for (const part of n.parts) gsap.set(...partState(part, true));
+      if (n.iso) n.iso.spin.on = 0;
+    }
+    for (const f of this.flows.values()) f.on = 0;
+    this.cam = camera ? { ...camera } : this.fitCamera();
+    this.applyCamera();
+    this.emit();
+  }
+
+  get camera(): Camera {
+    return { ...this.cam };
+  }
+
+  set camera(c: Camera) {
+    this.cam = { ...c };
+    this.applyCamera();
+  }
+
+  /** Camera that shows everything currently drawn, with some room around it. */
+  fitCamera(padding = 90): Camera {
+    const boxes = [...this.nodes.values()].filter((n) => Number(gsap.getProperty(n.outer, 'opacity')) > 0).map((n) => this.boxOf(n));
+    if (!boxes.length) return { x: VIEW.width / 2, y: VIEW.height / 2, zoom: 1 };
+    const x1 = Math.min(...boxes.map((b) => b.x));
+    const y1 = Math.min(...boxes.map((b) => b.y));
+    const x2 = Math.max(...boxes.map((b) => b.x + b.width));
+    const y2 = Math.max(...boxes.map((b) => b.y + b.height));
+    const zoom = Math.min((VIEW.width - 2 * padding) / Math.max(x2 - x1, 1), (VIEW.height - 2 * padding) / Math.max(y2 - y1, 1), 1);
+    return { x: (x1 + x2) / 2, y: (y1 + y2) / 2, zoom };
+  }
+
+  /** Board coordinates under a point on the screen. */
+  boardPoint(clientX: number, clientY: number): { x: number; y: number } {
+    const m = this.camGroup.getScreenCTM();
+    if (!m) return { x: 0, y: 0 };
+    const p = new DOMPoint(clientX, clientY).matrixTransform(m.inverse());
+    return { x: p.x, y: p.y };
+  }
+
+  /** Board units per screen pixel, for drag thresholds and handles. */
+  get unitsPerPixel(): number {
+    const m = this.camGroup.getScreenCTM();
+    return m ? 1 / m.a : 1;
+  }
+
+  /** The smallest element whose box contains the point; `among` limits the candidates. */
+  elementAt(point: { x: number; y: number }, among: Set<string>, margin = 12): string | undefined {
+    let best: { id: string; area: number } | undefined;
+    for (const [id, n] of this.nodes) {
+      if (!among.has(id)) continue;
+      const b = this.boxOf(n);
+      if (point.x < b.x - margin || point.x > b.x + b.width + margin || point.y < b.y - margin || point.y > b.y + b.height + margin) continue;
+      const area = Math.max(b.width, 1) * Math.max(b.height, 1);
+      if (!best || area < best.area) best = { id, area };
+    }
+    return best?.id;
+  }
+
+  /** Box of an element in board coordinates, as currently drawn. */
+  elementBox(id: string) {
+    const n = this.nodes.get(id);
+    return n ? this.boxOf(n) : undefined;
+  }
+
+  /** Moves an element while dragging, before the presentation is updated. */
+  previewMove(id: string, x: number, y: number) {
+    const n = this.nodes.get(id);
+    if (n) gsap.set(n.outer, { x, y });
+  }
+
+  /** Dashed boxes around the selected elements; `secondary` ones (e.g. an action's targets) are drawn fainter. */
+  setSelection(ids: string[], secondary: string[] = []) {
+    this.overlay.replaceChildren();
+    const k = this.unitsPerPixel;
+    const draw = (id: string, strong: boolean) => {
+      const b = this.elementBox(id);
+      if (!b) return;
+      const pad = 10 * k;
+      svgEl('rect', {
+        x: b.x - pad, y: b.y - pad, width: b.width + 2 * pad, height: b.height + 2 * pad, rx: 6 * k,
+        fill: 'none', stroke: strong ? '#3ef0ff' : '#fff05a', 'stroke-width': (strong ? 2 : 1.5) * k,
+        'stroke-dasharray': `${6 * k} ${5 * k}`, opacity: strong ? 0.95 : 0.7,
+      }, this.overlay);
+    };
+    secondary.filter((id) => !ids.includes(id)).forEach((id) => draw(id, false));
+    ids.forEach((id) => draw(id, true));
+  }
+
+  private boxOf(n: ElementNodes) {
+    const b = n.outer.getBBox();
+    const m = this.camGroup.getCTM()!.inverse().multiply(n.outer.getCTM()!);
+    const pts = [[b.x, b.y], [b.x + b.width, b.y], [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]]
+      .map(([x, y]) => new DOMPoint(x, y).matrixTransform(m));
+    const xs = pts.map((p) => p.x);
+    const ys = pts.map((p) => p.y);
+    return { x: Math.min(...xs), y: Math.min(...ys), width: Math.max(...xs) - Math.min(...xs), height: Math.max(...ys) - Math.min(...ys) };
+  }
 
   // ---------------------------------------------------------------- building
 
@@ -322,13 +440,14 @@ export class Stage {
     this.tl.kill();
     this.tl = gsap.timeline({ paused: true });
     this.layer.replaceChildren();
+    this.overlay.replaceChildren();
     this.nodes.clear();
     this.flows.clear();
     // Previous scene's masks; the board's own defs come first and are kept.
     this.defs.querySelectorAll('[data-scene]').forEach((n) => n.remove());
 
     const lookup = (id: string) => scene.elements.find((e) => e.id === id);
-    for (const el of scene.elements) this.nodes.set(el.id, this.buildElement(el, lookup));
+    for (const el of scene.elements) this.nodes.set(el.id, this.buildElement(el, lookup, scene.initial[el.id]));
 
     this.applyState(scene.initial);
     this.cam = { ...scene.camera };
@@ -348,11 +467,16 @@ export class Stage {
         n.iso.phase = 0;
         n.iso.progress.forEach((c) => (c.v = 1));
       }
+      if (n.chart && s.chart) {
+        s.chart.values.forEach((v, i) => (n.chart!.values[i].v = v));
+        n.chart.growth.forEach((c) => (c.v = 1));
+        renderChart(n.chart);
+      }
       if (n.flowPath) this.flows.set(id, { on: s.flow ? 1 : 0, dir: s.flow?.reverse ? -1 : 1, speed: s.flow?.speed ?? 160 });
     }
   }
 
-  private buildElement(el: CompiledElement, lookup: (id: string) => CompiledElement | undefined): ElementNodes {
+  private buildElement(el: CompiledElement, lookup: (id: string) => CompiledElement | undefined, initial?: ElementState): ElementNodes {
     const outer = svgEl('g', { 'data-id': el.id, class: `jzm-el jzm-${el.type}` }, this.layer);
     const fx = svgEl('g', {}, outer);
     const parts: DrawPart[] = [];
@@ -411,6 +535,7 @@ export class Stage {
     let pivot = { x: 0, y: 0 };
     let flowPath: SVGPathElement | undefined;
     let iso: IsoNodes | undefined;
+    let chart: ChartNodes | undefined;
 
     switch (el.type) {
       case 'icon': {
@@ -477,6 +602,9 @@ export class Stage {
       case 'ring':
         stroke(ringPath(el.rx, el.ry, el.id), board.stroke * 0.9);
         break;
+      case 'chart':
+        chart = buildChart(el, initial?.chart?.max ?? el.max ?? 1, { fx, stroke, write, parts });
+        break;
       case 'iso': {
         const isoParts = resolveIsoParts(el);
         iso = {
@@ -489,7 +617,7 @@ export class Stage {
           spin: { on: 0, speed: 30 },
           phase: 0,
         };
-        for (const cell of iso.progress) parts.push({ kind: 'iso', cell });
+        for (const cell of iso.progress) parts.push({ kind: 'cell', cell });
         if (el.label) {
           const { box } = projectIso(isoParts, iso.view, el.scale);
           write(el.label, 0, box.y + box.height + ISO_LABEL_SIZE * 0.85, ISO_LABEL_SIZE);
@@ -498,7 +626,7 @@ export class Stage {
         break;
       }
     }
-    return { outer, fx, parts, pivot, flowPath, iso };
+    return { outer, fx, parts, pivot, flowPath, iso, chart };
   }
 
   private addOp(op: Op) {
@@ -520,7 +648,7 @@ export class Stage {
         if (op.mode === 'draw') {
           // Each part gets time in proportion to its size, with a floor so dots and short ticks still show.
           // A fill fades in over a quarter of the time the strokes before it took.
-          const lineWeights = n.parts.map((p) => (p.kind === 'stroke' ? p.length * p.scale : p.kind === 'write' ? p.width * 0.7 : p.kind === 'iso' ? 60 : 0));
+          const lineWeights = n.parts.map((p) => (p.kind === 'stroke' ? p.weight ?? p.length * p.scale : p.kind === 'write' ? p.width * 0.7 : p.kind === 'cell' ? p.weight ?? 60 : 0));
           const weights = n.parts.map((p, i) => (p.kind === 'fill'
             ? lineWeights.slice(0, i).reduce((a, b) => a + b, 0) * 0.25
             : Math.max(lineWeights[i], 12)));
@@ -567,6 +695,11 @@ export class Stage {
         break;
       case 'iso':
         if (n.iso) tl.fromTo(n.iso.view, { ...op.from }, { ...op.to, duration: op.dur, ease: 'power2.inOut', immediateRender: false }, op.t);
+        break;
+      case 'values':
+        if (n.chart) {
+          op.to.forEach((v, i) => tl.fromTo(n.chart!.values[i], { v: op.from[i] }, { v, duration: op.dur, ease: 'power2.inOut', immediateRender: false }, op.t));
+        }
         break;
       case 'spin':
         if (n.iso) {

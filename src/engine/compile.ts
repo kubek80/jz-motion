@@ -19,6 +19,8 @@ export interface ElementState {
   flow: { reverse: boolean; speed: number } | null;
   /** Only for iso elements. */
   iso?: { rotate: number; explode: number; spin: number | null };
+  /** Only for charts: the values shown now. */
+  chart?: { values: number[]; max: number };
 }
 
 export type Op =
@@ -30,7 +32,8 @@ export type Op =
   | { kind: 'flow'; id: string; from: ElementState['flow']; to: ElementState['flow']; t: number }
   | { kind: 'camera'; from: Camera; to: Camera; t: number; dur: number }
   | { kind: 'iso'; id: string; from: { rotate: number; explode: number }; to: { rotate: number; explode: number }; t: number; dur: number }
-  | { kind: 'spin'; id: string; from: number | null; to: number | null; t: number };
+  | { kind: 'spin'; id: string; from: number | null; to: number | null; t: number }
+  | { kind: 'values'; id: string; from: number[]; to: number[]; t: number; dur: number };
 
 export interface CompiledBeat { title?: string; notes?: string; auto: boolean; start: number; end: number }
 
@@ -80,6 +83,7 @@ function defaultDuration(action: Action, el?: CompiledElement): number {
       return 0.7;
     case 'rotate':
     case 'explode':
+    case 'set-values':
       return 1.2;
     case 'spin':
       return 0;
@@ -94,6 +98,15 @@ function defaultDuration(action: Action, el?: CompiledElement): number {
 
 const isPositioned = (el: CompiledElement): el is Exclude<CompiledElement, { type: 'arrow' }> => el.type !== 'arrow';
 
+/** A round number a little above `v`: 1, 1.2, 1.5, 2, 2.5, 3, 4, 5, 6, 8 times a power of ten. */
+export function niceMax(v: number): number {
+  if (v <= 0) return 1;
+  const target = v * 1.05;
+  const exp = 10 ** Math.floor(Math.log10(target));
+  for (const m of [1, 1.2, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10]) if (m * exp >= target) return m * exp;
+  return 10 * exp;
+}
+
 export function compile(input: unknown): CompileResult {
   const parsed = Presentation.safeParse(input);
   if (!parsed.success) {
@@ -107,6 +120,15 @@ export function compile(input: unknown): CompileResult {
   const scenes: CompiledScene[] = [];
 
   source.scenes.forEach((scene, si) => {
+    try {
+      compileScene(scene, si);
+    } catch (e) {
+      // Errors are reported, never thrown: an LLM gets them back as a list it can fix.
+      errors.push(`scenes.${si}: ${(e as Error).message}`);
+    }
+  });
+
+  function compileScene(scene: Presentation['scenes'][number], si: number) {
     const where = `scenes.${si}`;
     const prev = scenes[si - 1];
     const elements: CompiledElement[] = [];
@@ -138,6 +160,10 @@ export function compile(input: unknown): CompileResult {
         errors.push(`${where}.elements.${ei}: id "${el.id}" is already used${state[el.id] ? ' (inherited from the previous scene)' : ''}`);
         return;
       }
+      if (el.type === 'chart' && el.kind === 'pie' && el.data.every((d) => d.value === 0)) {
+        errors.push(`${where}.elements.${ei}: a pie chart needs at least one value above 0`);
+        return;
+      }
       if (el.type === 'icon' && !icons[el.icon]) {
         errors.push(`${where}.elements.${ei}: unknown icon "${el.icon}" (see docs/library.md)`);
         return;
@@ -155,6 +181,7 @@ export function compile(input: unknown): CompileResult {
         color: el.color,
         flow: null,
         ...(el.type === 'iso' ? { iso: { rotate: el.rotate, explode: 0, spin: null } } : {}),
+        ...(el.type === 'chart' ? { chart: { values: el.data.map((d) => d.value), max: el.max ?? 0 } } : {}),
       };
     });
 
@@ -165,6 +192,10 @@ export function compile(input: unknown): CompileResult {
         fullBox(el, lookup);
       } catch (e) {
         errors.push(`${where}.elements.${ei} (${el.id}): ${(e as Error).message}`);
+        // Leave the broken arrow out so later steps (framing, circles) don't trip over it.
+        elements.splice(elements.indexOf(el), 1);
+        byId.delete(el.id);
+        delete state[el.id];
       }
     }
 
@@ -276,6 +307,23 @@ export function compile(input: unknown): CompileResult {
               return action.duration ?? 0;
             });
             break;
+          case 'set-values':
+            each((id, t, el) => {
+              const chart = state[id].chart;
+              if (el.type !== 'chart' || !chart) {
+                errors.push(`${at}: set-values only works on charts, "${id}" is a ${el.type}`);
+                return 0;
+              }
+              if (action.values.length !== chart.values.length) {
+                errors.push(`${at}: "${id}" has ${chart.values.length} data items but got ${action.values.length} values`);
+                return 0;
+              }
+              const d = dur(el);
+              ops.push({ kind: 'values', id, from: [...chart.values], to: [...action.values], t, dur: d });
+              chart.values = [...action.values];
+              return d;
+            });
+            break;
           case 'rotate':
           case 'explode':
           case 'spin':
@@ -359,6 +407,13 @@ export function compile(input: unknown): CompileResult {
       time = beatEnd;
     });
 
+    // A chart's value axis covers every value it shows during the scene, so later set-values don't overflow.
+    for (const el of elements) {
+      if (el.type !== 'chart' || el.max !== undefined) continue;
+      const seen = [...el.data.map((d) => d.value), ...(initial[el.id]?.chart?.values ?? []), ...ops.flatMap((o) => (o.kind === 'values' && o.id === el.id ? o.to : []))];
+      for (const st of [initial, state]) if (st[el.id]?.chart) st[el.id].chart!.max = niceMax(Math.max(...seen));
+    }
+
     scenes.push({
       id: scene.id,
       title: scene.title,
@@ -371,7 +426,7 @@ export function compile(input: unknown): CompileResult {
       beats,
       duration: time,
     });
-  });
+  }
 
   if (errors.length) return { ok: false, errors };
   return { ok: true, presentation: { title: source.title, scenes }, source };
