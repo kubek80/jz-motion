@@ -1,4 +1,5 @@
 import { DEFAULT_CAMERA, frameBox, fullBox, union, type Box } from './geometry';
+import { isoModels } from './iso';
 import { icons } from './library';
 import type { ColorName } from './palette';
 import { Presentation, type Action, type Camera, type Element, type Point } from './schema';
@@ -16,6 +17,8 @@ export interface ElementState {
   y: number;
   color: ColorName;
   flow: { reverse: boolean; speed: number } | null;
+  /** Only for iso elements. */
+  iso?: { rotate: number; explode: number; spin: number | null };
 }
 
 export type Op =
@@ -25,7 +28,9 @@ export type Op =
   | { kind: 'move'; id: string; from: Point; to: Point; t: number; dur: number }
   | { kind: 'recolor'; id: string; from: ColorName; to: ColorName; t: number; dur: number }
   | { kind: 'flow'; id: string; from: ElementState['flow']; to: ElementState['flow']; t: number }
-  | { kind: 'camera'; from: Camera; to: Camera; t: number; dur: number };
+  | { kind: 'camera'; from: Camera; to: Camera; t: number; dur: number }
+  | { kind: 'iso'; id: string; from: { rotate: number; explode: number }; to: { rotate: number; explode: number }; t: number; dur: number }
+  | { kind: 'spin'; id: string; from: number | null; to: number | null; t: number };
 
 export interface CompiledBeat { title?: string; notes?: string; auto: boolean; start: number; end: number }
 
@@ -73,6 +78,11 @@ function defaultDuration(action: Action, el?: CompiledElement): number {
       return 0.4;
     case 'circle':
       return 0.7;
+    case 'rotate':
+    case 'explode':
+      return 1.2;
+    case 'spin':
+      return 0;
     case 'camera':
       return 1.3;
     case 'wait':
@@ -132,6 +142,10 @@ export function compile(input: unknown): CompileResult {
         errors.push(`${where}.elements.${ei}: unknown icon "${el.icon}" (see docs/library.md)`);
         return;
       }
+      if (el.type === 'iso' && !el.parts?.length && !isoModels[el.model ?? '']) {
+        errors.push(`${where}.elements.${ei}: ${el.model ? `unknown iso model "${el.model}"` : 'an iso element needs "model" or "parts"'} (see docs/library.md)`);
+        return;
+      }
       elements.push(el);
       byId.set(el.id, el);
       state[el.id] = {
@@ -140,6 +154,7 @@ export function compile(input: unknown): CompileResult {
         y: 'y' in el ? el.y : 0,
         color: el.color,
         flow: null,
+        ...(el.type === 'iso' ? { iso: { rotate: el.rotate, explode: 0, spin: null } } : {}),
       };
     });
 
@@ -259,6 +274,29 @@ export function compile(input: unknown): CompileResult {
               ops.push({ kind: 'flow', id, from: state[id].flow, to, t });
               state[id].flow = to;
               return action.duration ?? 0;
+            });
+            break;
+          case 'rotate':
+          case 'explode':
+          case 'spin':
+            each((id, t, el) => {
+              const iso = state[id].iso;
+              if (el.type !== 'iso' || !iso) {
+                errors.push(`${at}: ${action.do} only works on iso elements, "${id}" is a ${el.type}`);
+                return 0;
+              }
+              if (action.do === 'spin') {
+                const to = action.on ? action.speed : null;
+                ops.push({ kind: 'spin', id, from: iso.spin, to, t });
+                iso.spin = to;
+                return action.duration ?? 0;
+              }
+              const d = dur(el);
+              const from = { rotate: iso.rotate, explode: iso.explode };
+              if (action.do === 'rotate') iso.rotate = action.to ?? iso.rotate + (action.by ?? 90);
+              else iso.explode = action.amount;
+              ops.push({ kind: 'iso', id, from, to: { rotate: iso.rotate, explode: iso.explode }, t, dur: d });
+              return d;
             });
             break;
           case 'circle': {

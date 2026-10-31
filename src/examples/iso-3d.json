@@ -1,0 +1,54 @@
+{
+  "version": 1,
+  "title": "3D on the board",
+  "scenes": [
+    {
+      "id": "stack",
+      "title": "The AI stack in 3D",
+      "elements": [
+        { "id": "heading", "type": "text", "text": "the AI stack, in 3D", "x": 960, "y": 130, "size": 84, "color": "yellow" },
+        { "id": "stack", "type": "iso", "model": "layers", "x": 780, "y": 600, "scale": 150 },
+        { "id": "app", "type": "text", "text": "apps & agents", "x": 1330, "y": 380, "size": 56, "color": "pink", "align": "start" },
+        { "id": "model", "type": "text", "text": "models", "x": 1330, "y": 600, "size": 56, "color": "cyan", "align": "start" },
+        { "id": "hw", "type": "text", "text": "hardware", "x": 1330, "y": 820, "size": 56, "color": "green", "align": "start" }
+      ],
+      "beats": [
+        { "title": "Heading", "actions": [{ "do": "draw", "target": "heading" }] },
+        { "title": "Build the stack", "actions": [{ "do": "draw", "target": "stack", "duration": 2 }] },
+        { "title": "Pull it apart", "actions": [
+          { "do": "explode", "target": "stack", "amount": 1.3 },
+          { "do": "draw", "target": ["hw", "model", "app"], "stagger": 0.5 }
+        ] },
+        { "title": "Turn it", "actions": [{ "do": "rotate", "target": "stack", "by": 90, "duration": 1.6 }] },
+        { "title": "Keep spinning", "actions": [{ "do": "spin", "target": "stack", "speed": 20 }] }
+      ]
+    },
+    {
+      "id": "infra",
+      "title": "Where training happens",
+      "elements": [
+        { "id": "dc", "type": "iso", "model": "datacenter", "x": 520, "y": 520, "scale": 110, "color": "cyan", "label": "datacenter" },
+        { "id": "cluster", "type": "iso", "model": "gpu-cluster", "x": 1400, "y": 500, "scale": 95, "color": "pink", "label": "GPU cluster" },
+        { "id": "db", "type": "iso", "model": "database", "x": 1400, "y": 930, "scale": 70, "color": "yellow", "label": "training data", "visible": false },
+        { "id": "link", "type": "arrow", "from": "dc", "to": "cluster", "label": "contains" },
+        { "id": "feed", "type": "arrow", "from": "db", "to": "cluster.bottom" }
+      ],
+      "beats": [
+        { "title": "Datacenter", "actions": [{ "do": "draw", "target": "dc", "duration": 2.5 }] },
+        { "title": "GPU cluster", "actions": [
+          { "do": "draw", "target": ["link", "cluster"], "stagger": 0.8, "duration": 2 },
+          { "do": "spin", "target": "dc", "speed": 15 }
+        ] },
+        { "title": "Zoom in", "actions": [
+          { "do": "camera", "focus": "cluster", "padding": 200 },
+          { "do": "explode", "target": "cluster", "amount": 0.5, "start": "with", "delay": 0.6 }
+        ] },
+        { "title": "Data", "actions": [
+          { "do": "draw", "target": ["db", "feed"], "stagger": 0.8 },
+          { "do": "flow", "target": ["link", "feed"] },
+          { "do": "camera", "focus": "all", "padding": 80, "start": "with" }
+        ] }
+      ]
+    }
+  ]
+}

@@ -37,6 +37,7 @@ All elements take `id`, `color` and optionally `visible`. An element that a beat
 | `text` | `text`, `x`, `y`, `size` (56), `align` (`middle`, `start`, `end`) | Handwritten marker font. `y` is the vertical middle of the line. |
 | `box` | `x`, `y`, `width`, `height`, `radius` (18), `label`, `dashed` | `x`, `y` is the center. Label is written inside. |
 | `arrow` | `from`, `to`, `curve` (0), `head` (`end`, `start`, `both`, `none`), `label`, `dashed` | See below. |
+| `iso` | `model` or `parts`, `x`, `y`, `scale` (70), `rotate` (0), `label` | Isometric 3D object, see below. `x`, `y` is its middle. |
 
 ### Arrows
 
@@ -46,6 +47,23 @@ All elements take `id`, `color` and optionally `visible`. An element that a beat
 - Anchors: `center`, `top`, `bottom`, `left`, `right`, `top-left`, `top-right`, `bottom-left`, `bottom-right`. The bottom of an icon is below its label.
 - `curve` bends the arrow: `0.2` is a gentle bend to the left of the direction of travel, negative bends right.
 - The label sits above the arrow (to the side for vertical arrows).
+
+### Isometric 3D (`iso`)
+
+A 3D object drawn in the same marker style: outlines in its color, faces filled with the board color so hidden edges stay hidden. Use a preset `model` from [library.md](library.md#3d-iso-models), or build your own from `parts`:
+
+```json
+{ "id": "rack", "type": "iso", "x": 960, "y": 540, "scale": 90, "color": "cyan", "parts": [
+  { "shape": "box", "size": [2, 0.4, 1.4], "at": [0, 0, 0] },
+  { "shape": "box", "size": [2, 0.4, 1.4], "at": [0, 0.5, 0], "color": "pink" },
+  { "shape": "cylinder", "size": [0.6, 0.3, 0.6], "at": [0, 0.9, 0] }
+] }
+```
+
+- World units: `y` points up; `at` is the center of the part's bottom face; `size` is width (x), height (y), depth (z). A cylinder's width is its diameter.
+- `scale` is board units per world unit. `rotate` turns the object around its vertical axis (degrees).
+- Parts are boxes and cylinders that should not overlap each other. A part's own `color` overrides the element color.
+- `draw` builds the object part by part, in the order of `parts`.
 
 ## Beats and actions
 
@@ -65,6 +83,9 @@ Actions with `target` accept one id or a list. With a list, targets start `stagg
 | `recolor` | `color` | 0.4 | |
 | `circle` | `color` (yellow), `id` | 0.7 | Draws a hand-drawn loop around the target(s). The loop is an element with id `id` or `<target>-circle`, so it can be erased later. |
 | `flow` | `on` (true), `reverse` (false), `speed` (160) | instant | Dots travel along an arrow and keep going between beats. `"on": false` stops them. Arrows only. |
+| `rotate` | `to` or `by` (90) | 1.2 | Turns an iso object to an angle or by an amount, in degrees. |
+| `spin` | `on` (true), `speed` (30) | instant | Keeps an iso object turning (degrees per second) between beats. `"on": false` stops it. |
+| `explode` | `amount` (0.6) | 1.2 | Pushes an iso object's parts apart from its middle; `0` puts them back together. |
 | `camera` | `focus`, `padding` (120), `x`, `y`, `zoom` | 1.3 | `focus` is an id, a list of ids, or `"all"` (everything visible at that moment); the camera frames them with `padding` screen pixels around. Without `focus`, moves to `x`/`y`/`zoom` (any omitted value stays). `zoom` together with `focus` overrides the fitted zoom. |
 | `wait` | | 1 | Pause inside a beat. |
 

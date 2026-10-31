@@ -1,6 +1,7 @@
 import gsap from 'gsap';
 import type { CompiledElement, CompiledPresentation, CompiledScene, ElementState, Op } from './compile';
-import { arrowCurve, arrowEnds, arrowHead, iconLabelSize, VIEW } from './geometry';
+import { arrowCurve, arrowEnds, arrowHead, iconLabelSize, ISO_LABEL_SIZE, VIEW } from './geometry';
+import { projectIso, resolveIsoParts, type IsoPart } from './iso';
 import { ICON_GRID, icons } from './library';
 import { board, palette } from './palette';
 import type { Camera } from './schema';
@@ -18,7 +19,9 @@ function svgEl<K extends keyof SVGElementTagNameMap>(tag: K, attrs: Record<strin
 type DrawPart =
   | { kind: 'stroke'; node: SVGGeometryElement; length: number; scale: number }
   | { kind: 'write'; rect: SVGRectElement; x: number; width: number }
-  | { kind: 'fill'; node: SVGElement; opacity: number };
+  | { kind: 'fill'; node: SVGElement; opacity: number }
+  /** One part of an iso object; `cell.v` goes 0 → 1 as it is drawn. */
+  | { kind: 'iso'; cell: { v: number } };
 
 /** Target and values for a part fully drawn or not drawn at all. */
 function partState(p: DrawPart, drawn: boolean): [gsap.TweenTarget, gsap.TweenVars] {
@@ -29,6 +32,8 @@ function partState(p: DrawPart, drawn: boolean): [gsap.TweenTarget, gsap.TweenVa
       return [p.rect, { attr: { width: drawn ? p.width : 0 } }];
     case 'fill':
       return [p.node, { fillOpacity: drawn ? p.opacity : 0 }];
+    case 'iso':
+      return [p.cell, { v: drawn ? 1 : 0 }];
   }
 }
 
@@ -39,6 +44,19 @@ interface ElementNodes {
   /** Pivot for pop and pulse, in the element's own coordinates. */
   pivot: { x: number; y: number };
   flowPath?: SVGPathElement;
+  iso?: IsoNodes;
+}
+
+interface IsoNodes {
+  parts: IsoPart[];
+  scale: number;
+  group: SVGGElement;
+  pool: SVGPathElement[];
+  view: { rotate: number; explode: number };
+  progress: { v: number }[];
+  spin: { on: number; speed: number };
+  /** Extra turn accumulated while spinning. */
+  phase: number;
 }
 
 interface FlowState { on: number; dir: number; speed: number }
@@ -251,6 +269,11 @@ export class Stage {
     }
     const { x, y, zoom } = this.cam;
     this.camGroup.setAttribute('transform', `translate(${VIEW.width / 2} ${VIEW.height / 2}) scale(${zoom}) translate(${-x} ${-y})`);
+    for (const n of this.nodes.values()) {
+      if (!n.iso) continue;
+      if (n.iso.spin.on > 0.5) n.iso.phase += (Math.min(deltaMs, 100) / 1000) * n.iso.spin.speed;
+      renderIso(n.iso);
+    }
     for (const [id, f] of this.flows) {
       const path = this.nodes.get(id)?.flowPath;
       if (!path) continue;
@@ -319,6 +342,12 @@ export class Stage {
       if (!n) continue;
       gsap.set(n.outer, { x: s.x, y: s.y, opacity: s.visible ? 1 : 0, color: palette[s.color], filter: 'blur(0px)' });
       for (const part of n.parts) gsap.set(...partState(part, true));
+      if (n.iso && s.iso) {
+        Object.assign(n.iso.view, { rotate: s.iso.rotate, explode: s.iso.explode });
+        Object.assign(n.iso.spin, { on: s.iso.spin === null ? 0 : 1, speed: s.iso.spin ?? 30 });
+        n.iso.phase = 0;
+        n.iso.progress.forEach((c) => (c.v = 1));
+      }
       if (n.flowPath) this.flows.set(id, { on: s.flow ? 1 : 0, dir: s.flow?.reverse ? -1 : 1, speed: s.flow?.speed ?? 160 });
     }
   }
@@ -381,6 +410,7 @@ export class Stage {
 
     let pivot = { x: 0, y: 0 };
     let flowPath: SVGPathElement | undefined;
+    let iso: IsoNodes | undefined;
 
     switch (el.type) {
       case 'icon': {
@@ -447,8 +477,28 @@ export class Stage {
       case 'ring':
         stroke(ringPath(el.rx, el.ry, el.id), board.stroke * 0.9);
         break;
+      case 'iso': {
+        const isoParts = resolveIsoParts(el);
+        iso = {
+          parts: isoParts,
+          scale: el.scale,
+          group: svgEl('g', { 'stroke-linejoin': 'round' }, fx),
+          pool: [],
+          view: { rotate: el.rotate, explode: 0 },
+          progress: isoParts.map(() => ({ v: 1 })),
+          spin: { on: 0, speed: 30 },
+          phase: 0,
+        };
+        for (const cell of iso.progress) parts.push({ kind: 'iso', cell });
+        if (el.label) {
+          const { box } = projectIso(isoParts, iso.view, el.scale);
+          write(el.label, 0, box.y + box.height + ISO_LABEL_SIZE * 0.85, ISO_LABEL_SIZE);
+        }
+        renderIso(iso);
+        break;
+      }
     }
-    return { outer, fx, parts, pivot, flowPath };
+    return { outer, fx, parts, pivot, flowPath, iso };
   }
 
   private addOp(op: Op) {
@@ -470,7 +520,7 @@ export class Stage {
         if (op.mode === 'draw') {
           // Each part gets time in proportion to its size, with a floor so dots and short ticks still show.
           // A fill fades in over a quarter of the time the strokes before it took.
-          const lineWeights = n.parts.map((p) => (p.kind === 'stroke' ? p.length * p.scale : p.kind === 'write' ? p.width * 0.7 : 0));
+          const lineWeights = n.parts.map((p) => (p.kind === 'stroke' ? p.length * p.scale : p.kind === 'write' ? p.width * 0.7 : p.kind === 'iso' ? 60 : 0));
           const weights = n.parts.map((p, i) => (p.kind === 'fill'
             ? lineWeights.slice(0, i).reduce((a, b) => a + b, 0) * 0.25
             : Math.max(lineWeights[i], 12)));
@@ -515,6 +565,15 @@ export class Stage {
       case 'recolor':
         tl.fromTo(n.outer, { color: palette[op.from] }, { color: palette[op.to], duration: op.dur, immediateRender: false }, op.t);
         break;
+      case 'iso':
+        if (n.iso) tl.fromTo(n.iso.view, { ...op.from }, { ...op.to, duration: op.dur, ease: 'power2.inOut', immediateRender: false }, op.t);
+        break;
+      case 'spin':
+        if (n.iso) {
+          const toSpin = (v: number | null) => ({ on: v === null ? 0 : 1, speed: v ?? n.iso!.spin.speed });
+          tl.fromTo(n.iso.spin, toSpin(op.from), { ...toSpin(op.to), duration: instant, immediateRender: false }, op.t);
+        }
+        break;
       case 'flow': {
         const state = this.flows.get(op.id);
         if (!state) return;
@@ -527,6 +586,28 @@ export class Stage {
 }
 
 const FLOW_PERIOD = 34;
+
+/** Re-projects an iso object and updates its face paths. Faces are filled with the board color so hidden lines stay hidden. */
+function renderIso(iso: IsoNodes) {
+  const { faces } = projectIso(iso.parts, { rotate: iso.view.rotate + iso.phase, explode: iso.view.explode }, iso.scale);
+  faces.forEach((f, k) => {
+    let path = iso.pool[k];
+    if (!path) {
+      path = svgEl('path', { 'stroke-width': board.stroke * 0.8, pathLength: 1, 'stroke-dasharray': '1 1' }, iso.group);
+      iso.pool.push(path);
+    }
+    const part = iso.parts[f.part];
+    const color = part.color ? palette[part.color] : 'currentColor';
+    const p = iso.progress[f.part].v;
+    path.setAttribute('d', f.d);
+    path.style.display = p > 0 ? '' : 'none';
+    path.style.stroke = color;
+    path.style.fill = `color-mix(in srgb, ${color} 9%, ${board.background})`;
+    path.style.fillOpacity = String(p);
+    path.style.strokeDashoffset = String(1 - p);
+  });
+  for (let k = faces.length; k < iso.pool.length; k++) iso.pool[k].style.display = 'none';
+}
 
 function setDash(path: SVGGeometryElement, length: number) {
   path.style.strokeDasharray = `${length + 1} ${length + 1}`;

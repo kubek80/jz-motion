@@ -66,7 +66,32 @@ export const ArrowElement = z.object({
   dashed: z.boolean().default(false),
 });
 
-export const Element = z.discriminatedUnion('type', [IconElement, TextElement, BoxElement, ArrowElement]);
+const Vec3 = z.tuple([z.number(), z.number(), z.number()]);
+export const IsoPart = z.object({
+  shape: z.enum(['box', 'cylinder']),
+  /** Width (x), height (y), depth (z) in world units; for a cylinder x is the diameter. */
+  size: z.tuple([z.number().positive(), z.number().positive(), z.number().positive()]),
+  /** Center of the part's bottom face; y points up. */
+  at: Vec3.default([0, 0, 0]),
+  color: Color.optional(),
+});
+
+/** Isometric 3D object: a preset `model` from the library or your own `parts`. */
+export const IsoElement = z.object({
+  ...base,
+  type: z.literal('iso'),
+  model: z.string().optional(),
+  parts: z.array(IsoPart).optional(),
+  x: z.number(),
+  y: z.number(),
+  /** Board units per world unit. */
+  scale: z.number().positive().default(70),
+  /** Starting turn around the vertical axis, degrees. */
+  rotate: z.number().default(0),
+  label: z.string().optional(),
+});
+
+export const Element = z.discriminatedUnion('type', [IconElement, TextElement, BoxElement, ArrowElement, IsoElement]);
 
 const Targets = z.union([Id, z.array(Id).min(1)]);
 const timing = {
@@ -86,6 +111,16 @@ export const Action = z.discriminatedUnion('do', [
   z.object({ do: z.literal('pulse'), ...targeted, times: z.number().int().positive().default(1) }),
   z.object({ do: z.literal('move'), ...targeted, to: Point }),
   z.object({ do: z.literal('recolor'), ...targeted, color: Color }),
+  z.object({ do: z.literal('rotate'), ...targeted, to: z.number().optional(), by: z.number().optional() }),
+  z.object({ do: z.literal('explode'), ...targeted, amount: z.number().min(0).default(0.6) }),
+  z.object({
+    do: z.literal('spin'),
+    ...timing,
+    target: Targets,
+    on: z.boolean().default(true),
+    /** Degrees per second. */
+    speed: z.number().default(30),
+  }),
   z.object({ do: z.literal('circle'), ...timing, target: Targets, id: Id.optional(), color: Color.default('yellow') }),
   z.object({
     do: z.literal('flow'),
@@ -144,6 +179,7 @@ export type IconElement = z.infer<typeof IconElement>;
 export type TextElement = z.infer<typeof TextElement>;
 export type BoxElement = z.infer<typeof BoxElement>;
 export type ArrowElement = z.infer<typeof ArrowElement>;
+export type IsoElement = z.infer<typeof IsoElement>;
 export type Action = z.infer<typeof Action>;
 export type Beat = z.infer<typeof Beat>;
 export type Camera = z.infer<typeof Camera>;

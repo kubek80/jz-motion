@@ -1,4 +1,5 @@
 import type { CompiledElement as Element } from './compile';
+import { projectIso, resolveIsoParts } from './iso';
 import type { AnchorName, ArrowElement, Camera, Point, Ref } from './schema';
 
 export const VIEW = { width: 1920, height: 1080 } as const;
@@ -11,6 +12,7 @@ export const textWidth = (text: string, size: number) => text.length * size * 0.
 
 export const iconLabelSize = (size: number) => Math.max(34, size * 0.34);
 export const ARROW_GAP = 16;
+export const ISO_LABEL_SIZE = 44;
 
 /** The element's main shape (icon square, box, text line). Arrows attach to it. */
 export function shapeBox(el: Element, lookup: (id: string) => Element | undefined): Box {
@@ -23,6 +25,10 @@ export function shapeBox(el: Element, lookup: (id: string) => Element | undefine
       const w = textWidth(el.text, el.size);
       const left = el.align === 'start' ? el.x : el.align === 'end' ? el.x - w : el.x - w / 2;
       return { x: left, y: el.y - el.size / 2, width: w, height: el.size };
+    }
+    case 'iso': {
+      const b = projectIso(resolveIsoParts(el), { rotate: el.rotate, explode: 0 }, el.scale).box;
+      return { x: el.x + b.x, y: el.y + b.y, width: b.width, height: b.height };
     }
     case 'ring':
       return { x: el.x - el.rx, y: el.y - el.ry, width: el.rx * 2, height: el.ry * 2 };
@@ -39,10 +45,10 @@ export function shapeBox(el: Element, lookup: (id: string) => Element | undefine
 /** Everything the element draws, including its label. Used for camera framing. */
 export function fullBox(el: Element, lookup: (id: string) => Element | undefined): Box {
   const box = shapeBox(el, lookup);
-  if (el.type === 'icon' && el.label) {
-    const ls = iconLabelSize(el.size);
+  if ((el.type === 'icon' || el.type === 'iso') && el.label) {
+    const ls = el.type === 'icon' ? iconLabelSize(el.size) : ISO_LABEL_SIZE;
     const lw = textWidth(el.label, ls);
-    return union([box, { x: el.x - lw / 2, y: el.y + el.size / 2, width: lw, height: ls * 1.3 }]);
+    return union([box, { x: el.x - lw / 2, y: box.y + box.height, width: lw, height: ls * 1.3 }]);
   }
   return box;
 }

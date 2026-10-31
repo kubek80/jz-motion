@@ -120,6 +120,31 @@ describe('compile', () => {
     ]);
   });
 
+  it('tracks iso rotation and explode, and checks targets', () => {
+    const s = ok(deck({
+      elements: [{ id: 'db', type: 'iso', model: 'database', x: 0, y: 0, rotate: 10 }],
+      beats: [{ actions: [
+        { do: 'rotate', target: 'db', by: 45 },
+        { do: 'explode', target: 'db', amount: 1 },
+        { do: 'spin', target: 'db', speed: 20 },
+      ] }],
+    })).scenes[0];
+    expect(s.ops.map((o) => o.kind)).toEqual(['iso', 'iso', 'spin']);
+    expect(s.final.db.iso).toEqual({ rotate: 55, explode: 1, spin: 20 });
+
+    const bad = compile(deck({
+      elements: [
+        { id: 'a', type: 'iso', model: 'nope', x: 0, y: 0 },
+        { id: 't', type: 'text', text: 'x', x: 0, y: 0 },
+      ],
+      beats: [{ actions: [{ do: 'spin', target: 't' }] }],
+    }));
+    expect(bad.ok ? [] : bad.errors).toEqual([
+      'scenes.0.elements.0: unknown iso model "nope" (see docs/library.md)',
+      'scenes.0.beats.0.actions.0: spin only works on iso elements, "t" is a text',
+    ]);
+  });
+
   it('reports schema errors with paths', () => {
     const r = compile({ version: 1, title: 't', scenes: [{ id: 's', elements: [{ id: 'a', type: 'blob' }] }] });
     expect(r.ok).toBe(false);

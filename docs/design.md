@@ -13,6 +13,7 @@ A web app for technical explainer presentations and videos: a dark blackboard, l
 | Marker colors | green, pink, yellow, cyan, orange, white, referenced by name. | Recoloring is one field; consistent look. |
 | Clipart | Stroke icons from Tabler (MIT), plus hand-drawn ones in `icons.custom.json` (hardware so far). More are added as needed. | Single-line paths draw on perfectly. |
 | Logos | Brand logos from Simple Icons (CC0), drawn as a thin neon outline with a faint fill. OpenAI is hand-drawn (not in Simple Icons). | Recognisable, still in the board style. |
+| 3D | `iso` elements: three.js does the 3D math and isometric projection; faces are drawn as SVG paths filled with the board color. | 3D objects glow, draw on and zoom exactly like the rest; no second rendering style. |
 | Glow | Tight inner glow plus a dimmed soft halo, crisp stroke on top; handwriting at weight 700. | Saturated colors without blurring text. |
 | Timing | Beats. One beat is one presenter click. In video mode beats play back to back. | One data model for live presenting and video. |
 
@@ -38,6 +39,7 @@ Presentation
 | `src/engine/schema.ts` | The format (zod). Source of truth. |
 | `src/engine/compile.ts` | Validates and turns a presentation into a timed plan per scene (pure, unit tested). |
 | `src/engine/geometry.ts` | Bounds, anchors, arrow paths, camera framing. |
+| `src/engine/iso.ts`, `iso-models.json` | Isometric 3D: projection, hidden faces, paint order; preset models. |
 | `src/engine/render.ts` | `Stage`: builds SVG, the glow and board texture, and a GSAP timeline per scene; presenter navigation. |
 | `src/engine/library.ts`, `icons.generated.ts`, `icons.custom.json` | Icon library. `npm run icons` merges Tabler, Simple Icons and the hand-drawn JSON into `icons.generated.ts` and `docs/library.md`. |
 | `src/app/` | Player UI: scene list, beats, scrubber, JSON editor, present mode. |
