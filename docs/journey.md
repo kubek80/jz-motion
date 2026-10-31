@@ -129,3 +129,7 @@ Added a `chart` element (bar, line, donut pie) and a `set-values` action:
 **Checked by:** tests for the value animation, axis rounding and errors (wrong number of values, set-values on a non-chart), and screenshots of each chart while drawing and after a change.
 
 ![Charts](journey/14-charts.jpg)
+
+## Step 10: Into `main` again
+
+The editor, LLM generation and charts went to `main` as pull request #2. Next for Jakub: try the AI tab with real models (OpenRouter or RunPod keys), and decide what the first real video covers.
