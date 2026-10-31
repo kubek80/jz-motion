@@ -1,0 +1,56 @@
+:root {
+  --bg: #0a0c0e;
+  --panel: #13171b;
+  --line: #242a30;
+  --text: #dfe6ee;
+  --muted: #7d8994;
+  --accent: #3ef0ff;
+  --error: #ff6b7d;
+  color-scheme: dark;
+  font: 14px/1.4 system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); }
+button, .file {
+  background: var(--panel); color: var(--text); border: 1px solid var(--line);
+  border-radius: 6px; padding: 5px 10px; cursor: pointer; font: inherit;
+}
+button:hover, .file:hover { border-color: var(--accent); }
+.file input { display: none; }
+.muted { color: var(--muted); }
+
+.app { display: flex; flex-direction: column; height: 100vh; }
+.bar { display: flex; gap: 10px; align-items: center; padding: 8px 14px; border-bottom: 1px solid var(--line); }
+.logo { color: var(--accent); }
+.spacer { flex: 1; }
+
+.main { flex: 1; display: flex; min-height: 0; }
+.scenes { width: 190px; padding: 10px; display: flex; flex-direction: column; gap: 6px; border-right: 1px solid var(--line); overflow: auto; }
+.scene { text-align: left; display: flex; gap: 8px; }
+.scene.active { border-color: var(--accent); }
+.scene .num { color: var(--muted); }
+
+.center { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 10px; padding: 14px; overflow: auto; }
+.frame { aspect-ratio: 16 / 9; width: 100%; max-height: calc(100vh - 210px); margin: 0 auto; background: #000; border-radius: 8px; overflow: hidden; cursor: pointer; }
+.frame:fullscreen { max-height: none; border-radius: 0; }
+.host { width: 100%; height: 100%; }
+.controls { display: flex; gap: 8px; align-items: center; }
+.controls input[type=range] { flex: 1; }
+.time { color: var(--muted); font-variant-numeric: tabular-nums; min-width: 110px; text-align: right; }
+.beats { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.beats .done button { color: var(--muted); }
+.beats .current button { border-color: var(--accent); color: var(--accent); }
+
+.editor { width: 440px; display: flex; flex-direction: column; border-left: 1px solid var(--line); }
+.editor-bar { display: flex; gap: 6px; padding: 8px; border-bottom: 1px solid var(--line); }
+.editor textarea {
+  flex: 1; resize: none; border: 0; outline: 0; padding: 10px; background: var(--bg); color: var(--text);
+  font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+.errors { margin: 0; padding: 8px 8px 8px 26px; max-height: 30%; overflow: auto; color: var(--error); border-top: 1px solid var(--line); font-size: 12px; }
+
+@media (max-width: 900px) {
+  .main { flex-direction: column; }
+  .scenes { width: auto; flex-direction: row; border-right: 0; border-bottom: 1px solid var(--line); }
+  .editor { width: auto; height: 50vh; border-left: 0; border-top: 1px solid var(--line); }
+}
