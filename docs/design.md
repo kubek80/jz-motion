@@ -42,7 +42,8 @@ Presentation
 | `src/engine/iso.ts`, `iso-models.json` | Isometric 3D: projection, hidden faces, paint order; preset models. |
 | `src/engine/render.ts` | `Stage`: builds SVG, the glow and board texture, and a GSAP timeline per scene; presenter navigation. |
 | `src/engine/library.ts`, `icons.generated.ts`, `icons.custom.json` | Icon library. `npm run icons` merges Tabler, Simple Icons and the hand-drawn JSON into `icons.generated.ts` and `docs/library.md`. |
-| `src/app/` | Player UI: scene list, beats, scrubber, JSON editor, present mode. |
+| `src/app/` | App: Edit and Play modes, JSON tab, undo/redo, present mode. |
+| `src/app/editor/` | Editor: document edit operations (`doc.ts`), schema-generated property forms, library palette, beats editor. |
 | `src/examples/*.json` | Example presentations, loadable from the app. |
 
 ## Phases
@@ -51,7 +52,7 @@ Presentation
 |---|---|---|
 | 0 | Format + renderer: draw-on, arrows, flows, camera, glow; JSON playground | Done |
 | 1 | Library v1: more clipart (made together as needed), groups, reusable composite elements | |
-| 2 | Editor: place and move elements on the board, property panel, beat timeline editing | |
+| 2 | Editor: place and move elements on the board, property panel, beat timeline editing | Done (first version) |
 | 3 | Present mode polish: speaker notes view, scene transitions | Basic version done |
 | 4 | Charts (bars grow, line draws, counters) and hand-drawn custom clipart | |
 | 5 | LLM docs and generation: a model writes scenes that load; model switching via OpenRouter / RunPod | |

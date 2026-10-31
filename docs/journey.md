@@ -85,6 +85,20 @@ Jakub asked for animated previews; Claude rendered the timeline frame by frame (
 
 **Approved:** glow level, the hand-drawn OpenAI logo, the hardware drawings, the 3D look.
 
-## Step 6: Next
+## Step 6: Into `main`, and this log
 
-Jakub asked to put everything on `main`, then build: (1) a visual editor, (2) LLM generation with switchable models, (3) charts. And to keep this log.
+Jakub asked to put everything on `main` (pull request #1, merged), to keep this log of the steps, and to build next: (1) a visual editor, (2) LLM generation with switchable models, (3) charts.
+
+## Step 7: The editor
+
+Built an **Edit** mode next to **Play**:
+- The board shows every element of a scene fully drawn. Click to select, shift+click for several, drag to move, scroll to zoom, drag the empty board to pan.
+- A library palette (searchable icons with previews, text, box, 3D models); "Arrow" connects two selected elements.
+- Beats as cards under the board: add, reorder, delete beats and actions; clicking an action highlights its targets on the board.
+- A properties panel **generated from the schema** (zod → JSON Schema), so new fields and element types appear in the editor without extra work. Renaming an element updates every reference to it; deleting one also removes its arrows and its mentions in beats.
+- Undo/redo for every change. The JSON stays the single source of truth, so the JSON tab and the visual editor are always in sync.
+
+**Checked by:** unit tests for the edit operations (rename, delete, unique ids), and a browser script that selects, drags, adds a GPU, connects it with an arrow, adds a beat, undoes three times and switches to Play. The first screenshot showed an empty, mis-framed board: in development React mounts components twice, and the discarded board finished loading later and stored a bogus camera. Fixed by ignoring results from a board that is no longer current.
+
+![Camera bug](journey/12-editor-camera-bug.jpg)
+![Editor](journey/11-editor.jpg)
