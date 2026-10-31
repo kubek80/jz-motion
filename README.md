@@ -33,5 +33,6 @@ Open the printed URL. The example presentation explains this project. Edit the J
 - [Design and phases](docs/design.md)
 - [Presentation format](docs/format.md): the reference for writing scenes, by hand or with an LLM
 - [Element library](docs/library.md)
+- [How we built it](docs/journey.md): the step-by-step story of this project
 
 Clipart from [Tabler Icons](https://tabler.io/icons) (MIT), logos from [Simple Icons](https://simpleicons.org) (CC0). Logos are trademarks of their owners.
