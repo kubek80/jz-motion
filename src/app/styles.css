@@ -465,3 +465,18 @@ body.dragging { user-select: none; -webkit-user-select: none; }
 .click:hover { z-index: 2; }
 .click:hover .flag { max-width: 320px; }
 .playhead { position: absolute; top: 0; bottom: 0; width: 0; border-left: 2px solid #fff05a; pointer-events: none; box-shadow: 0 0 8px #fff05a; }
+.claude-offer { display: flex; align-items: center; gap: 12px; padding: 10px 12px; margin-bottom: 8px; border: 1px solid #ff9a3c66; border-radius: 10px; background: #ff9a3c10; }
+.claude-offer p { margin: 2px 0 0; font-size: 12px; }
+.claude-offer button { flex-shrink: 0; }
+/* Prompter: the script large on the left, the board smaller beside it */
+.timing-body.prompter { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); }
+.timing-body.prompter .timing-script { order: -1; }
+.timing-body.prompter .timing-board { align-self: start; width: 100%; }
+.timing-body.prompter .timing-script .now p { font-size: clamp(22px, 2.3vw, 34px); line-height: 1.4; }
+.timing-body.prompter .timing-script .now b { font-size: 18px; }
+.timing-body.prompter .timing-script .next p { font-size: clamp(16px, 1.5vw, 22px); }
+.rec-banner { flex-direction: row !important; align-items: center; gap: 8px; border-color: #ff6b7d88 !important; background: #ff6b7d14 !important; font-size: 13px; }
+.rec-banner .dot { width: 10px; height: 10px; border-radius: 50%; background: #ff6b7d; animation: pulse-dot 1s infinite alternate; }
+.rec-btn { border-color: #ff6b7d88; color: #ff6b7d; }
+.rec-btn.on { background: #ff6b7d; color: #14060a; font-weight: 600; }
+.timing-controls button.on { border-color: var(--accent); color: var(--accent); }

@@ -38,7 +38,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
         </div>
         <section className="settings-section">
           <h3>Models and API keys</h3>
-          <p className="muted hint">Any OpenAI-compatible service: OpenRouter (one key for Claude, GPT, Gemini, Qwen, DeepSeek...), RunPod, or your own. Keys stay in this browser and are only sent to that service, through the local server.</p>
+          <p className="muted hint">Claude Code on this computer (your Claude subscription, no key), or any OpenAI-compatible service: OpenRouter (one key for Claude, GPT, Gemini, Qwen, DeepSeek…), RunPod, or your own. Keys stay in this browser and are only sent to that service, through the local server.</p>
           <ModelsEditor onChange={setProfiles} />
         </section>
         <section className="settings-section">

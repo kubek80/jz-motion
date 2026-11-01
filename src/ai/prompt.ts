@@ -1,5 +1,6 @@
 import formatDoc from '../../docs/format.md?raw';
 import libraryDoc from '../../docs/library.md?raw';
+import styleDoc from '../../docs/style.md?raw';
 import { generatedIcons } from '../engine/icons.generated';
 import builtInIso from '../engine/iso-models.json';
 import { isoModels } from '../engine/iso';
@@ -11,13 +12,8 @@ const TASK = `You write presentations for jz-motion: technical explainers drawn 
 
 Reply with ONE JSON object: a complete presentation in the format below. No prose, no Markdown code fences.`;
 
-const CRAFT = `How to make a good one:
-- The board is 1920×1080 at zoom 1, y pointing down. Keep each scene's main content inside it; zoom into details with a camera action and back out with "focus": "all".
-- 3 to 7 beats per scene. A beat is one idea the presenter talks over; give each a short title.
-- Draw things in the order you would explain them. Connect components with labelled arrows; use "flow" to show data moving.
-- Only use icons, clipart and 3D models listed in the library. Give icons a label.
-- Leave room: about 300 board units between icon centers, text sizes 40 to 90, nothing overlapping.
-- Use 2 to 4 colors and keep their meaning consistent (for example one color per kind of component).`;
+/** How a presentation should look and flow: docs/style.md, shared with the Claude Code skills. */
+const CRAFT = styleDoc;
 
 /** The format reference and the library, including icons and clipart made in this app. */
 export function referenceDocs(): string {

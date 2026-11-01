@@ -45,24 +45,28 @@ export function autoPerformance(p: CompiledPresentation, timing: AutoTiming = DE
 /**
  * The clicks of a presentation: each starts a beat and runs on through the auto beats after it.
  * `t` is when it plays: its beat's cue, or (without a usable cue) a pause after the one before.
- * `cued` says whether `t` came from the cue; `late` says the cue was earlier than the previous click had finished.
+ * A cue that comes before the previous click has finished still counts, like clicking early while
+ * presenting: the previous animation jumps to its end (`late` marks it). A cue before the previous click
+ * itself is out of order and ignored.
  */
 export interface Click { scene: number; beat: number; last: number; from: number; until: number; t: number; cued: boolean; late: boolean }
 
 export function cueClicks(p: CompiledPresentation, timing: AutoTiming = DEFAULT_TIMING): Click[] {
   const clicks: Click[] = [];
-  let t = 0;
+  let prevStart = -Infinity;
+  let prevEnd = 0;
   p.scenes.forEach((scene, si) => {
     for (let b = 0; b < scene.beats.length;) {
       let e = b;
       while (e + 1 < scene.beats.length && scene.beats[e + 1].auto) e++;
       const cue = scene.beats[b].cue;
-      const usable = cue !== undefined && cue >= t - 1e-6;
-      const at = usable ? cue : t + (si === 0 && b === 0 ? timing.lead : timing.gap);
+      const usable = cue !== undefined && cue > prevStart + 1e-6;
+      const at = usable ? cue : prevEnd + (si === 0 && b === 0 ? timing.lead : timing.gap);
       const from = scene.beats[b].start;
       const until = scene.beats[e].end;
-      clicks.push({ scene: si, beat: b, last: e, from, until, t: at, cued: usable, late: cue !== undefined && !usable });
-      t = at + (until - from);
+      clicks.push({ scene: si, beat: b, last: e, from, until, t: at, cued: usable, late: usable && at < prevEnd - 1e-6 });
+      prevStart = at;
+      prevEnd = at + (until - from);
       b = e + 1;
     }
   });
