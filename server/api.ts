@@ -9,6 +9,7 @@ import { exportVideo } from './export';
 import { deleteIcon, readLibrary, saveIcon } from './library';
 import { findOffset } from './media';
 import { saveUpload, transcribe, uploadPath } from './transcribe';
+import { saveImage, serveImage } from './images';
 import { createPresentation, deletePresentation, listPresentations, readPresentation, writePresentation } from './presentations';
 import { addTrack, createTake, deleteTake, getTake, listTakes, TAKES_DIR, trackPath, updateTake } from './takes';
 
@@ -18,6 +19,7 @@ import { addTrack, createTake, deleteTake, getTake, listTakes, TAKES_DIR, trackP
 //   /api/transcribe  upload a recording and transcribe it (to make a presentation from it)
 //   /api/llm      proxy to OpenAI-compatible model APIs (browsers can't call most of them directly)
 //   /api/takes    recordings: create, upload tracks, set offsets, auto-sync, delete
+//   /api/images   screenshots and pictures for the board (images/<hash>.<ext>), served at /images/<file>
 //   /api/export   render a presentation (and a take) to MP4; /exports/<file> to download it
 
 export const EXPORTS_DIR = resolve(process.env.JZM_EXPORTS_DIR ?? 'exports');
@@ -157,6 +159,8 @@ export function jzmServer(): Plugin {
           const upload = await saveUpload(req, q.get('ext') ?? 'webm');
           return send(res, 200, await transcribe(upload, { baseURL: q.get('baseURL') ?? '', model: q.get('model') ?? 'whisper-1', apiKey: String(req.headers['x-api-key'] ?? '') || undefined }));
         }
+        if (url.pathname === '/api/images' && req.method === 'POST') return send(res, 200, await saveImage(req, url.searchParams.get('ext') ?? 'png'));
+        if (parts[0] === 'images' && parts[1] && req.method === 'GET' && (await serveImage(res, parts[1]))) return;
         if (parts[0] === 'api' && parts[1] === 'library') {
           if (!parts[2] && req.method === 'GET') return send(res, 200, await readLibrary());
           if (parts[2] && req.method === 'PUT') return send(res, 200, (await saveIcon(parts[2], await readJson(req)), { ok: true }));

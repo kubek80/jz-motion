@@ -11,6 +11,43 @@ const ok = (input: unknown): CompiledPresentation => {
 const deck = (scene: object) => ({ version: 1, title: 't', scenes: [{ id: 's', ...scene }] });
 
 describe('compile', () => {
+  const shotDoc = (beats: unknown[]) => ({
+    version: 1, title: 't',
+    scenes: [{ id: 's', elements: [
+      { id: 'shot', type: 'image', src: '/images/a.png', x: 960, y: 540, width: 1000, height: 600, frame: 'browser' },
+      { id: 'part', type: 'area', x: 1200, y: 400, width: 200, height: 100, shape: 'ellipse' },
+      { id: 'note', type: 'text', text: 'here', x: 1500, y: 400 },
+    ], beats }],
+  });
+
+  it('spotlights an area, keeps what is drawn meanwhile above it, and turns off', () => {
+    const r = compile(shotDoc([
+      { actions: [{ do: 'draw', target: 'shot' }] },
+      { actions: [{ do: 'spotlight', target: 'part', padding: 10 }, { do: 'draw', target: 'note' }] },
+      { actions: [{ do: 'spotlight', on: false }] },
+    ]));
+    if (!r.ok) throw new Error(r.errors.join('; '));
+    const s = r.presentation.scenes[0];
+    const lights = s.ops.filter((o) => o.kind === 'spotlight');
+    expect(lights).toHaveLength(2);
+    expect(lights[0]).toMatchObject({ from: null, to: { x: 1090, y: 340, width: 220, height: 120, shape: 'ellipse', style: 'dark', amount: 0.7 } });
+    expect(lights[1]).toMatchObject({ to: null });
+    expect(s.above).toEqual(['note']);
+  });
+
+  it('asks for a target when a spotlight turns on', () => {
+    const r = compile(shotDoc([{ actions: [{ do: 'spotlight' }] }]));
+    expect(r.ok).toBe(false);
+  });
+
+  it('frames a framed screenshot including its browser bar', () => {
+    const r = compile({ ...shotDoc([{ actions: [{ do: 'camera', focus: 'shot', padding: 0 }] }]) });
+    if (!r.ok) throw new Error(r.errors.join('; '));
+    const cam = (r.presentation.scenes[0].ops.find((o) => o.kind === 'camera') as { to: { y: number } }).to;
+    // The picture and its browser bar together are centred on the element's position.
+    expect(cam.y).toBeCloseTo(540, 0);
+  });
+
   it('times each action from the start of its beat', () => {
     const r = compile({
       version: 1, title: 't',

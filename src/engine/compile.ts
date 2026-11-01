@@ -33,7 +33,11 @@ export type Op =
   | { kind: 'camera'; from: Camera; to: Camera; t: number; dur: number }
   | { kind: 'iso'; id: string; from: { rotate: number; explode: number }; to: { rotate: number; explode: number }; t: number; dur: number }
   | { kind: 'spin'; id: string; from: number | null; to: number | null; t: number }
-  | { kind: 'values'; id: string; from: number[]; to: number[]; t: number; dur: number };
+  | { kind: 'values'; id: string; from: number[]; to: number[]; t: number; dur: number }
+  | { kind: 'spotlight'; from: Spotlight | null; to: Spotlight | null; t: number; dur: number };
+
+/** A spotlight: the lit region in board coordinates, and how everything outside it is dimmed. */
+export interface Spotlight { x: number; y: number; width: number; height: number; shape: 'rect' | 'ellipse'; style: 'dark' | 'fade'; amount: number }
 
 export interface CompiledBeat {
   title?: string;
@@ -62,6 +66,8 @@ export interface CompiledScene {
   layout?: LayoutName;
   track?: string;
   ops: Op[];
+  /** Elements first drawn while a spotlight is on (notes, circles): they stay bright above the dimming. */
+  above: string[];
   beats: CompiledBeat[];
   duration: number;
 }
@@ -81,6 +87,8 @@ function defaultDuration(action: Action, el?: CompiledElement): number {
       if (el.type === 'text') return Math.min(2.2, Math.max(0.5, el.text.length * 0.06));
       if (el.type === 'arrow') return 0.8;
       if (el.type === 'ring') return 0.7;
+      if (el.type === 'image') return el.frame === 'browser' ? 1.6 : 0.9;
+      if (el.type === 'area') return 0;
       return 1.2;
     case 'fade-in':
     case 'fade-out':
@@ -107,6 +115,8 @@ function defaultDuration(action: Action, el?: CompiledElement): number {
       return 1.3;
     case 'wait':
       return 1;
+    case 'spotlight':
+      return 0.6;
     case 'flow':
       return 0;
   }
@@ -167,7 +177,7 @@ export function compile(input: unknown): CompileResult {
     const revealed = new Set<string>();
     for (const beat of scene.beats) {
       for (const a of beat.actions) {
-        if (a.do in SHOW && 'target' in a) [a.target].flat().forEach((id) => revealed.add(id));
+        if (a.do in SHOW && 'target' in a && a.target) [a.target].flat().forEach((id) => revealed.add(id));
       }
     }
 
@@ -218,6 +228,8 @@ export function compile(input: unknown): CompileResult {
     const initial = structuredClone(state);
     const startCamera: Camera = scene.camera ?? (scene.inherit && prev ? prev.finalCamera : DEFAULT_CAMERA);
     let camera = startCamera;
+    /** The light on the board, if a spotlight is on. Every scene starts without one. */
+    let spotlight: Spotlight | null = null;
     const ops: Op[] = [];
     const beats: CompiledBeat[] = [];
     let time = 0;
@@ -243,7 +255,7 @@ export function compile(input: unknown): CompileResult {
         const start = (action.start === 'with' ? prevStart : prevEnd) + action.delay;
         let end = start;
 
-        const targets = 'target' in action ? [action.target].flat() : [];
+        const targets: string[] = 'target' in action && action.target ? [action.target].flat() : [];
         const missing = targets.filter((id) => !byId.has(id));
         if (missing.length) {
           errors.push(`${at}: unknown element ${missing.map((m) => `"${m}"`).join(', ')}`);
@@ -411,6 +423,29 @@ export function compile(input: unknown): CompileResult {
             end = start + d;
             break;
           }
+          case 'spotlight': {
+            let to: Spotlight | null = null;
+            if (action.on) {
+              const ids = targets.length ? targets : [];
+              if (!ids.length) {
+                errors.push(`${at}: spotlight needs a target (or "on": false to turn it off)`);
+                return;
+              }
+              const box = union(ids.map(boxOf));
+              const area = ids.length === 1 ? byId.get(ids[0]) : undefined;
+              const p = action.padding;
+              to = {
+                x: box.x - p, y: box.y - p, width: box.width + 2 * p, height: box.height + 2 * p,
+                shape: action.shape ?? (area?.type === 'area' ? area.shape : 'rect'),
+                style: action.style, amount: action.amount,
+              };
+            }
+            const d = dur();
+            ops.push({ kind: 'spotlight', from: spotlight, to, t: start, dur: d });
+            spotlight = to;
+            end = start + d;
+            break;
+          }
           case 'wait':
             end = start + dur();
             break;
@@ -449,9 +484,28 @@ export function compile(input: unknown): CompileResult {
       ops,
       beats,
       duration: time,
+      above: drawnInSpotlight(ops),
     });
   }
 
   if (errors.length) return { ok: false, errors };
   return { ok: true, presentation: { title: source.title, scenes }, source };
+}
+
+/** Elements whose first appearance happens while a spotlight is on. */
+export function drawnInSpotlight(ops: Op[]): string[] {
+  const lights = ops.filter((o): o is Extract<Op, { kind: 'spotlight' }> => o.kind === 'spotlight').sort((a, b) => a.t - b.t);
+  const onAt = (t: number) => {
+    let on = false;
+    for (const l of lights) if (l.t <= t + 1e-6) on = l.to !== null;
+    return on;
+  };
+  const seen = new Set<string>();
+  const above: string[] = [];
+  for (const o of [...ops].sort((a, b) => a.t - b.t)) {
+    if (o.kind !== 'show' || seen.has(o.id)) continue;
+    seen.add(o.id);
+    if (onAt(o.t)) above.push(o.id);
+  }
+  return above;
 }

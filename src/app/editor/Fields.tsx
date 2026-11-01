@@ -32,6 +32,13 @@ const FIELD_INFO: Record<string, FieldInfo> = {
   line: { label: 'line', help: 'Solid, dashed or dotted.' },
   weight: { label: 'thickness' },
   head: { label: 'arrowhead' },
+  frame: { label: 'frame', help: 'Draw a browser window around the picture, in the element\'s colour.' },
+  url: { label: 'address bar', help: 'Text in the browser frame\'s address bar.' },
+  src: { label: 'picture file', group: 'advanced' },
+  shape: { help: 'Shape of the area (and of a spotlight on it).' },
+  style: { label: 'outside', help: '"dark": everything else goes darker; "fade": everything else fades into the board.' },
+  amount: { label: 'strength', help: 'How much darker or fainter, from 0 to 1.' },
+  on: { help: 'Off turns it off.' },
 };
 
 /** Position and size fields, shown together as a compact grid with drawing-program style labels. */
@@ -307,6 +314,18 @@ const CHOICE_ICONS: Record<string, Record<string, React.ReactNode>> = {
     start: g(<path d="M6 6H26M6 11H18M6 16H22" />),
     middle: g(<path d="M6 6H26M10 11H22M8 16H24" />),
     end: g(<path d="M6 6H26M14 11H26M10 16H26" />),
+  },
+  frame: {
+    none: g(<><rect x="5" y="4" width="22" height="14" rx="1.5" fill="currentColor" opacity="0.35" stroke="none" /><path d="M8 14L13 9L17 12L24 7" strokeWidth="1.4" /></>),
+    browser: g(<><rect x="3" y="2.5" width="26" height="17" rx="3" /><path d="M3 7.5H29" strokeWidth="1.4" /><circle cx="6.2" cy="5" r="0.6" fill="currentColor" /><circle cx="8.6" cy="5" r="0.6" fill="currentColor" /><circle cx="11" cy="5" r="0.6" fill="currentColor" /><rect x="7" y="10" width="18" height="7" rx="1" fill="currentColor" opacity="0.35" stroke="none" /></>),
+  },
+  shape: {
+    rect: g(<rect x="5" y="4" width="22" height="14" rx="2" strokeDasharray="3 2.5" />),
+    ellipse: g(<ellipse cx="16" cy="11" rx="11.5" ry="7.5" strokeDasharray="3 2.5" />),
+  },
+  style: {
+    dark: g(<><rect x="1.5" y="1.5" width="29" height="19" rx="2" fill="#000" stroke="none" /><rect x="10" y="6" width="12" height="10" rx="2" fill="currentColor" opacity="0.9" stroke="none" /></>),
+    fade: g(<><rect x="1.5" y="1.5" width="29" height="19" rx="2" fill="currentColor" opacity="0.18" stroke="none" /><rect x="10" y="6" width="12" height="10" rx="2" fill="currentColor" opacity="0.9" stroke="none" /></>),
   },
   line: {
     solid: g(<path d="M4 11H28" strokeWidth="2.2" />),
