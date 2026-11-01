@@ -322,3 +322,15 @@ For explainer videos Jakub wanted to paste a screenshot of an interface and draw
 ![Text styles, and editing code in place](journey/51-text-styles.jpg)
 ![Tools](journey/52-tool-icons.jpg)
 ![Text properties](journey/53-text-properties.jpg)
+
+## Step 24: An explainer about jz-motion, made in jz-motion
+
+Jakub asked for a template that explains the app itself (features, screenshots, architecture, why it is LLM first) and a script to read over it. The pitch: he built it to make explainers and presentations quickly because he never has time to publish; it is designed so cheaper models (Claude Haiku) and specialised ones (image models via fal.ai) can take over parts of the work; and a library that grows with every explainer lowers the cost of the next one. Everything is LLM first, with every generation held to one style. Inspiration: IBM Technology's lightboard explainers.
+
+- **The example** `src/examples/about-jz-motion.json`, ten scenes and 46 beats: title; why (ideas that never become videos, the IBM inspiration); starting from a sentence (home screenshot, spotlighting the prompt, the three ways in and the model picker); the editor (storyboard, ask bar, properties); LLM first (format and library in, JSON out, check and repair loop, then the board, and a zoom into the JSON); one style for everything (icon, clipart, 3D, chart in the same markers, then the AI creator conversation); the library and a falling cost per explainer; architecture (browser, local server, swappable models, fal.ai next); the right model for each job; recording and publishing.
+- It uses this round's features throughout: screenshots in browser frames with areas, spotlights and circles; bold headlines; code text; camera moves; flows; set-values.
+- **Screenshots** of the current app were captured with Playwright (against the mock model) and ship in `public/examples/about/`, so the example works anywhere, exports included.
+- **The script** is the beats' speaker notes (about 840 words, 6 to 7 minutes), collected in `docs/explainer-script.md` with recording steps and a ready title, description and chapter list for publishing.
+- **Bug found by it:** a line chart's last point and value never appeared: points popped in only after the line had passed them, and the line never passes its last point. Points now pop in as the line arrives.
+
+![The about template, scene by scene](journey/54-about-template.jpg)

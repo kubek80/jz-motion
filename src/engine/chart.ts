@@ -155,7 +155,9 @@ export function renderChart(n: ChartNodes) {
   let along = 0;
   n.dots.forEach((dot, i) => {
     along += lengths[i];
-    const g = popOut(clamp01((reach - along / total) / 0.12 + (i === 0 ? 1 : 0) * Math.min(1, reach * 20)));
+    // A point pops in over the stretch of line just before it, so it is fully there when the line arrives
+    // (the last one included); the first appears as soon as the line starts.
+    const g = popOut(i === 0 ? Math.min(1, reach * 20) : clamp01(1 + (reach - along / total) / 0.12));
     const r = 9 * g;
     const { x, y } = pts[i];
     dot.setAttribute('d', r > 0.1 ? `M${x - r} ${y}a${r} ${r} 0 1 0 ${2 * r} 0a${r} ${r} 0 1 0 ${-2 * r} 0` : '');

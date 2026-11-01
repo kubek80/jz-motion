@@ -16,7 +16,9 @@ npm run dev
 
 Video export also needs [FFmpeg](https://ffmpeg.org) (`brew install ffmpeg`), or set `FFMPEG_PATH` / `FFPROBE_PATH`.
 
-Open the printed URL. The home screen has one prompt box in the middle: pick **Topic** (describe what to explain), **Script** (paste what you will say) or **Recording** (attach a video or audio file), pick the model for that kind of start (remembered per kind), and send. Below it are your presentations: open, rename, duplicate or delete; or start blank or from an example. **⚙ Settings** (home and editor) holds your models and API keys, the default model per kind of start, and the speech-to-text service. They are saved as files in `presentations/` while `npm run dev` runs (in the browser otherwise), so you can keep them in git. Click the logo to get back home.
+Open the printed URL. New here? Start from the example **jz-motion: explainers, fast (about this app)**: ten scenes on what the app does, how it is built and why it is LLM first, with a ready voice-over in [docs/explainer-script.md](docs/explainer-script.md).
+
+ The home screen has one prompt box in the middle: pick **Topic** (describe what to explain), **Script** (paste what you will say) or **Recording** (attach a video or audio file), pick the model for that kind of start (remembered per kind), and send. Below it are your presentations: open, rename, duplicate or delete; or start blank or from an example. **⚙ Settings** (home and editor) holds your models and API keys, the default model per kind of start, and the speech-to-text service. They are saved as files in `presentations/` while `npm run dev` runs (in the browser otherwise), so you can keep them in git. Click the logo to get back home.
 
 **Edit mode**
 
