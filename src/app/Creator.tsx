@@ -7,6 +7,8 @@ import { isoModels, projectIso, type IsoPart } from '../engine/iso';
 import { icons, type IconDef } from '../engine/library';
 import { IconPreview } from './editor/IconPreview';
 import { ModelsEditor } from './ModelsEditor';
+import { ModelSelect } from './ModelSelect';
+import { advice, pickFor, rememberedFor, rememberFor, type Task } from '../ai/recommend';
 import { Preview } from './Preview';
 import { saveToLibrary } from './userLibrary';
 
@@ -32,7 +34,6 @@ type Turn =
   | { role: 'assistant'; model: string; result?: AskResult<any>; seeded?: boolean };
 
 const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').replace(/^(\d)/, 'x$1');
-const MODEL_KEY = 'jzm.creatorModel';
 
 const KINDS: { kind: CreateKind; label: string; hint: string; example: string }[] = [
   { kind: 'scene', label: 'Scene', hint: 'A new scene for this presentation, added after the current one', example: 'e.g. how a request flows through an API gateway to three microservices, then zoom into the auth service' },
@@ -72,7 +73,7 @@ export function Creator({ initialKind, start, presentation, scene = 0, onClose, 
   const [input, setInput] = useState('');
   const [name, setName] = useState(start ? start.name ?? `my-${start.from}` : '');
   const [profiles, setProfiles] = useState<ModelProfile[]>(loadProfiles);
-  const [modelId, setModelId] = useState(() => { try { return localStorage.getItem(MODEL_KEY) ?? ''; } catch { return ''; } });
+  const [picked, setPicked] = useState<Partial<Record<CreateKind, string>>>({});
   const [managing, setManaging] = useState(false);
   const [shown, setShown] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -80,8 +81,9 @@ export function Creator({ initialKind, start, presentation, scene = 0, onClose, 
 
   const kinds = KINDS.filter((k) => k.kind !== 'scene' || (presentation && onAddScene));
   const info = KINDS.find((k) => k.kind === kind)!;
-  const usable = profiles.filter((p) => p.enabled);
-  const profile = usable.find((p) => p.id === modelId) ?? usable[0];
+  // Each kind of thing has its own model: the one last used for it, else the one recommended for it.
+  const task: Task = kind === 'scene' ? 'scene-new' : kind;
+  const profile = pickFor(task, profiles, picked[kind] ?? rememberedFor(task));
   const busy = turns.some((t) => t.role === 'assistant' && !t.result);
   const firstText = turns.find((t) => t.role === 'user')?.text ?? '';
   const finalName = slug(name || firstText.split(/\s+/).slice(0, 3).join(' '));
@@ -107,7 +109,7 @@ export function Creator({ initialKind, start, presentation, scene = 0, onClose, 
   const send = () => {
     const text = input.trim();
     if (!text || !profile || busy) return;
-    try { localStorage.setItem(MODEL_KEY, profile.id); } catch { /* no storage */ }
+    rememberFor(task, profile.id);
     setError(null);
     setInput('');
     const asked: Turn[] = [...turns, { role: 'user', text }];
@@ -207,15 +209,13 @@ export function Creator({ initialKind, start, presentation, scene = 0, onClose, 
                 onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } }}
               />
               <div className="row">
-                <select value={profile?.id ?? ''} onChange={(e) => setModelId(e.target.value)} title="The model for the next reply; you can switch any time">
-                  {usable.length === 0 && <option value="">No models yet</option>}
-                  {usable.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
-                </select>
+                <ModelSelect task={task} profiles={profiles} value={profile?.id} onChange={(id) => { setPicked({ ...picked, [kind]: id }); rememberFor(task, id); }} />
                 <button onClick={() => setManaging(!managing)}>{managing ? 'Done' : 'Models…'}</button>
                 <span className="spacer" />
                 {started && !start && <button onClick={() => { setTurns([]); setShown(null); }} disabled={busy} title="Forget this conversation">Start over</button>}
                 <button className="primary" disabled={!input.trim() || !profile || busy} onClick={send}>{busy ? 'Working…' : started ? 'Ask for changes' : 'Make it'}</button>
               </div>
+              {profiles.length > 0 && <small className="model-advice">{advice(task, profiles)}</small>}
               {managing && <ModelsEditor onChange={setProfiles} />}
               <details>
                 <summary className="muted">Rules the model follows</summary>

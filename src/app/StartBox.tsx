@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { loadProfiles } from '../ai/profiles';
+import { advice, pickFor, type Task } from '../ai/recommend';
+import { ModelSelect } from './ModelSelect';
 import { loadModeModels, saveModeModel, type StartMode } from './settingsStore';
 
 const MODES: { mode: StartMode; label: string; placeholder: string }[] = [
@@ -17,7 +19,9 @@ export function StartBox({ onStart, onSettings, canRecord }: { onStart: (s: Star
   const [file, setFile] = useState<File | null>(null);
   const profiles = loadProfiles();
   const [chosen, setChosen] = useState(loadModeModels);
-  const modelId = chosen[mode] && profiles.some((p) => p.id === chosen[mode]) ? chosen[mode] : profiles.find((p) => p.enabled)?.id ?? profiles[0]?.id;
+  const task: Task = `from-${mode}`;
+  // The model chosen for this kind of start, else the one recommended for it.
+  const modelId = pickFor(task, profiles, chosen[mode])?.id;
   const info = MODES.find((m) => m.mode === mode)!;
   const ready = !!modelId && (mode === 'recording' ? !!file : !!text.trim());
 
@@ -59,19 +63,13 @@ export function StartBox({ onStart, onSettings, canRecord }: { onStart: (s: Star
         </div>
         <span className="spacer" />
         {profiles.length ? (
-          <select
-            className="model-pick"
-            value={modelId}
-            title="Model for this kind of start (remembered)"
-            onChange={(e) => { saveModeModel(mode, e.target.value); setChosen(loadModeModels()); }}
-          >
-            {profiles.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
-          </select>
+          <ModelSelect className="model-pick" task={task} profiles={profiles} value={modelId} onChange={(id) => { saveModeModel(mode, id); setChosen(loadModeModels()); }} />
         ) : (
           <button className="link" onClick={onSettings}>Add a model in Settings</button>
         )}
         <button className="send" disabled={!ready} onClick={send} title="Send">↑</button>
       </div>
+      {profiles.length > 0 && <small className="model-advice">{advice(task, profiles)}</small>}
     </div>
   );
 }

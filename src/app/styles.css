@@ -285,7 +285,7 @@ input, textarea, select { font: inherit; color: var(--text); background: var(--b
 .mode-chips { display: flex; gap: 6px; }
 .chip { border-radius: 999px; padding: 4px 12px; font-size: 13px; }
 .chip.on { border-color: var(--accent); color: var(--accent); background: #3ef0ff14; }
-.model-pick { max-width: 220px; font-size: 13px; border-radius: 999px; }
+.model-pick { max-width: 340px; font-size: 13px; border-radius: 999px; }
 .send { width: 36px; height: 36px; border-radius: 50%; padding: 0; font-size: 18px; background: var(--accent); color: #031013; border: 0; }
 .send:disabled { background: var(--line); color: var(--muted); }
 .attach { border: 1px dashed var(--line); border-radius: 10px; padding: 10px 12px; color: var(--muted); cursor: pointer; font-size: 14px; }
@@ -480,3 +480,12 @@ body.dragging { user-select: none; -webkit-user-select: none; }
 .rec-btn { border-color: #ff6b7d88; color: #ff6b7d; }
 .rec-btn.on { background: #ff6b7d; color: #14060a; font-weight: 600; }
 .timing-controls button.on { border-color: var(--accent); color: var(--accent); }
+/* Model recommendations */
+.model-advice { display: block; color: var(--muted); font-size: 11.5px; line-height: 1.4; }
+.model-advice::before { content: '★ '; color: #fff05a; }
+.start-box .model-advice { margin-top: 6px; padding: 0 2px; }
+.model-select.with-advice { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.size-badge { font-size: 10.5px; padding: 0 6px; border-radius: 6px; border: 1px solid var(--line); color: var(--muted); }
+.size-badge.small { color: #3dff8b; border-color: #3dff8b55; }
+.size-badge.medium { color: #3ef0ff; border-color: #3ef0ff55; }
+.size-badge.large { color: #ff4fd8; border-color: #ff4fd855; }

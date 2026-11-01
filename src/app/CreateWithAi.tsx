@@ -107,6 +107,7 @@ export function CreateWithAi({ kind, onClose, onCreate, initialText, initialFile
                 current={draft}
                 onPresentation={setDraft}
                 initialModelId={modelId}
+                task={`from-${kind}`}
                 wrapFirst={kind === 'script' ? scriptRequest : kind === 'topic' ? (t) => `Make a presentation about: ${t}` : (extra) => `${transcriptRequest(recording!.segments)}\n\n${extra}`}
                 placeholder={kind === 'script' ? 'Paste your script here, then Send. Afterwards, ask for changes.' : kind === 'topic' ? 'What should it explain?' : 'Anything to add? (e.g. "use the NVIDIA and Apple logos")'}
                 intro={kind === 'script'

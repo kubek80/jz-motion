@@ -7,6 +7,8 @@ export interface ModelProfile {
   apiKey: string;
   /** Included in "Generate". */
   enabled: boolean;
+  /** How capable it is, for model recommendations; guessed from the name when unset. */
+  size?: 'small' | 'medium' | 'large';
 }
 
 export const PRESETS = [
