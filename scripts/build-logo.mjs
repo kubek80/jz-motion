@@ -4,6 +4,7 @@
 //   public/favicon.svg       simplified JZ on a dark tile, for browser tabs
 //   public/favicon-16.png, favicon-32.png, apple-touch-icon.png (180), icon-192.png, icon-512.png
 //   docs/img/logo.png        full logo on the board, for the README
+//   src/engine/clipart/jz-logo.json   the logo as clipart for the board (run `npm run icons` after)
 // "motion" is converted from the Caveat font to outlines, so the SVGs need no fonts.
 import { mkdir, writeFile } from 'node:fs/promises';
 import opentype from 'opentype.js';
@@ -35,10 +36,14 @@ function letters({ detail = true, stroke = 3.2 } = {}) {
     <path d="${J}" fill="#121c20" stroke="${C.cyan}" stroke-width="${stroke}"/>${core(J, '#d4fbff')}`;
 }
 
+const MOTION_SIZE = 150;
+const motionPath = () => {
+  const width = font.getAdvanceWidth('motion', MOTION_SIZE);
+  return font.getPath('motion', -width / 2, 0, MOTION_SIZE).toPathData(1);
+};
+
 function motionWord() {
-  const size = 150;
-  const width = font.getAdvanceWidth('motion', size);
-  const d = font.getPath('motion', -width / 2, 0, size).toPathData(1);
+  const d = motionPath();
   return `<path d="${d}" transform="translate(470 395) rotate(-8)" fill="${C.white}" stroke="${C.board}" stroke-width="16" paint-order="stroke" stroke-linejoin="round"/>`;
 }
 
@@ -106,6 +111,33 @@ for (const [size, file] of [[16, 'public/favicon-16.png'], [32, 'public/favicon-
 }
 const [, , fw, fh] = fullBox.split(' ').map(Number);
 await png(svg(fullBox, fullBody), 'docs/img/logo.png', 900, Math.round((900 * fh) / fw), C.board);
+
+// The same logo as clipart: parts in the full logo's frame, cropped to its viewBox.
+{
+  const [fx, fy] = fullBox.split(' ').map(Number);
+  const letters = `translate(${150 - fx} ${50 - fy}) scale(3) skewX(-8)`;
+  const shift = `translate(${-fx} ${-fy})`;
+  const word = `translate(${470 - fx} ${395 - fy}) rotate(-8)`;
+  const parts = [
+    { d: Z, color: 'yellow', width: 1.4, opacity: 0.7, transform: `${letters} translate(5 5)` },
+    { d: J, color: 'yellow', width: 1.4, opacity: 0.7, transform: `${letters} translate(5 5)` },
+    { d: Z, color: 'pink', width: 3.2, fill: 'board', transform: letters },
+    { d: J, color: 'cyan', width: 3.2, fill: 'board', transform: letters },
+    // A dark edge first (it covers the letters as it is drawn), then the white word fills in.
+    { d: motionPath(), color: 'board', width: 16, transform: word },
+    { d: motionPath(), color: 'white', width: 1.5, fill: 'white', transform: word },
+    { d: 'M250 470 Q450 455 640 405', color: 'green', width: 6, transform: shift },
+    { d: 'M618 398 L642 404 L630 426', color: 'green', width: 6, transform: shift },
+  ];
+  await mkdir('src/engine/clipart', { recursive: true });
+  await writeFile('src/engine/clipart/jz-logo.json', JSON.stringify({
+    description: 'The jz-motion logo: neon JZ with handwritten "motion" and an arrow',
+    tags: ['clipart', 'logo', 'jz-motion'],
+    paths: [],
+    box: [Number(fw.toFixed(1)), Number(fh.toFixed(1))],
+    parts,
+  }, null, 1));
+}
 
 await browser.close();
 console.log('logo files written');

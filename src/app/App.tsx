@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { compile, Stage, type StagePosition } from '../engine';
+import { compile, icons, Stage, type StagePosition } from '../engine';
 import type { Camera } from '../engine/schema';
 import { AiPanel } from './AiPanel';
+import { IconCreator } from './IconCreator';
+import type { ChatMessageView } from './Chat';
+import { JsonPanel } from './JsonPanel';
 import { VideoPanel } from './VideoPanel';
 import { useRecorder } from './useRecorder';
 import { Beats } from './editor/Beats';
@@ -12,7 +15,6 @@ import {
 import { Inspector } from './editor/Inspector';
 import { Library, type AddRequest } from './editor/Library';
 import type { Selection } from './editor/types';
-import { examples } from './examples';
 import { useHistory } from './useHistory';
 
 type Mode = 'edit' | 'play';
@@ -81,6 +83,11 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
   const posRef = useRef(pos);
   posRef.current = pos;
   const [withCamera, setWithCamera] = useState(true);
+  /** The AI chat for this presentation, kept while it is open. */
+  const [chatLog, setChatLog] = useState<ChatMessageView[]>([]);
+  const [creating, setCreating] = useState(false);
+  /** Bumped when the library gains an item, so the palette shows it. */
+  const [libraryVersion, setLibraryVersion] = useState(0);
   const docRef = useRef<RawDoc | null>(null);
   const recorder = useRecorder(stage, () => JSON.parse(history.value), () => docRef.current?.title ?? 'take', id);
   const preview = useRef<HTMLVideoElement>(null);
@@ -208,7 +215,9 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
     let el: Raw;
     switch (r.kind) {
       case 'icon':
-        el = { id: uniqueId(doc, sceneIndex, r.name), type: 'icon', icon: r.name, ...at, size: 140, color: 'cyan', label: r.name };
+        el = icons[r.name]?.parts
+          ? { id: uniqueId(doc, sceneIndex, r.name), type: 'icon', icon: r.name, ...at, size: 520 }
+          : { id: uniqueId(doc, sceneIndex, r.name), type: 'icon', icon: r.name, ...at, size: 140, color: 'cyan', label: r.name };
         break;
       case 'iso':
         el = { id: uniqueId(doc, sceneIndex, r.name), type: 'iso', model: r.name, ...at, scale: 80, color: 'cyan' };
@@ -424,15 +433,6 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
 
   // ---------------------------------------------------------------- files
 
-  const exportJson = () => {
-    const blob = new Blob([text], { type: 'application/json' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'presentation.json';
-    a.click();
-    URL.revokeObjectURL(a.href);
-  };
-
   const replaceAll = (value: string) => {
     editCams.current.clear();
     setPicked([]);
@@ -447,6 +447,16 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
 
   return (
     <div className={`app mode-${mode}`}>
+      {creating && (
+        <IconCreator
+          onClose={() => setCreating(false)}
+          onSaved={(name) => {
+            setCreating(false);
+            setLibraryVersion((v) => v + 1);
+            add({ kind: 'icon', name });
+          }}
+        />
+      )}
       <header className="bar">
         <button className="logo-button" onClick={onHome} title="All presentations"><img className="logo" src="/logo.svg" alt="jz-motion" /></button>
         <span className="muted">{doc?.title ?? 'fix the JSON to continue'}</span>
@@ -477,7 +487,7 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
             ))}
             {mode === 'edit' && doc && <button className="add-scene" onClick={() => update(addScene(doc, sceneIndex))}>+ scene</button>}
           </div>
-          {mode === 'edit' && doc && <Library onAdd={add} arrowActive={arrowTool} />}
+          {mode === 'edit' && doc && <Library onAdd={add} arrowActive={arrowTool} onCreate={() => setCreating(true)} version={libraryVersion} />}
         </aside>
 
         <section className="center">
@@ -555,7 +565,7 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
             <button className={panel === 'video' ? 'on' : ''} onClick={() => setPanel('video')}>Video</button>
           </div>
           {panel === 'ai' ? (
-            <AiPanel current={text} onUse={replaceAll} />
+            <AiPanel current={text} scene={sceneIndex} onUse={replaceAll} chat={chatLog} onChat={setChatLog} />
           ) : panel === 'video' ? (
             <VideoPanel presentation={text} presentationId={id} refreshKey={recorder.state.lastTake?.id} />
           ) : mode === 'edit' && panel === 'props' && doc ? (
@@ -581,26 +591,7 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
               onTitle={(title) => update({ ...doc, title })}
             />
           ) : (
-            <div className="json-panel">
-              <div className="editor-bar">
-                <label className="file">
-                  Import
-                  <input type="file" accept="application/json,.json" onChange={(e) => e.target.files?.[0] && void e.target.files[0].text().then(replaceAll)} />
-                </label>
-                <button onClick={exportJson}>Export</button>
-                <select
-                  value=""
-                  onChange={(e) => {
-                    const ex = examples.find((x) => x.name === e.target.value);
-                    if (ex && (text === ex.text || confirm(`Replace your current presentation with "${ex.title}"? (Undo brings it back.)`))) replaceAll(ex.text);
-                  }}
-                >
-                  <option value="" disabled>Load example…</option>
-                  {examples.map((x) => <option key={x.name} value={x.name}>{x.title}</option>)}
-                </select>
-              </div>
-              <textarea spellCheck={false} value={text} onChange={(e) => history.set(e.target.value, { merge: true })} />
-            </div>
+            <JsonPanel text={text} scene={sceneIndex} errors={result.ok ? [] : result.errors} onText={(v) => history.set(v, { merge: true })} onReplace={replaceAll} />
           )}
           {!result.ok && (
             <ul className="errors">

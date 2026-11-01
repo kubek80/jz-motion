@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { compile, type CompiledPresentation } from '../engine/compile';
 import { buildFfmpegArgs, resolveLayout } from './ffmpeg';
-import { autoPerformance, layoutAt, layoutSegments, stateAt, type Performance } from './performance';
+import { autoPerformance, cuePerformance, layoutAt, layoutSegments, stateAt, type Performance } from './performance';
 
 const presentation = (): CompiledPresentation => {
   const r = compile({
@@ -35,6 +35,33 @@ describe('performance', () => {
       { t: 10, scene: 1, from: 0, until: 0 },
     ]);
     expect(perf.duration).toBe(14);
+  });
+
+  it('plays beats at their cues, and beats without one right after', () => {
+    const r = compile({
+      version: 1, title: 't',
+      scenes: [
+        { id: 'a', elements: [{ id: 'x', type: 'text', text: 'x', x: 0, y: 0 }], beats: [
+          { cue: 2, actions: [{ do: 'fade-in', target: 'x', duration: 1 }] },
+          { actions: [{ do: 'pulse', target: 'x', duration: 1 }] },
+        ] },
+        { id: 'b', elements: [{ id: 'y', type: 'text', text: 'y', x: 0, y: 0 }], beats: [
+          { cue: 1, actions: [{ do: 'fade-in', target: 'y', duration: 1 }] },
+          { cue: 20, actions: [{ do: 'pulse', target: 'y', duration: 1 }] },
+        ] },
+      ],
+    });
+    if (!r.ok) throw new Error(r.errors.join());
+    const perf = cuePerformance(r.presentation, 30, { lead: 1, gap: 2, tail: 3 });
+    expect(perf.events).toEqual([
+      { t: 0, scene: 0, from: 0, until: 0 },
+      { t: 2, scene: 0, from: 0, until: 1 },
+      { t: 5, scene: 0, from: 1, until: 2 },
+      // cue 1 is earlier than where we are (6s): treated as missing
+      { t: 8, scene: 1, from: 0, until: 1 },
+      { t: 20, scene: 1, from: 1, until: 2 },
+    ]);
+    expect(perf.duration).toBe(30);
   });
 
   it('finds the scene and timeline position at any moment', () => {

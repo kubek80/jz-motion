@@ -3,6 +3,7 @@ import intro from '../examples/intro.json';
 import { Editor } from './App';
 import { Home } from './Home';
 import { openStore, type Store } from './store';
+import { loadUserLibrary } from './userLibrary';
 
 /** The id in the address (#/p/<id>), so a reload keeps the presentation open. */
 const idFromHash = () => location.hash.match(/^#\/p\/([\w-]+)/)?.[1] ?? null;
@@ -21,7 +22,7 @@ async function seed(store: Store) {
 
 // Shared so React's double-run of effects in development can't seed twice.
 let ready: Promise<Store> | null = null;
-const getStore = () => (ready ??= openStore().then(async (s) => {
+const getStore = () => (ready ??= Promise.all([openStore(), loadUserLibrary()]).then(async ([s]) => {
   await seed(s).catch(() => undefined);
   return s;
 }));

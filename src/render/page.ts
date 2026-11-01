@@ -1,5 +1,6 @@
 import '@fontsource/caveat/700.css';
 import { compile, Stage } from '../engine';
+import { loadUserLibrary } from '../app/userLibrary';
 import { stateAt, type Performance } from '../video/performance';
 
 // The page video export drives: just the board, full window, drawn frame by frame on request.
@@ -23,6 +24,7 @@ let perf: Performance = { events: [], duration: 0 };
 
 window.jzmRender = {
   async load(presentation, performance) {
+    await loadUserLibrary();
     const r = compile(presentation);
     if (!r.ok) throw new Error(r.errors.join('\n'));
     await stage.load(r.presentation);

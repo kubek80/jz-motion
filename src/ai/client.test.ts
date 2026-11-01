@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import hardware from '../examples/hardware.json';
 import { generate, type Fetch } from './client';
-import { extractJson, SYSTEM_PROMPT } from './prompt';
+import { extractJson, systemPrompt } from './prompt';
 import type { ModelProfile } from './profiles';
 
 const profile: ModelProfile = { id: 'p', name: 'test', baseURL: 'https://openrouter.ai/api/v1', model: 'x/y', apiKey: 'k', enabled: true };
@@ -27,9 +27,9 @@ describe('generate', () => {
     expect(r.ok).toBe(true);
     expect(r.attempts).toBe(1);
     expect(sent[0].url).toBe('/api/llm');
-    expect(sent[0].payload.body.messages[0].content).toBe(SYSTEM_PROMPT);
-    expect(SYSTEM_PROMPT).toContain('## Beats and actions');
-    expect(SYSTEM_PROMPT).toContain('dgx-spark');
+    expect(sent[0].payload.body.messages[0].content).toBe(systemPrompt());
+    expect(systemPrompt()).toContain('## Beats and actions');
+    expect(systemPrompt()).toContain('dgx-spark');
     expect(sent[0].payload.body.usage).toEqual({ include: true });
   });
 

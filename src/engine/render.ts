@@ -1,10 +1,11 @@
 import gsap from 'gsap';
 import { buildChart, renderChart, type ChartNodes } from './chart';
 import { svgEl } from './dom';
+import { splitSubpaths } from './pathSplit';
 import type { CompiledElement, CompiledPresentation, CompiledScene, ElementState, Op } from './compile';
 import { arrowCurve, arrowEnds, arrowHead, iconLabelSize, ISO_LABEL_SIZE, VIEW } from './geometry';
 import { projectIso, resolveIsoParts, type IsoPart } from './iso';
-import { ICON_GRID, icons } from './library';
+import { ICON_GRID, iconHeight, icons, type PartColor } from './library';
 import { board, palette } from './palette';
 import type { Camera } from './schema';
 
@@ -596,7 +597,14 @@ export class Stage {
     const outer = svgEl('g', { 'data-id': el.id, class: `jzm-el jzm-${el.type}` }, this.layer);
     const fx = svgEl('g', {}, outer);
     const parts: DrawPart[] = [];
-    const stroke = (d: string, width: number, parent: SVGElement = fx, dashed = false, scale = 1) => {
+    const stroke = (d: string, width: number, parent: SVGElement = fx, dashed = false, scale = 1): SVGGraphicsElement => {
+      // A path with several pieces draws them one after another (a dash pattern restarts on every piece).
+      const pieces = dashed ? [d] : splitSubpaths(d);
+      if (pieces.length > 1) {
+        const group = svgEl('g', {}, parent);
+        for (const piece of pieces) stroke(piece, width, group, false, scale);
+        return group;
+      }
       const path = svgEl('path', {
         d,
         fill: 'none',
@@ -615,12 +623,13 @@ export class Stage {
         path.setAttribute('stroke-dasharray', `${width * 3} ${width * 3}`);
         const holder = svgEl('g', { mask: `url(#${id})` }, parent);
         holder.appendChild(path);
-        const length = reveal.getTotalLength();
+        // One unit longer than the path, so "not drawn" hides even the rounded line end.
+        const length = reveal.getTotalLength() + 1;
         setDash(reveal, length);
         parts.push({ kind: 'stroke', node: reveal, length, scale });
         return path;
       }
-      const length = path.getTotalLength();
+      const length = path.getTotalLength() + 1;
       setDash(path, length);
       parts.push({ kind: 'stroke', node: path, length, scale });
       return path;
@@ -656,9 +665,25 @@ export class Stage {
     switch (el.type) {
       case 'icon': {
         const def = icons[el.icon];
-        const scale = el.size / ICON_GRID;
-        const g = svgEl('g', { transform: `scale(${scale}) translate(${-ICON_GRID / 2} ${-ICON_GRID / 2})` }, fx);
-        if (def.style === 'logo') {
+        const [bw, bh] = def.box ?? [ICON_GRID, ICON_GRID];
+        const scale = el.size / bw;
+        const g = svgEl('g', { transform: `scale(${scale}) translate(${-bw / 2} ${-bh / 2})` }, fx);
+        if (def.parts) {
+          // Clipart: each part in its own colour; outlines draw first, then their fills fade in.
+          const colour = (c: PartColor) => (c === 'board' ? board.background : palette[c]);
+          for (const part of def.parts) {
+            const holder = part.transform ? svgEl('g', { transform: part.transform }, g) : g;
+            const path = stroke(part.d, part.width ?? 2, holder, false, scale);
+            // Strokes are drawn in currentColor, so setting `color` colours every piece of the part.
+            if (part.color) path.style.color = colour(part.color);
+            if (part.opacity !== undefined) path.setAttribute('opacity', String(part.opacity));
+            if (part.fill) {
+              const f = svgEl('path', { d: part.d, fill: colour(part.fill), stroke: 'none', 'fill-rule': 'evenodd' });
+              holder.insertBefore(f, path);
+              parts.push({ kind: 'fill', node: f, opacity: part.fillOpacity ?? 1 });
+            }
+          }
+        } else if (def.style === 'logo') {
           // Brand logos are filled shapes: trace their outline thinly, then fade in a faint fill.
           const w = Math.max(2, el.size * 0.02) / scale;
           for (const d of def.paths) stroke(d, w, g, false, scale);
@@ -671,7 +696,7 @@ export class Stage {
         }
         if (el.label) {
           const ls = iconLabelSize(el.size);
-          write(el.label, 0, el.size / 2 + ls * 0.75, ls);
+          write(el.label, 0, iconHeight(el.icon, el.size) / 2 + ls * 0.75, ls);
         }
         break;
       }
@@ -690,7 +715,7 @@ export class Stage {
       case 'arrow': {
         const { start, end } = arrowEnds(el, lookup);
         const { control, d } = arrowCurve(start, end, el.curve);
-        const shaft = stroke(d, board.stroke, fx, el.dashed);
+        const shaft = stroke(d, board.stroke, fx, el.dashed) as SVGPathElement;
         if (el.head === 'end' || el.head === 'both') stroke(arrowHead(end, control), board.stroke);
         if (el.head === 'start' || el.head === 'both') stroke(arrowHead(start, control), board.stroke);
         const mid = { x: 0.25 * start.x + 0.5 * control.x + 0.25 * end.x, y: 0.25 * start.y + 0.5 * control.y + 0.25 * end.y };
@@ -859,7 +884,7 @@ function renderIso(iso: IsoNodes) {
 }
 
 function setDash(path: SVGGeometryElement, length: number) {
-  path.style.strokeDasharray = `${length + 1} ${length + 1}`;
+  path.style.strokeDasharray = `${length} ${length}`;
 }
 
 /** A hand-drawn loop: slightly wobbly ellipse that overshoots its start. */

@@ -16,7 +16,7 @@ npm run dev
 
 Video export also needs [FFmpeg](https://ffmpeg.org) (`brew install ffmpeg`), or set `FFMPEG_PATH` / `FFPROBE_PATH`.
 
-Open the printed URL. The home screen lists your presentations: create one (blank or from an example), open, rename, duplicate or delete. They are saved as files in `presentations/` while `npm run dev` runs (in the browser otherwise), so you can keep them in git. Click the logo to get back home.
+Open the printed URL. The home screen lists your presentations: create one (blank, from an example, **from a script** or **from a recording**), open, rename, duplicate or delete. They are saved as files in `presentations/` while `npm run dev` runs (in the browser otherwise), so you can keep them in git. Click the logo to get back home.
 
 **Edit mode**
 
@@ -24,14 +24,18 @@ Open the printed URL. The home screen lists your presentations: create one (blan
 |---|---|
 | Select, move, resize | Click an element and drag it; drag a corner handle to resize. Shift+click selects several. |
 | Pan, zoom | Drag the empty board; scroll. |
-| Add | Click an icon, Text, Box, Chart or a 3D model in the library. **Arrow**: click it, then the start element, then the end element. |
+| Add | Click an icon, logo, clipart, Text, Box, Chart or a 3D model in the library. **Arrow**: click it, then the start element, then the end element. **+ New icon or clipart with AI** draws a new one from your description and saves it to your library (`library/`). |
 | Animate | **+ beat** under the board (it draws the selected elements), or **+ action** inside a beat. |
-| Edit details | Properties panel on the right (colors are swatches). |
+| Edit details | Properties panel on the right (colours are markers, chart types and layouts are pictures). The **JSON** tab shows this scene or the whole file, with colours, folding and full screen. |
 | Delete, duplicate, undo | Delete key, Ctrl+D, Ctrl+Z / Ctrl+Shift+Z |
 
 **AI tab**
 
-Add a model (OpenRouter, RunPod or any OpenAI-compatible endpoint, with its API key), tick the models to compare, describe the presentation or the change, and pick a result. Keys stay in your browser and go only to the model's API through the local dev server (`npm run dev` or `npm run preview`). To try it without a key: `npm run mock-llm`, then add the "Local mock" model.
+**Chat** with a model about the open presentation: ask for changes ("add a database under the API") and they are applied right away (Ctrl+Z undoes them), or ask questions. **Compare models** sends one request to several models and shows their results side by side. Models are any OpenAI-compatible endpoint (OpenRouter, RunPod, ...) with its API key.
+
+**From a script** (home screen): paste your script; a model turns it into scenes and beats with your lines as speaker notes; refine it in the chat, then create it.
+
+**From a recording** (home screen): upload a video or audio recording. It is transcribed (any OpenAI-compatible speech-to-text service: OpenAI Whisper, Groq, a local Whisper server), a model builds a presentation whose beats are cued to when you say things, and the recording becomes its first take, ready to export as a video. Keys stay in your browser and go only to the model's API through the local dev server (`npm run dev` or `npm run preview`). To try it without a key: `npm run mock-llm`, then add the "Local mock" model.
 
 **Recording and video**
 

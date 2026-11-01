@@ -18,6 +18,8 @@ A web app for technical explainer presentations and videos: a dark blackboard, l
 | LLMs | Any OpenAI-compatible endpoint; the system prompt is `docs/format.md` + `docs/library.md`; compile errors go back to the model. Calls go through the dev server's `/api/llm` proxy. | One code path for OpenRouter, RunPod and self-hosted; docs stay the single source of truth. |
 | Video | A *performance* (when each beat started, recorded from the presenter's clicks or generated) fully determines every frame. Export renders frames exactly in headless Chromium and FFmpeg composites camera tracks and mixes audio. | Natural timing from talking; no screen recording; same output every time. |
 | Presentations | A home screen of presentations, each a JSON file in `presentations/` (via the local server), or browser storage without it. Takes remember which presentation they were recorded from. | Organise many videos; files are easy to keep in git. |
+| Library | Icons (single-colour line art, 24×24), logos and clipart (multi-colour `parts` drawn in order, any size). Items made in the app are saved in `library/` and loaded at runtime, and listed to the LLM. | One drawing model for everything on the board; AI-made items work everywhere, including export. |
+| AI features | One loop for all of them: ask for JSON, check it (compile for presentations, drawing rules for icons), send problems back. Chat edits the open presentation; scripts and transcripts become new presentations; beats get `cue`s from a transcript's timestamps. | Every model output is validated before it touches the board. |
 | Timing | Beats. One beat is one presenter click. In video mode beats play back to back. | One data model for live presenting and video. |
 
 ## Concepts
@@ -47,11 +49,11 @@ Presentation
 | `src/engine/render.ts` | `Stage`: builds SVG, the glow and board texture, and a GSAP timeline per scene; presenter navigation. |
 | `src/engine/library.ts`, `icons.generated.ts`, `icons.custom.json` | Icon library. `npm run icons` merges Tabler, Simple Icons and the hand-drawn JSON into `icons.generated.ts` and `docs/library.md`. |
 | `src/app/` | `Root` (home or an open presentation), `Home`, `Editor` (Edit and Play modes, JSON tab, undo/redo, present mode), `store.ts` (files or browser storage). |
-| `src/ai/` | LLM generation: system prompt built from the docs, client with repair loop, model profiles. |
+| `src/ai/` | LLM work: `client.ts` (ask for JSON with repair loop), `prompt.ts` (docs as context), `assistant.ts` (chat, script, transcript), `iconPrompt.ts` (drawing rules and checks), model profiles. |
 | `src/app/editor/` | Editor: document edit operations (`doc.ts`), schema-generated property forms, library palette, beats editor. |
 | `src/video/` | Performances (timing), layout over time, FFmpeg command builder (pure, tested). |
 | `src/render/` | The page export drives: board only, frame by frame. |
-| `server/` | Local server API (Vite plugin): presentations, LLM proxy, takes (recordings), audio auto-sync, export jobs; `cli-export.ts`. |
+| `server/` | Local server API (Vite plugin): presentations, library, LLM proxy, transcription, takes (recordings), audio auto-sync, export jobs; `cli-export.ts`. |
 | `src/examples/*.json` | Example presentations, loadable from the app. |
 
 ## Phases

@@ -44,6 +44,8 @@ export interface CompiledBeat {
   /** Video layout and camera track, with the scene's defaults applied. */
   layout?: LayoutName;
   track?: string;
+  /** Seconds into the recording at which it starts, if made from a recording. */
+  cue?: number;
 }
 
 export interface CompiledScene {
@@ -417,7 +419,7 @@ export function compile(input: unknown): CompileResult {
 
       beats.push({
         title: beat.title, notes: beat.notes, auto: beat.auto, start: beatStart, end: beatEnd,
-        layout: beat.layout ?? scene.layout, track: beat.track ?? scene.track,
+        layout: beat.layout ?? scene.layout, track: beat.track ?? scene.track, cue: beat.cue,
       });
       time = beatEnd;
     });
