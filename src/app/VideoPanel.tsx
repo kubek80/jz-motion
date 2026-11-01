@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Performance } from '../video/performance';
 
 interface Track { name: string; file: string; offset: number; hasVideo: boolean; hasAudio: boolean; duration: number }
-interface Take { id: string; name: string; created: string; performance: Performance; tracks: Track[] }
+interface Take { id: string; name: string; created: string; performance: Performance; tracks: Track[]; presentationId?: string }
 interface Job { id: string; status: 'running' | 'done' | 'failed'; done: number; total: number; file?: string; error?: string; started: number }
 
 const api = async (url: string, init?: RequestInit) => {
@@ -15,7 +15,7 @@ const api = async (url: string, init?: RequestInit) => {
 const mmss = (s: number) => `${Math.floor(s / 60)}:${String(Math.round(s % 60)).padStart(2, '0')}`;
 
 /** Takes (recordings), their tracks and offsets, and MP4 export. */
-export function VideoPanel({ presentation, refreshKey }: { presentation: string; refreshKey: unknown }) {
+export function VideoPanel({ presentation, presentationId, refreshKey }: { presentation: string; presentationId: string; refreshKey: unknown }) {
   const [takes, setTakes] = useState<Take[] | null>(null);
   const [selected, setSelected] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
@@ -30,13 +30,14 @@ export function VideoPanel({ presentation, refreshKey }: { presentation: string;
 
   const load = useCallback(async () => {
     try {
-      setTakes(await api('/api/takes'));
+      // Takes of this presentation (and older ones recorded before takes knew their presentation).
+      setTakes(((await api('/api/takes')) as Take[]).filter((t) => !t.presentationId || t.presentationId === presentationId));
       setError(null);
     } catch (e) {
       setTakes([]);
       setError(`Recording and export need the local server (npm run dev): ${(e as Error).message}`);
     }
-  }, []);
+  }, [presentationId]);
   useEffect(() => void load(), [load, refreshKey]);
   useEffect(() => () => clearInterval(poll.current), []);
 

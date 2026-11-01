@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { anchorNames } from '../../engine/schema';
 import { icons } from '../../engine/library';
 import { isoModels } from '../../engine/iso';
+import { palette } from '../../engine/palette';
 import type { Raw } from './doc';
 
 // A form generated from the JSON Schema of an element or action (z.toJSONSchema), so new fields in
@@ -37,6 +38,7 @@ export function Fields({ schema, value, ids, onChange, hide = [] }: Props) {
 function Field({ name, prop, value, ids, onChange }: { name: string; prop: Prop; value: unknown; ids: string[]; onChange: (v: unknown) => void }) {
   const placeholder = prop.default !== undefined ? String(prop.default) : '';
 
+  if (prop.enum && prop.enum.every((c: string) => c in palette)) return <Swatches value={value as string | undefined} colors={prop.enum} fallback={prop.default} onChange={onChange} />;
   if (name === 'icon') return <Select value={value} options={Object.keys(icons).sort()} onChange={onChange} />;
   if (name === 'model') return <Select value={value} options={Object.keys(isoModels)} empty="(custom parts)" onChange={onChange} />;
   if (name === 'from' || name === 'to') {
@@ -150,4 +152,23 @@ function Json({ value, onChange }: { value: unknown; onChange: (v: unknown) => v
     }
   };
   return <textarea className={bad ? 'json bad' : 'json'} rows={Math.min(8, draft.split('\n').length + 1)} value={draft} onChange={(e) => setDraft(e.target.value)} onBlur={commit} />;
+}
+
+/** Marker colors as swatches; the current one is ringed, a dashed ring marks the default. */
+function Swatches({ value, colors, fallback, onChange }: { value?: string; colors: string[]; fallback?: string; onChange: (v: unknown) => void }) {
+  const current = value ?? fallback;
+  return (
+    <span className="swatches">
+      {colors.map((c) => (
+        <button
+          key={c}
+          type="button"
+          title={c + (value === undefined && c === fallback ? ' (default)' : '')}
+          className={c === current ? 'swatch on' : 'swatch'}
+          style={{ background: palette[c as keyof typeof palette], boxShadow: c === current ? `0 0 10px ${palette[c as keyof typeof palette]}` : undefined }}
+          onClick={() => onChange(c === fallback && value !== undefined ? undefined : c)}
+        />
+      ))}
+    </span>
+  );
 }

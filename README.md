@@ -16,17 +16,17 @@ npm run dev
 
 Video export also needs [FFmpeg](https://ffmpeg.org) (`brew install ffmpeg`), or set `FFMPEG_PATH` / `FFPROBE_PATH`.
 
-Open the printed URL. The example presentation explains this project; more are under **JSON → Load example**. Your work is kept in the browser.
+Open the printed URL. The home screen lists your presentations: create one (blank or from an example), open, rename, duplicate or delete. They are saved as files in `presentations/` while `npm run dev` runs (in the browser otherwise), so you can keep them in git. Click the logo to get back home.
 
 **Edit mode**
 
 | Do | How |
 |---|---|
-| Select, move | Click an element and drag it. Shift+click selects several. |
+| Select, move, resize | Click an element and drag it; drag a corner handle to resize. Shift+click selects several. |
 | Pan, zoom | Drag the empty board; scroll. |
-| Add | Click an icon, Text, Box, Chart or a 3D model in the library. Select two elements, then **Arrow** to connect them. |
+| Add | Click an icon, Text, Box, Chart or a 3D model in the library. **Arrow**: click it, then the start element, then the end element. |
 | Animate | **+ beat** under the board (it draws the selected elements), or **+ action** inside a beat. |
-| Edit details | Properties panel on the right. |
+| Edit details | Properties panel on the right (colors are swatches). |
 | Delete, duplicate, undo | Delete key, Ctrl+D, Ctrl+Z / Ctrl+Shift+Z |
 
 **AI tab**

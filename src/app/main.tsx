@@ -4,10 +4,10 @@ import { createRoot } from 'react-dom/client';
 if (new URLSearchParams(location.search).has('render')) {
   void import('../render/page');
 } else {
-  void Promise.all([import('./App'), import('@fontsource/caveat/700.css'), import('./styles.css')]).then(([{ App }]) => {
+  void Promise.all([import('./Root'), import('@fontsource/caveat/700.css'), import('./styles.css')]).then(([{ Root }]) => {
     createRoot(document.getElementById('root')!).render(
       <StrictMode>
-        <App />
+        <Root />
       </StrictMode>,
     );
   });

@@ -24,6 +24,8 @@ export interface Take {
   performance: Performance;
   /** The presentation when it was recorded; the timing in `performance` refers to it. */
   presentation: unknown;
+  /** Which saved presentation it was recorded from. */
+  presentationId?: string;
   tracks: Track[];
 }
 
@@ -49,7 +51,7 @@ async function save(take: Take) {
   await writeFile(join(dir(take.id), 'take.json'), JSON.stringify(take, null, 2));
 }
 
-export async function createTake(input: { name: string; performance: Performance; presentation: unknown }): Promise<Take> {
+export async function createTake(input: { name: string; performance: Performance; presentation: unknown; presentationId?: string }): Promise<Take> {
   const take: Take = { id: randomUUID().slice(0, 8), created: new Date().toISOString(), tracks: [], ...input };
   await mkdir(dir(take.id), { recursive: true });
   await save(take);

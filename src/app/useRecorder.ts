@@ -17,7 +17,7 @@ const MIME = ['video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video
  * Records a take: microphone (and camera) through MediaRecorder, plus every play/jump on the stage
  * with its time. Saved to the local server as a take with one track, "me".
  */
-export function useRecorder(stage: React.RefObject<Stage | null>, presentation: () => unknown, title: () => string) {
+export function useRecorder(stage: React.RefObject<Stage | null>, presentation: () => unknown, title: () => string, presentationId?: string) {
   const [state, setState] = useState<RecorderState>({ status: 'idle', seconds: 0 });
   const session = useRef<{ recorder: MediaRecorder; chunks: Blob[]; events: PerformEvent[]; t0: number; off: () => void; timer: number; snapshot: unknown } | null>(null);
 
@@ -66,14 +66,14 @@ export function useRecorder(stage: React.RefObject<Stage | null>, presentation: 
       const take = await fetch('/api/takes', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ name, performance: { events: r.events, duration }, presentation: r.snapshot }),
+        body: JSON.stringify({ name, performance: { events: r.events, duration }, presentation: r.snapshot, presentationId }),
       }).then(ok);
       await fetch(`/api/takes/${take.id}/tracks/me?ext=webm&offset=0`, { method: 'PUT', body: new Blob(r.chunks, { type: r.recorder.mimeType }) }).then(ok);
       setState({ status: 'idle', seconds: 0, lastTake: { id: take.id, name } });
     } catch (e) {
       setState({ status: 'idle', seconds: 0, error: `Could not save the take (is the local server running?): ${(e as Error).message}` });
     }
-  }, [title]);
+  }, [title, presentationId]);
 
   useEffect(() => () => {
     const r = session.current;
