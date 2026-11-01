@@ -150,3 +150,23 @@ Jakub asked for the three pieces that turn a presentation into a YouTube video.
 ![First MP4 frames](journey/17-first-mp4-frames.jpg)
 ![Recording](journey/16-recording.jpg)
 ![Layouts](journey/15-video-layouts.jpg)
+
+## Step 12: A logo
+
+Jakub asked for a more fun logo. Three design rounds, each a sheet of options rendered in the board's own style:
+
+1. Four directions: JZ with an orbiting swoosh, a hand-drawn play button, a marker drawing a squiggle, JZ as a node diagram.
+
+   ![Round 1](journey/18-logo-round1.jpg)
+
+2. Jakub: big outlined JZ with a smaller handwritten "motion". Three placements of "motion": a signature underneath, written across, side by side.
+
+   ![Round 2](journey/19-logo-round2.jpg)
+
+3. Jakub: between the first two placements, letters bolder and closer, "motion" bigger and overlapping. Chunky slanted letters with the J overlapping the Z, in three treatments: neon tube, 3D shadow, both.
+
+   ![Round 3](journey/20-logo-round3.jpg)
+
+Jakub picked **C** (neon tube + shadow, white "motion", green arrow). `npm run logo` now builds every size from one script: the full logo and JZ mark as SVG ("motion" converted from the Caveat font to outlines, so it needs no fonts), app icons, and favicons that drop the shadow and glow at 16 to 48 px so they stay crisp. The app header and browser tab use it.
+
+![Final logo set](journey/21-logo-final.jpg)
