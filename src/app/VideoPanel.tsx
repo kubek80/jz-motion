@@ -16,7 +16,7 @@ const api = async (url: string, init?: RequestInit) => {
 const mmss = (s: number) => `${Math.floor(s / 60)}:${String(Math.round(s % 60)).padStart(2, '0')}`;
 
 /** Takes (recordings), their tracks and offsets, and MP4 export. */
-export function VideoPanel({ presentation, presentationId, refreshKey }: { presentation: string; presentationId: string; refreshKey: unknown }) {
+export function VideoPanel({ presentation, presentationId, refreshKey, select }: { presentation: string; presentationId: string; refreshKey: unknown; select?: string }) {
   const [takes, setTakes] = useState<Take[] | null>(null);
   const [selected, setSelected] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
@@ -40,6 +40,8 @@ export function VideoPanel({ presentation, presentationId, refreshKey }: { prese
     }
   }, [presentationId]);
   useEffect(() => void load(), [load, refreshKey]);
+  // A take just made elsewhere (e.g. from the Timing window) opens here.
+  useEffect(() => { if (select) setSelected(select); }, [select]);
   useEffect(() => () => clearInterval(poll.current), []);
 
   const take = takes?.find((t) => t.id === selected);

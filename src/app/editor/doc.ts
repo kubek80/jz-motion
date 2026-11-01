@@ -3,9 +3,9 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export type Raw = Record<string, any>;
-export interface RawDoc { version: 1; title: string; scenes: RawScene[] }
+export interface RawDoc { version: 1; title: string; scenes: RawScene[]; voiceover?: { upload: string; duration: number; name?: string } }
 export interface RawScene { id: string; title?: string; inherit?: boolean; elements?: Raw[]; beats?: RawBeat[]; [k: string]: unknown }
-export interface RawBeat { title?: string; notes?: string; auto?: boolean; actions: Raw[] }
+export interface RawBeat { title?: string; notes?: string; auto?: boolean; cue?: number; actions: Raw[] }
 
 const clone = <T>(v: T): T => structuredClone(v);
 

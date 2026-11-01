@@ -45,6 +45,10 @@ Open the printed URL. New here? Start from the example **jz-motion: explainers, 
 
 **From a recording** (home screen): upload a video or audio recording. It is transcribed (any OpenAI-compatible speech-to-text service: OpenAI Whisper, Groq, a local Whisper server), a model builds a presentation whose beats are cued to when you say things, and the recording becomes its first take, ready to export as a video. Keys stay in your browser and go only to the model's API through the local dev server (`npm run dev` or `npm run preview`). To try it without a key: `npm run mock-llm`, then add the "Local mock" model.
 
+**Timing to a voice-over**
+
+**Timing** (top bar) opens the voice-over timeline: load your narration (any audio or video file), and every click of the presentation appears on its waveform. Drag a click to move it, double-click it to let it follow the one before, or press **Tap to place**, play, and press **T** as each line starts. The board plays along, with the current and next script lines (speaker notes) beside it. **Make a take for export** turns it into a take with the voice-over as its sound; export it from the Video tab.
+
 **Recording and video**
 
 1. In **Play** mode press **● Record** (tick *camera* to film yourself) and present as usual: talk and click through the beats. Your voice, camera and the moment of every click are saved as a *take* (in `takes/`).

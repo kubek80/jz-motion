@@ -268,6 +268,11 @@ export const Presentation = z.object({
   version: z.literal(1),
   title: z.string(),
   scenes: z.array(Scene).min(1),
+  /**
+   * A narration recorded or made separately, which beats are timed to: each beat's `cue` is seconds into it.
+   * `upload` is the file kept by the local server (uploads/).
+   */
+  voiceover: z.object({ upload: z.string(), duration: z.number().positive(), name: z.string().optional() }).optional(),
 });
 
 export type LayoutName = (typeof layoutNames)[number];

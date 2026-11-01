@@ -334,3 +334,18 @@ Jakub asked for a template that explains the app itself (features, screenshots, 
 - **Bug found by it:** a line chart's last point and value never appeared: points popped in only after the line had passed them, and the line never passes its last point. Points now pop in as the line arrives.
 
 ![The about template, scene by scene](journey/54-about-template.jpg)
+
+## Step 25: Timing to a voice-over
+
+Jakub wanted more control over timing, so a presentation can follow a voice-over. Beats could already carry a `cue` (seconds into a recording), but only presentations made from a recording had them, and there was no way to see or change them.
+
+- **Timing window** (top bar): the narration's waveform with a time ruler, and every click of the presentation (a beat plus the auto beats after it) as a marker in its scene's colour, with a bar showing how long its animation runs. Solid markers sit on their cue; dashed ones have none and follow the click before; red ones have a cue earlier than the previous click finishes.
+- **Placing clicks:** drag a marker (snaps to 0.05 s), double-click it to clear its cue, or switch on **Tap to place**, play, and press T as each line starts: each tap places the next click. Everything goes through undo.
+- **Reading along:** the board plays in sync with the audio, and beside it the current beat's speaker notes (the script line) and the next one with its time.
+- **Voice-over** is any audio or video file, stored by the local server (`uploads/`, served with range requests so the player can seek) and named in the presentation's new `voiceover` field. Without one, the same timeline runs on a silent clock for rehearsing.
+- **Make a take for export** builds a take from the cues, with the voice-over (copied, so the presentation keeps it) as its sound, and opens it in the Video tab.
+- The cue logic moved into one function (`cueClicks`) that both the export and the window use, so what you see is what exports.
+
+**Checked by:** unit tests (which clicks sit on a cue, which come too early) and a browser run on the about template with a generated 60-second voice-over: loading it, dragging a click to 20.5 s, tapping three clicks while it plays, and making a take that opens in the Video tab.
+
+![Timing window](journey/55-timing.jpg)

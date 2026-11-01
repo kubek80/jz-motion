@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { createReadStream, createWriteStream } from 'node:fs';
-import { rename, stat } from 'node:fs/promises';
+import { copyFile, rename, stat } from 'node:fs/promises';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { basename, join, resolve } from 'node:path';
 import { pipeline } from 'node:stream/promises';
@@ -97,7 +97,9 @@ async function takes(req: IncomingMessage, res: ServerResponse, parts: string[],
     const upload = join(TAKES_DIR, id, `upload-${randomUUID()}`);
     const from = query.get('from');
     // `from`: a recording uploaded earlier for transcription becomes the track, instead of a new upload.
-    if (from) await rename(uploadPath(from), upload);
+    // `copy`: keep the upload (a voice-over the presentation still uses).
+    if (from && query.get('copy')) await copyFile(uploadPath(from), upload);
+    else if (from) await rename(uploadPath(from), upload);
     else await pipeline(req, createWriteStream(upload));
     const ext = (from ? from.split('.').pop()! : query.get('ext') ?? 'webm').replace(/[^\w]/g, '') || 'webm';
     return send(res, 200, await addTrack(id, name, upload, ext, Number(query.get('offset') ?? 0)));
@@ -136,6 +138,29 @@ function startExport(body: any, appUrl: string): Job { // eslint-disable-line @t
   return job;
 }
 
+const MEDIA_TYPES: Record<string, string> = { mp3: 'audio/mpeg', m4a: 'audio/mp4', wav: 'audio/wav', ogg: 'audio/ogg', webm: 'video/webm', mp4: 'video/mp4', mov: 'video/quicktime', aac: 'audio/aac', flac: 'audio/flac' };
+
+/** An uploaded recording or voice-over, with range requests so players can seek. */
+async function serveUpload(req: IncomingMessage, res: ServerResponse, file: string) {
+  const path = uploadPath(file);
+  const info = await stat(path).catch(() => null);
+  if (!info) return send(res, 404, { error: 'not found' });
+  res.setHeader('content-type', MEDIA_TYPES[file.split('.').pop()!.toLowerCase()] ?? 'application/octet-stream');
+  res.setHeader('accept-ranges', 'bytes');
+  const range = /^bytes=(\d*)-(\d*)$/.exec(String(req.headers.range ?? ''));
+  if (range) {
+    const start = range[1] ? Number(range[1]) : Math.max(0, info.size - Number(range[2]));
+    const end = range[1] && range[2] ? Math.min(Number(range[2]), info.size - 1) : info.size - 1;
+    res.statusCode = 206;
+    res.setHeader('content-range', `bytes ${start}-${end}/${info.size}`);
+    res.setHeader('content-length', String(end - start + 1));
+    createReadStream(path, { start, end }).pipe(res);
+    return;
+  }
+  res.setHeader('content-length', String(info.size));
+  createReadStream(path).pipe(res);
+}
+
 async function serveExport(res: ServerResponse, file: string) {
   if (!/^[\w.-]+\.mp4$/.test(file)) return send(res, 404, { error: 'not found' });
   const path = join(EXPORTS_DIR, file);
@@ -159,6 +184,8 @@ export function jzmServer(): Plugin {
           const upload = await saveUpload(req, q.get('ext') ?? 'webm');
           return send(res, 200, await transcribe(upload, { baseURL: q.get('baseURL') ?? '', model: q.get('model') ?? 'whisper-1', apiKey: String(req.headers['x-api-key'] ?? '') || undefined }));
         }
+        if (url.pathname === '/api/uploads' && req.method === 'POST') return send(res, 200, { upload: await saveUpload(req, url.searchParams.get('ext') ?? 'mp3') });
+        if (parts[0] === 'uploads' && parts[1] && req.method === 'GET') return await serveUpload(req, res, parts[1]);
         if (url.pathname === '/api/images' && req.method === 'POST') return send(res, 200, await saveImage(req, url.searchParams.get('ext') ?? 'png'));
         if (parts[0] === 'images' && parts[1] && req.method === 'GET' && (await serveImage(res, parts[1]))) return;
         if (parts[0] === 'api' && parts[1] === 'library') {

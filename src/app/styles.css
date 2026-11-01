@@ -421,3 +421,47 @@ body.dragging { user-select: none; -webkit-user-select: none; }
 .ai-add svg { width: 15px; height: 15px; color: #ff4fd8; filter: drop-shadow(0 0 3px #ff4fd899); }
 .scene-adds .ai-add { justify-content: flex-start; }
 .add-scene .plus { color: #3dff8b; font-weight: 700; margin-right: 2px; }
+
+/* Timing window: board and script on top, the voice-over timeline below */
+.timing { position: fixed; inset: 0; z-index: 55; background: var(--bg); display: flex; flex-direction: column; }
+.timing-head { display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-bottom: 1px solid var(--line); }
+.timing-head h2 { margin: 0; font-size: 18px; }
+.file-btn { display: inline-flex; align-items: center; padding: 4px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); cursor: pointer; font-size: 13px; max-width: 420px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.file-btn:hover { border-color: var(--accent); }
+.file-btn input { display: none; }
+.timing-body { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 14px; padding: 14px 16px 6px; }
+.timing-board { min-height: 0; aspect-ratio: 16 / 9; max-height: 100%; max-width: 100%; justify-self: center; border-radius: 8px; overflow: hidden; background: #000; }
+.timing-board svg { width: 100%; height: 100%; }
+.timing-script { display: flex; flex-direction: column; gap: 12px; overflow: auto; }
+.timing-script > div { display: flex; flex-direction: column; gap: 4px; padding: 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
+.timing-script .now { border-color: color-mix(in srgb, var(--accent) 50%, var(--line)); }
+.timing-script .now p { font-size: 17px; line-height: 1.45; margin: 4px 0 0; }
+.timing-script .next { opacity: .7; }
+.timing-script .next p { font-size: 14px; line-height: 1.4; margin: 4px 0 0; }
+.timing-script .muted { font-size: 12px; }
+.timing-controls { display: flex; align-items: center; gap: 10px; padding: 6px 16px; }
+.timing-controls .play { width: 40px; height: 34px; font-size: 15px; }
+.timing-controls .clock { font-variant-numeric: tabular-nums; min-width: 120px; }
+.timing-controls .tap.on { border-color: #ff4fd8; color: #ff4fd8; box-shadow: 0 0 10px #ff4fd855; }
+.timing-controls .tap-now { border-color: #ff4fd8; color: #ff4fd8; }
+.timing-controls .zoom { display: flex; align-items: center; gap: 6px; }
+.timing-lane { height: 200px; overflow-x: auto; overflow-y: hidden; border-top: 1px solid var(--line); background: #0b0e11; cursor: text; flex-shrink: 0; }
+.timing-track { position: relative; height: 100%; }
+.timing-track .ruler { position: relative; height: 22px; border-bottom: 1px solid var(--line); }
+.timing-track .ruler span { position: absolute; top: 4px; font-size: 11px; color: var(--muted); transform: translateX(-50%); font-variant-numeric: tabular-nums; }
+.timing-track .ruler span::after { content: ''; position: absolute; left: 50%; top: 14px; height: 5px; border-left: 1px solid var(--line); }
+.timing-track .wave { position: relative; height: 80px; }
+.timing-track .wave canvas { position: absolute; top: 0; height: 80px; }
+.wave-empty { position: absolute; left: 24px; top: 30px; font-size: 12px; }
+.timing-track .clicks { position: relative; height: 96px; }
+.click { --c: #3ef0ff; position: absolute; top: -80px; bottom: 6px; border-left: 2px solid var(--c); cursor: ew-resize; }
+.click.auto { border-left-style: dashed; opacity: .6; }
+.click.late { --c: #ff6b7d; }
+.click .flag { position: absolute; bottom: 30px; left: -1px; max-width: 160px; padding: 2px 6px; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--c); background: color-mix(in srgb, var(--c) 14%, #0b0e11); border: 1px solid color-mix(in srgb, var(--c) 50%, transparent); border-radius: 0 6px 6px 0; }
+.click.row2 .flag { bottom: 54px; }
+.click .anim { position: absolute; bottom: 14px; left: 0; height: 6px; border-radius: 0 3px 3px 0; background: color-mix(in srgb, var(--c) 45%, transparent); }
+.click.current .flag { color: #0b0e11; background: var(--c); }
+.click.tap-next .flag { outline: 2px solid #ff4fd8; }
+.click:hover { z-index: 2; }
+.click:hover .flag { max-width: 320px; }
+.playhead { position: absolute; top: 0; bottom: 0; width: 0; border-left: 2px solid #fff05a; pointer-events: none; box-shadow: 0 0 8px #fff05a; }
