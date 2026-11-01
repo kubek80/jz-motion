@@ -609,9 +609,9 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
               </div>
             ))}
             {mode === 'edit' && doc && (
-              <div className="row">
-                <button className="add-scene" onClick={() => update(addScene(doc, sceneIndex))}>+ scene</button>
-                <button className="add-scene" onClick={() => setCreating({ kind: 'scene' })} title="Describe a scene; a model makes it">+ scene with AI</button>
+              <div className="scene-adds">
+                <button className="add-scene" onClick={() => update(addScene(doc, sceneIndex))}>+ New scene</button>
+                <button className="add-scene" onClick={() => setCreating({ kind: 'scene' })} title="Describe a scene; a model makes it">✦ New scene with AI</button>
               </div>
             )}
           </div>
