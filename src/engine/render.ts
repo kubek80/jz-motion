@@ -463,6 +463,34 @@ export class Stage {
 
   private handles: { corner: Corner; x: number; y: number }[] = [];
 
+  /**
+   * Where an element's editable text (`text`, `label` or `title`) is on screen, for editing it in place.
+   * Without that text yet (an icon with no label), the spot just below the element.
+   */
+  textField(id: string, field: string): { left: number; top: number; width: number; height: number; fontPx: number; color: string; align: 'start' | 'middle' | 'end' } | undefined {
+    const n = this.nodes.get(id);
+    if (!n) return undefined;
+    const color = getComputedStyle(n.outer).color;
+    const node = n.outer.querySelector<SVGTextElement>(`text[data-field="${field}"]`);
+    if (node) {
+      const r = node.getBoundingClientRect();
+      const scale = node.getScreenCTM()?.a ?? 1;
+      return { left: r.left, top: r.top, width: r.width, height: r.height, fontPx: Number(node.getAttribute('font-size')) * scale, color, align: (node.getAttribute('text-anchor') ?? 'middle') as 'start' | 'middle' | 'end' };
+    }
+    const b = this.boxOf(n);
+    const m = this.camGroup.getScreenCTM();
+    if (!m) return undefined;
+    const p = new DOMPoint(b.x, b.y + b.height + 8).matrixTransform(m);
+    const q = new DOMPoint(b.x + b.width, b.y + b.height + 60).matrixTransform(m);
+    return { left: p.x, top: p.y, width: q.x - p.x, height: q.y - p.y, fontPx: 40 * m.a, color, align: 'middle' };
+  }
+
+  /** Hides a piece of text while it is being edited in place. */
+  setTextHidden(id: string, field: string, hidden: boolean) {
+    const node = this.nodes.get(id)?.outer.querySelector<SVGTextElement>(`text[data-field="${field}"]`);
+    if (node) node.style.visibility = hidden ? 'hidden' : '';
+  }
+
   /** The resize handle under a board point, if any (see setSelection's `handles`). */
   handleAt(point: { x: number; y: number }): Corner | undefined {
     const r = 12 * this.unitsPerPixel;
@@ -634,7 +662,8 @@ export class Stage {
       parts.push({ kind: 'stroke', node: path, length, scale });
       return path;
     };
-    const write = (text: string, x: number, y: number, size: number, anchor: 'start' | 'middle' | 'end' = 'middle') => {
+    /** `field` marks text that can be edited in place (the element's text, label or title). */
+    const write = (text: string, x: number, y: number, size: number, anchor: 'start' | 'middle' | 'end' = 'middle', field?: string) => {
       const t = svgEl('text', {
         x,
         y,
@@ -646,6 +675,7 @@ export class Stage {
         fill: 'currentColor',
       }, fx);
       t.textContent = text;
+      if (field) t.setAttribute('data-field', field);
       const width = t.getComputedTextLength() || text.length * size * 0.42;
       const left = anchor === 'start' ? x : anchor === 'end' ? x - width : x - width / 2;
       const id = `${this.prefix}-c${uid++}`;
@@ -696,12 +726,12 @@ export class Stage {
         }
         if (el.label) {
           const ls = iconLabelSize(el.size);
-          write(el.label, 0, iconHeight(el.icon, el.size) / 2 + ls * 0.75, ls);
+          write(el.label, 0, iconHeight(el.icon, el.size) / 2 + ls * 0.75, ls, 'middle', 'label');
         }
         break;
       }
       case 'text':
-        write(el.text, 0, 0, el.size, el.align);
+        write(el.text, 0, 0, el.size, el.align, 'text');
         break;
       case 'box': {
         const w = el.width / 2;
@@ -709,7 +739,7 @@ export class Stage {
         const r = Math.min(el.radius, w, h);
         const d = `M${-w + r} ${-h}H${w - r}Q${w} ${-h} ${w} ${-h + r}V${h - r}Q${w} ${h} ${w - r} ${h}H${-w + r}Q${-w} ${h} ${-w} ${h - r}V${-h + r}Q${-w} ${-h} ${-w + r} ${-h}Z`;
         stroke(d, board.stroke, fx, el.dashed);
-        if (el.label) write(el.label, 0, 0, Math.min(56, el.height * 0.4));
+        if (el.label) write(el.label, 0, 0, Math.min(56, el.height * 0.4), 'middle', 'label');
         break;
       }
       case 'arrow': {
@@ -727,7 +757,7 @@ export class Stage {
           let ny = (end.x - start.x) / len;
           if (ny > 0 || (ny === 0 && nx < 0)) { nx = -nx; ny = -ny; }
           const vertical = Math.abs(nx) > 0.9;
-          write(el.label, mid.x + nx * 34, mid.y + ny * 34, 40, vertical ? (nx > 0 ? 'start' : 'end') : 'middle');
+          write(el.label, mid.x + nx * 34, mid.y + ny * 34, 40, vertical ? (nx > 0 ? 'start' : 'end') : 'middle', 'label');
         }
         flowPath = svgEl('path', {
           d: shaft.getAttribute('d')!,
@@ -761,7 +791,7 @@ export class Stage {
         for (const cell of iso.progress) parts.push({ kind: 'cell', cell });
         if (el.label) {
           const { box } = projectIso(isoParts, iso.view, el.scale);
-          write(el.label, 0, box.y + box.height + ISO_LABEL_SIZE * 0.85, ISO_LABEL_SIZE);
+          write(el.label, 0, box.y + box.height + ISO_LABEL_SIZE * 0.85, ISO_LABEL_SIZE, 'middle', 'label');
         }
         renderIso(iso);
         break;

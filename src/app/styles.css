@@ -220,6 +220,12 @@ input, textarea, select { font: inherit; color: var(--text); background: var(--b
 .transcript { padding: 8px 12px 0; font-size: 13px; }
 .transcript ul { max-height: 160px; overflow: auto; padding-left: 18px; }
 
+.inline-edit {
+  position: absolute; z-index: 5; field-sizing: content; min-width: 3ch; max-width: 90%; padding: 0 0.25em;
+  font-family: 'Caveat', cursive; font-weight: 700; line-height: 1.2; background: #0d1114e6;
+  border: 1px dashed var(--accent); border-radius: 4px; outline: none; text-shadow: 0 0 6px currentColor;
+}
+
 @media (max-width: 900px) {
   .main { flex-direction: column; }
   .left, .right { width: auto; border: 0; border-top: 1px solid var(--line); }
