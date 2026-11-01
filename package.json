@@ -10,7 +10,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "icons": "node scripts/import-icons.mjs",
-    "mock-llm": "node scripts/mock-llm.mjs"
+    "mock-llm": "node scripts/mock-llm.mjs",
+    "export": "tsx server/cli-export.ts"
   },
   "dependencies": {
     "@fontsource/caveat": "^5.3.0",
@@ -27,7 +28,9 @@
     "@types/react-dom": "^19.3.0",
     "@types/three": "^0.181.0",
     "@vitejs/plugin-react": "^6.1.2",
+    "playwright": "^1.63.0",
     "simple-icons": "^16.36.0",
+    "tsx": "^4.23.15",
     "typescript": "~5.9",
     "vite": "^8.3.5",
     "vitest": "^4.1.12"

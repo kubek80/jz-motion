@@ -79,6 +79,24 @@ A 3D object drawn in the same marker style: outlines in its color, faces filled 
 - `set-values` animates the chart to new numbers. The value axis is scaled to fit every value the chart shows in the scene; set `max` to fix it.
 - `unit` is appended to the value labels, for example `"%"` or `" GB"`.
 
+## Video layout
+
+For video export, a beat or a scene can say where the recorded camera goes while it plays. A beat without one uses its scene's; the default is `pip`.
+
+| `layout` | Frame |
+|---|---|
+| `board` | The board only. |
+| `pip` | The board, with the camera small in the bottom-right corner. |
+| `pip-left` | The same, bottom-left. |
+| `camera` | The camera full screen, with the board small in the top-right corner. |
+| `side` | Two cameras side by side (the `track` one on the left). |
+
+`track` names the recording to show, for example `"me"` (default) or `"friend"`. Layouts fall back gracefully: without a camera recording every layout shows the board.
+
+```json
+{ "title": "Over to Marek", "layout": "camera", "track": "friend", "actions": [ ... ] }
+```
+
 ## Beats and actions
 
 A beat is one click while presenting. Its actions run in order: each starts when the previous one ends, unless it says `"start": "with"` (start together with the previous action). Every action also takes `delay` (seconds) and `duration` (seconds, default depends on the action). A beat with `"auto": true` plays straight after the previous beat.

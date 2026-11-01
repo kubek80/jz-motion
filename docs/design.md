@@ -16,6 +16,7 @@ A web app for technical explainer presentations and videos: a dark blackboard, l
 | 3D | `iso` elements: three.js does the 3D math and isometric projection; faces are drawn as SVG paths filled with the board color. | 3D objects glow, draw on and zoom exactly like the rest; no second rendering style. |
 | Glow | Tight inner glow plus a dimmed soft halo, crisp stroke on top; handwriting at weight 700. | Saturated colors without blurring text. |
 | LLMs | Any OpenAI-compatible endpoint; the system prompt is `docs/format.md` + `docs/library.md`; compile errors go back to the model. Calls go through the dev server's `/api/llm` proxy. | One code path for OpenRouter, RunPod and self-hosted; docs stay the single source of truth. |
+| Video | A *performance* (when each beat started, recorded from the presenter's clicks or generated) fully determines every frame. Export renders frames exactly in headless Chromium and FFmpeg composites camera tracks and mixes audio. | Natural timing from talking; no screen recording; same output every time. |
 | Timing | Beats. One beat is one presenter click. In video mode beats play back to back. | One data model for live presenting and video. |
 
 ## Concepts
@@ -47,6 +48,9 @@ Presentation
 | `src/app/` | App: Edit and Play modes, JSON tab, undo/redo, present mode. |
 | `src/ai/` | LLM generation: system prompt built from the docs, client with repair loop, model profiles. |
 | `src/app/editor/` | Editor: document edit operations (`doc.ts`), schema-generated property forms, library palette, beats editor. |
+| `src/video/` | Performances (timing), layout over time, FFmpeg command builder (pure, tested). |
+| `src/render/` | The page export drives: board only, frame by frame. |
+| `server/` | Local server API (Vite plugin): LLM proxy, takes (recordings), audio auto-sync, export jobs; `cli-export.ts`. |
 | `src/examples/*.json` | Example presentations, loadable from the app. |
 
 ## Phases
@@ -59,7 +63,8 @@ Presentation
 | 3 | Present mode polish: speaker notes view, scene transitions | Basic version done |
 | 4 | Charts (bars grow, line draws, counters) and hand-drawn custom clipart | Charts done (bar, line, pie, set-values) |
 | 5 | LLM docs and generation: a model writes scenes that load; model switching via OpenRouter / RunPod | First version: AI tab, compare, repair loop |
-| Later | Video: export through HyperFrames, presenter camera overlays, layouts (picture-in-picture, side by side) | |
+| 6 | Video: export, recording narration and camera, layouts, friend's track with auto-sync | First version |
+| Later | Layout transitions, background removal, teleprompter / notes view, faster export (GPU) | |
 
 ## Known limits (phase 0)
 

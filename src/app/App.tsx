@@ -3,6 +3,8 @@ import { compile, Stage, type StagePosition } from '../engine';
 import type { Camera } from '../engine/schema';
 import intro from '../examples/intro.json';
 import { AiPanel } from './AiPanel';
+import { VideoPanel } from './VideoPanel';
+import { useRecorder } from './useRecorder';
 import { Beats } from './editor/Beats';
 import {
   addElement, addScene, deleteElement, deleteScene, idsInScope, moveItem, renameElement, uniqueId,
@@ -35,7 +37,7 @@ function saveDraft(text: string) {
 }
 
 type Mode = 'edit' | 'play';
-type Panel = 'props' | 'json' | 'ai';
+type Panel = 'props' | 'json' | 'ai' | 'video';
 
 interface Drag {
   pointer: number;
@@ -67,6 +69,11 @@ export function App() {
   const editCams = useRef(new Map<number, Camera>());
   const posRef = useRef(pos);
   posRef.current = pos;
+  const [withCamera, setWithCamera] = useState(true);
+  const docRef = useRef<RawDoc | null>(null);
+  const recorder = useRecorder(stage, () => JSON.parse(history.value), () => docRef.current?.title ?? 'take');
+  const preview = useRef<HTMLVideoElement>(null);
+  const recording = recorder.state.status === 'recording';
   const sceneIndex = pos.scene;
 
   useEffect(() => saveDraft(text), [text]);
@@ -79,6 +86,11 @@ export function App() {
       return null;
     }
   }, [text]);
+
+  docRef.current = doc;
+  useEffect(() => {
+    if (preview.current) preview.current.srcObject = recorder.state.stream ?? null;
+  }, [recorder.state.stream]);
 
   const result = useMemo(() => {
     try {
@@ -404,6 +416,7 @@ export function App() {
             onWheel={onWheel}
           >
             <div className="host" ref={stageHost} />
+            <video ref={preview} className={recording && recorder.state.stream?.getVideoTracks().length ? 'cam-preview on' : 'cam-preview'} autoPlay muted playsInline />
             {!result.ok && mode === 'edit' && <div className="frame-note">The board shows the last valid version. Fix: {result.errors[0]}</div>}
           </div>
 
@@ -415,6 +428,20 @@ export function App() {
                 <button onClick={() => (pos.playing ? stage.current?.pause() : stage.current?.playAll())}>{pos.playing ? 'Pause' : 'Play all'}</button>
                 <input type="range" min={0} max={pos.duration || 1} step={0.01} value={pos.time} onChange={(e) => stage.current?.seek(Number(e.target.value))} />
                 <span className="time">{pos.time.toFixed(1)}s / {pos.duration.toFixed(1)}s</span>
+              </div>
+              <div className="controls record">
+                {recording ? (
+                  <button className="rec on" onClick={() => void recorder.stop()}>■ Stop recording · {Math.floor(recorder.state.seconds / 60)}:{String(Math.floor(recorder.state.seconds % 60)).padStart(2, '0')}</button>
+                ) : (
+                  <>
+                    <button className="rec" disabled={recorder.state.status !== 'idle'} onClick={() => void recorder.start(withCamera)} title="Records your voice (and camera) and when you click; export the take from the Video tab">
+                      {recorder.state.status === 'saving' ? 'Saving…' : recorder.state.status === 'starting' ? 'Starting…' : '● Record'}
+                    </button>
+                    <label className="check"><input type="checkbox" checked={withCamera} onChange={(e) => setWithCamera(e.target.checked)} /> camera</label>
+                  </>
+                )}
+                {recorder.state.lastTake && !recording && <span className="muted">Saved “{recorder.state.lastTake.name}”. Export it from the <button className="link" onClick={() => setPanel('video')}>Video</button> tab.</span>}
+                {recorder.state.error && <span className="error-text">{recorder.state.error}</span>}
               </div>
               {compiledScene && (
                 <ol className="beats">
@@ -443,11 +470,14 @@ export function App() {
         <aside className="right">
           <div className="tabs">
             <button className={panel === 'props' ? 'on' : ''} onClick={() => setPanel('props')} disabled={mode !== 'edit'}>Properties</button>
-            <button className={panel === 'json' || (mode !== 'edit' && panel !== 'ai') ? 'on' : ''} onClick={() => setPanel('json')}>JSON</button>
+            <button className={panel === 'json' || (mode !== 'edit' && panel === 'props') ? 'on' : ''} onClick={() => setPanel('json')}>JSON</button>
             <button className={panel === 'ai' ? 'on' : ''} onClick={() => setPanel('ai')}>AI</button>
+            <button className={panel === 'video' ? 'on' : ''} onClick={() => setPanel('video')}>Video</button>
           </div>
           {panel === 'ai' ? (
             <AiPanel current={text} onUse={replaceAll} />
+          ) : panel === 'video' ? (
+            <VideoPanel presentation={text} refreshKey={recorder.state.lastTake?.id} />
           ) : mode === 'edit' && panel === 'props' && doc ? (
             <Inspector
               doc={doc}
