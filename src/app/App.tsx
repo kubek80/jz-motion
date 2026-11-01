@@ -1,9 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { compile, icons, Stage, type StagePosition } from '../engine';
 import type { Camera } from '../engine/schema';
+import { palette, type ColorName } from '../engine/palette';
 import { AiPanel } from './AiPanel';
 import { Creator, type CreateKind } from './Creator';
 import { Settings } from './Settings';
+import { LibraryManager } from './LibraryManager';
+import { confirmDialog } from './confirm';
 import { insertScene } from '../ai/assistant';
 import type { ChatMessageView } from './Chat';
 import { JsonPanel } from './JsonPanel';
@@ -111,13 +114,13 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
   const [chatLog, setChatLog] = useState<ChatMessageView[]>([]);
   const [creating, setCreating] = useState<CreateKind | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [libraryOpen, setLibraryOpen] = useState(false);
   /** Bumped when the library gains an item, so the palette shows it. */
   const [libraryVersion, setLibraryVersion] = useState(0);
   const docRef = useRef<RawDoc | null>(null);
   const recorder = useRecorder(stage, () => JSON.parse(history.value), () => docRef.current?.title ?? 'take', id);
   const preview = useRef<HTMLVideoElement>(null);
   const recording = recorder.state.status === 'recording';
-  const sceneIndex = pos.scene;
 
   // Save shortly after edits stop, and on the way out.
   const saved = useRef(initial);
@@ -140,6 +143,8 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
   }, [text]);
 
   docRef.current = doc;
+  // The board can still be on a scene that was just deleted; keep to the scenes that exist.
+  const sceneIndex = doc ? Math.min(pos.scene, doc.scenes.length - 1) : pos.scene;
   useEffect(() => {
     if (preview.current) preview.current.srcObject = recorder.state.stream ?? null;
   }, [recorder.state.stream]);
@@ -152,7 +157,7 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
     }
   }, [text]);
 
-  const scene = doc?.scenes[Math.min(sceneIndex, doc.scenes.length - 1)];
+  const scene = doc?.scenes[sceneIndex];
   const editable = useMemo(() => new Set((scene?.elements ?? []).map((e) => e.id)), [scene]);
   const ids = useMemo(() => (doc ? [...idsInScope(doc, sceneIndex)] : []), [doc, sceneIndex]);
 
@@ -229,6 +234,24 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
   };
 
   // ---------------------------------------------------------------- editing actions
+
+  const removeScene = async (i: number) => {
+    if (!doc) return;
+    const s = doc.scenes[i];
+    const ok = await confirmDialog({
+      title: `Delete scene ${i + 1}, “${s.title ?? s.id}”?`,
+      message: `${s.elements?.length ?? 0} elements and ${s.beats?.length ?? 0} beats go with it. Undo (Ctrl+Z) brings it back.`,
+      confirm: 'Delete scene', danger: true,
+    });
+    const now = docRef.current;
+    if (!ok || !now || now.scenes[i] !== s) return;
+    // Stay on the same scene, or the one before it if it was the open one or came earlier.
+    editCams.current.clear(); // its views are kept by scene number, which shift
+    openScene.current = i <= sceneIndex ? Math.max(0, sceneIndex - 1) : sceneIndex;
+    setPicked([]);
+    setSelection(null);
+    update(deleteScene(now, i));
+  };
 
   const deletePicked = (list: string[]) => {
     if (!doc || !list.length) return;
@@ -513,10 +536,23 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
   // ---------------------------------------------------------------- render
 
   const compiledScene = result.ok ? result.presentation.scenes[sceneIndex] : undefined;
+  const elementColors = useMemo(
+    () => Object.fromEntries((compiledScene?.elements ?? []).map((e) => [e.id, palette[(compiledScene?.final[e.id]?.color ?? e.color ?? 'white') as ColorName] ?? palette.white])),
+    [compiledScene],
+  );
 
   return (
     <div className={`app mode-${mode}`}>
       {settingsOpen && <Settings onClose={() => setSettingsOpen(false)} />}
+      {libraryOpen && (
+        <LibraryManager
+          onClose={() => setLibraryOpen(false)}
+          onAdd={(it) => add(it)}
+          onCreate={(kind) => setCreating(kind)}
+          onChanged={() => setLibraryVersion((v) => v + 1)}
+          version={libraryVersion}
+        />
+      )}
       {creating && doc && (
         <Creator
           initialKind={creating}
@@ -526,7 +562,8 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
           onSaved={(kind, name) => {
             setCreating(null);
             setLibraryVersion((v) => v + 1);
-            add(kind === '3d' ? { kind: 'iso', name } : { kind: 'icon', name });
+            // From the library window, the new item just shows up there; otherwise it goes on the board.
+            if (!libraryOpen) add(kind === '3d' ? { kind: 'iso', name } : { kind: 'icon', name });
           }}
           onAddScene={(scene) => {
             setCreating(null);
@@ -562,7 +599,7 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
                 {mode === 'edit' && doc && (
                   <span className="tools" onClick={(e) => e.stopPropagation()}>
                     <button title="Move up" onClick={() => update({ ...doc, scenes: moveItem(doc.scenes, i, i - 1) })}>↑</button>
-                    <button title="Delete scene" disabled={doc.scenes.length < 2} onClick={() => confirm(`Delete scene "${s.title ?? s.id}"?`) && update(deleteScene(doc, i))}>✕</button>
+                    <button title="Delete scene" disabled={doc.scenes.length < 2} onClick={() => void removeScene(i)}>✕</button>
                   </span>
                 )}
               </div>
@@ -574,7 +611,7 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
               </div>
             )}
           </div>
-          {mode === 'edit' && doc && <Library onAdd={add} arrowActive={arrowTool} onCreate={() => setCreating('icon')} version={libraryVersion} />}
+          {mode === 'edit' && doc && <Library onAdd={add} arrowActive={arrowTool} onCreate={() => setCreating('icon')} onBrowse={() => setLibraryOpen(true)} version={libraryVersion} />}
         </aside>
 
         <section className="center">
@@ -665,6 +702,8 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
               beats={scene.beats ?? []}
               selection={selection}
               picked={picked.filter((id) => ids.includes(id))}
+              timing={compiledScene?.beats.map((b) => b.actions)}
+              colors={elementColors}
               onSelect={(s) => { setSelection(s); if (s) setPicked([]); }}
               onChange={(beats) => update(updateBeats(doc, sceneIndex, () => beats))}
             />

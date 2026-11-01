@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Performance } from '../video/performance';
+import { confirmDialog } from './confirm';
 
 interface Track { name: string; file: string; offset: number; hasVideo: boolean; hasAudio: boolean; duration: number }
 interface Take { id: string; name: string; created: string; performance: Performance; tracks: Track[]; presentationId?: string }
@@ -112,7 +113,7 @@ export function VideoPanel({ presentation, presentationId, refreshKey }: { prese
                       {t.name !== 'me' && t.hasAudio && (
                         <button title="Line this track up with “me” by matching the sound (a clap at the start helps)" disabled={!!busy} onClick={() => act('sync', () => api(`/api/takes/${take.id}/sync/${t.name}`, { method: 'POST' }))}>Auto-sync</button>
                       )}
-                      <button className="danger" title="Remove track" onClick={() => confirm(`Remove track "${t.name}"?`) && act('remove', () => api(`/api/takes/${take.id}`, { method: 'PATCH', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ removeTracks: [t.name] }) }))}>✕</button>
+                      <button className="danger" title="Remove track" onClick={async () => (await confirmDialog({ title: `Remove the recording “${t.name}”?`, message: 'It is removed from this take.', confirm: 'Remove', danger: true })) && act('remove', () => api(`/api/takes/${take.id}`, { method: 'PATCH', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ removeTracks: [t.name] }) }))}>✕</button>
                     </td>
                   </tr>
                 ))}
@@ -135,7 +136,7 @@ export function VideoPanel({ presentation, presentationId, refreshKey }: { prese
               </label>
             </div>
             <label className="check"><input type="checkbox" checked={asRecorded} onChange={(e) => setAsRecorded(e.target.checked)} /> Use the presentation as it was when recorded (keeps the timing exact)</label>
-            <button className="danger" onClick={() => confirm('Delete this take and its recordings?') && act('delete', async () => { await api(`/api/takes/${take.id}`, { method: 'DELETE' }); setSelected(''); })}>Delete take</button>
+            <button className="danger" onClick={async () => (await confirmDialog({ title: 'Delete this take?', message: 'Its recordings are deleted too. This can\'t be undone.', confirm: 'Delete', danger: true })) && act('delete', async () => { await api(`/api/takes/${take.id}`, { method: 'DELETE' }); setSelected(''); })}>Delete take</button>
           </>
         )}
         <p className="muted hint">Layouts are set per beat or scene (properties: <b>layout</b>, <b>track</b>): board, pip, pip-left, camera, side.</p>

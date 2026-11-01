@@ -11,6 +11,18 @@ const ok = (input: unknown): CompiledPresentation => {
 const deck = (scene: object) => ({ version: 1, title: 't', scenes: [{ id: 's', ...scene }] });
 
 describe('compile', () => {
+  it('times each action from the start of its beat', () => {
+    const r = compile({
+      version: 1, title: 't',
+      scenes: [{ id: 's', elements: [{ id: 'a', type: 'box', x: 0, y: 0, width: 10, height: 10 }, { id: 'b', type: 'box', x: 50, y: 0, width: 10, height: 10 }], beats: [
+        { actions: [{ do: 'wait', duration: 2 }] },
+        { actions: [{ do: 'draw', target: 'a', duration: 1 }, { do: 'draw', target: 'b', duration: 0.5, start: 'with' }, { do: 'wait', duration: 1, delay: 0.5 }] },
+      ] }],
+    });
+    if (!r.ok) throw new Error(r.errors.join('; '));
+    expect(r.presentation.scenes[0].beats[1].actions).toEqual([{ start: 0, end: 1 }, { start: 0, end: 0.5 }, { start: 1, end: 2 }]);
+  });
+
   it('compiles the bundled example', () => {
     const p = ok(intro);
     expect(p.scenes.map((s) => s.id)).toEqual(['idea', 'how', 'next']);

@@ -48,7 +48,7 @@ Presentation
 | `src/engine/iso.ts`, `iso-models.json` | Isometric 3D: projection, hidden faces, paint order; preset models. |
 | `src/engine/render.ts` | `Stage`: builds SVG, the glow and board texture, and a GSAP timeline per scene; presenter navigation. |
 | `src/engine/library.ts`, `icons.generated.ts`, `icons.custom.json` | Icon library. `npm run icons` merges Tabler, Simple Icons and the hand-drawn JSON into `icons.generated.ts` and `docs/library.md`. |
-| `src/app/` | `Root` (home or an open presentation), `Home` (prompt box `StartBox`), `Settings` + `settingsStore.ts` (models, model per start mode, transcription), `Creator` (scene / icon / clipart / 3D with AI), `Editor` (Edit and Play modes, JSON tab, undo/redo, present mode), `store.ts` (files or browser storage). |
+| `src/app/` | `Root` (home or an open presentation), `Home` (prompt box `StartBox`), `Settings` + `settingsStore.ts` (models, model per start mode, transcription), `Creator` (scene / icon / clipart / 3D with AI), `LibraryManager` (full-screen library), `confirm.tsx` (in-app confirmations), `Editor` (Edit and Play modes, JSON tab, undo/redo, present mode), `store.ts` (files or browser storage). |
 | `src/ai/` | LLM work: `client.ts` (ask for JSON with repair loop), `prompt.ts` (docs as context), `assistant.ts` (chat, script, transcript, one new scene, change one scene), `iconPrompt.ts` (rules and checks for icons, clipart and 3D models), model profiles. |
 | `src/app/editor/` | Editor: document edit operations (`doc.ts`), schema-generated property forms, library palette, beats editor. |
 | `src/video/` | Performances (timing), layout over time, FFmpeg command builder (pure, tested). |

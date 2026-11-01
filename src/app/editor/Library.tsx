@@ -9,7 +9,7 @@ export type AddRequest =
   | { kind: 'text' | 'box' | 'arrow' | 'chart' };
 
 /** Palette of things to put on the board. Clicking adds the item in the middle of the view. */
-export function Library({ onAdd, arrowActive, onCreate, version }: { onAdd: (r: AddRequest) => void; arrowActive: boolean; onCreate?: () => void; version?: number }) {
+export function Library({ onAdd, arrowActive, onCreate, onBrowse, version }: { onAdd: (r: AddRequest) => void; arrowActive: boolean; onCreate?: () => void; onBrowse?: () => void; version?: number }) {
   const [query, setQuery] = useState('');
   const shown = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -36,8 +36,11 @@ export function Library({ onAdd, arrowActive, onCreate, version }: { onAdd: (r: 
           Arrow
         </button>
       </div>
-      <input className="search" placeholder="Search icons, logos, clipart…" value={query} onChange={(e) => setQuery(e.target.value)} />
-      {onCreate && <button className="add" onClick={onCreate} title="Describe an icon, clipart or 3D model and let a model make it">+ New icon, clipart or 3D with AI</button>}
+      <div className="lib-search">
+        <input className="search" placeholder="Search icons, logos, clipart…" value={query} onChange={(e) => setQuery(e.target.value)} />
+        {onBrowse && <button onClick={onBrowse} title="Open the whole library: big previews, details, manage what you made">⤢</button>}
+      </div>
+      {onCreate && <button className="add" onClick={onCreate} title="Describe an icon, clipart or 3D model and let a model make it">+ New with AI</button>}
       {groups.map(([title, list]) => list.length > 0 && (
         <div key={title}>
           <div className="subhead">{title}</div>
@@ -53,7 +56,7 @@ export function Library({ onAdd, arrowActive, onCreate, version }: { onAdd: (r: 
       ))}
       <div className="subhead">3D models</div>
       <div className="model-list">
-        {Object.entries(isoModels).map(([name, m]) => (
+        {Object.entries(isoModels).filter(([name, m]) => !query.trim() || name.includes(query.trim().toLowerCase()) || m.description.toLowerCase().includes(query.trim().toLowerCase())).map(([name, m]) => (
           <button key={name} title={m.description} onClick={() => onAdd({ kind: 'iso', name })}>{name}</button>
         ))}
       </div>

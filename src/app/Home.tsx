@@ -3,6 +3,8 @@ import { compile } from '../engine/compile';
 import { cuePerformance } from '../video/performance';
 import { CreateWithAi, type RecordingSource } from './CreateWithAi';
 import { Settings } from './Settings';
+import { LibraryManager } from './LibraryManager';
+import { confirmDialog } from './confirm';
 import { StartBox, type Start } from './StartBox';
 import { examples } from './examples';
 import { Preview } from './Preview';
@@ -23,6 +25,7 @@ export function Home({ store, onOpen }: { store: Store; onOpen: (id: string) => 
   const [error, setError] = useState<string | null>(null);
   const [start, setStart] = useState<Start | null>(null);
   const [settings, setSettings] = useState(false);
+  const [library, setLibrary] = useState(false);
 
   const load = async () => {
     try {
@@ -75,8 +78,10 @@ export function Home({ store, onOpen }: { store: Store; onOpen: (id: string) => 
         <CreateWithAi kind={start.mode} initialText={start.text} initialFile={start.file} modelId={start.modelId} onClose={() => setStart(null)} onCreate={createFromAi} />
       )}
       {settings && <Settings onClose={() => setSettings(false)} />}
+      {library && <LibraryManager onClose={() => setLibrary(false)} />}
       <header className="home-bar">
         <span className="spacer" />
+        <button onClick={() => setLibrary(true)} title="Icons, logos, clipart and 3D models">Library</button>
         <button onClick={() => setSettings(true)} title="Models, API keys, transcription">⚙ Settings</button>
       </header>
       <div className="hero">
@@ -131,7 +136,7 @@ export function Home({ store, onOpen }: { store: Store; onOpen: (id: string) => 
                     Rename
                   </button>
                   <button disabled={!p.text} onClick={() => p.text && void act(() => store.create(retitle(p.text!, `${p.title} (copy)`)))}>Duplicate</button>
-                  <button className="danger" onClick={() => confirm(`Delete "${p.title}"? This can't be undone.`) && void act(() => store.remove(p.id))}>Delete</button>
+                  <button className="danger" onClick={async () => (await confirmDialog({ title: `Delete “${p.title}”?`, message: "This can't be undone.", confirm: 'Delete', danger: true })) && void act(() => store.remove(p.id))}>Delete</button>
                 </span>
               </div>
             </div>
