@@ -183,3 +183,9 @@ Jakub tried the app and asked for:
 
 ![Home](journey/22-home.jpg)
 ![Resize, swatches, arrow tool](journey/23-resize-swatches-arrow.jpg)
+
+## Step 14: Markers instead of dots
+
+Jakub liked the palette but wanted the actual marker tips instead of circles. Colors are now a tray of markers (chisel tip, collar, a colour band on the body): the chosen one stands up out of the tray and glows in its ink, and a marker lifts halfway when hovered. One detail found by the screenshots: the tray hides the markers' lower halves, and a hidden-overflow box can still be scrolled (the test tool scrolled it while hovering), which shifted every marker; `overflow: clip` can't be scrolled.
+
+![Marker tray: at rest, and hovering pink](journey/24-marker-tray.jpg)
