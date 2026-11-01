@@ -35,8 +35,8 @@ All elements take `id`, `color` and optionally `visible`. An element that a beat
 |---|---|---|
 | `icon` | `icon`, `x`, `y`, `size` (120), `label` | `x`, `y` is the center. Label is written under the icon. Names of icons, logos and clipart: [library.md](library.md). Clipart is multi-coloured (`color` only affects its uncoloured parts) and `size` is its width. |
 | `text` | `text`, `x`, `y`, `size` (56), `align` (`middle`, `start`, `end`) | Handwritten marker font. `y` is the vertical middle of the line. |
-| `box` | `x`, `y`, `width`, `height`, `radius` (18), `label`, `dashed` | `x`, `y` is the center. Label is written inside. |
-| `arrow` | `from`, `to`, `curve` (0), `head` (`end`, `start`, `both`, `none`), `label`, `dashed` | See below. |
+| `box` | `x`, `y`, `width`, `height`, `radius` (18), `label`, `line` (`solid`, `dashed`, `dotted`), `weight` (`normal`, `bold`) | `x`, `y` is the center. Label is written inside. |
+| `arrow` | `from`, `to`, `curve` (0), `head` (`end`, `start`, `both`, `none`), `label`, `line` (`solid`, `dashed`, `dotted`), `weight` (`normal`, `bold`: thicker, bigger head) | See below. |
 | `iso` | `model` or `parts`, `x`, `y`, `scale` (70), `rotate` (0), `label` | Isometric 3D object, see below. `x`, `y` is its middle. |
 | `chart` | `kind` (`bar`, `line`, `pie`), `data`, `x`, `y`, `width` (640), `height` (380), `title`, `unit` (""), `max`, `values` (true) | See below. `x`, `y` is its middle. |
 
@@ -48,6 +48,7 @@ All elements take `id`, `color` and optionally `visible`. An element that a beat
 - Anchors: `center`, `top`, `bottom`, `left`, `right`, `top-left`, `top-right`, `bottom-left`, `bottom-right`. The bottom of an icon is below its label.
 - `curve` bends the arrow: `0.2` is a gentle bend to the left of the direction of travel, negative bends right.
 - The label sits above the arrow (to the side for vertical arrows).
+- `"dashed": true` (older files) is the same as `"line": "dashed"`.
 
 ### Isometric 3D (`iso`)
 

@@ -74,6 +74,10 @@ export interface StagePosition {
 
 let uid = 0;
 
+type LineStyle = 'solid' | 'dashed' | 'dotted';
+/** A box's or arrow's line style; `dashed: true` is the older spelling of "dashed". */
+const lineOf = (el: { line?: LineStyle; dashed?: boolean }): LineStyle => el.line ?? (el.dashed ? 'dashed' : 'solid');
+
 /** Plays a compiled presentation into a container. */
 export class Stage {
   readonly svg: SVGSVGElement;
@@ -626,12 +630,13 @@ export class Stage {
     const outer = svgEl('g', { 'data-id': el.id, class: `jzm-el jzm-${el.type}` }, this.layer);
     const fx = svgEl('g', {}, outer);
     const parts: DrawPart[] = [];
-    const stroke = (d: string, width: number, parent: SVGElement = fx, dashed = false, scale = 1): SVGGraphicsElement => {
+    const stroke = (d: string, width: number, parent: SVGElement = fx, line: LineStyle = 'solid', scale = 1): SVGGraphicsElement => {
+      const patterned = line !== 'solid';
       // A path with several pieces draws them one after another (a dash pattern restarts on every piece).
-      const pieces = dashed ? [d] : splitSubpaths(d);
+      const pieces = patterned ? [d] : splitSubpaths(d);
       if (pieces.length > 1) {
         const group = svgEl('g', {}, parent);
-        for (const piece of pieces) stroke(piece, width, group, false, scale);
+        for (const piece of pieces) stroke(piece, width, group, 'solid', scale);
         return group;
       }
       const path = svgEl('path', {
@@ -642,14 +647,15 @@ export class Stage {
         'stroke-linecap': 'round',
         'stroke-linejoin': 'round',
       }, parent);
-      if (dashed) {
-        // Dashed strokes are drawn through a mask so the dash pattern and the draw-on don't fight.
+      if (patterned) {
+        // Dashed and dotted strokes are drawn through a mask so the dash pattern and the draw-on don't fight.
         const id = `${this.prefix}-m${uid++}`;
         // The default mask region is a percentage of the viewport, which cuts off shapes drawn around their center.
         const mask = svgEl('mask', { id, maskUnits: 'userSpaceOnUse', x: -1e5, y: -1e5, width: 2e5, height: 2e5, 'data-scene': '' }, this.defs);
         // userSpaceOnUse: the mask follows the element's own transforms.
         const reveal = svgEl('path', { d, fill: 'none', stroke: '#fff', 'stroke-width': width + 6, 'stroke-linecap': 'round' }, mask);
-        path.setAttribute('stroke-dasharray', `${width * 3} ${width * 3}`);
+        // Dots are zero-length dashes with round ends.
+        path.setAttribute('stroke-dasharray', line === 'dotted' ? `0 ${width * 2.4}` : `${width * 3} ${width * 3}`);
         const holder = svgEl('g', { mask: `url(#${id})` }, parent);
         holder.appendChild(path);
         // One unit longer than the path, so "not drawn" hides even the rounded line end.
@@ -704,7 +710,7 @@ export class Stage {
           const colour = (c: PartColor) => (c === 'board' ? board.background : palette[c]);
           for (const part of def.parts) {
             const holder = part.transform ? svgEl('g', { transform: part.transform }, g) : g;
-            const path = stroke(part.d, part.width ?? 2, holder, false, scale);
+            const path = stroke(part.d, part.width ?? 2, holder, 'solid', scale);
             // Strokes are drawn in currentColor, so setting `color` colours every piece of the part.
             if (part.color) path.style.color = colour(part.color);
             if (part.opacity !== undefined) path.setAttribute('opacity', String(part.opacity));
@@ -717,13 +723,13 @@ export class Stage {
         } else if (def.style === 'logo') {
           // Brand logos are filled shapes: trace their outline thinly, then fade in a faint fill.
           const w = Math.max(2, el.size * 0.02) / scale;
-          for (const d of def.paths) stroke(d, w, g, false, scale);
+          for (const d of def.paths) stroke(d, w, g, 'solid', scale);
           const fill = svgEl('g', { fill: 'currentColor', 'fill-rule': 'evenodd', stroke: 'none' }, g);
           for (const d of def.paths) svgEl('path', { d }, fill);
           parts.push({ kind: 'fill', node: fill, opacity: 0.22 });
         } else {
           const w = def.stroke ?? Math.max(3.5, el.size * 0.045) / scale;
-          for (const d of def.paths) stroke(d, w, g, false, scale);
+          for (const d of def.paths) stroke(d, w, g, 'solid', scale);
         }
         if (el.label) {
           const ls = iconLabelSize(el.size);
@@ -739,16 +745,18 @@ export class Stage {
         const h = el.height / 2;
         const r = Math.min(el.radius, w, h);
         const d = `M${-w + r} ${-h}H${w - r}Q${w} ${-h} ${w} ${-h + r}V${h - r}Q${w} ${h} ${w - r} ${h}H${-w + r}Q${-w} ${h} ${-w} ${h - r}V${-h + r}Q${-w} ${-h} ${-w + r} ${-h}Z`;
-        stroke(d, board.stroke, fx, el.dashed);
+        stroke(d, board.stroke * (el.weight === 'bold' ? 1.8 : 1), fx, lineOf(el));
         if (el.label) write(el.label, 0, 0, Math.min(56, el.height * 0.4), 'middle', 'label');
         break;
       }
       case 'arrow': {
         const { start, end } = arrowEnds(el, lookup);
         const { control, d } = arrowCurve(start, end, el.curve);
-        const shaft = stroke(d, board.stroke, fx, el.dashed) as SVGPathElement;
-        if (el.head === 'end' || el.head === 'both') stroke(arrowHead(end, control), board.stroke);
-        if (el.head === 'start' || el.head === 'both') stroke(arrowHead(start, control), board.stroke);
+        const bold = el.weight === 'bold';
+        const width = board.stroke * (bold ? 1.9 : 1);
+        const shaft = stroke(d, width, fx, lineOf(el)) as SVGPathElement;
+        if (el.head === 'end' || el.head === 'both') stroke(arrowHead(end, control, bold ? 40 : 26), width);
+        if (el.head === 'start' || el.head === 'both') stroke(arrowHead(start, control, bold ? 40 : 26), width);
         const mid = { x: 0.25 * start.x + 0.5 * control.x + 0.25 * end.x, y: 0.25 * start.y + 0.5 * control.y + 0.25 * end.y };
         pivot = mid;
         if (el.label) {

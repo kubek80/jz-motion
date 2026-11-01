@@ -29,7 +29,7 @@ Open the printed URL. The home screen has one prompt box in the middle: pick **T
 | Animate | The strip under the board shows the scene's beats left to right (one per click, or *auto*), each with its actions, colour-coded, the elements they act on and a small timeline. **+ beat** draws the selected elements; **+ action** offers draw, fade, pop, pulse, circle, camera, move, flow, erase or a pause for the selected elements. Drag actions to reorder them or move them to another beat. |
 | Change a scene with AI | Type into the bar above the beats ("pulse the API after it is drawn"); only the open scene changes; Ctrl+Z undoes it. |
 | Add a scene with AI | **+ scene with AI** next to the scenes: describe it, preview it, keep it. It goes after the open scene and continues from it. |
-| Edit details | Properties panel on the right (colours are markers, chart types and layouts are pictures; hover a **?** for help; ids and rarely needed fields are under *Advanced*, video settings under *Video export*). The **JSON** tab shows this scene or the whole file, with colours, folding and full screen. |
+| Edit details | Properties panel on the right: position and size at the top like a drawing program (X, Y, W, H, size, rotation, corner radius; drag a label sideways to change the number, Shift for bigger steps), colours are markers, chart types, layouts, line styles (solid, dashed, dotted) and thickness are pictures; hover a **?** for help; ids and rarely needed fields are under *Advanced*, video settings under *Video export*). The **JSON** tab shows this scene or the whole file, with colours, folding and full screen. |
 | Delete, duplicate, undo | Delete key, Ctrl+D, Ctrl+Z / Ctrl+Shift+Z |
 
 **AI tab**
