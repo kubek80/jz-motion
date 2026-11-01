@@ -154,21 +154,33 @@ function Json({ value, onChange }: { value: unknown; onChange: (v: unknown) => v
   return <textarea className={bad ? 'json bad' : 'json'} rows={Math.min(8, draft.split('\n').length + 1)} value={draft} onChange={(e) => setDraft(e.target.value)} onBlur={commit} />;
 }
 
-/** Marker colors as swatches; the current one is ringed, a dashed ring marks the default. */
+/** Marker colors as a tray of markers: the chosen one is lifted out and glows. */
 function Swatches({ value, colors, fallback, onChange }: { value?: string; colors: string[]; fallback?: string; onChange: (v: unknown) => void }) {
   const current = value ?? fallback;
   return (
-    <span className="swatches">
-      {colors.map((c) => (
-        <button
-          key={c}
-          type="button"
-          title={c + (value === undefined && c === fallback ? ' (default)' : '')}
-          className={c === current ? 'swatch on' : 'swatch'}
-          style={{ background: palette[c as keyof typeof palette], boxShadow: c === current ? `0 0 10px ${palette[c as keyof typeof palette]}` : undefined }}
-          onClick={() => onChange(c === fallback && value !== undefined ? undefined : c)}
-        />
-      ))}
+    <span className="marker-tray">
+      {colors.map((c) => {
+        const hex = palette[c as keyof typeof palette];
+        return (
+          <button
+            key={c}
+            type="button"
+            title={c + (value === undefined && c === fallback ? ' (default)' : '')}
+            className={c === current ? 'marker on' : 'marker'}
+            style={{ '--ink': hex } as React.CSSProperties}
+            onClick={() => onChange(c === fallback && value !== undefined ? undefined : c)}
+          >
+            <svg viewBox="0 0 20 46" width="25" height="58" aria-hidden>
+              {/* chisel tip, collar, body with a colour band */}
+              <path d="M7.5 1.5 L12.5 5 V12 H7.5 Z" fill={hex} />
+              <rect x="5.5" y="12" width="9" height="5" rx="1" fill={hex} opacity="0.55" />
+              <rect x="3" y="17" width="14" height="28" rx="3" fill="#232a31" stroke="#38424c" />
+              <rect x="3" y="23" width="14" height="7" fill={hex} opacity="0.85" />
+              <rect x="5" y="19" width="2" height="23" rx="1" fill="#ffffff" opacity="0.08" />
+            </svg>
+          </button>
+        );
+      })}
     </span>
   );
 }

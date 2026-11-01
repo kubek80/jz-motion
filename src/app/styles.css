@@ -146,9 +146,10 @@ input, textarea, select { font: inherit; color: var(--text); background: var(--b
 .job { display: flex; flex-direction: column; gap: 6px; }
 .job progress { width: 100%; }
 
-.swatches { display: flex; gap: 6px; flex-wrap: wrap; }
-.swatch { width: 24px; height: 24px; padding: 0; border-radius: 50%; border: 2px solid transparent; }
-.swatch.on { border-color: #fff; }
+.marker-tray { display: flex; gap: 6px; align-items: flex-end; height: 66px; padding: 0 8px; border-bottom: 3px solid #2a333b; border-radius: 0 0 8px 8px; overflow: clip; }
+.marker { padding: 0; border: 0; background: none; line-height: 0; transform: translateY(22px); transition: transform 0.15s ease, filter 0.15s ease; }
+.marker:hover { transform: translateY(14px); }
+.marker.on { transform: translateY(4px); filter: drop-shadow(0 0 5px var(--ink)); }
 .basics button.on { border-color: var(--accent); color: var(--accent); }
 .tool-hint { position: absolute; left: 50%; top: 10px; transform: translateX(-50%); padding: 6px 12px; background: #000c; border: 1px solid var(--accent); border-radius: 6px; font-size: 13px; pointer-events: none; }
 
