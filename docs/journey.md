@@ -367,3 +367,14 @@ Jakub builds jz-motion for himself and wants to run it locally on his Claude sub
 ![Recording narration with the teleprompter](journey/57-prompter.jpg)
 ![Made by a fresh Claude Code conversation using the skills](journey/58-fresh-conversation.jpg)
 ![Drafted by Haiku through the subscription](journey/59-haiku-subscription.jpg)
+
+## Step 27: Which action, when
+
+Jakub asked whether the docs tell models *when* to use things like a circle. Barely: `format.md` says what each action does, and the style guide had three one-line hints. Models used actions correctly but rarely chose between them, so most beats were plain `draw`.
+
+- `docs/style.md` gained **Which action, when**: a table from what the viewer should do (watch something being built, notice one thing, ignore the rest, follow data moving, see a change of state, see numbers change, look inside a 3D object, look at a detail, clear space, pause) to the action for it (`draw`, `pop`, `circle`, `pulse`, `spotlight` dark or fade, `flow`, `recolor`, `move`, `set-values`, `explode`, `rotate`, `camera`, `erase`, `fade-out`, `wait`) and what to avoid. Plus **pacing**: one emphasis per beat, `start: "with"` and `auto` beats for things that belong together, one to three spoken sentences of notes per beat, build up then focus, and end a scene by pulling back.
+- Because the app's models and the Claude Code skills both read the style guide, both get the guidance.
+
+**Checked by:** the same request as in step 26 (a two-scene HTTP caching explainer) to a fresh Claude Code conversation. Before: twelve draws, one circle, one flow, one recolor, two fade-outs. After: requests shown moving with `flow` while they are talked about and switched off when moving on, one point per beat, and the "or a new file" ending as a `pop`. It still drew rather than `recolor`ed the copy going stale, so the guide helps but doesn't do the director's job for it.
+
+![The HTTP caching explainer after the guide (beats 3, 5, 6 and 7)](journey/60-which-action.jpg)
