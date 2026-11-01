@@ -6,7 +6,7 @@ import type { CompiledElement, CompiledPresentation, CompiledScene, ElementState
 import { arrowCurve, arrowEnds, arrowHead, iconLabelSize, imageFrame, ISO_LABEL_SIZE, VIEW } from './geometry';
 import { projectIso, resolveIsoParts, type IsoPart } from './iso';
 import { ICON_GRID, iconHeight, icons, type PartColor } from './library';
-import { board, palette } from './palette';
+import { board, palette, type TextStyle } from './palette';
 import type { Camera } from './schema';
 
 
@@ -208,6 +208,8 @@ export class Stage {
     await Promise.all([
       document.fonts.load(`40px Caveat`),
       document.fonts.load(`700 40px Caveat`),
+      document.fonts.load(`40px Bungee`),
+      document.fonts.load(`500 40px 'JetBrains Mono'`),
       this.backgroundReady,
       // Pictures load before the first frame, so exports never catch one half-loaded.
       ...[...new Set(p.scenes.flatMap((sc) => sc.elements.flatMap((e) => (e.type === 'image' ? [e.src] : []))))].map(preloadImage),
@@ -519,7 +521,7 @@ export class Stage {
    * Where an element's editable text (`text`, `label` or `title`) is on screen, for editing it in place.
    * Without that text yet (an icon with no label), the spot just below the element.
    */
-  textField(id: string, field: string): { left: number; top: number; width: number; height: number; fontPx: number; color: string; align: 'start' | 'middle' | 'end' } | undefined {
+  textField(id: string, field: string): { left: number; top: number; width: number; height: number; fontPx: number; color: string; align: 'start' | 'middle' | 'end'; family: string; weight: string } | undefined {
     const n = this.nodes.get(id);
     if (!n) return undefined;
     const color = getComputedStyle(n.outer).color;
@@ -527,14 +529,18 @@ export class Stage {
     if (node) {
       const r = node.getBoundingClientRect();
       const scale = node.getScreenCTM()?.a ?? 1;
-      return { left: r.left, top: r.top, width: r.width, height: r.height, fontPx: Number(node.getAttribute('font-size')) * scale, color, align: (node.getAttribute('text-anchor') ?? 'middle') as 'start' | 'middle' | 'end' };
+      return {
+        left: r.left, top: r.top, width: r.width, height: r.height, fontPx: Number(node.getAttribute('font-size')) * scale, color,
+        align: (node.getAttribute('text-anchor') ?? 'middle') as 'start' | 'middle' | 'end',
+        family: node.getAttribute('font-family') ?? board.font, weight: node.getAttribute('font-weight') ?? '700',
+      };
     }
     const b = this.boxOf(n);
     const m = this.camGroup.getScreenCTM();
     if (!m) return undefined;
     const p = new DOMPoint(b.x, b.y + b.height + 8).matrixTransform(m);
     const q = new DOMPoint(b.x + b.width, b.y + b.height + 60).matrixTransform(m);
-    return { left: p.x, top: p.y, width: q.x - p.x, height: q.y - p.y, fontPx: 40 * m.a, color, align: 'middle' };
+    return { left: p.x, top: p.y, width: q.x - p.x, height: q.y - p.y, fontPx: 40 * m.a, color, align: 'middle', family: board.font, weight: '700' };
   }
 
   /** Hides a piece of text while it is being edited in place. */
@@ -721,27 +727,53 @@ export class Stage {
       return path;
     };
     /** `field` marks text that can be edited in place (the element's text, label or title). */
-    const write = (text: string, x: number, y: number, size: number, anchor: 'start' | 'middle' | 'end' = 'middle', field?: string) => {
-      const t = svgEl('text', {
-        x,
-        y,
-        'font-size': size,
-        'font-family': board.font,
-        'font-weight': 700,
-        'text-anchor': anchor,
-        'dominant-baseline': 'central',
-        fill: 'currentColor',
-      }, fx);
-      t.textContent = text;
+    const write = (text: string, x: number, y: number, size: number, anchor: 'start' | 'middle' | 'end' = 'middle', field?: string, style: TextStyle = 'marker') => {
+      const font = board.fonts[style];
+      const lines = text.split('\n');
+      const lh = size * board.lineHeight;
+      const make = (parent: SVGElement) => {
+        const t = svgEl('text', {
+          x, y, 'font-size': size, 'font-family': font.family, 'font-weight': font.weight,
+          'text-anchor': anchor, 'dominant-baseline': 'central', fill: 'currentColor',
+          // Code keeps its indentation.
+          ...(style === 'code' ? { 'xml:space': 'preserve', style: 'white-space: pre' } : {}),
+        }, parent) as SVGTextElement;
+        if (lines.length === 1) t.textContent = text;
+        else lines.forEach((line, i) => {
+          const span = svgEl('tspan', { x, dy: i === 0 ? -((lines.length - 1) * lh) / 2 : lh }, t);
+          span.textContent = line || ' ';
+        });
+        return t;
+      };
+      // Bold: dark letters with a marker outline and an offset echo, like the JZ in the logo.
+      const holder = style === 'bold' ? svgEl('g', {}, fx) : fx;
+      if (style === 'bold') {
+        const echo = make(holder);
+        echo.setAttribute('transform', `translate(${size * 0.07} ${size * 0.07})`);
+        Object.entries({ fill: 'none', stroke: 'currentColor', 'stroke-width': size * 0.025, opacity: 0.45 }).forEach(([k, v]) => echo.setAttribute(k, String(v)));
+      }
+      const t = make(holder);
+      if (style === 'bold') {
+        Object.entries({ fill: board.background, 'fill-opacity': 0.85, stroke: 'currentColor', 'stroke-width': size * 0.045, 'stroke-linejoin': 'round' }).forEach(([k, v]) => t.setAttribute(k, String(v)));
+      }
       if (field) t.setAttribute('data-field', field);
-      const width = t.getComputedTextLength() || text.length * size * 0.42;
+      const measured = lines.length === 1 ? t.getComputedTextLength() : Math.max(...Array.from(t.querySelectorAll('tspan')).map((s) => s.getComputedTextLength()));
+      const width = measured || Math.max(...lines.map((l) => l.length)) * size * font.charWidth;
+      const height = size + (lines.length - 1) * lh;
       const left = anchor === 'start' ? x : anchor === 'end' ? x - width : x - width / 2;
+      if (style === 'code' && lines.length > 1) {
+        // Code is a block: placed by `align`, but its lines all start at the block's left edge.
+        for (const node of holder === fx ? [t] : Array.from(holder.querySelectorAll('text'))) {
+          node.setAttribute('text-anchor', 'start');
+          node.querySelectorAll('tspan').forEach((span) => span.setAttribute('x', String(left)));
+        }
+      }
       const id = `${this.prefix}-c${uid++}`;
       const clip = svgEl('clipPath', { id, 'data-scene': '' }, this.defs);
-      // Generous vertical room for descenders and the glow; the clip is in the text's user space.
-      const rect = svgEl('rect', { x: left - size * 0.2, y: y - size, width: width + size * 0.4, height: size * 2 }, clip);
+      // Generous room for descenders, the outline and the glow; the clip is in the text's user space.
+      const rect = svgEl('rect', { x: left - size * 0.2, y: y - height / 2 - size * 0.5, width: width + size * 0.4, height: height + size }, clip);
       clip.setAttribute('clipPathUnits', 'userSpaceOnUse');
-      t.setAttribute('clip-path', `url(#${id})`);
+      (style === 'bold' ? holder : t).setAttribute('clip-path', `url(#${id})`);
       parts.push({ kind: 'write', rect, x: left - size * 0.2, width: width + size * 0.4 });
     };
 
@@ -791,7 +823,7 @@ export class Stage {
         break;
       }
       case 'text':
-        write(el.text, 0, 0, el.size, el.align, 'text');
+        write(el.text, 0, 0, el.size, el.align, 'text', el.style);
         break;
       case 'box': {
         const w = el.width / 2;

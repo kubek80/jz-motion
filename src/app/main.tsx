@@ -4,7 +4,7 @@ import { createRoot } from 'react-dom/client';
 if (new URLSearchParams(location.search).has('render')) {
   void import('../render/page');
 } else {
-  void Promise.all([import('./Root'), import('./confirm'), import('@fontsource/caveat/700.css'), import('./styles.css')]).then(([{ Root }, { ConfirmHost }]) => {
+  void Promise.all([import('./Root'), import('./confirm'), import('@fontsource/caveat/700.css'), import('@fontsource/bungee/400.css'), import('@fontsource/jetbrains-mono/500.css'), import('./styles.css')]).then(([{ Root }, { ConfirmHost }]) => {
     createRoot(document.getElementById('root')!).render(
       <StrictMode>
         <Root />

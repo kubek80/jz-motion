@@ -1,4 +1,6 @@
 import '@fontsource/caveat/700.css';
+import '@fontsource/bungee/400.css';
+import '@fontsource/jetbrains-mono/500.css';
 import { compile, Stage } from '../engine';
 import { loadUserLibrary } from '../app/userLibrary';
 import { stateAt, type Performance } from '../video/performance';

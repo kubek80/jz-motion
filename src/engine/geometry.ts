@@ -1,6 +1,7 @@
 import type { CompiledElement as Element } from './compile';
 import { projectIso, resolveIsoParts } from './iso';
 import { iconHeight } from './library';
+import { board, type TextStyle } from './palette';
 import type { AnchorName, ArrowElement, Camera, Point, Ref } from './schema';
 
 export const VIEW = { width: 1920, height: 1080 } as const;
@@ -9,7 +10,10 @@ export const DEFAULT_CAMERA: Camera = { x: VIEW.width / 2, y: VIEW.height / 2, z
 export interface Box { x: number; y: number; width: number; height: number }
 
 /** Approximate width of handwritten text. Used for layout and framing; the renderer measures the real text. */
-export const textWidth = (text: string, size: number) => text.length * size * 0.42;
+export const textWidth = (text: string, size: number, style: TextStyle = 'marker') =>
+  Math.max(...text.split('\n').map((l) => l.length)) * size * board.fonts[style].charWidth;
+/** Height of a text of `lines` lines. */
+export const textHeight = (text: string, size: number) => size * (1 + (text.split('\n').length - 1) * board.lineHeight);
 
 export const iconLabelSize = (size: number) => Math.max(34, size * 0.34);
 export const ARROW_GAP = 16;
@@ -25,9 +29,10 @@ export function shapeBox(el: Element, lookup: (id: string) => Element | undefine
     case 'box':
       return { x: el.x - el.width / 2, y: el.y - el.height / 2, width: el.width, height: el.height };
     case 'text': {
-      const w = textWidth(el.text, el.size);
+      const w = textWidth(el.text, el.size, el.style);
+      const h = textHeight(el.text, el.size);
       const left = el.align === 'start' ? el.x : el.align === 'end' ? el.x - w : el.x - w / 2;
-      return { x: left, y: el.y - el.size / 2, width: w, height: el.size };
+      return { x: left, y: el.y - h / 2, width: w, height: h };
     }
     case 'chart':
     case 'area':
