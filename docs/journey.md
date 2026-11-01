@@ -349,3 +349,21 @@ Jakub wanted more control over timing, so a presentation can follow a voice-over
 **Checked by:** unit tests (which clicks sit on a cue, which come too early) and a browser run on the about template with a generated 60-second voice-over: loading it, dragging a click to 20.5 s, tapping three clicks while it plays, and making a take that opens in the Video tab.
 
 ![Timing window](journey/55-timing.jpg)
+
+## Step 26: My Claude subscription, skills for fresh conversations, and a teleprompter
+
+Jakub builds jz-motion for himself and wants to run it locally on his Claude subscription; to have documentation and skills good enough that a fresh Claude conversation can work with the project without any history; and to use the Timing window as a teleprompter. He was also unsure whether screen recordings would make the project too complicated.
+
+- **Claude Code as a model provider.** The local server can answer model requests by running the `claude` command on the same computer (`claude -p`, JSON output, tools, settings and plugins off), with the person's own login: no API key. Conversations are passed as a transcript and the reply goes through the same checks as any model. Settings finds Claude Code and offers **Add Sonnet and Haiku** in one click. It is meant for personal local use only. Checked for real: Haiku through the subscription drafted a four-scene CDN explainer from one sentence in 18 seconds, in the house style.
+- **One style guide.** The rules the app sent to models lived in a code string; they are now `docs/style.md`, which the app's prompts and the Claude Code skills both read (plus a new rule after the CDN test: when a scene continues from the previous one, don't put new things on top of old ones).
+- **Skills and CLAUDE.md.** `.claude/skills/` has `new-presentation`, `edit-presentation`, `library-item` and `voiceover-and-video`; `CLAUDE.md` explains the project, the folders and the conventions. Two new commands give a model something to verify with: `npm run check` (validates a presentation or library item with the app's own rules; `--library` lists everything that can be drawn) and `npm run snapshot` (PNGs of every scene, so it can look at what it made). Tested with a fresh Claude Code conversation with no context: asked for an HTTP caching explainer, it found the skill, read the rules, wrote the file, checked it, looked at the snapshots, fixed a crowded scene and handed over the link.
+- **Docs rewritten** to match the app: README (setup with the subscription, three ways to make a presentation, editor, AI, screenshots, narration and video, commands), `docs/models.md` (providers, which model for which job, transcription), `docs/design.md` (decisions, code map, phases), `docs/format.md` (cues).
+- **Teleprompter and narration recording.** The Timing window can record the narration itself: the script (speaker notes) shows large, you read, and press → or Space as you start each next line, which places that beat at that moment; ← takes back an early press, Esc stops. One read-through gives the voice-over and the timing. **Prompter** shows the script large at any time.
+- **Early cues.** Pressing → before the previous animation had finished used to be ignored. Now an early cue starts its beat on time and the previous animation jumps to its end, like an early click when presenting live.
+
+**Checked by:** 55 unit tests (new: early cues), the real Claude Code calls above, a narration recording with a simulated microphone (placing, taking back and re-placing lines, then saving the voice-over), and the Settings offer in the browser.
+
+![Settings offers the Claude subscription](journey/56-claude-subscription.jpg)
+![Recording narration with the teleprompter](journey/57-prompter.jpg)
+![Made by a fresh Claude Code conversation using the skills](journey/58-fresh-conversation.jpg)
+![Drafted by Haiku through the subscription](journey/59-haiku-subscription.jpg)

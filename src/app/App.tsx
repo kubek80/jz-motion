@@ -617,13 +617,18 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
             if (v) next.voiceover = v; else delete next.voiceover;
             update(next);
           }}
-          onCue={(si, bi, cue) => update(updateBeats(doc, si, (beats) => beats.map((b, i) => {
-            if (i !== bi) return b;
-            const nb = { ...b };
-            if (cue === undefined) delete nb.cue; else nb.cue = cue;
-            return nb;
-          })))}
-          onClearCues={() => update({ ...doc, scenes: doc.scenes.map((s) => ({ ...s, beats: s.beats?.map(({ cue: _cue, ...b }) => b) })) })}
+          onCues={(changes, clearOthers) => update({
+            ...doc,
+            scenes: doc.scenes.map((s, si) => ({
+              ...s,
+              beats: s.beats?.map((b, bi) => {
+                const change = changes.find((c) => c.scene === si && c.beat === bi);
+                const { cue, ...rest } = b;
+                const next = change ? change.cue : clearOthers ? undefined : cue;
+                return next === undefined ? rest : { ...rest, cue: next };
+              }),
+            })),
+          })}
           onTake={(takeId) => { setTimingOpen(false); setMadeTake(takeId); setPanel('video'); }}
           onClose={() => setTimingOpen(false)}
         />

@@ -2,7 +2,7 @@
 
 <img src="docs/img/logo.png" alt="jz-motion logo" width="360">
 
-A glowing blackboard for technical explainer presentations and videos. Scenes are JSON: clipart, logos, text, boxes, arrows, charts and isometric 3D objects drawn stroke by stroke in luminous marker colors, with flows, highlights and camera zooms, stepped through beat by beat. Edit them visually, or have an LLM write them.
+A personal studio for technical explainer videos and presentations. Everything is drawn on a dark board in glowing marker colours (icons, logos, clipart, text, charts, isometric 3D, screenshots) and animated beat by beat, with arrows, flows, spotlights and camera moves. Models write most of it; you adjust it like a whiteboard, record your narration with a teleprompter, and export an MP4.
 
 ![The example presentation](docs/img/board.png)
 
@@ -10,79 +10,83 @@ A glowing blackboard for technical explainer presentations and videos. Scenes ar
 
 ```sh
 npm install
-npx playwright install chromium   # once, for video export
-npm run dev
+npx playwright install chromium   # once: video export and snapshots use it
+npm run dev                       # then open http://localhost:5173
 ```
 
 Video export also needs [FFmpeg](https://ffmpeg.org) (`brew install ffmpeg`), or set `FFMPEG_PATH` / `FFPROBE_PATH`.
 
-Open the printed URL. New here? Start from the example **jz-motion: explainers, fast (about this app)**: ten scenes on what the app does, how it is built and why it is LLM first, with a ready voice-over in [docs/explainer-script.md](docs/explainer-script.md).
+**Models.** If Claude Code is installed and logged in on your computer, **⚙ Settings** offers **Add Sonnet and Haiku**: the app then uses your Claude subscription, with no API key. Otherwise add an OpenRouter key or any OpenAI-compatible endpoint. Details, and which model to use for what: [docs/models.md](docs/models.md).
 
- The home screen has one prompt box in the middle: pick **Topic** (describe what to explain), **Script** (paste what you will say) or **Recording** (attach a video or audio file), pick the model for that kind of start (remembered per kind), and send. Below it are your presentations: open, rename, duplicate or delete; or start blank or from an example. **⚙ Settings** (home and editor) holds your models and API keys, the default model per kind of start, and the speech-to-text service. They are saved as files in `presentations/` while `npm run dev` runs (in the browser otherwise), so you can keep them in git. Click the logo to get back home.
+New here? Open the example **jz-motion: explainers, fast (about this app)** from the home screen: ten scenes on what the app does and how, with its voice-over script in [docs/explainer-script.md](docs/explainer-script.md).
 
-**Edit mode**
+## Making a presentation
+
+- **In the app.** The home screen has one prompt box: choose **Topic** (say what to explain), **Script** (paste what you will say) or **Recording** (attach a video or audio file; it is transcribed and the beats are timed to your words), pick the model, send. Refine the draft in the chat beside its preview, then create it. Or start blank, or from an example.
+- **With Claude Code.** In this folder, ask Claude Code to "make a presentation about …". The skills in `.claude/skills/` tell it the format, the style and how to check and preview its work (see [CLAUDE.md](CLAUDE.md)). The file appears on the home screen.
+- **By hand.** A presentation is one JSON file in `presentations/`; the format is in [docs/format.md](docs/format.md). The editor's **JSON** tab shows the open scene or the whole file.
+
+Presentations, your library and your pictures are plain files (`presentations/`, `library/`, `images/`), so you can keep them in git.
+
+## The editor
 
 | Do | How |
 |---|---|
-| Select, move, resize | Click an element and drag it; drag a corner handle to resize. Shift+click selects several. |
-| Edit text in place | Double-click a text, label or chart title on the board (or select the element and press Enter), type, Enter to keep, Esc to cancel. Text has three styles: handwritten marker, **bold** outlined capitals and **code** (several lines; Ctrl+Enter keeps it). |
-| Pan, zoom | Drag the empty board; scroll. **Reset view** (or 0) goes back to the scene's start view, **Fit all** (Shift+0) shows everything. |
-| Add | Click an icon, logo, clipart, Text, Box, Chart or a 3D model in the library, or open the whole library with **⤢** (also **Library** on the home screen): big previews that draw in, details, and renaming, editing or deleting what you made. **New with AI** (in the library window, on the home screen too) is a conversation: describe the item, then ask for changes; every reply is a version with a preview, and you save the one you like. **Refine with AI** continues from one of your items, **Make a variation** from a built-in one. **Arrow**: click it, then the start element, then the end element. **+ New with AI** draws an icon, clipart or 3D model from your description and saves it to your library (`library/`). |
-| Screenshots | Paste one (Ctrl+V), drop a picture on the board, or click **Image**. Pick a **frame** (none, or a browser window drawn in marker, with your own address) in its properties; the next picture uses the same frame. Pictures sit under the drawing, so you can draw on top of them. To point at part of it, select the picture and click **Area**, move and resize the dashed area over the part, then in the area's properties add a beat that spotlights and circles it (or zooms to it). A **spotlight** darkens or fades everything else until you turn it off. |
-| Animate | The strip under the board shows the scene's beats left to right (one per click, or *auto*), each with its actions, colour-coded, the elements they act on and a small timeline. **+ beat** draws the selected elements; **+ action** offers draw, fade, pop, pulse, circle, camera, move, flow, erase or a pause for the selected elements. Drag actions to reorder them or move them to another beat. |
-| Change a scene with AI | Type into the bar above the beats ("pulse the API after it is drawn"); only the open scene changes; Ctrl+Z undoes it. |
-| Add a scene with AI | **+ scene with AI** next to the scenes: describe it, preview it, keep it. It goes after the open scene and continues from it. |
-| Edit details | Properties panel on the right: position and size at the top like a drawing program (X, Y, W, H, size, rotation, corner radius; drag a label sideways to change the number, Shift for bigger steps), colours are markers, chart types, layouts, line styles (solid, dashed, dotted) and thickness are pictures; hover a **?** for help; ids and rarely needed fields are under *Advanced*, video settings under *Video export*). The **JSON** tab shows this scene or the whole file, with colours, folding and full screen. |
-| Delete, duplicate, undo | Delete key, Ctrl+D, Ctrl+Z / Ctrl+Shift+Z |
+| Add | Left panel: **Text**, **Box**, **Chart**, **Arrow** (click it, then the start element, then the end), **Image**, **Area**, and any icon, logo, clipart or 3D model. **⤢** opens the whole library. |
+| Select, move, resize | Click and drag; corner handles resize. Shift+click selects several. |
+| Edit text in place | Double-click a text, label or chart title (or select it and press Enter). Enter keeps it, Esc cancels. Code text takes several lines: Ctrl+Enter keeps it. |
+| Properties | Right panel: position and size like a drawing program (drag a label such as **W** sideways to change it), colours as marker tips, styles as pictures (text: marker, bold, code; lines: solid, dashed, dotted; thickness; arrowheads; chart types). Hover **?** for help. Ids and rarely needed fields are under *Advanced*. |
+| Beats | The strip under the board: one card per click, left to right, each with its actions on a small timeline. **+ beat** draws the selected elements; **+ action** adds draw, fade, pop, pulse, circle, spotlight, camera, move, flow, erase or a pause. Drag actions to reorder them or move them to another beat. |
+| Scenes | Left panel: **+ New scene**, **✦ New scene with AI** (describe it, talk it over, add it after the open scene). |
+| Pan, zoom | Drag the empty board, scroll. **Reset view** (0) returns to the scene's start view, **Fit all** (Shift+0) shows everything. |
+| Undo, delete, duplicate | Ctrl+Z / Ctrl+Shift+Z, Delete, Ctrl+D |
 
-**AI tab**
+**Screenshots.** Paste one (Ctrl+V), drop it on the board, or click **Image**. Its properties offer a **frame**: a browser window drawn in marker, with your own address. Pictures sit under the drawing, so you can draw on them. To point at a part, select the picture and click **Area**, fit the dashed area over the part, and use the area's one-click beats: spotlight and circle it, spotlight it, circle it, zoom to it. A **spotlight** darkens or fades everything else until it is turned off; anything drawn meanwhile stays bright.
 
-**Chat** with a model about the open presentation: ask for changes ("add a database under the API") and they are applied right away (Ctrl+Z undoes them), or ask questions. **Compare models** sends one request to several models and shows their results side by side. Models are any OpenAI-compatible endpoint (OpenRouter, RunPod, ...) with its API key.
+## AI while editing
 
-**From a topic** (home screen): describe it; refine the draft in the chat, then create it.
+- **Ask about this scene** (the bar above the beats): "split the second beat in two", "zoom into the database first". Only that scene changes; Ctrl+Z undoes it.
+- **AI tab**: a chat about the whole presentation that can change it, or **Compare** several models on one request.
+- **New with AI** (library window, left panel): an icon, clipart or 3D model made in a conversation. Every reply is a version with a preview; ask for changes until you like one, then save it to your library. **Refine with AI** continues from one of your items, **Make a variation** from a built-in one.
 
-**From a script** (home screen): paste your script; a model turns it into scenes and beats with your lines as speaker notes; refine it in the chat, then create it.
+Every model reply is checked against the format and the drawing rules, and sent back with the problems when it breaks them.
 
-**From a recording** (home screen): upload a video or audio recording. It is transcribed (any OpenAI-compatible speech-to-text service: OpenAI Whisper, Groq, a local Whisper server), a model builds a presentation whose beats are cued to when you say things, and the recording becomes its first take, ready to export as a video. Keys stay in your browser and go only to the model's API through the local dev server (`npm run dev` or `npm run preview`). To try it without a key: `npm run mock-llm`, then add the "Local mock" model.
+## Narration, timing and video
 
-**Timing to a voice-over**
+**Timing** (top bar) times the presentation to your voice:
 
-**Timing** (top bar) opens the voice-over timeline: load your narration (any audio or video file), and every click of the presentation appears on its waveform. Drag a click to move it, double-click it to let it follow the one before, or press **Tap to place**, play, and press **T** as each line starts. The board plays along, with the current and next script lines (speaker notes) beside it. **Make a take for export** turns it into a take with the voice-over as its sound; export it from the Video tab.
+- **● Record narration**: the script (each beat's speaker notes) shows large, as a teleprompter. Read, and press → or Space as you start each next line: that places the beat at that moment. ← takes back an early press, Esc stops. You get the voice-over and the timing in one go.
+- **Load a voice-over…**: use a narration recorded elsewhere. Then drag the beats onto the waveform, or **Tap to place**: play and press T as each line starts.
+- The board plays in sync, with the current and next line beside it. **Prompter** shows the script large at any time.
+- **Make a take for export** turns it into a take with your voice as its sound.
 
-**Recording and video**
+Or present live: **Play** mode → **● Record** (tick *camera* to film yourself); your voice, camera and clicks become a take.
 
-1. In **Play** mode press **● Record** (tick *camera* to film yourself) and present as usual: talk and click through the beats. Your voice, camera and the moment of every click are saved as a *take* (in `takes/`).
-2. In the **Video** tab pick the take. Add a friend's recording with **+ add recording**, then line it up with **Auto-sync** (matches the sound; a clap at the start helps) or type its start time.
-3. Choose where the camera goes per beat or per scene in the properties panel (`layout`: board, pip, pip-left, camera, side; `track`: which recording).
-4. **Export MP4** (1080p or 4K, 30 or 60 fps). Without a take the video uses automatic timing with a pause between beats. Files land in `exports/`.
+Then the **Video** tab: pick the take, add a friend's recording (with **Auto-sync**), choose where the camera goes per beat or scene (`layout`: board, pip, pip-left, camera, side), and **Export MP4** (1080p or 4K, 30 or 60 fps) into `exports/`. Without a take, the video uses even pauses between beats.
 
-From the command line: `npm run export -- presentation.json [--take <id>] [--4k] [--fps 60] [--gap 1.5] [--out file.mp4]`.
+**Play mode keys:** → / Space / Page Down / click: next beat (finishes a running one first) · ← / Page Up: previous · F: full screen.
 
-**Play mode**
-
-| Key | Does |
-|---|---|
-| → / space / Page Down / click the board | Next beat (finishes a running beat first) |
-| ← / Page Up | Previous beat |
-| F | Full-screen present mode |
-
-## Other commands
+## Commands
 
 | Command | Does |
 |---|---|
-| `npm test` | Unit tests |
-| `npm run typecheck` | TypeScript |
-| `npm run build` | Production build into `dist/` |
-| `npm run export -- file.json` | Render a presentation (optionally with `--take <id>`) to MP4 |
-| `npm run mock-llm` | A fake model on port 5199 for trying the AI tab without a key |
-| `npm run logo` | Rebuild the logo files in `public/` and `docs/img/logo.png` from `scripts/build-logo.mjs` |
-| `npm run icons` | Regenerate the icon library and `docs/library.md` (Tabler clipart, Simple Icons logos, `src/engine/icons.custom.json`) |
+| `npm run dev` | The app, with its local server (files, model calls, transcription, export) |
+| `npm run check -- <file.json>` | Checks a presentation or library item against the app's rules; `--library` lists everything that can be drawn |
+| `npm run snapshot -- <file.json>` | PNG of each scene fully drawn (`--beats`: after every beat) in `snapshots/` |
+| `npm run export -- <file.json>` | Renders to MP4 (`--take <id>`, `--4k`, `--fps 60`, `--gap 1.5`, `--out file.mp4`) |
+| `npm test` · `npm run typecheck` · `npm run build` | Unit tests · TypeScript · production build |
+| `npm run mock-llm` | A fake model on port 5199, for trying AI flows without a key |
+| `npm run icons` | Rebuilds the built-in icon library and `docs/library.md` |
+| `npm run logo` | Rebuilds the logo files |
 
 ## Docs
 
-- [Design and phases](docs/design.md)
-- [Presentation format](docs/format.md): the reference for writing scenes, by hand or with an LLM
-- [Element library](docs/library.md)
-- [How we built it](docs/journey.md): the step-by-step story of this project
+- [CLAUDE.md](CLAUDE.md): orientation for Claude Code (and for you): skills, folders, conventions
+- [Style guide](docs/style.md): how presentations should look; every model follows it
+- [Presentation format](docs/format.md): the JSON reference
+- [Library](docs/library.md): built-in icons, logos, clipart and 3D models
+- [Models](docs/models.md): providers, your Claude subscription, which model for what
+- [Design](docs/design.md): architecture, decisions and code map
+- [How we built it](docs/journey.md): the project, step by step, with screenshots
 
 Clipart from [Tabler Icons](https://tabler.io/icons) (MIT), logos from [Simple Icons](https://simpleicons.org) (CC0). Logos are trademarks of their owners.

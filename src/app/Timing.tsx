@@ -13,9 +13,8 @@ interface Props {
   presentationId: string;
   voiceover?: Voiceover;
   onVoiceover: (v: Voiceover | undefined) => void;
-  /** Sets (or with undefined, clears) the cue of the beat that starts a click. */
-  onCue: (scene: number, beat: number, cue: number | undefined) => void;
-  onClearCues: () => void;
+  /** Sets (or with undefined, clears) cues of beats that start clicks; `clearOthers` forgets every other cue first. */
+  onCues: (changes: { scene: number; beat: number; cue: number | undefined }[], clearOthers?: boolean) => void;
   /** A take was made from this timing and voice-over, ready to export. */
   onTake: (id: string) => void;
   onClose: () => void;
@@ -28,7 +27,8 @@ const fmt = (s: number) => `${Math.floor(s / 60)}:${(s % 60).toFixed(1).padStart
  * Timing a presentation to a voice-over: the narration's waveform with every click placed on it. Drag a click
  * to move it, or play and tap T as each line starts. The board plays along, with the script line beside it.
  */
-export function Timing({ presentation, text, presentationId, voiceover, onVoiceover, onCue, onClearCues, onTake, onClose }: Props) {
+export function Timing({ presentation, text, presentationId, voiceover, onVoiceover, onCues, onTake, onClose }: Props) {
+  const onCue = (scene: number, beat: number, cue: number | undefined) => onCues([{ scene, beat, cue }]);
   const clicks = useMemo(() => cueClicks(presentation), [presentation]);
   const perf = useMemo(() => cuePerformance(presentation, voiceover?.duration ?? 0), [presentation, voiceover?.duration]);
   const total = Math.max(perf.duration, voiceover?.duration ?? 0, 1);
@@ -38,7 +38,11 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
   const silent = useRef({ startedAt: 0, at: 0, playing: false });
   const [time, setTime] = useState(0);
   const [playing, setPlaying] = useState(false);
-  const now = () => (voiceover ? audio.current?.currentTime ?? 0 : silent.current.playing ? silent.current.at + (performance.now() - silent.current.startedAt) / 1000 : silent.current.at);
+  /** While recording narration, the clock is the recording. */
+  const rec = useRef<{ recorder: MediaRecorder; stream: MediaStream; chunks: Blob[]; startedAt: number } | null>(null);
+  const now = () => (rec.current ? (performance.now() - rec.current.startedAt) / 1000
+    : voiceover ? audio.current?.currentTime ?? 0
+      : silent.current.playing ? silent.current.at + (performance.now() - silent.current.startedAt) / 1000 : silent.current.at);
   const seek = (t: number) => {
     const v = Math.max(0, Math.min(total, t));
     if (voiceover && audio.current) audio.current.currentTime = v;
@@ -146,6 +150,7 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
   const [drag, setDrag] = useState<{ index: number; t: number } | null>(null);
   const startDrag = (e: React.PointerEvent, index: number) => {
     e.stopPropagation();
+    if (rec.current) return;
     const x0 = e.clientX;
     const t0 = clicks[index].t;
     const target = e.currentTarget as HTMLElement;
@@ -166,6 +171,8 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
     target.addEventListener('pointerup', up);
   };
 
+  const [busy, setBusy] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [tapping, setTapping] = useState(false);
   const [tapIndex, setTapIndex] = useState(0);
   const nextAfter = (t: number) => Math.max(0, clicks.findIndex((c) => c.t >= t - 0.05));
@@ -176,13 +183,82 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
     setTapIndex(tapIndex + 1);
   };
 
-  const keys = useRef({ playing, tapping, tap, play, pause, seek, now, onClose });
-  keys.current = { playing, tapping, tap, play, pause, seek, now, onClose };
+  // ---------------------------------------------------------------- recording narration, with the script as a prompter
+  const [recording, setRecording] = useState(false);
+  const [recIndex, setRecIndex] = useState(0);
+  const [prompter, setPrompter] = useState(false);
+  const startRecording = async () => {
+    setError(null);
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: true } });
+      pause();
+      const recorder = new MediaRecorder(stream, MediaRecorder.isTypeSupported('audio/webm;codecs=opus') ? { mimeType: 'audio/webm;codecs=opus' } : undefined);
+      const chunks: Blob[] = [];
+      recorder.ondataavailable = (e) => e.data.size && chunks.push(e.data);
+      rec.current = { recorder, stream, chunks, startedAt: performance.now() };
+      recorder.start(1000);
+      // A fresh timing: the first click starts with the recording; → places each next one.
+      if (clicks[0]) onCues([{ scene: clicks[0].scene, beat: clicks[0].beat, cue: 0 }], true);
+      setRecIndex(0);
+      setRecording(true);
+      setPrompter(true);
+    } catch (e) {
+      setError(`Could not use the microphone: ${(e as Error).message}`);
+    }
+  };
+  const nextLine = () => {
+    const i = recIndex + 1;
+    const c = clicks[i];
+    if (!c) return void stopRecording();
+    onCue(c.scene, c.beat, Math.round(now() * 20) / 20);
+    setRecIndex(i);
+  };
+  const previousLine = () => {
+    // Pressed too early: the line goes back to following the one before, to be placed again.
+    if (recIndex === 0) return;
+    const c = clicks[recIndex];
+    onCue(c.scene, c.beat, undefined);
+    setRecIndex(recIndex - 1);
+  };
+  const stopRecording = async () => {
+    const r = rec.current;
+    if (!r) return;
+    const duration = now();
+    rec.current = null;
+    setRecording(false);
+    const done = new Promise<void>((resolve) => { r.recorder.onstop = () => resolve(); });
+    r.recorder.stop();
+    await done;
+    r.stream.getTracks().forEach((t) => t.stop());
+    setBusy('Saving the narration…');
+    try {
+      const blob = new Blob(r.chunks, { type: r.recorder.mimeType || 'audio/webm' });
+      const res = await fetch('/api/uploads?ext=webm', { method: 'POST', body: blob });
+      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error ?? res.statusText);
+      const { upload } = await res.json();
+      onVoiceover({ upload, duration: Math.round(duration * 100) / 100, name: `narration ${new Date().toLocaleString()}` });
+      seek(0);
+      setPps(0);
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(null);
+    }
+  };
+  useEffect(() => () => { rec.current?.stream.getTracks().forEach((t) => t.stop()); }, []);
+
+  const keys = useRef({ playing, tapping, tap, play, pause, seek, now, onClose, recording, nextLine, previousLine, stopRecording });
+  keys.current = { playing, tapping, tap, play, pause, seek, now, onClose, recording, nextLine, previousLine, stopRecording };
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.target as HTMLElement).closest('input, textarea, select')) return;
       const k = keys.current;
-      if (e.key === ' ') (k.playing ? k.pause() : k.play());
+      if (k.recording) {
+        if ([' ', 'ArrowRight', 'ArrowDown', 'PageDown', 'Enter'].includes(e.key)) k.nextLine();
+        else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) k.previousLine();
+        else if (e.key === 'Escape') void k.stopRecording();
+        else return;
+      } else if (e.key === ' ') (k.playing ? k.pause() : k.play());
       else if (e.key.toLowerCase() === 't' && k.tapping) k.tap();
       else if (e.key === 'ArrowLeft') k.seek(k.now() - (e.shiftKey ? 10 : 2));
       else if (e.key === 'ArrowRight') k.seek(k.now() + (e.shiftKey ? 10 : 2));
@@ -197,8 +273,6 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
   }, []);
 
   // ---------------------------------------------------------------- voice-over file, take
-  const [busy, setBusy] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
   const loadVoiceover = async (file: File) => {
     setBusy('Uploading…');
     setError(null);
@@ -267,16 +341,17 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
           <input type="file" accept="audio/*,video/*" onChange={(e) => { const f = e.target.files?.[0]; e.target.value = ''; if (f) void loadVoiceover(f); }} />
         </label>
         {voiceover && <button onClick={() => onVoiceover(undefined)} title="Stop using this voice-over (the cues stay)">Remove</button>}
-        <button onClick={onClearCues} disabled={!cuedCount} title="Forget every cue: clicks go back to even pauses">Clear cues</button>
+        <button onClick={() => onCues([], true)} disabled={!cuedCount || recording} title="Forget every cue: clicks go back to even pauses">Clear cues</button>
         <button className="primary" disabled={!voiceover || !!busy} onClick={() => void makeTake()} title="A take with this timing and the voice-over as its sound, ready to export in the Video tab">
           Make a take for export
         </button>
         <button onClick={onClose} title="Close (Esc)">✕</button>
       </header>
       {voiceover && <audio ref={audio} src={`/uploads/${voiceover.upload}`} preload="auto" onPause={() => setPlaying(false)} onPlay={() => setPlaying(true)} />}
-      <div className="timing-body">
+      <div className={prompter ? 'timing-body prompter' : 'timing-body'}>
         <div className="timing-board" ref={host} />
         <aside className="timing-script">
+          {recording && <div className="rec-banner"><span className="dot" /> Recording {fmt(time)} · <b>→ / Space</b> next line · <b>←</b> back · <b>Esc</b> stop</div>}
           <div className="now">
             <span className="muted">Now · {sceneTitle(current)}</span>
             <b>{beatOf(current)?.title ?? `Beat ${(current?.beat ?? 0) + 1}`}</b>
@@ -292,7 +367,13 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
         </aside>
       </div>
       <div className="timing-controls">
-        <button className="play" onClick={() => (playing ? pause() : play())} title="Play / pause (Space)">{playing ? '❚❚' : '▶'}</button>
+        {recording ? (
+          <button className="rec-btn on" onClick={() => void stopRecording()}>■ Stop recording</button>
+        ) : (
+          <button className="rec-btn" disabled={!!busy} onClick={() => void startRecording()} title="Record your narration while reading the script: press → (or Space) as you start each new line; that places its beat. Replaces the current timing.">● Record narration</button>
+        )}
+        <button className={prompter ? 'on' : ''} onClick={() => setPrompter(!prompter)} title="Show the script large, as a teleprompter">Prompter</button>
+        <button className="play" disabled={recording} onClick={() => (playing ? pause() : play())} title="Play / pause (Space)">{playing ? '❚❚' : '▶'}</button>
         <span className="clock">{fmt(time)} / {fmt(total)}</span>
         <button
           className={tapping ? 'tap on' : 'tap'}
@@ -315,7 +396,7 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
         className="timing-lane"
         ref={lane}
         onPointerDown={(e) => {
-          if ((e.target as HTMLElement).closest('.click')) return;
+          if ((e.target as HTMLElement).closest('.click') || rec.current) return;
           const r = e.currentTarget.getBoundingClientRect();
           seek((e.clientX - r.left + e.currentTarget.scrollLeft - 20) / pps);
         }}
@@ -341,7 +422,7 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
                   style={{ left: 20 + c.t * pps, '--c': color } as React.CSSProperties}
                   onPointerDown={(e) => startDrag(e, i)}
                   onDoubleClick={() => onCue(c.scene, c.beat, undefined)}
-                  title={`${sceneTitle(c)} · ${b?.title ?? `beat ${c.beat + 1}`} at ${fmt(c.t)}${c.cued ? '' : ' (follows the one before)'}${c.late ? ' (its cue is before the previous click ends)' : ''}\n${b?.notes ?? ''}`}
+                  title={`${sceneTitle(c)} · ${b?.title ?? `beat ${c.beat + 1}`} at ${fmt(c.t)}${c.cued ? '' : ' (follows the one before)'}${c.late ? ' (starts before the previous animation ends: that one jumps to its end)' : ''}\n${b?.notes ?? ''}`}
                 >
                   <span className="flag">{c.scene + 1}.{c.beat + 1} {b?.title ?? ''}</span>
                   <span className="anim" style={{ width: Math.max(2, (c.until - c.from) * pps) }} />

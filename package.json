@@ -12,7 +12,9 @@
     "icons": "node scripts/import-icons.mjs",
     "mock-llm": "node scripts/mock-llm.mjs",
     "export": "tsx server/cli-export.ts",
-    "logo": "node scripts/build-logo.mjs"
+    "logo": "node scripts/build-logo.mjs",
+    "check": "tsx server/cli-check.ts",
+    "snapshot": "tsx server/cli-snapshot.ts"
   },
   "dependencies": {
     "@codemirror/lang-json": "^6.0.2",

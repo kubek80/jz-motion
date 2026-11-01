@@ -66,9 +66,23 @@ describe('performance', () => {
     expect(cueClicks(r.presentation, { lead: 1, gap: 2, tail: 3 }).map((c) => [c.scene, c.beat, c.t, c.cued, c.late])).toEqual([
       [0, 0, 2, true, false],
       [0, 1, 5, false, false],
-      [1, 0, 8, false, true],
+      [1, 0, 8, false, false],
       [1, 1, 20, true, false],
     ]);
+  });
+
+  it('honours a cue that comes before the previous animation ends, like an early click', () => {
+    const r = compile({
+      version: 1, title: 't',
+      scenes: [{ id: 'a', elements: [{ id: 'x', type: 'text', text: 'x', x: 0, y: 0 }], beats: [
+        { cue: 0, actions: [{ do: 'fade-in', target: 'x', duration: 3 }] },
+        { cue: 1, actions: [{ do: 'pulse', target: 'x', duration: 1 }] },
+      ] }],
+    });
+    if (!r.ok) throw new Error(r.errors.join());
+    expect(cueClicks(r.presentation).map((c) => [c.t, c.cued, c.late])).toEqual([[0, true, false], [1, true, true]]);
+    // The second beat starts at 1 s, from where the first one ends: the fade jumps to its end.
+    expect(cuePerformance(r.presentation, 0).events.slice(1)).toEqual([{ t: 0, scene: 0, from: 0, until: 3 }, { t: 1, scene: 0, from: 3, until: 4 }]);
   });
 
   it('finds the scene and timeline position at any moment', () => {

@@ -116,7 +116,7 @@ For video export, a beat or a scene can say where the recorded camera goes while
 
 ## Beats and actions
 
-A beat is one click while presenting. Its actions run in order: each starts when the previous one ends, unless it says `"start": "with"` (start together with the previous action). Every action also takes `delay` (seconds) and `duration` (seconds, default depends on the action). A beat with `"auto": true` plays straight after the previous beat. A beat's `cue` (seconds) is when it starts in a recording or voice-over: the video plays each beat at its cue (set them in the app's **Timing** window). A top-level `"voiceover": { "upload", "duration", "name" }` names the narration the cues refer to (a file kept by the local server).
+A beat is one click while presenting. Its actions run in order: each starts when the previous one ends, unless it says `"start": "with"` (start together with the previous action). Every action also takes `delay` (seconds) and `duration` (seconds, default depends on the action). A beat with `"auto": true` plays straight after the previous beat. A beat's `cue` (seconds) is when it starts in a recording or voice-over: the video plays each beat at its cue (set them in the app's **Timing** window). A cue that comes before the previous beat has finished cuts that beat short, like an early click; cues must not go backwards. A top-level `"voiceover": { "upload", "duration", "name" }` names the narration the cues refer to (a file kept by the local server).
 
 Actions with `target` accept one id or a list. With a list, targets start `stagger` seconds apart (default 0.25).
 

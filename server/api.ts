@@ -10,6 +10,7 @@ import { deleteIcon, readLibrary, saveIcon } from './library';
 import { findOffset } from './media';
 import { saveUpload, transcribe, uploadPath } from './transcribe';
 import { saveImage, serveImage } from './images';
+import { claudeCodeChat, claudeCodeStatus } from './claudeCode';
 import { createPresentation, deletePresentation, listPresentations, readPresentation, writePresentation } from './presentations';
 import { addTrack, createTake, deleteTake, getTake, listTakes, TAKES_DIR, trackPath, updateTake } from './takes';
 
@@ -66,6 +67,13 @@ function send(res: ServerResponse, status: number, body: unknown) {
 
 async function llm(req: IncomingMessage, res: ServerResponse) {
   const { baseURL, apiKey, body } = await readJson(req);
+  if (String(baseURL).startsWith('claude-code')) {
+    try {
+      return send(res, 200, await claudeCodeChat(String(body?.model ?? ''), body?.messages ?? []));
+    } catch (e) {
+      return send(res, 502, { error: (e as Error).message });
+    }
+  }
   const url = new URL(`${String(baseURL).replace(/\/+$/, '')}/chat/completions`);
   if (!/^https?:$/.test(url.protocol)) throw new Error('baseURL must be http(s)');
   const upstream = await fetch(url, {
@@ -179,6 +187,7 @@ export function jzmServer(): Plugin {
       const parts = url.pathname.split('/').filter(Boolean);
       try {
         if (url.pathname === '/api/llm' && req.method === 'POST') return await llm(req, res);
+        if (url.pathname === '/api/claude-code' && req.method === 'GET') return send(res, 200, await claudeCodeStatus());
         if (url.pathname === '/api/transcribe' && req.method === 'POST') {
           const q = url.searchParams;
           const upload = await saveUpload(req, q.get('ext') ?? 'webm');
