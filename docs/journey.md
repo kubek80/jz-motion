@@ -260,3 +260,18 @@ Jakub found that deleting the open scene blanked the whole app, that confirmatio
 ![Adding an action](journey/39-add-action-menu.jpg)
 ![Library window](journey/40-library.jpg)
 ![Managing your own items](journey/41-library-mine.jpg)
+
+## Step 19: Talking an item over until it's right
+
+Jakub wanted to create items from the library too, and to chat about an element until he's happy with it before it goes into the library.
+
+- **Making something with AI is now a conversation.** Describe it and send; the reply appears as *Version 1* with a preview. Then ask for changes ("make the body pink", "add a fan on top"); each reply is the next version. Click any version to look at it large, and save the one you like under a name. You can switch models between replies, and a reply that breaks the rules even after the automatic repairs says so and you just ask again.
+- Under the hood, every follow-up sends the first request, then each version and the change asked of it, and the model replies with the whole item again under the same rules, so every version is checked the same way (tested).
+- **From the library window, everywhere:** "New with AI" (icon, clipart, 3D model) now works from the home screen's library too. **Refine with AI** on your own items starts the conversation from the saved version and saves over it; **Make a variation with AI** on a built-in item starts from it and saves a new one (named `my-<original>`).
+- Scenes made with AI ("+ scene with AI" in the editor) use the same conversation.
+
+**Checked by:** 49 unit tests and browser runs against the mock model: a clipart made in three versions with a model switch, saving an earlier version; refining it from the library; a variation of a built-in 3D model; a scene refined once and added.
+
+![A conversation about a clipart](journey/42-chat-about-clipart.jpg)
+![A variation of a built-in 3D model](journey/43-variation-3d.jpg)
+![A scene made in a conversation](journey/44-chat-scene.jpg)

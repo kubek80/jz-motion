@@ -4,6 +4,7 @@ import { cuePerformance } from '../video/performance';
 import { CreateWithAi, type RecordingSource } from './CreateWithAi';
 import { Settings } from './Settings';
 import { LibraryManager } from './LibraryManager';
+import { Creator, type CreateRequest } from './Creator';
 import { confirmDialog } from './confirm';
 import { StartBox, type Start } from './StartBox';
 import { examples } from './examples';
@@ -26,6 +27,8 @@ export function Home({ store, onOpen }: { store: Store; onOpen: (id: string) => 
   const [start, setStart] = useState<Start | null>(null);
   const [settings, setSettings] = useState(false);
   const [library, setLibrary] = useState(false);
+  const [creating, setCreating] = useState<CreateRequest | null>(null);
+  const [libraryVersion, setLibraryVersion] = useState(0);
 
   const load = async () => {
     try {
@@ -78,7 +81,15 @@ export function Home({ store, onOpen }: { store: Store; onOpen: (id: string) => 
         <CreateWithAi kind={start.mode} initialText={start.text} initialFile={start.file} modelId={start.modelId} onClose={() => setStart(null)} onCreate={createFromAi} />
       )}
       {settings && <Settings onClose={() => setSettings(false)} />}
-      {library && <LibraryManager onClose={() => setLibrary(false)} />}
+      {library && <LibraryManager onClose={() => setLibrary(false)} onCreate={(kind, start) => setCreating({ kind, start })} version={libraryVersion} />}
+      {creating && (
+        <Creator
+          initialKind={creating.kind}
+          start={creating.start}
+          onClose={() => setCreating(null)}
+          onSaved={() => { setCreating(null); setLibraryVersion((v) => v + 1); }}
+        />
+      )}
       <header className="home-bar">
         <span className="spacer" />
         <button onClick={() => setLibrary(true)} title="Icons, logos, clipart and 3D models">Library</button>

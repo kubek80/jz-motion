@@ -27,6 +27,16 @@ function answer(messages) {
   const first = messages.find((m) => m.role === 'user').content;
   const repairing = messages.filter((m) => m.role === 'assistant').length > 0 && /does not load/.test(last);
 
+  // A follow-up about an item already made: change the previous version a little, so each version differs.
+  if (last.startsWith('Change it:')) {
+    const prev = JSON.parse([...messages].reverse().find((m) => m.role === 'assistant').content);
+    const n = messages.filter((m) => m.role === 'user' && m.content.startsWith('Change it:')).length;
+    if (Array.isArray(prev.paths) && prev.paths.length && !prev.parts) prev.paths.push(`M${4 + n} 21h${4 + n}`);
+    else if (Array.isArray(prev.parts) && prev.parts[0]?.shape) prev.parts.push({ shape: 'cylinder', size: [0.6, 0.3, 0.6], at: [0, 2 + n * 0.3, 0], color: ['pink', 'yellow', 'green'][(n - 1) % 3] });
+    else if (Array.isArray(prev.parts)) prev.parts = prev.parts.map((p, i) => (i === 0 ? { ...p, color: ['pink', 'yellow', 'green'][(n - 1) % 3] } : p));
+    else if (prev.elements) prev.title = `${prev.title ?? 'Scene'} (v${n + 1})`;
+    return prev;
+  }
   if (system.startsWith('Write ONE new scene')) {
     const scene = example('hardware').scenes[0];
     return { ...scene, title: 'Local hardware (AI)' };
