@@ -51,6 +51,11 @@ export const BoxElement = z.object({
   height: z.number().positive(),
   radius: z.number().min(0).default(18),
   label: z.string().optional(),
+  /** Border: solid, dashed or dotted. */
+  line: z.enum(['solid', 'dashed', 'dotted']).optional(),
+  /** Border thickness. */
+  weight: z.enum(['normal', 'bold']).default('normal'),
+  /** Older way to say line "dashed". */
   dashed: z.boolean().default(false),
 });
 
@@ -63,6 +68,11 @@ export const ArrowElement = z.object({
   curve: z.number().default(0),
   head: z.enum(['end', 'start', 'both', 'none']).default('end'),
   label: z.string().optional(),
+  /** Solid, dashed or dotted line. */
+  line: z.enum(['solid', 'dashed', 'dotted']).optional(),
+  /** "bold": a thicker line and a bigger head. */
+  weight: z.enum(['normal', 'bold']).default('normal'),
+  /** Older way to say line "dashed". */
   dashed: z.boolean().default(false),
 });
 

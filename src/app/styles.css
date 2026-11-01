@@ -373,3 +373,27 @@ button.danger.solid:hover { filter: brightness(1.1); color: #14060a; }
 .creator-preview { aspect-ratio: 1; display: grid; place-items: center; background: #0d1114; border-radius: 12px; border: 1px solid var(--line); filter: drop-shadow(0 0 5px #3ef0ff55); overflow: hidden; }
 .creator-preview.board { aspect-ratio: 16 / 9; filter: none; }
 .creator-preview .preview { width: 100%; }
+
+/* Thin, quiet scrollbars everywhere */
+* { scrollbar-width: thin; scrollbar-color: #ffffff22 transparent; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #ffffff1f; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #ffffff40; }
+::-webkit-scrollbar-corner { background: transparent; }
+
+/* Dragging on the board never selects text */
+.frame, .frame * { user-select: none; -webkit-user-select: none; }
+.frame .inline-edit { user-select: text; -webkit-user-select: text; }
+body.dragging { user-select: none; -webkit-user-select: none; }
+
+/* Position and size, like a drawing program */
+.geo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding-bottom: 8px; margin-bottom: 2px; border-bottom: 1px solid var(--line); }
+.geo { display: flex; align-items: center; background: var(--bg); border: 1px solid var(--line); border-radius: 6px; height: 28px; overflow: hidden; }
+.geo:focus-within { border-color: var(--accent); }
+.geo-mark { flex-shrink: 0; width: 26px; height: 100%; display: grid; place-items: center; color: var(--muted); font-size: 11px; font-weight: 600; cursor: ew-resize; user-select: none; }
+.geo-mark:hover, .geo.scrubbing .geo-mark { color: var(--accent); }
+.geo input { flex: 1; min-width: 0; border: 0; background: transparent; padding: 0 6px 0 0; height: 100%; font-variant-numeric: tabular-nums; }
+.geo input:focus { outline: none; }
+.geo input::-webkit-inner-spin-button, .geo input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+.geo input[type=number] { -moz-appearance: textfield; }

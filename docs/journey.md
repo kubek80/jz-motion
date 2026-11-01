@@ -275,3 +275,17 @@ Jakub wanted to create items from the library too, and to chat about an element 
 ![A conversation about a clipart](journey/42-chat-about-clipart.jpg)
 ![A variation of a built-in 3D model](journey/43-variation-3d.jpg)
 ![A scene made in a conversation](journey/44-chat-scene.jpg)
+
+## Step 20: Drawing-program polish
+
+Jakub's notes: scrollbars too big, position and size fields that don't look like a drawing program, text getting selected while moving a box, and a more graphical choice of border and arrow styles (with dotted, and a big arrow).
+
+- **Scrollbars** are thin (6 px) and nearly invisible until hovered, everywhere.
+- **Position and size** sit at the top of an element's properties as a compact grid: X, Y, W, H, a size or scale field, rotation and corner radius, each with a small letter or picture inside the field. Dragging a label sideways changes the number (Shift for steps of 10); a drag is one undo step.
+- **No more selecting text while dragging:** the board can't start a text selection, and nothing on the page gets selected while something is being moved.
+- **Line styles:** boxes and arrows take `line` (solid, dashed, dotted) and `weight` (normal, bold; a bold arrow also gets a bigger head), picked from pictures. Dots are zero-length dashes with round ends, drawn in through the same mask as dashes. Older files with `"dashed": true` still work, and choosing a style tidies that away.
+
+**Checked by:** 49 unit tests and a browser run that drags a box across the board (checking nothing gets selected), sets a box to dotted and bold, drags its W label, and makes an arrow dashed and bold, checking the saved file each time.
+
+![Position and size](journey/45-position-size.jpg)
+![Line styles](journey/46-line-styles.jpg)

@@ -402,6 +402,8 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
           return el && typeof el.x === 'number' ? [{ id, x: el.x as number, y: el.y as number }] : [];
         })
       : [];
+    document.body.classList.add('dragging');
+    window.getSelection()?.removeAllRanges();
     drag.current = {
       pointer: e.pointerId, startX: e.clientX, startY: e.clientY, moved: false, items: movable, pan: !hit,
       board, camera: s.camera, unitsPerPixel: s.unitsPerPixel,
@@ -451,6 +453,7 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
   const onPointerUp = (e: React.PointerEvent) => {
     const d = drag.current;
     drag.current = null;
+    document.body.classList.remove('dragging');
     if (!d || !doc) return;
     if (d.resize) {
       if (d.moved) update(updateElement(doc, sceneIndex, d.resize.id, resized(d.resize.el, d.resize.sx, d.resize.sy)));
@@ -730,7 +733,7 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
               editable={editable}
               ids={ids}
               selection={selection}
-              onElement={(id, k, v) => update(updateElement(doc, sceneIndex, id, { [k]: v }))}
+              onElement={(id, k, v) => update(updateElement(doc, sceneIndex, id, k === 'line' ? { line: v, dashed: undefined } : { [k]: v }))}
               onRename={rename}
               onDelete={deletePicked}
               onDuplicate={duplicate}
