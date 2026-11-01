@@ -30,7 +30,12 @@ export function shapeBox(el: Element, lookup: (id: string) => Element | undefine
       return { x: left, y: el.y - el.size / 2, width: w, height: el.size };
     }
     case 'chart':
+    case 'area':
       return { x: el.x - el.width / 2, y: el.y - el.height / 2, width: el.width, height: el.height };
+    case 'image': {
+      const { bar } = imageFrame(el);
+      return { x: el.x - el.width / 2, y: el.y - (el.height + bar) / 2, width: el.width, height: el.height + bar };
+    }
     case 'iso': {
       const b = projectIso(resolveIsoParts(el), { rotate: el.rotate, explode: 0 }, el.scale).box;
       return { x: el.x + b.x, y: el.y + b.y, width: b.width, height: b.height };
@@ -45,6 +50,16 @@ export function shapeBox(el: Element, lookup: (id: string) => Element | undefine
       ]);
     }
   }
+}
+
+/**
+ * A framed image's browser bar: its height, and where the picture sits. The picture and bar together are
+ * centered on (x, y); the picture is `width` × `height` and the bar sits on top of it.
+ */
+export function imageFrame(el: { x: number; y: number; width: number; height: number; frame?: string }) {
+  const bar = el.frame === 'browser' ? Math.min(90, Math.max(34, el.width * 0.055)) : 0;
+  const top = el.y - (el.height + bar) / 2;
+  return { bar, top, imageTop: top + bar };
 }
 
 /** Everything the element draws, including its label. Used for camera framing. */

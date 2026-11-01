@@ -2,8 +2,8 @@ import gsap from 'gsap';
 import { buildChart, renderChart, type ChartNodes } from './chart';
 import { svgEl } from './dom';
 import { splitSubpaths } from './pathSplit';
-import type { CompiledElement, CompiledPresentation, CompiledScene, ElementState, Op } from './compile';
-import { arrowCurve, arrowEnds, arrowHead, iconLabelSize, ISO_LABEL_SIZE, VIEW } from './geometry';
+import type { CompiledElement, CompiledPresentation, CompiledScene, ElementState, Op, Spotlight } from './compile';
+import { arrowCurve, arrowEnds, arrowHead, iconLabelSize, imageFrame, ISO_LABEL_SIZE, VIEW } from './geometry';
 import { projectIso, resolveIsoParts, type IsoPart } from './iso';
 import { ICON_GRID, iconHeight, icons, type PartColor } from './library';
 import { board, palette } from './palette';
@@ -42,7 +42,16 @@ interface ElementNodes {
   flowPath?: SVGPathElement;
   iso?: IsoNodes;
   chart?: ChartNodes;
+  image?: ImageNodes;
+  /** An area's outline: shown only while editing. */
+  areaOutline?: SVGElement;
 }
+
+/**
+ * A picture lives in its own layer under the marker glow (so it stays crisp), and copies the element's
+ * position, scale and opacity every frame. It is revealed left to right while `reveal.v` goes 0 → 1.
+ */
+interface ImageNodes { outer: SVGGElement; fx: SVGGElement; clip: SVGRectElement; img: SVGImageElement; left: number; width: number; reveal: { v: number } }
 
 interface IsoNodes {
   parts: IsoPart[];
@@ -83,6 +92,13 @@ export class Stage {
   readonly svg: SVGSVGElement;
   private camGroup: SVGGElement;
   private layer: SVGGElement;
+  /** Pictures, under the glowing drawing. */
+  private images: SVGGElement;
+  /** The spotlight's dimming, above the drawing. */
+  private spotPath: SVGPathElement;
+  /** Drawing added while a spotlight is on, kept bright above it. */
+  private layerTop: SVGGElement;
+  private spot = { on: 0, x: 0, y: 0, width: 0, height: 0, amount: 0.7, ellipse: 0, fade: 0 };
   private overlay: SVGGElement;
   private defs: SVGDefsElement;
   private presentation?: CompiledPresentation;
@@ -115,7 +131,10 @@ export class Stage {
     this.defs = svgEl('defs', {}, this.svg);
     this.buildBoard();
     this.camGroup = svgEl('g', {}, this.svg);
+    this.images = svgEl('g', {}, this.camGroup);
     this.layer = svgEl('g', { filter: `url(#${this.prefix}-glow)` }, this.camGroup);
+    this.spotPath = svgEl('path', { 'fill-rule': 'evenodd', 'pointer-events': 'none', display: 'none' }, this.camGroup) as SVGPathElement;
+    this.layerTop = svgEl('g', { filter: `url(#${this.prefix}-glow)` }, this.camGroup);
     // Editor selection boxes: above the drawing, without the glow.
     this.overlay = svgEl('g', { 'pointer-events': 'none' }, this.camGroup);
     container.appendChild(this.svg);
@@ -190,6 +209,8 @@ export class Stage {
       document.fonts.load(`40px Caveat`),
       document.fonts.load(`700 40px Caveat`),
       this.backgroundReady,
+      // Pictures load before the first frame, so exports never catch one half-loaded.
+      ...[...new Set(p.scenes.flatMap((sc) => sc.elements.flatMap((e) => (e.type === 'image' ? [e.src] : []))))].map(preloadImage),
     ]).catch(() => undefined);
     const scene = Math.min(at.scene, p.scenes.length - 1);
     this.showScene(scene, Math.min(at.beat, p.scenes[scene].beats.length));
@@ -309,6 +330,27 @@ export class Stage {
     this.emit();
   }
 
+  /** The dimming outside the spotlight: a huge rectangle with the lit region cut out of it. */
+  private renderSpotlight() {
+    const s = this.spot;
+    const alpha = s.on * s.amount;
+    if (alpha < 0.002 || s.width <= 0) {
+      this.spotPath.setAttribute('display', 'none');
+      return;
+    }
+    const { x, y, width: w, height: h } = s;
+    const hole = s.ellipse > 0.5
+      ? `M${x} ${y + h / 2}a${w / 2} ${h / 2} 0 1 0 ${w} 0a${w / 2} ${h / 2} 0 1 0 ${-w} 0Z`
+      : (() => {
+          const r = Math.min(18, w / 4, h / 4);
+          return `M${x + r} ${y}H${x + w - r}Q${x + w} ${y} ${x + w} ${y + r}V${y + h - r}Q${x + w} ${y + h} ${x + w - r} ${y + h}H${x + r}Q${x} ${y + h} ${x} ${y + h - r}V${y + r}Q${x} ${y} ${x + r} ${y}Z`;
+        })();
+    this.spotPath.setAttribute('d', `M-100000 -100000H100000V100000H-100000Z${hole}`);
+    this.spotPath.setAttribute('fill', s.fade > 0.5 ? board.background : '#000');
+    this.spotPath.setAttribute('opacity', String(alpha));
+    this.spotPath.removeAttribute('display');
+  }
+
   private applyCamera() {
     const { x, y, zoom } = this.cam;
     this.camGroup.setAttribute('transform', `translate(${VIEW.width / 2} ${VIEW.height / 2}) scale(${zoom}) translate(${-x} ${-y})`);
@@ -335,6 +377,8 @@ export class Stage {
   /** Draws the parts that are computed rather than tweened: camera, charts, 3D, flows. */
   private frame(dt: number) {
     this.applyCamera();
+    this.renderSpotlight();
+    for (const n of this.nodes.values()) if (n.image) renderImage(n);
     for (const n of this.nodes.values()) {
       if (n.chart) renderChart(n.chart);
       if (!n.iso) continue;
@@ -368,7 +412,11 @@ export class Stage {
       gsap.set(n.outer, { opacity: isRing ? 0 : editable.has(id) ? 1 : 0.3 });
       for (const part of n.parts) gsap.set(...partState(part, true));
       if (n.iso) n.iso.spin.on = 0;
+      if (n.areaOutline) n.areaOutline.setAttribute('stroke-opacity', '0.6');
+      if (n.image) renderImage(n);
     }
+    this.spot.on = 0;
+    this.renderSpotlight();
     for (const f of this.flows.values()) f.on = 0;
     this.cam = camera ? { ...camera } : this.fitCamera();
     this.applyCamera();
@@ -589,7 +637,10 @@ export class Stage {
     this.tl.kill();
     this.tl = gsap.timeline({ paused: true });
     this.layer.replaceChildren();
+    this.layerTop.replaceChildren();
+    this.images.replaceChildren();
     this.overlay.replaceChildren();
+    Object.assign(this.spot, { on: 0 });
     this.nodes.clear();
     this.flows.clear();
     // Previous scene's masks; the board's own defs come first and are kept.
@@ -627,7 +678,7 @@ export class Stage {
   }
 
   private buildElement(el: CompiledElement, lookup: (id: string) => CompiledElement | undefined, initial?: ElementState): ElementNodes {
-    const outer = svgEl('g', { 'data-id': el.id, class: `jzm-el jzm-${el.type}` }, this.layer);
+    const outer = svgEl('g', { 'data-id': el.id, class: `jzm-el jzm-${el.type}` }, this.builtFor?.above.includes(el.id) ? this.layerTop : this.layer);
     const fx = svgEl('g', {}, outer);
     const parts: DrawPart[] = [];
     const stroke = (d: string, width: number, parent: SVGElement = fx, line: LineStyle = 'solid', scale = 1): SVGGraphicsElement => {
@@ -698,6 +749,8 @@ export class Stage {
     let flowPath: SVGPathElement | undefined;
     let iso: IsoNodes | undefined;
     let chart: ChartNodes | undefined;
+    let image: ImageNodes | undefined;
+    let areaOutline: SVGElement | undefined;
 
     switch (el.type) {
       case 'icon': {
@@ -782,6 +835,53 @@ export class Stage {
       case 'ring':
         stroke(ringPath(el.rx, el.ry, el.id), board.stroke * 0.9);
         break;
+      case 'image': {
+        const { bar, top, imageTop } = imageFrame(el);
+        const w = el.width / 2;
+        const t = top - el.y;
+        const it = imageTop - el.y;
+        const bottom = it + el.height;
+        // An invisible box so the element can be picked and framed even without a frame drawn.
+        svgEl('rect', { x: -w, y: t, width: el.width, height: el.height + bar, fill: 'none', stroke: 'none' }, fx);
+        const outer2 = svgEl('g', {}, this.images) as SVGGElement;
+        const fx2 = svgEl('g', {}, outer2) as SVGGElement;
+        const clipId = `${this.prefix}-c${uid++}`;
+        const clipPath = svgEl('clipPath', { id: clipId, 'data-scene': '' }, this.defs);
+        const clip = svgEl('rect', { x: -w, y: it, width: el.width, height: el.height, rx: bar ? 0 : 8 }, clipPath) as SVGRectElement;
+        const img = svgEl('image', { href: el.src, x: -w, y: it, width: el.width, height: el.height, preserveAspectRatio: 'xMidYMid slice', 'clip-path': `url(#${clipId})` }, fx2) as SVGImageElement;
+        const reveal = { v: 1 };
+        image = { outer: outer2, fx: fx2, clip, img, left: -w, width: el.width, reveal };
+        if (bar) {
+          // A browser window in marker: outline, the bar's bottom edge, three dots, the address field.
+          const r = Math.min(18, bar * 0.45);
+          stroke(`M${-w + r} ${t}H${w - r}Q${w} ${t} ${w} ${t + r}V${bottom - r}Q${w} ${bottom} ${w - r} ${bottom}H${-w + r}Q${-w} ${bottom} ${-w} ${bottom - r}V${t + r}Q${-w} ${t} ${-w + r} ${t}Z`, board.stroke);
+          stroke(`M${-w} ${it}H${w}`, board.stroke * 0.8);
+          const dotR = bar * 0.11;
+          for (let i = 0; i < 3; i++) {
+            const cx = -w + bar * 0.55 + i * bar * 0.42;
+            const cy = t + bar / 2;
+            stroke(`M${cx - dotR} ${cy}a${dotR} ${dotR} 0 1 0 ${dotR * 2} 0a${dotR} ${dotR} 0 1 0 ${-dotR * 2} 0`, board.stroke * 0.7);
+          }
+          const fieldX = -w + bar * 1.9;
+          const fieldW = Math.min(el.width * 0.55, el.width - bar * 2.6);
+          const fh = bar * 0.56;
+          stroke(`M${fieldX + fh / 2} ${t + (bar - fh) / 2}H${fieldX + fieldW - fh / 2}a${fh / 2} ${fh / 2} 0 0 1 0 ${fh}H${fieldX + fh / 2}a${fh / 2} ${fh / 2} 0 0 1 0 ${-fh}Z`, board.stroke * 0.7);
+          if (el.url) write(el.url, fieldX + fh * 0.6, t + bar / 2, fh * 0.62, 'start', 'url');
+        }
+        parts.push({ kind: 'cell', cell: reveal, weight: el.width * 0.9 });
+        if (el.label) write(el.label, 0, bottom + 34, 40, 'middle', 'label');
+        break;
+      }
+      case 'area': {
+        const w = el.width / 2;
+        const h = el.height / 2;
+        const d = el.shape === 'ellipse'
+          ? `M${-w} 0a${w} ${h} 0 1 0 ${el.width} 0a${w} ${h} 0 1 0 ${-el.width} 0Z`
+          : `M${-w} ${-h}H${w}V${h}H${-w}Z`;
+        // Not part of the drawing: a faint dashed outline while editing, invisible otherwise.
+        areaOutline = svgEl('path', { d, fill: 'none', stroke: 'currentColor', 'stroke-width': 3, 'stroke-dasharray': '10 8', 'stroke-opacity': 0 }, fx);
+        break;
+      }
       case 'chart':
         chart = buildChart(el, initial?.chart?.max ?? el.max ?? 1, { fx, stroke, write, parts });
         break;
@@ -806,7 +906,7 @@ export class Stage {
         break;
       }
     }
-    return { outer, fx, parts, pivot, flowPath, iso, chart };
+    return { outer, fx, parts, pivot, flowPath, iso, chart, image, areaOutline };
   }
 
   private addOp(op: Op) {
@@ -814,6 +914,13 @@ export class Stage {
     const instant = 0.001;
     if (op.kind === 'camera') {
       tl.fromTo(this.cam, { ...op.from }, { ...op.to, duration: op.dur, ease: 'power2.inOut', immediateRender: false }, op.t);
+      return;
+    }
+    if (op.kind === 'spotlight') {
+      // Turning on or off keeps the lit region still; moving between targets slides it.
+      const from = spotValues(op.from ?? op.to!, op.from ? 1 : 0);
+      const to = spotValues(op.to ?? op.from!, op.to ? 1 : 0);
+      tl.fromTo(this.spot, from, { ...to, duration: Math.max(op.dur, 0.001), ease: 'power2.inOut', immediateRender: false }, op.t);
       return;
     }
     const n = this.nodes.get(op.id);
@@ -948,4 +1055,28 @@ function ringPath(rx: number, ry: number, seed: string): string {
     pts.push(`${(Math.cos(a) * rx * k).toFixed(1)} ${(Math.sin(a) * ry * k).toFixed(1)}`);
   }
   return `M${pts[0]}L${pts.slice(1).join('L')}`;
+}
+
+/** The spotlight as numbers GSAP can tween; `on` fades it in and out. */
+function spotValues(s: Spotlight, on: number) {
+  return { on, x: s.x, y: s.y, width: s.width, height: s.height, amount: s.amount, ellipse: s.shape === 'ellipse' ? 1 : 0, fade: s.style === 'fade' ? 1 : 0 };
+}
+
+/** Copies the element's position, scale and visibility onto its picture, and applies the reveal. */
+function renderImage(n: ElementNodes) {
+  const im = n.image!;
+  const t1 = n.outer.getAttribute('transform');
+  const t2 = n.fx.getAttribute('transform');
+  if (t1 !== null) im.outer.setAttribute('transform', t1); else im.outer.removeAttribute('transform');
+  if (t2 !== null) im.fx.setAttribute('transform', t2); else im.fx.removeAttribute('transform');
+  im.outer.style.opacity = n.outer.style.opacity;
+  const v = Math.max(0, Math.min(1, im.reveal.v));
+  im.clip.setAttribute('width', String(im.width * v));
+  im.img.style.opacity = String(Math.min(1, v * 2.5));
+}
+
+function preloadImage(src: string): Promise<void> {
+  const img = new Image();
+  img.src = src;
+  return img.decode().catch(() => undefined);
 }

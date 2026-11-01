@@ -2,11 +2,13 @@ import { useMemo, useState } from 'react';
 import { isoModels } from '../../engine/iso';
 import { icons, type IconDef } from '../../engine/library';
 import { IconPreview } from './IconPreview';
+import { isImageFile, uploadImage, type PlacedImage } from '../images';
 
 export type AddRequest =
   | { kind: 'icon'; name: string }
   | { kind: 'iso'; name: string }
-  | { kind: 'text' | 'box' | 'arrow' | 'chart' };
+  | { kind: 'text' | 'box' | 'arrow' | 'chart' | 'area' }
+  | { kind: 'image'; image: PlacedImage };
 
 /** Palette of things to put on the board. Clicking adds the item in the middle of the view. */
 export function Library({ onAdd, arrowActive, onCreate, onBrowse, version }: { onAdd: (r: AddRequest) => void; arrowActive: boolean; onCreate?: () => void; onBrowse?: () => void; version?: number }) {
@@ -35,6 +37,15 @@ export function Library({ onAdd, arrowActive, onCreate, onBrowse, version }: { o
         >
           Arrow
         </button>
+        <label className="file-button" title="Add a screenshot or picture (you can also paste one with Ctrl+V, or drop it on the board)">
+          Image
+          <input type="file" accept="image/*" onChange={(e) => {
+            const f = e.target.files?.[0];
+            e.target.value = '';
+            if (isImageFile(f)) void uploadImage(f).then((image) => onAdd({ kind: 'image', image }), (err) => alert(`Could not add the picture: ${(err as Error).message}`));
+          }} />
+        </label>
+        <button onClick={() => onAdd({ kind: 'area' })} title="Mark part of a screenshot (or anything) to circle it, spotlight it or zoom to it">Area</button>
       </div>
       <div className="lib-search">
         <input className="search" placeholder="Search icons, logos, clipart…" value={query} onChange={(e) => setQuery(e.target.value)} />

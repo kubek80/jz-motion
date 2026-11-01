@@ -31,6 +31,7 @@ const VERBS: Record<string, { icon: string; label: string; family: 'reveal' | 'h
   spin: { icon: '⟳', label: 'Spin', family: 'motion' },
   explode: { icon: '✺', label: 'Explode', family: 'motion' },
   camera: { icon: '⌖', label: 'Camera', family: 'camera' },
+  spotlight: { icon: '◎', label: 'Spotlight', family: 'attention' },
   'set-values': { icon: '▤', label: 'New values', family: 'data' },
   wait: { icon: '⋯', label: 'Pause', family: 'wait' },
 };
@@ -44,6 +45,7 @@ const QUICK: { do: string; needs: boolean; hint: string }[] = [
   { do: 'pulse', needs: true, hint: 'Grow and shrink to draw attention' },
   { do: 'circle', needs: true, hint: 'Draw a loop around it' },
   { do: 'camera', needs: false, hint: 'Frame the selected elements (or everything)' },
+  { do: 'spotlight', needs: false, hint: 'Darken everything except the selected elements (nothing selected: turn the spotlight off)' },
   { do: 'move', needs: true, hint: 'Move it somewhere else' },
   { do: 'flow', needs: true, hint: 'Dots travel along an arrow' },
   { do: 'erase', needs: true, hint: 'Wipe it off the board' },
@@ -56,6 +58,7 @@ function newAction(kind: string, picked: string[]): Raw {
     case 'camera': return { do: 'camera', focus: picked.length ? target : 'all' };
     case 'move': return { do: 'move', target, to: { x: 960, y: 540 } };
     case 'wait': return { do: 'wait', duration: 1 };
+    case 'spotlight': return picked.length ? { do: 'spotlight', target } : { do: 'spotlight', on: false };
     default: return { do: kind, target };
   }
 }
@@ -93,6 +96,7 @@ export function Beats({ beats, selection, picked, timing, colors, onSelect, onCh
     if (who === undefined) {
       if (a.do === 'camera') return <span className="tchip" style={GREY}>{a.zoom !== undefined ? `zoom ${a.zoom}` : 'move'}</span>;
       if (a.do === 'wait') return <span className="tchip" style={GREY}>{a.duration ?? 1}s</span>;
+      if (a.do === 'spotlight') return <span className="tchip" style={GREY}>off</span>;
       return null;
     }
     const list = [who].flat() as string[];

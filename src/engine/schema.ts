@@ -120,7 +120,37 @@ export const ChartElement = z.object({
   values: z.boolean().default(true),
 });
 
-export const Element = z.discriminatedUnion('type', [IconElement, TextElement, BoxElement, ArrowElement, IsoElement, ChartElement]);
+/** A picture, usually a screenshot, optionally framed as a browser window drawn in marker. */
+export const ImageElement = z.object({
+  ...base,
+  type: z.literal('image'),
+  /** Where the picture is: "/images/<file>" (pasted or added in the app), or a data: URL. */
+  src: z.string().min(1),
+  /** Center of the picture (with its frame). */
+  x: z.number(),
+  y: z.number(),
+  /** Size of the picture itself; the browser frame adds a bar above it. */
+  width: z.number().positive(),
+  height: z.number().positive(),
+  /** "browser": a browser window outline drawn around it, in the element's colour. */
+  frame: z.enum(['none', 'browser']).default('none'),
+  /** Text in the browser frame's address bar. */
+  url: z.string().optional(),
+  label: z.string().optional(),
+});
+
+/** A marked region, e.g. part of a screenshot, for circle, spotlight and camera. Not drawn itself. */
+export const AreaElement = z.object({
+  ...base,
+  type: z.literal('area'),
+  x: z.number(),
+  y: z.number(),
+  width: z.number().positive(),
+  height: z.number().positive(),
+  shape: z.enum(['rect', 'ellipse']).default('rect'),
+});
+
+export const Element = z.discriminatedUnion('type', [IconElement, TextElement, BoxElement, ArrowElement, IsoElement, ChartElement, ImageElement, AreaElement]);
 
 const Targets = z.union([Id, z.array(Id).min(1)]);
 const timing = {
@@ -172,6 +202,24 @@ export const Action = z.discriminatedUnion('do', [
     zoom: z.number().positive().optional(),
     /** Space around the focused elements, in screen pixels at 1920×1080. */
     padding: z.number().min(0).default(120),
+  }),
+  /**
+   * Darkens (or fades) everything outside the targets so they stand out; stays on between beats.
+   * "on": false turns it off; a new spotlight moves the light to new targets.
+   */
+  z.object({
+    do: z.literal('spotlight'),
+    ...timing,
+    target: Targets.optional(),
+    on: z.boolean().default(true),
+    /** "dark": everything else goes darker; "fade": everything else fades into the board. */
+    style: z.enum(['dark', 'fade']).default('dark'),
+    /** How strongly, 0 to 1. */
+    amount: z.number().min(0).max(1).default(0.7),
+    /** Shape of the light; defaults to the area's own shape, else a rounded rectangle. */
+    shape: z.enum(['rect', 'ellipse']).optional(),
+    /** Room around the targets, in board units. */
+    padding: z.number().min(0).default(24),
   }),
   z.object({ do: z.literal('wait'), ...timing }),
 ]);

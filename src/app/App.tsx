@@ -7,6 +7,7 @@ import { Creator, type CreateRequest } from './Creator';
 import { Settings } from './Settings';
 import { LibraryManager } from './LibraryManager';
 import { confirmDialog } from './confirm';
+import { imageFrom, lastFrame, rememberFrame, uploadImage } from './images';
 import { insertScene } from '../ai/assistant';
 import type { ChatMessageView } from './Chat';
 import { JsonPanel } from './JsonPanel';
@@ -60,9 +61,9 @@ interface InlineEdit {
 }
 
 /** Elements that resize around their position; the rest (arrows) follow what they connect. */
-const RESIZABLE = new Set(['icon', 'text', 'box', 'chart', 'iso']);
+const RESIZABLE = new Set(['icon', 'text', 'box', 'chart', 'iso', 'image', 'area']);
 /** These keep their proportions; boxes and charts stretch freely (Shift keeps proportions). */
-const UNIFORM = new Set(['icon', 'text', 'iso']);
+const UNIFORM = new Set(['icon', 'text', 'iso', 'image']);
 
 /** New size fields after scaling an element by sx × sy. */
 function resized(el: Raw, sx: number, sy: number): Raw {
@@ -73,6 +74,8 @@ function resized(el: Raw, sx: number, sy: number): Raw {
     case 'iso': return { scale: Math.round((el.scale ?? 70) * sx * 10) / 10 };
     case 'box': return { width: r(el.width * sx), height: r(el.height * sy) };
     case 'chart': return { width: r((el.width ?? 640) * sx), height: r((el.height ?? 380) * sy) };
+    case 'image':
+    case 'area': return { width: r(el.width * sx), height: r(el.height * sy) };
     default: return {};
   }
 }
@@ -285,6 +288,25 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
           data: [{ label: 'A', value: 3 }, { label: 'B', value: 5 }, { label: 'C', value: 2 }],
         };
         break;
+      case 'image': {
+        // Fit the picture comfortably inside the current view.
+        const zoom = cam.zoom || 1;
+        const k = Math.min(1, (1100 / zoom) / r.image.width, (680 / zoom) / r.image.height);
+        el = {
+          id: uniqueId(doc, sceneIndex, 'screenshot'), type: 'image', src: r.image.src, ...at,
+          width: Math.round(r.image.width * k), height: Math.round(r.image.height * k), color: 'cyan',
+          ...(lastFrame() === 'browser' ? { frame: 'browser' } : {}),
+        };
+        break;
+      }
+      case 'area': {
+        // Over the selected picture's middle, else in the middle of the view.
+        const base = pickedEl && (pickedEl.type === 'image' || pickedEl.type === 'box' || pickedEl.type === 'chart') ? pickedEl : null;
+        el = base
+          ? { id: uniqueId(doc, sceneIndex, 'area'), type: 'area', x: base.x, y: base.y, width: Math.round(base.width * 0.3), height: Math.round(base.height * 0.3), color: 'yellow' }
+          : { id: uniqueId(doc, sceneIndex, 'area'), type: 'area', ...at, width: 320, height: 200, color: 'yellow' };
+        break;
+      }
       case 'arrow':
         if (picked.length !== 2) {
           // Start the arrow tool; a single selected element is where the arrow starts.
@@ -518,6 +540,23 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
+  // Paste a screenshot (Ctrl+V) or drop a picture on the board to add it.
+  const addRef = useRef(add);
+  addRef.current = add;
+  const addPicture = (file: File | null) => {
+    if (!file) return false;
+    void uploadImage(file).then((image) => addRef.current({ kind: 'image', image }), (e) => alert(`Could not add the picture: ${(e as Error).message}`));
+    return true;
+  };
+  useEffect(() => {
+    const onPaste = (e: ClipboardEvent) => {
+      if (keyState.current.mode !== 'edit' || (e.target as HTMLElement).closest?.('textarea, input, [contenteditable], .cm-editor')) return;
+      if (addPicture(imageFrom(e.clipboardData))) e.preventDefault();
+    };
+    window.addEventListener('paste', onPaste);
+    return () => window.removeEventListener('paste', onPaste);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   const togglePresent = async () => {
     if (document.fullscreenElement) await document.exitFullscreen();
     else {
@@ -628,6 +667,8 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
             onPointerUp={onPointerUp}
             onWheel={onWheel}
             onDoubleClick={onDoubleClick}
+            onDragOver={(e) => { if (mode === 'edit' && Array.from(e.dataTransfer.types).includes('Files')) e.preventDefault(); }}
+            onDrop={(e) => { if (mode === 'edit' && addPicture(imageFrom(e.dataTransfer))) e.preventDefault(); }}
           >
             <div className="host" ref={stageHost} />
             <video ref={preview} className={recording && recorder.state.stream?.getVideoTracks().length ? 'cam-preview on' : 'cam-preview'} autoPlay muted playsInline />
@@ -733,10 +774,16 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
               editable={editable}
               ids={ids}
               selection={selection}
-              onElement={(id, k, v) => update(updateElement(doc, sceneIndex, id, k === 'line' ? { line: v, dashed: undefined } : { [k]: v }))}
+              onElement={(id, k, v) => { if (k === 'frame') rememberFrame(v); update(updateElement(doc, sceneIndex, id, k === 'line' ? { line: v, dashed: undefined } : { [k]: v })); }}
               onRename={rename}
               onDelete={deletePicked}
               onDuplicate={duplicate}
+              onAddBeat={(beat) => {
+                const n = scene?.beats?.length ?? 0;
+                update(updateBeats(doc, sceneIndex, (beats) => [...beats, beat as (typeof beats)[number]]));
+                setPicked([]);
+                setSelection({ kind: 'beat', beat: n });
+              }}
               onAction={(bi, ai, next) => update(updateBeats(doc, sceneIndex, (beats) => beats.map((b, i) => (i === bi ? { ...b, actions: b.actions.map((a, j) => (j === ai ? next : a)) } : b))))}
               onBeat={(bi, k, v) => update(updateBeats(doc, sceneIndex, (beats) => beats.map((b, i) => {
                 if (i !== bi) return b;

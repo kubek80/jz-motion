@@ -398,3 +398,11 @@ body.dragging { user-select: none; -webkit-user-select: none; }
 .geo input:focus { outline: none; }
 .geo input::-webkit-inner-spin-button, .geo input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
 .geo input[type=number] { -moz-appearance: textfield; }
+
+/* Pictures and areas */
+.basics .file-button { display: flex; align-items: center; justify-content: center; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 4px 10px; cursor: pointer; font-size: 13px; }
+.basics .file-button:hover { border-color: var(--accent); }
+.basics .file-button input { display: none; }
+.quick-beats { display: flex; flex-direction: column; gap: 6px; padding: 8px 0; border-top: 1px solid var(--line); font-size: 12px; }
+.row.wrap { flex-wrap: wrap; }
+.quick-beats button { font-size: 12px; }

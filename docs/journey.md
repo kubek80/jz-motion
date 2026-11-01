@@ -295,3 +295,20 @@ Jakub's notes: scrollbars too big, position and size fields that don't look like
 "+ New scene" and "✦ New scene with AI" now sit on their own lines under the scenes, and the Icons / Logos / Clipart / 3D headings have a little space above and below so they read as headings over their pictures.
 
 ![Left panel](journey/47-left-panel.jpg)
+
+## Step 22: Screenshots, areas and a spotlight
+
+For explainer videos Jakub wanted to paste a screenshot of an interface and draw on it, optionally framed as a browser window in the app's style, circle part of it, and darken or fade everything else to focus attention.
+
+- **`image` element:** paste a screenshot (Ctrl+V), drop a picture on the board, or click **Image**. The local server keeps pictures in `images/`, named by their content, so pasting the same one twice stores it once; with no server the picture is kept inside the presentation. The picture fits the current view and resizes keeping its proportions.
+- **Browser frame:** `"frame": "browser"` draws a window around the picture in marker: rounded outline, bar, three dots and an address field with your text. It draws in stroke by stroke, then the screenshot is revealed left to right. The next picture remembers the frame you chose.
+- **Pictures stay crisp under the drawing.** The glow filter works on the whole drawing layer, and a blurred halo around a screenshot looked wrong, so pictures live in their own layer underneath; every frame each picture copies its element's position, scale and opacity, so moving, popping, fading and erasing work as for anything else.
+- **`area` element:** an invisible rectangle or ellipse marking part of a screenshot (a dashed outline while editing). Select a picture and click **Area** to put one over its middle. Its properties offer one-click beats: spotlight and circle it, spotlight it, circle it, zoom to it.
+- **`spotlight` action:** everything outside the target goes darker (`dark`) or fades into the board (`fade`), by `amount`, in the area's shape; it stays on between beats, a new spotlight slides the light to new targets, and `"on": false` turns it off. Anything drawn while it is on (the circle, a note, an arrow) is kept above the dimming, so annotations stay bright.
+- Exports wait for every picture to load before the first frame.
+
+**Checked by:** 52 unit tests (new: spotlight on/move/off and what stays above it, a spotlight without a target, framing a framed screenshot) and browser runs: pasting a screenshot, choosing the browser frame and address, adding an area over it and a spotlight-and-circle beat, and playing a scene through draw, spotlight (dark and fade) and lights back on.
+
+![Screenshot drawn in, spotlight dark, spotlight fade, and the editing view](journey/48-screenshot-spotlight.jpg)
+![Area with one-click beats](journey/49-area-quick-beats.jpg)
+![Picture properties](journey/50-image-properties.jpg)

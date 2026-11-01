@@ -15,6 +15,8 @@ interface Props {
   onRename: (from: string, to: string) => string | null;
   onDelete: (ids: string[]) => void;
   onDuplicate: (id: string) => void;
+  /** Adds a beat after the existing ones. */
+  onAddBeat: (beat: Raw) => void;
   onAction: (beat: number, action: number, next: Raw) => void;
   onBeat: (beat: number, key: string, value: unknown) => void;
   onScene: (key: string, value: unknown) => void;
@@ -39,6 +41,17 @@ export function Inspector(p: Props) {
           schema={elementSchemas[el.type]} value={el} ids={p.ids.filter((i) => i !== id)} hide={['id']} onChange={(k, v) => p.onElement(id, k, v)}
           advanced={<label className="field" title="The name other elements and beats use to refer to this one (arrows, actions). Renaming updates them all."><span>id<i className="help">?</i></span><IdField id={id} onRename={(to) => p.onRename(id, to)} /></label>}
         />
+        {el.type === 'area' && (
+          <div className="quick-beats">
+            <span className="muted">Add a beat that…</span>
+            <div className="row wrap">
+              <button onClick={() => p.onAddBeat({ title: `Look at ${id}`, actions: [{ do: 'spotlight', target: id }, { do: 'circle', target: id, start: 'with' }] })}>spotlights and circles it</button>
+              <button onClick={() => p.onAddBeat({ title: `Look at ${id}`, actions: [{ do: 'spotlight', target: id }] })}>spotlights it</button>
+              <button onClick={() => p.onAddBeat({ title: `Circle ${id}`, actions: [{ do: 'circle', target: id }] })}>circles it</button>
+              <button onClick={() => p.onAddBeat({ title: `Zoom to ${id}`, actions: [{ do: 'camera', focus: id, padding: 160 }] })}>zooms to it</button>
+            </div>
+          </div>
+        )}
         <div className="row">
           <button onClick={() => p.onDuplicate(id)}>Duplicate</button>
           <button className="danger" onClick={() => p.onDelete([id])}>Delete</button>
