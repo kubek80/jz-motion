@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { confirmDialog } from './confirm';
 import { examples } from './examples';
 import { JsonEditor, type JsonEditorHandle } from './JsonEditor';
 
@@ -83,9 +84,9 @@ export function JsonPanel({ text, scene, errors, onText, onReplace }: Props) {
         <select
           value=""
           title="Replace with an example (undo brings yours back)"
-          onChange={(e) => {
+          onChange={async (e) => {
             const ex = examples.find((x) => x.name === e.target.value);
-            if (ex && (text === ex.text || confirm(`Replace this presentation with "${ex.title}"? (Undo brings it back.)`))) onReplace(ex.text);
+            if (ex && (text === ex.text || (await confirmDialog({ title: `Replace this presentation with “${ex.title}”?`, message: 'Undo (Ctrl+Z) brings yours back.', confirm: 'Replace' })))) onReplace(ex.text);
           }}
         >
           <option value="" disabled>Example…</option>

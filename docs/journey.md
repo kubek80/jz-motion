@@ -243,3 +243,20 @@ Jakub's next list: a home screen like Gemini or Lovable (one chat box in the mid
 ![A scene with AI](journey/34-scene-with-ai.jpg)
 ![A 3D model with AI](journey/35-3d-with-ai.jpg)
 ![Asking AI to change the open scene](journey/36-scene-ask.jpg)
+
+## Step 18: Safer deleting, a beats storyboard, and a library window
+
+Jakub found that deleting the open scene blanked the whole app, that confirmations used the browser's own dialog, that beats and actions were hard to read, and asked for a proper place to manage icons, clipart and 3D models.
+
+- **The blank screen:** after deleting the last scene the editor still pointed at a scene number that no longer existed, and the first panel to read it crashed React. The open scene is now always kept within the scenes that exist, and deleting moves to the scene before.
+- **In-app confirmations:** one small dialog (title, what goes with it, Cancel / a red Delete; Enter and Esc work) replaces every browser `confirm()`: scenes, presentations, takes, recordings, replacing with an example, and the library.
+- **Beats as a storyboard:** beats run left to right with how each starts (on click or auto) and how long it takes. Each action shows a coloured verb (green reveals, pink hides, yellow draws attention, cyan moves, orange camera), chips for the elements it acts on in their own marker colours, and a small bar showing when it runs inside the beat, so "together with the previous one" is visible at a glance. The compiler now reports each action's start and end for this. **+ action** opens a menu of the common actions for the selected elements, and actions can be dragged to reorder them or to another beat.
+- **Library window** (⤢ next to the library search, and **Library** on the home screen): everything by group with counts (icons, logos, clipart, 3D models, made by me), search, large tiles, and a side panel that draws the selected item in on a small board (click to replay, try marker colours), its description and tags, and the JSON to use it. Things you made can be renamed, re-described and deleted there, and "New with AI" makes icons, clipart and 3D models without leaving it.
+
+**Checked by:** 48 unit tests (new: action timing) and browser runs: deleting the open last scene (cancel, delete, undo), adding actions from the menu and dragging one to another beat, and in the library making a 3D model with AI, renaming it, deleting it, and double-clicking a built-in model onto the board.
+
+![Confirmation](journey/37-confirm-dialog.jpg)
+![Beats storyboard](journey/38-beats-storyboard.jpg)
+![Adding an action](journey/39-add-action-menu.jpg)
+![Library window](journey/40-library.jpg)
+![Managing your own items](journey/41-library-mine.jpg)

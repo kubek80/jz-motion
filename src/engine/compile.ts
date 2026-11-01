@@ -46,6 +46,8 @@ export interface CompiledBeat {
   track?: string;
   /** Seconds into the recording at which it starts, if made from a recording. */
   cue?: number;
+  /** When each action runs, in seconds from the start of the beat (same order as the actions). */
+  actions: { start: number; end: number }[];
 }
 
 export interface CompiledScene {
@@ -234,6 +236,7 @@ export function compile(input: unknown): CompileResult {
       let prevStart = beatStart;
       let prevEnd = beatStart;
       let beatEnd = beatStart;
+      const timing: CompiledBeat['actions'] = [];
 
       beat.actions.forEach((action, ai) => {
         const at = `${where}.beats.${bi}.actions.${ai}`;
@@ -415,11 +418,13 @@ export function compile(input: unknown): CompileResult {
         prevStart = start;
         prevEnd = end;
         beatEnd = Math.max(beatEnd, end);
+        timing[ai] = { start: start - beatStart, end: end - beatStart };
       });
 
       beats.push({
         title: beat.title, notes: beat.notes, auto: beat.auto, start: beatStart, end: beatEnd,
         layout: beat.layout ?? scene.layout, track: beat.track ?? scene.track, cue: beat.cue,
+        actions: Array.from({ length: beat.actions.length }, (_, i) => timing[i] ?? { start: 0, end: 0 }),
       });
       time = beatEnd;
     });
