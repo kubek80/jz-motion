@@ -37,7 +37,7 @@ export function Library({ onAdd, arrowActive, onCreate, version }: { onAdd: (r: 
         </button>
       </div>
       <input className="search" placeholder="Search icons, logos, clipart…" value={query} onChange={(e) => setQuery(e.target.value)} />
-      {onCreate && <button className="add" onClick={onCreate} title="Describe an icon or clipart and let a model draw it">+ New icon or clipart with AI</button>}
+      {onCreate && <button className="add" onClick={onCreate} title="Describe an icon, clipart or 3D model and let a model make it">+ New icon, clipart or 3D with AI</button>}
       {groups.map(([title, list]) => list.length > 0 && (
         <div key={title}>
           <div className="subhead">{title}</div>

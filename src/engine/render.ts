@@ -615,6 +615,7 @@ export class Stage {
       if (n.chart && s.chart) {
         s.chart.values.forEach((v, i) => (n.chart!.values[i].v = v));
         n.chart.growth.forEach((c) => (c.v = 1));
+        n.chart.intro.v = 1;
         renderChart(n.chart);
       }
       if (n.flowPath) this.flows.set(id, { on: s.flow ? 1 : 0, dir: s.flow?.reverse ? -1 : 1, speed: s.flow?.speed ?? 160 });

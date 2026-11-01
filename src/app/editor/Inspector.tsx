@@ -19,6 +19,7 @@ interface Props {
   onBeat: (beat: number, key: string, value: unknown) => void;
   onScene: (key: string, value: unknown) => void;
   onTitle: (title: string) => void;
+  currentView: () => { x: number; y: number; zoom: number };
 }
 
 /** Properties of whatever is selected: board elements first, then an action or beat, else the scene. */
@@ -34,8 +35,10 @@ export function Inspector(p: Props) {
     return (
       <div className="inspector">
         <h3>{el.type} <span className="muted">element</span></h3>
-        <label className="field"><span>id</span><IdField id={id} onRename={(to) => p.onRename(id, to)} /></label>
-        <Fields schema={elementSchemas[el.type]} value={el} ids={p.ids.filter((i) => i !== id)} hide={['id']} onChange={(k, v) => p.onElement(id, k, v)} />
+        <Fields
+          schema={elementSchemas[el.type]} value={el} ids={p.ids.filter((i) => i !== id)} hide={['id']} onChange={(k, v) => p.onElement(id, k, v)}
+          advanced={<label className="field" title="The name other elements and beats use to refer to this one (arrows, actions). Renaming updates them all."><span>id<i className="help">?</i></span><IdField id={id} onRename={(to) => p.onRename(id, to)} /></label>}
+        />
         <div className="row">
           <button onClick={() => p.onDuplicate(id)}>Duplicate</button>
           <button className="danger" onClick={() => p.onDelete([id])}>Delete</button>
@@ -101,7 +104,10 @@ export function Inspector(p: Props) {
       <h3>Presentation</h3>
       <label className="field"><span>title</span><Commit value={p.doc.title} onCommit={p.onTitle} /></label>
       <h3>Scene {p.scene + 1}</h3>
-      <Fields schema={sceneSchema} value={scene} ids={p.ids} hide={['elements', 'beats']} onChange={p.onScene} />
+      <Fields
+        schema={sceneSchema} value={scene} ids={p.ids} hide={['elements', 'beats', 'id']} onChange={p.onScene} currentView={p.currentView}
+        advanced={<label className="field" title="The scene's name in the JSON. Rarely needs changing."><span>id<i className="help">?</i></span><Commit value={scene.id} onCommit={(v) => /^[A-Za-z][\w-]*$/.test(v) && p.onScene('id', v)} /></label>}
+      />
       <p className="muted hint">Click an element to edit it, shift+click to select several, drag to move. Drag the empty board to pan, scroll to zoom.</p>
     </div>
   );

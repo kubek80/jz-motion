@@ -2,7 +2,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { compile, icons, Stage, type StagePosition } from '../engine';
 import type { Camera } from '../engine/schema';
 import { AiPanel } from './AiPanel';
-import { IconCreator } from './IconCreator';
+import { Creator, type CreateKind } from './Creator';
+import { Settings } from './Settings';
+import { insertScene } from '../ai/assistant';
 import type { ChatMessageView } from './Chat';
 import { JsonPanel } from './JsonPanel';
 import { VideoPanel } from './VideoPanel';
@@ -14,6 +16,7 @@ import {
 } from './editor/doc';
 import { Inspector } from './editor/Inspector';
 import { Library, type AddRequest } from './editor/Library';
+import { SceneAsk } from './editor/SceneAsk';
 import type { Selection } from './editor/types';
 import { useHistory } from './useHistory';
 
@@ -91,6 +94,8 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
   const [arrowFrom, setArrowFrom] = useState<string | null | undefined>(undefined);
   /** Text being edited in place on the board. */
   const [inline, setInline] = useState<InlineEdit | null>(null);
+  /** A scene to switch to when the presentation next reloads (just added). */
+  const openScene = useRef<number | null>(null);
   const arrowTool = arrowFrom !== undefined;
   const [selection, setSelection] = useState<Selection>(null);
   const stageHost = useRef<HTMLDivElement>(null);
@@ -104,7 +109,8 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
   const [withCamera, setWithCamera] = useState(true);
   /** The AI chat for this presentation, kept while it is open. */
   const [chatLog, setChatLog] = useState<ChatMessageView[]>([]);
-  const [creating, setCreating] = useState(false);
+  const [creating, setCreating] = useState<CreateKind | null>(null);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   /** Bumped when the library gains an item, so the palette shows it. */
   const [libraryVersion, setLibraryVersion] = useState(0);
   const docRef = useRef<RawDoc | null>(null);
@@ -184,7 +190,10 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
   useEffect(() => {
     const s = stage.current;
     if (!s || !result.ok) return;
-    const { scene: si, beat } = posRef.current;
+    const { beat } = posRef.current;
+    // After adding a scene, open it once the presentation has it.
+    const si = openScene.current ?? posRef.current.scene;
+    openScene.current = null;
     const at = Math.min(si, result.presentation.scenes.length - 1);
     void s.load(result.presentation, { scene: at, beat: mode === 'edit' ? 0 : beat }).then(() => {
       // The stage may have been replaced while fonts loaded (React dev mode mounts twice).
@@ -507,13 +516,25 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
 
   return (
     <div className={`app mode-${mode}`}>
-      {creating && (
-        <IconCreator
-          onClose={() => setCreating(false)}
-          onSaved={(name) => {
-            setCreating(false);
+      {settingsOpen && <Settings onClose={() => setSettingsOpen(false)} />}
+      {creating && doc && (
+        <Creator
+          initialKind={creating}
+          presentation={text}
+          scene={sceneIndex}
+          onClose={() => setCreating(null)}
+          onSaved={(kind, name) => {
+            setCreating(null);
             setLibraryVersion((v) => v + 1);
-            add({ kind: 'icon', name });
+            add(kind === '3d' ? { kind: 'iso', name } : { kind: 'icon', name });
+          }}
+          onAddScene={(scene) => {
+            setCreating(null);
+            const { doc: next, index } = insertScene(doc, scene, sceneIndex);
+            openScene.current = index;
+            setPicked([]);
+            setSelection(null);
+            update(next as RawDoc);
           }}
         />
       )}
@@ -528,6 +549,7 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
         <button onClick={history.undo} disabled={!history.canUndo} title="Undo (Ctrl+Z)">↶</button>
         <button onClick={history.redo} disabled={!history.canRedo} title="Redo (Ctrl+Shift+Z)">↷</button>
         <button onClick={() => void togglePresent()} title="Full screen (F). Arrows, space or a clicker to step.">Present</button>
+        <button onClick={() => setSettingsOpen(true)} title="Models, API keys, transcription">⚙</button>
       </header>
 
       <div className="main">
@@ -545,9 +567,14 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
                 )}
               </div>
             ))}
-            {mode === 'edit' && doc && <button className="add-scene" onClick={() => update(addScene(doc, sceneIndex))}>+ scene</button>}
+            {mode === 'edit' && doc && (
+              <div className="row">
+                <button className="add-scene" onClick={() => update(addScene(doc, sceneIndex))}>+ scene</button>
+                <button className="add-scene" onClick={() => setCreating('scene')} title="Describe a scene; a model makes it">+ scene with AI</button>
+              </div>
+            )}
           </div>
-          {mode === 'edit' && doc && <Library onAdd={add} arrowActive={arrowTool} onCreate={() => setCreating(true)} version={libraryVersion} />}
+          {mode === 'edit' && doc && <Library onAdd={add} arrowActive={arrowTool} onCreate={() => setCreating('icon')} version={libraryVersion} />}
         </aside>
 
         <section className="center">
@@ -631,6 +658,9 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
           )}
 
           {mode === 'edit' && doc && scene && (
+            <SceneAsk presentation={text} scene={sceneIndex} title={scene.title ?? scene.id} onApply={(json) => history.set(json)} />
+          )}
+          {mode === 'edit' && doc && scene && (
             <Beats
               beats={scene.beats ?? []}
               selection={selection}
@@ -649,7 +679,7 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
             <button className={panel === 'video' ? 'on' : ''} onClick={() => setPanel('video')}>Video</button>
           </div>
           {panel === 'ai' ? (
-            <AiPanel current={text} scene={sceneIndex} onUse={replaceAll} chat={chatLog} onChat={setChatLog} />
+            <AiPanel current={text} scene={sceneIndex} onUse={(json) => history.set(json)} chat={chatLog} onChat={setChatLog} />
           ) : panel === 'video' ? (
             <VideoPanel presentation={text} presentationId={id} refreshKey={recorder.state.lastTake?.id} />
           ) : mode === 'edit' && panel === 'props' && doc ? (
@@ -673,6 +703,7 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
               })))}
               onScene={(k, v) => update(updateScene(doc, sceneIndex, { [k]: v }))}
               onTitle={(title) => update({ ...doc, title })}
+              currentView={() => stage.current?.camera ?? { x: 960, y: 540, zoom: 1 }}
             />
           ) : (
             <JsonPanel text={text} scene={sceneIndex} errors={result.ok ? [] : result.errors} onText={(v) => history.set(v, { merge: true })} onReplace={replaceAll} />

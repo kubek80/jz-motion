@@ -75,7 +75,7 @@ A 3D object drawn in the same marker style: outlines in its color, faces filled 
 ```
 
 - `data` is a list of `{ "label", "value", "color" }`; values are 0 or more. A data item's `color` overrides the chart color; pie slices without a color get different colors automatically.
-- `draw` writes the title, draws the axes and labels, then grows the bars (or traces the line, or sweeps the slices) while the values count up.
+- `draw` writes the title and draws the axes, then grows the bars one after another with overlap (or traces the line, its dots popping in as it reaches them, or sweeps the slices) while the values count up. The growing takes most of the draw time.
 - `set-values` animates the chart to new numbers. The value axis is scaled to fit every value the chart shows in the scene; set `max` to fix it.
 - `unit` is appended to the value labels, for example `"%"` or `" GB"`.
 

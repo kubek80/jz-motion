@@ -1,6 +1,8 @@
 import formatDoc from '../../docs/format.md?raw';
 import libraryDoc from '../../docs/library.md?raw';
 import { generatedIcons } from '../engine/icons.generated';
+import builtInIso from '../engine/iso-models.json';
+import { isoModels } from '../engine/iso';
 import { icons } from '../engine/library';
 
 // What the model reads: our own format reference and library list, so keeping the docs right keeps generation right.
@@ -20,8 +22,12 @@ const CRAFT = `How to make a good one:
 /** The format reference and the library, including icons and clipart made in this app. */
 export function referenceDocs(): string {
   const own = Object.entries(icons).filter(([name]) => !(name in generatedIcons));
-  const extra = own.length
-    ? `\n\n## Made in this app\n\n| Name | What it shows |\n|---|---|\n${own.map(([n, d]) => `| \`${n}\` | ${d.description} |`).join('\n')}\n`
+  const ownIso = Object.entries(isoModels).filter(([name]) => !(name in builtInIso));
+  const extra = own.length || ownIso.length
+    ? `\n\n## Made in this app\n\n| Name | Use as | What it shows |\n|---|---|---|\n${[
+      ...own.map(([n, d]) => `| \`${n}\` | icon | ${d.description} |`),
+      ...ownIso.map(([n, d]) => `| \`${n}\` | iso model | ${d.description} |`),
+    ].join('\n')}\n`
     : '';
   return `${CRAFT}\n\n${formatDoc}\n\n${libraryDoc}${extra}`;
 }

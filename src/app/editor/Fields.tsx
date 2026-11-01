@@ -11,6 +11,26 @@ import type { Raw } from './doc';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type Prop = Record<string, any>;
 
+/** How a field is shown: a friendlier name, a short explanation, and which group it belongs to. */
+interface FieldInfo { label?: string; help?: string; group?: 'video' | 'advanced' }
+
+const FIELD_INFO: Record<string, FieldInfo> = {
+  visible: { label: 'visible at start', help: 'Shown before any beat plays. Usually decided for you: things a beat draws start hidden.', group: 'advanced' },
+  inherit: { label: 'continue from previous scene', help: 'Start with the previous scene\'s board (what is still visible, and its view), to keep building the same drawing.' },
+  camera: { label: 'start view', help: 'Where the view is when the scene starts. Empty: the whole board.' },
+  layout: { label: 'layout', help: 'Where your camera recording appears while this plays (video export only).', group: 'video' },
+  track: { label: 'recording', help: 'Which recording that layout shows: "me" is yours, others are recordings added to a take.', group: 'video' },
+  cue: { label: 'starts at (s)', help: 'Seconds into the recording where this beat plays (presentations made from a recording).', group: 'advanced' },
+  auto: { label: 'play automatically', help: 'Plays right after the previous beat instead of waiting for a click.' },
+  notes: { label: 'speaker notes' },
+  start: { label: 'starts', help: '"after": when the previous action ends; "with": together with it.' },
+  stagger: { help: 'With several targets: seconds between each one starting.' },
+  focus: { help: 'What the camera frames; "all" frames everything visible.' },
+  padding: { help: 'Space around what the camera frames, in screen pixels.' },
+  curve: { help: 'Bends the arrow: positive bends left, negative right (0.2 is gentle).' },
+  values: { label: 'show values' },
+};
+
 interface Props {
   schema: { properties: Record<string, Prop>; required?: string[] };
   value: Raw;
@@ -18,20 +38,86 @@ interface Props {
   onChange: (key: string, value: unknown) => void;
   /** Keys not to show (shown elsewhere, or fixed). */
   hide?: string[];
+  /** The editor's current view, for "use current view" on a scene's start view. */
+  currentView?: () => { x: number; y: number; zoom: number };
+  /** Extra fields for the Advanced group (e.g. the id). */
+  advanced?: React.ReactNode;
 }
 
-export function Fields({ schema, value, ids, onChange, hide = [] }: Props) {
+export function Fields({ schema, value, ids, onChange, hide = [], currentView, advanced }: Props) {
+  const entries = Object.entries(schema.properties).filter(([key, p]) => !hide.includes(key) && p.const === undefined);
+  const row = ([key, p]: [string, Prop]) => {
+    const info = FIELD_INFO[key] ?? {};
+    return (
+      <label key={key} className="field" title={info.help}>
+        <span>{info.label ?? key}{info.help ? <i className="help">?</i> : null}</span>
+        {key === 'camera' && p.type === 'object'
+          ? <StartView value={value[key] as Raw | undefined} currentView={currentView} onChange={(v) => onChange(key, v)} />
+          : key === 'track'
+            ? <TrackField value={value[key] as string | undefined} onChange={(v) => onChange(key, v)} />
+            : <Field name={key} prop={p} value={value[key]} ids={ids} onChange={(v) => onChange(key, v)} />}
+      </label>
+    );
+  };
+  const main = entries.filter(([k]) => !FIELD_INFO[k]?.group);
+  const video = entries.filter(([k]) => FIELD_INFO[k]?.group === 'video');
+  const adv = entries.filter(([k]) => FIELD_INFO[k]?.group === 'advanced');
   return (
     <div className="fields">
-      {Object.entries(schema.properties)
-        .filter(([key, p]) => !hide.includes(key) && p.const === undefined)
-        .map(([key, p]) => (
-          <label key={key} className="field">
-            <span>{key}{schema.required?.includes(key) ? '' : ''}</span>
-            <Field name={key} prop={p} value={value[key]} ids={ids} onChange={(v) => onChange(key, v)} />
-          </label>
-        ))}
+      {main.map(row)}
+      {video.length > 0 && (
+        <>
+          <div className="field-group">Video export</div>
+          {video.map(row)}
+        </>
+      )}
+      {(adv.length > 0 || advanced) && (
+        <details className="advanced">
+          <summary>Advanced</summary>
+          <div className="fields">
+            {advanced}
+            {adv.map(row)}
+          </div>
+        </details>
+      )}
     </div>
+  );
+}
+
+/** A scene's start view: the whole board, or a view picked on the board. */
+function StartView({ value, currentView, onChange }: { value?: Raw; currentView?: () => { x: number; y: number; zoom: number }; onChange: (v: unknown) => void }) {
+  return (
+    <span className="start-view">
+      <span className="muted">{value ? `zoom ×${Number(value.zoom).toFixed(2)} at ${Math.round(value.x)}, ${Math.round(value.y)}` : 'whole board'}</span>
+      {currentView && (
+        <button
+          type="button"
+          title="Start the scene with the view you see on the board now"
+          onClick={() => {
+            const c = currentView();
+            onChange({ x: Math.round(c.x), y: Math.round(c.y), zoom: Math.round(c.zoom * 100) / 100 });
+          }}
+        >
+          Use current view
+        </button>
+      )}
+      {value && <button type="button" onClick={() => onChange(undefined)}>Whole board</button>}
+    </span>
+  );
+}
+
+const TRACKS = ['me', 'friend'];
+/** Which recording a video layout shows. */
+function TrackField({ value, onChange }: { value?: string; onChange: (v: unknown) => void }) {
+  const options = value && !TRACKS.includes(value) ? [...TRACKS, value] : TRACKS;
+  return (
+    <span className="pair">
+      <select value={value ?? ''} onChange={(e) => onChange(e.target.value === '__other' ? prompt('Recording name (as added to the take)') || undefined : e.target.value || undefined)}>
+        <option value="">(me)</option>
+        {options.map((t) => <option key={t} value={t}>{t}</option>)}
+        <option value="__other">other…</option>
+      </select>
+    </span>
   );
 }
 
@@ -53,13 +139,9 @@ function Field({ name, prop, value, ids, onChange }: { name: string; prop: Prop;
   if (prop.enum) return <Select value={value} options={prop.enum} empty={placeholder ? `(${placeholder})` : '—'} onChange={onChange} />;
   if (prop.type === 'number') return <NumberField value={value as number | undefined} placeholder={placeholder} onChange={onChange} />;
   if (prop.type === 'boolean') {
-    return (
-      <select value={value === undefined ? '' : String(value)} onChange={(e) => onChange(e.target.value === '' ? undefined : e.target.value === 'true')}>
-        <option value="">{placeholder ? `(${placeholder})` : '—'}</option>
-        <option value="true">yes</option>
-        <option value="false">no</option>
-      </select>
-    );
+    // Unset means the default; setting it back to the default removes it from the JSON.
+    const checked = value === undefined ? prop.default === true : value === true;
+    return <input type="checkbox" className="check-input" checked={checked} onChange={(e) => onChange(e.target.checked === (prop.default === true) ? undefined : e.target.checked)} />;
   }
   if (prop.type === 'string') return <TextField value={value as string | undefined} placeholder={placeholder} onChange={onChange} />;
   if (prop.type === 'object' && Object.keys(prop.properties ?? {}).join() === 'x,y') {
