@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { loadProfiles, type ModelProfile } from '../ai/profiles';
+import { rate } from '../ai/recommend';
+import { ModelSelect } from './ModelSelect';
 import { ModelsEditor } from './ModelsEditor';
 import { loadModeModels, loadTranscriber, saveModeModel, saveTranscriber, TRANSCRIBERS, type StartMode, type Transcriber } from './settingsStore';
 
@@ -46,10 +48,11 @@ export function Settings({ onClose }: { onClose: () => void }) {
           {MODES.map(([mode, label]) => (
             <label key={mode} className="field">
               <span>{label}</span>
-              <select value={modeModels[mode] ?? ''} onChange={(e) => { saveModeModel(mode, e.target.value); setModeModels(loadModeModels()); }}>
-                <option value="">(first ticked model)</option>
-                {profiles.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
-              </select>
+              <ModelSelect
+                task={`from-${mode}`} profiles={profiles} value={modeModels[mode]} showAdvice
+                empty={`(recommended${rate(`from-${mode}`, profiles).best ? `: ${rate(`from-${mode}`, profiles).best!.name}` : ''})`}
+                onChange={(id) => { saveModeModel(mode, id); setModeModels(loadModeModels()); }}
+              />
             </label>
           ))}
         </section>

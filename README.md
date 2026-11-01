@@ -16,7 +16,7 @@ npm run dev                       # then open http://localhost:5173
 
 Video export also needs [FFmpeg](https://ffmpeg.org) (`brew install ffmpeg`), or set `FFMPEG_PATH` / `FFPROBE_PATH`.
 
-**Models.** If Claude Code is installed and logged in on your computer, **⚙ Settings** offers **Add Sonnet and Haiku**: the app then uses your Claude subscription, with no API key. Otherwise add an OpenRouter key or any OpenAI-compatible endpoint. Details, and which model to use for what: [docs/models.md](docs/models.md).
+**Models.** If Claude Code is installed and logged in on your computer, **⚙ Settings** offers **Add Opus, Sonnet and Haiku**: the app then uses your Claude subscription, with no API key. Every model menu recommends the model that is enough for its job (Haiku for an icon, Opus for a whole presentation from a script). Otherwise add an OpenRouter key or any OpenAI-compatible endpoint. Details, and which model to use for what: [docs/models.md](docs/models.md).
 
 New here? Open the example **jz-motion: explainers, fast (about this app)** from the home screen: ten scenes on what the app does and how, with its voice-over script in [docs/explainer-script.md](docs/explainer-script.md).
 

@@ -378,3 +378,17 @@ Jakub asked whether the docs tell models *when* to use things like a circle. Bar
 **Checked by:** the same request as in step 26 (a two-scene HTTP caching explainer) to a fresh Claude Code conversation. Before: twelve draws, one circle, one flow, one recolor, two fade-outs. After: requests shown moving with `flow` while they are talked about and switched off when moving on, one point per beat, and the "or a new file" ending as a `pop`. It still drew rather than `recolor`ed the copy going stale, so the guide helps but doesn't do the director's job for it.
 
 ![The HTTP caching explainer after the guide (beats 3, 5, 6 and 7)](journey/60-which-action.jpg)
+
+## Step 28: Which model for which job
+
+Jakub asked whether Opus should be available, and then for the model menus to recommend a model that is sufficient for the job at hand, for example when drawing a logo.
+
+- **Recommendations everywhere a model is picked.** Each menu knows its job (an icon, clipart, a 3D model, a change to one scene, a new scene, chat about the whole presentation, a presentation from a topic, a script or a recording) and the size of model it needs. Models are sorted into small, medium and large, guessed from their names (haiku, mini, flash; sonnet; opus, gpt-5, gemini pro) or set in Settings. The menu marks the smallest one that is enough as **★ recommended**, the others as *enough*, *works, smaller than ideal*, *may struggle* or *more than needed*, and a line under it says why ("A small, fast model is enough for an icon: a few strokes, and the rules and checks keep it on style").
+- **Defaults follow the recommendation** until you choose: Haiku for icons, 3D models and scene edits, Sonnet for clipart, new scenes, chat and presentations from a topic, Opus for presentations from a script or a recording. A choice you make is remembered for that job. Settings' "model for each way of starting" shows the recommendation as its default.
+- **Opus**: the subscription offer now adds Opus, Sonnet and Haiku (Opus unticked so Compare doesn't use it unasked), with a **+ Claude Opus** button for anyone who added the other two before. Models show a size badge in Settings and can be given a size by hand.
+- The logic lives in one place (`src/ai/recommend.ts`) with tests (sizes from names, the smallest model that fits, falling back to the biggest there is and saying so, remembered choices).
+- Found on the way: "gemini" contains "mini", so Gemini Pro was first guessed as a small model.
+
+**Checked by:** 59 unit tests and a browser run with Opus, Sonnet and Haiku through the subscription: the home box (topic → Sonnet, script → Opus), New with AI (icon and 3D → Haiku, clipart → Sonnet, a choice of Opus for icons remembered), and Settings.
+
+![Recommendations on the home screen, in New with AI and in Settings](journey/61-model-recommendations.jpg)

@@ -2,20 +2,15 @@ import { useState } from 'react';
 import { assistantMessages, checkAssistant } from '../../ai/assistant';
 import { askJson } from '../../ai/client';
 import { loadProfiles } from '../../ai/profiles';
+import { pickFor, rememberedFor, rememberFor } from '../../ai/recommend';
+import { ModelSelect } from '../ModelSelect';
 
-const KEY = 'jzm.sceneModel';
 
 /** One-line requests to a model about the scene being edited: its elements, beats and timing. */
 export function SceneAsk({ presentation, scene, title, onApply }: { presentation: string; scene: number; title: string; onApply: (json: string) => void }) {
   const profiles = loadProfiles();
-  const [modelId, setModelId] = useState(() => {
-    try {
-      return localStorage.getItem(KEY) ?? '';
-    } catch {
-      return '';
-    }
-  });
-  const profile = profiles.find((p) => p.id === modelId) ?? profiles.find((p) => p.enabled) ?? profiles[0];
+  const [modelId, setModelId] = useState(() => rememberedFor('scene-edit'));
+  const profile = pickFor('scene-edit', profiles, modelId);
   const [text, setText] = useState('');
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<{ ok: boolean; message: string } | null>(null);
@@ -47,9 +42,7 @@ export function SceneAsk({ presentation, scene, title, onApply }: { presentation
         onKeyDown={(e) => { if (e.key === 'Enter') void ask(); e.stopPropagation(); }}
       />
       {profiles.length > 1 && (
-        <select value={profile?.id} onChange={(e) => { setModelId(e.target.value); try { localStorage.setItem(KEY, e.target.value); } catch { /* ignore */ } }}>
-          {profiles.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
-        </select>
+        <ModelSelect task="scene-edit" profiles={profiles} value={profile?.id} onChange={(id) => { setModelId(id); rememberFor('scene-edit', id); }} />
       )}
       <button className="primary" disabled={!profile || !text.trim() || busy} onClick={() => void ask()}>{busy ? 'Working…' : 'Ask'}</button>
       {result && <span className={result.ok ? 'scene-ask-result' : 'scene-ask-result error-text'}>{result.message}</span>}

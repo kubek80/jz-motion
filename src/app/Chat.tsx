@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { assistantMessages, checkAssistant, type Turn } from '../ai/assistant';
 import { askJson } from '../ai/client';
 import { loadProfiles, type ModelProfile } from '../ai/profiles';
+import { advice, pickFor, rememberedFor, rememberFor, type Task } from '../ai/recommend';
+import { ModelSelect } from './ModelSelect';
 import { ModelsEditor } from './ModelsEditor';
 
 interface Message extends Turn {
@@ -30,12 +32,14 @@ interface Props {
   initialModelId?: string;
   /** Send the starting input straight away. */
   autoSend?: boolean;
+  /** The job, for recommending a model (default: changes to the whole presentation). */
+  task?: Task;
 }
 
 /** Talk to a model about the presentation; when it changes something, the change is applied (and can be undone). */
-export function Chat({ current, scene, onPresentation, wrapFirst, placeholder, intro, initial, onMessages, initialInput, initialModelId, autoSend }: Props) {
+export function Chat({ current, scene, onPresentation, wrapFirst, placeholder, intro, initial, onMessages, initialInput, initialModelId, autoSend, task = 'chat' }: Props) {
   const [profiles, setProfiles] = useState<ModelProfile[]>(loadProfiles);
-  const [modelId, setModelId] = useState<string>(() => (initialModelId && profiles.some((p) => p.id === initialModelId) ? initialModelId : profiles.find((p) => p.enabled)?.id ?? profiles[0]?.id ?? ''));
+  const [modelId, setModelId] = useState<string>(() => pickFor(task, profiles, initialModelId ?? rememberedFor(task))?.id ?? '');
   const [messages, setMessages] = useState<Message[]>(initial ?? []);
   const [input, setInput] = useState(initialInput ?? '');
   const [busy, setBusy] = useState(false);
@@ -79,13 +83,11 @@ export function Chat({ current, scene, onPresentation, wrapFirst, placeholder, i
   return (
     <div className="chat">
       <div className="chat-bar">
-        <select value={modelId} onChange={(e) => setModelId(e.target.value)} disabled={!profiles.length}>
-          {!profiles.length && <option value="">No models yet</option>}
-          {profiles.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
-        </select>
+        <ModelSelect task={task} profiles={profiles} value={modelId} onChange={(id) => { setModelId(id); rememberFor(task, id); }} />
         <button onClick={() => setManaging(!managing)}>{managing ? 'Done' : 'Models…'}</button>
         {messages.length > 0 && <button onClick={() => setMessages([])} title="Start a new conversation">Clear</button>}
       </div>
+      {profiles.length > 0 && <small className="model-advice">{advice(task, profiles)}</small>}
       {managing && <ModelsEditor onChange={(ps) => { setProfiles(ps); if (!ps.some((p) => p.id === modelId)) setModelId(ps[0]?.id ?? ''); }} />}
       <div className="chat-log" ref={list}>
         {!messages.length && <div className="muted chat-intro">{intro ?? 'Ask for changes ("add a database under the API and an arrow to it"), or ask about the presentation.'}</div>}

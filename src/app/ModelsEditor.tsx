@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { loadProfiles, PRESETS, saveProfiles, type ModelProfile } from '../ai/profiles';
+import { sizeOf } from '../ai/recommend';
 
 /** The models to work with (any OpenAI-compatible endpoint): add, edit, tick the ones to use. */
 export function ModelsEditor({ onChange }: { onChange?: (profiles: ModelProfile[]) => void }) {
@@ -10,7 +11,9 @@ export function ModelsEditor({ onChange }: { onChange?: (profiles: ModelProfile[
   useEffect(() => {
     void fetch('/api/claude-code').then((r) => (r.ok ? r.json() : null)).then(setClaude, () => setClaude(null));
   }, []);
-  const hasClaude = profiles.some((p) => p.baseURL.startsWith('claude-code'));
+  const claudeModels = profiles.filter((p) => p.baseURL.startsWith('claude-code')).map((p) => p.model.toLowerCase());
+  const hasClaude = claudeModels.length > 0;
+  const sub = (name: string, model: string, enabled: boolean): ModelProfile => ({ id: crypto.randomUUID(), name: `Claude ${name} (subscription)`, baseURL: 'claude-code:', model, apiKey: '', enabled });
   useEffect(() => {
     saveProfiles(profiles);
     onChange?.(profiles);
@@ -24,22 +27,22 @@ export function ModelsEditor({ onChange }: { onChange?: (profiles: ModelProfile[
               <b>Use your Claude subscription</b>
               <p className="muted">Claude Code {claude.version?.replace(/\s*\(Claude Code\)/, '')} is installed here. The app can ask it instead of an API: no key, your own login, on this computer only.</p>
             </div>
-            <button className="primary" onClick={() => setProfiles([
-              ...profiles,
-              { id: crypto.randomUUID(), name: 'Claude Sonnet (subscription)', baseURL: 'claude-code:', model: 'sonnet', apiKey: '', enabled: true },
-              { id: crypto.randomUUID(), name: 'Claude Haiku (subscription)', baseURL: 'claude-code:', model: 'haiku', apiKey: '', enabled: false },
-            ])}>Add Sonnet and Haiku</button>
+            <button className="primary" onClick={() => setProfiles([...profiles, sub('Opus', 'opus', false), sub('Sonnet', 'sonnet', true), sub('Haiku', 'haiku', false)])}>Add Opus, Sonnet and Haiku</button>
           </div>
+        )}
+        {claude?.available && hasClaude && !claudeModels.includes('opus') && (
+          <button className="add" onClick={() => setProfiles([...profiles, sub('Opus', 'opus', false)])} title="The largest Claude model, through your subscription: for whole presentations from a script or a recording">+ Claude Opus (subscription)</button>
         )}
         {profiles.length === 0 && <p className="muted">Add a model to generate with. Keys are kept in this browser only and sent only to that model's API, through your local dev server.</p>}
         <ul className="profiles">
           {profiles.map((p) => (
             <li key={p.id}>
               <label>
-                <input type="checkbox" checked={p.enabled} onChange={(e) => setProfiles(profiles.map((x) => (x.id === p.id ? { ...x, enabled: e.target.checked } : x)))} />
+                <input type="checkbox" title="Ticked: used when comparing models" checked={p.enabled} onChange={(e) => setProfiles(profiles.map((x) => (x.id === p.id ? { ...x, enabled: e.target.checked } : x)))} />
                 <span>{p.name}</span>
               </label>
               <span className="muted model-id">{p.model}</span>
+              <span className={`size-badge ${sizeOf(p) ?? 'unknown'}`} title="Size, for recommendations (Edit to change)">{sizeOf(p) ?? 'size?'}</span>
               <button onClick={() => setEditing(p)}>Edit</button>
             </li>
           ))}
@@ -85,6 +88,15 @@ function ProfileForm({ profile, onSave, onDelete, onCancel }: { profile: ModelPr
       {!local && <label className="field"><span>base URL</span><input value={p.baseURL} onChange={(e) => set({ baseURL: e.target.value })} /></label>}
       <label className="field"><span>model</span><input value={p.model} placeholder={local ? 'sonnet, opus or haiku' : 'vendor/model-name'} onChange={(e) => set({ model: e.target.value })} /></label>
       {!local && <label className="field"><span>API key</span><input type="password" value={p.apiKey} autoComplete="off" onChange={(e) => set({ apiKey: e.target.value })} /></label>}
+      <label className="field" title="Used to recommend models for each job: small for icons and small edits, large for whole presentations from a script or recording">
+        <span>size<i className="help">?</i></span>
+        <select value={p.size ?? ''} onChange={(e) => set({ size: (e.target.value || undefined) as ModelProfile['size'] })}>
+          <option value="">{`(guess from the name${sizeOf({ ...p, size: undefined }) ? `: ${sizeOf({ ...p, size: undefined })}` : ''})`}</option>
+          <option value="small">small: fast and cheap (Haiku, mini, flash…)</option>
+          <option value="medium">medium (Sonnet, GPT-4.1…)</option>
+          <option value="large">large: best at big jobs (Opus, GPT-5…)</option>
+        </select>
+      </label>
       <label className="field"><span>name</span><input value={p.name} placeholder={p.model || 'shown in results'} onChange={(e) => set({ name: e.target.value })} /></label>
       <div className="row">
         <button className="primary" disabled={!p.model || !p.baseURL} onClick={() => onSave({ ...p, name: p.name || p.model })}>Save</button>
