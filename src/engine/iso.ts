@@ -15,7 +15,12 @@ export interface IsoPart {
 }
 
 export interface IsoModel { description: string; parts: IsoPart[] }
-export const isoModels = models as unknown as Record<string, IsoModel>;
+export const isoModels: Record<string, IsoModel> = { ...(models as unknown as Record<string, IsoModel>) };
+
+/** 3D models made in the app (library/), added at runtime. */
+export function addIsoModels(more: Record<string, IsoModel>) {
+  Object.assign(isoModels, more);
+}
 
 export interface IsoView {
   /** Turn around the vertical axis, degrees. */

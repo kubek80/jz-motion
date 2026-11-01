@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { compile } from '../engine/compile';
 import { cuePerformance } from '../video/performance';
 import { CreateWithAi, type RecordingSource } from './CreateWithAi';
+import { Settings } from './Settings';
+import { StartBox, type Start } from './StartBox';
 import { examples } from './examples';
 import { Preview } from './Preview';
 import { blankPresentation, type PresentationInfo, type Store } from './store';
@@ -19,7 +21,8 @@ export function Home({ store, onOpen }: { store: Store; onOpen: (id: string) => 
   const [items, setItems] = useState<(PresentationInfo & { text?: string })[] | null>(null);
   const [query, setQuery] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const [aiCreate, setAiCreate] = useState<'script' | 'recording' | null>(null);
+  const [start, setStart] = useState<Start | null>(null);
+  const [settings, setSettings] = useState(false);
 
   const load = async () => {
     try {
@@ -68,25 +71,38 @@ export function Home({ store, onOpen }: { store: Store; onOpen: (id: string) => 
 
   return (
     <div className="home">
-      {aiCreate && <CreateWithAi kind={aiCreate} onClose={() => setAiCreate(null)} onCreate={createFromAi} />}
+      {start && (
+        <CreateWithAi kind={start.mode} initialText={start.text} initialFile={start.file} modelId={start.modelId} onClose={() => setStart(null)} onCreate={createFromAi} />
+      )}
+      {settings && <Settings onClose={() => setSettings(false)} />}
       <header className="home-bar">
-        <img src="/logo.svg" alt="jz-motion" className="home-logo" />
         <span className="spacer" />
-        <input className="search" placeholder="Search presentations…" value={query} onChange={(e) => setQuery(e.target.value)} />
-        <select
-          value=""
-          onChange={(e) => {
-            const ex = examples.find((x) => x.name === e.target.value);
-            if (ex) void create(ex.text);
-          }}
-        >
-          <option value="" disabled>New from example…</option>
-          {examples.map((x) => <option key={x.name} value={x.name}>{x.title}</option>)}
-        </select>
-        <button onClick={() => setAiCreate('script')} title="Paste a script; a model turns it into a presentation">From script…</button>
-        <button onClick={() => setAiCreate('recording')} disabled={store.kind !== 'files'} title={store.kind === 'files' ? 'Upload a recording; it is transcribed and turned into a presentation timed to your speech' : 'Needs the local server (npm run dev)'}>From recording…</button>
-        <button className="primary" onClick={() => void create(blankPresentation())}>+ New presentation</button>
+        <button onClick={() => setSettings(true)} title="Models, API keys, transcription">⚙ Settings</button>
       </header>
+      <div className="hero">
+        <img src="/logo.svg" alt="jz-motion" className="hero-logo" />
+        <h1>What do you want to explain?</h1>
+        <StartBox onStart={setStart} onSettings={() => setSettings(true)} canRecord={store.kind === 'files'} />
+        <div className="hero-links">
+          <button className="link" onClick={() => void create(blankPresentation())}>Blank presentation</button>
+          <span className="muted">·</span>
+          <select
+            value=""
+            onChange={(e) => {
+              const ex = examples.find((x) => x.name === e.target.value);
+              if (ex) void create(ex.text);
+            }}
+          >
+            <option value="" disabled>Start from an example…</option>
+            {examples.map((x) => <option key={x.name} value={x.name}>{x.title}</option>)}
+          </select>
+        </div>
+      </div>
+      <div className="home-list-head">
+        <h2>Your presentations</h2>
+        <span className="spacer" />
+        <input className="search" placeholder="Search…" value={query} onChange={(e) => setQuery(e.target.value)} />
+      </div>
       <p className="muted store-note">
         {store.kind === 'files' ? 'Saved as files in presentations/ (on this computer).' : 'Saved in this browser only. Run the app with npm run dev to save presentations as files.'}
       </p>

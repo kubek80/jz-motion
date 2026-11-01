@@ -54,3 +54,43 @@ export const transcriptRequest = (segments: Segment[]) => `This is the transcrip
 
 Transcript:
 ${segments.map((s) => `[${s.start.toFixed(1)}] ${s.text.trim()}`).join('\n')}`;
+
+export const SCENE_TASK = `Write ONE new scene for the jz-motion presentation below (technical explainers drawn on a dark blackboard with luminous marker colors, stepped through beat by beat).
+Reply with ONE JSON object, no Markdown fences: the scene, {"id": "...", "title": "...", "elements": [...], "beats": [...]}.
+- Match the presentation's style: its colours, sizes and the way it explains things.
+- 3 to 7 beats; each beat one idea, with a short title.
+- Only use icons, clipart and 3D models from the library.`;
+
+export function sceneMessages(description: string, current: string, after: number): ChatMessage[] {
+  return [
+    { role: 'system', content: `${SCENE_TASK}\n\n${referenceDocs()}` },
+    { role: 'user', content: `The presentation:\n${current}\n\nThe new scene goes after scene ${after + 1}.\n\nThe scene: ${description}` },
+  ];
+}
+
+/**
+ * Inserts a scene after `after`, renaming its id if another scene has it. Scenes that continue from the
+ * one before them ("inherit") stay attached: the new scene goes after the end of such a chain.
+ */
+export function insertScene(doc: { scenes: { id: string; inherit?: boolean }[] }, scene: Record<string, unknown>, after: number) {
+  let at = after + 1;
+  while (doc.scenes[at]?.inherit) at++;
+  const ids = new Set(doc.scenes.map((s) => s.id));
+  let id = typeof scene.id === 'string' && /^[A-Za-z][\w-]*$/.test(scene.id) ? scene.id : 'scene';
+  for (let n = 2; ids.has(id); n++) id = `${String(scene.id ?? 'scene').replace(/-\d+$/, '')}-${n}`;
+  const copy = structuredClone(doc);
+  copy.scenes.splice(at, 0, { ...scene, id });
+  return { doc: copy, index: at };
+}
+
+/** A scene is good when the presentation with it inserted still loads. */
+export function checkScene(current: string, after: number) {
+  return (value: unknown): Check<Record<string, unknown>> => {
+    if (!value || typeof value !== 'object' || Array.isArray(value)) return { ok: false, errors: ['reply with one scene object'] };
+    const { doc, index } = insertScene(JSON.parse(current), value as Record<string, unknown>, after);
+    const r = checkPresentation(doc);
+    if (r.ok) return { ok: true, value: doc.scenes[index] as Record<string, unknown> };
+    // Errors about the new scene are the useful ones; say which scene that is.
+    return { ok: false, errors: r.errors.map((e) => e.replace(`scenes.${index}`, 'the new scene')) };
+  };
+}

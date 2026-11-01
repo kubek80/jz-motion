@@ -16,7 +16,7 @@ npm run dev
 
 Video export also needs [FFmpeg](https://ffmpeg.org) (`brew install ffmpeg`), or set `FFMPEG_PATH` / `FFPROBE_PATH`.
 
-Open the printed URL. The home screen lists your presentations: create one (blank, from an example, **from a script** or **from a recording**), open, rename, duplicate or delete. They are saved as files in `presentations/` while `npm run dev` runs (in the browser otherwise), so you can keep them in git. Click the logo to get back home.
+Open the printed URL. The home screen has one prompt box in the middle: pick **Topic** (describe what to explain), **Script** (paste what you will say) or **Recording** (attach a video or audio file), pick the model for that kind of start (remembered per kind), and send. Below it are your presentations: open, rename, duplicate or delete; or start blank or from an example. **⚙ Settings** (home and editor) holds your models and API keys, the default model per kind of start, and the speech-to-text service. They are saved as files in `presentations/` while `npm run dev` runs (in the browser otherwise), so you can keep them in git. Click the logo to get back home.
 
 **Edit mode**
 
@@ -25,14 +25,18 @@ Open the printed URL. The home screen lists your presentations: create one (blan
 | Select, move, resize | Click an element and drag it; drag a corner handle to resize. Shift+click selects several. |
 | Edit text in place | Double-click a text, label or chart title on the board (or select the element and press Enter), type, Enter to keep, Esc to cancel. |
 | Pan, zoom | Drag the empty board; scroll. |
-| Add | Click an icon, logo, clipart, Text, Box, Chart or a 3D model in the library. **Arrow**: click it, then the start element, then the end element. **+ New icon or clipart with AI** draws a new one from your description and saves it to your library (`library/`). |
+| Add | Click an icon, logo, clipart, Text, Box, Chart or a 3D model in the library. **Arrow**: click it, then the start element, then the end element. **+ New with AI** draws an icon, clipart or 3D model from your description and saves it to your library (`library/`). |
 | Animate | **+ beat** under the board (it draws the selected elements), or **+ action** inside a beat. |
-| Edit details | Properties panel on the right (colours are markers, chart types and layouts are pictures). The **JSON** tab shows this scene or the whole file, with colours, folding and full screen. |
+| Change a scene with AI | Type into the bar above the beats ("pulse the API after it is drawn"); only the open scene changes; Ctrl+Z undoes it. |
+| Add a scene with AI | **+ scene with AI** next to the scenes: describe it, preview it, keep it. It goes after the open scene and continues from it. |
+| Edit details | Properties panel on the right (colours are markers, chart types and layouts are pictures; hover a **?** for help; ids and rarely needed fields are under *Advanced*, video settings under *Video export*). The **JSON** tab shows this scene or the whole file, with colours, folding and full screen. |
 | Delete, duplicate, undo | Delete key, Ctrl+D, Ctrl+Z / Ctrl+Shift+Z |
 
 **AI tab**
 
 **Chat** with a model about the open presentation: ask for changes ("add a database under the API") and they are applied right away (Ctrl+Z undoes them), or ask questions. **Compare models** sends one request to several models and shows their results side by side. Models are any OpenAI-compatible endpoint (OpenRouter, RunPod, ...) with its API key.
+
+**From a topic** (home screen): describe it; refine the draft in the chat, then create it.
 
 **From a script** (home screen): paste your script; a model turns it into scenes and beats with your lines as speaker notes; refine it in the chat, then create it.
 

@@ -26,12 +26,16 @@ interface Props {
   onMessages?: (m: Message[]) => void;
   /** Text to start the input box with. */
   initialInput?: string;
+  /** The model to start with (a profile id). */
+  initialModelId?: string;
+  /** Send the starting input straight away. */
+  autoSend?: boolean;
 }
 
 /** Talk to a model about the presentation; when it changes something, the change is applied (and can be undone). */
-export function Chat({ current, scene, onPresentation, wrapFirst, placeholder, intro, initial, onMessages, initialInput }: Props) {
+export function Chat({ current, scene, onPresentation, wrapFirst, placeholder, intro, initial, onMessages, initialInput, initialModelId, autoSend }: Props) {
   const [profiles, setProfiles] = useState<ModelProfile[]>(loadProfiles);
-  const [modelId, setModelId] = useState<string>(() => profiles.find((p) => p.enabled)?.id ?? profiles[0]?.id ?? '');
+  const [modelId, setModelId] = useState<string>(() => (initialModelId && profiles.some((p) => p.id === initialModelId) ? initialModelId : profiles.find((p) => p.enabled)?.id ?? profiles[0]?.id ?? ''));
   const [messages, setMessages] = useState<Message[]>(initial ?? []);
   const [input, setInput] = useState(initialInput ?? '');
   const [busy, setBusy] = useState(false);
@@ -43,8 +47,8 @@ export function Chat({ current, scene, onPresentation, wrapFirst, placeholder, i
   useEffect(() => { void list.current?.scrollTo({ top: list.current.scrollHeight }); }, [messages, busy]);
   const profile = profiles.find((p) => p.id === modelId);
 
-  const send = async () => {
-    const text = input.trim();
+  const send = async (override?: string) => {
+    const text = (override ?? input).trim();
     if (!text || !profile || busy) return;
     const isFirst = !messages.some((m) => m.role === 'user');
     const request = isFirst && wrapFirst ? wrapFirst(text) : text;
@@ -62,6 +66,15 @@ export function Chat({ current, scene, onPresentation, wrapFirst, placeholder, i
     if (r.value.presentation) onPresentation(JSON.stringify(r.value.presentation, null, 2));
     setMessages((m) => [...m, { role: 'assistant', text: r.value!.reply, changed: !!r.value!.presentation, meta }]);
   };
+
+  // Sent once, on the way in (from the home screen's prompt box).
+  const autoSent = useRef(false);
+  useEffect(() => {
+    if (autoSend && !autoSent.current && initialInput) {
+      autoSent.current = true;
+      void send(initialInput);
+    }
+  }); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="chat">

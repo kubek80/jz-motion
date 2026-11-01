@@ -1,3 +1,4 @@
+import type { IsoPart } from '../engine/iso';
 import type { ClipartPart, IconDef } from '../engine/library';
 import { colorNames } from '../engine/palette';
 import { splitSubpaths } from '../engine/pathSplit';
@@ -82,5 +83,45 @@ export function checkDrawing(kind: DrawingKind) {
       ...(typeof p.fillOpacity === 'number' ? { fillOpacity: p.fillOpacity } : {}),
     }));
     return { ok: true, value: { description, tags: ['clipart', 'made-with-ai', ...tags], paths: [], box: box as [number, number], parts: clean } };
+  };
+}
+
+export const ISO_RULES = `Build an isometric 3D model from boxes and cylinders, for a glowing-marker blackboard (drawn as neon outlines with dark faces).
+- World units, y points up. "at" is the centre of a part's bottom face [x, y, z]; "size" is [width, height, depth] (for a cylinder, width = depth = diameter).
+- A whole model is about 2 to 5 units across; parts are 0.1 to 4 units.
+- Stack parts exactly: a part resting on another has at[1] = the lower part's at[1] + its size[1]. Parts must not overlap (touching is fine).
+- 2 to 30 parts, listed bottom to top and back to front: the model is built part by part in this order.
+- Optional "color" per part: ${colorNames.join(', ')} (without one, a part takes the element's colour).
+Reply with one JSON object: {"description": "<what it is>", "tags": ["..."], "parts": [{"shape": "box" | "cylinder", "size": [w, h, d], "at": [x, y, z], "color": "<optional>"}]}`;
+
+export interface IsoModelDef { kind: 'iso'; description: string; tags: string[]; parts: IsoPart[] }
+
+export function isoMessages(description: string): ChatMessage[] {
+  return [{ role: 'system', content: ISO_RULES }, { role: 'user', content: `Build: ${description}` }];
+}
+
+export function checkIso(value: unknown): Check<IsoModelDef> {
+  const v = value as Record<string, unknown>;
+  if (!v || typeof v !== 'object') return { ok: false, errors: ['reply with a JSON object'] };
+  const errors: string[] = [];
+  const description = typeof v.description === 'string' ? v.description.trim() : '';
+  if (!description) errors.push('"description" is missing');
+  const parts = Array.isArray(v.parts) ? v.parts : [];
+  if (parts.length < 1 || parts.length > 40) errors.push(`"parts" must have 2 to 30 parts (got ${parts.length})`);
+  const nums = (a: unknown, n: number, ok: (x: number) => boolean) => Array.isArray(a) && a.length === n && a.every((x) => typeof x === 'number' && ok(x));
+  parts.forEach((p: Record<string, unknown>, i) => {
+    if (p?.shape !== 'box' && p?.shape !== 'cylinder') errors.push(`parts.${i}.shape must be "box" or "cylinder"`);
+    if (!nums(p?.size, 3, (x) => x > 0 && x <= 20)) errors.push(`parts.${i}.size must be [w, h, d] with numbers above 0`);
+    if (!nums(p?.at, 3, (x) => Math.abs(x) <= 50)) errors.push(`parts.${i}.at must be [x, y, z]`);
+    if (p?.color !== undefined && !(colorNames as readonly string[]).includes(p.color as string)) errors.push(`parts.${i}.color "${p.color}" is not one of ${colorNames.join(', ')}`);
+  });
+  if (errors.length) return { ok: false, errors };
+  const tags = Array.isArray(v.tags) ? v.tags.filter((t): t is string => typeof t === 'string') : [];
+  return {
+    ok: true,
+    value: {
+      kind: 'iso', description, tags: ['made-with-ai', ...tags],
+      parts: parts.map((p: Record<string, unknown>) => ({ shape: p.shape, size: p.size, at: p.at, ...(p.color ? { color: p.color } : {}) }) as IsoPart),
+    },
   };
 }

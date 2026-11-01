@@ -11,7 +11,10 @@ export interface ChartNodes {
   el: ChartElement;
   max: number;
   values: { v: number }[];
+  /** Pie: each slice's sweep, 0 → 1 while drawn. */
   growth: { v: number }[];
+  /** Bar and line: the whole intro, 0 → 1; bars and points come in from it with overlap and easing. */
+  intro: { v: number };
   plot: { left: number; right: number; top: number; bottom: number };
   bars: SVGPathElement[];
   line?: SVGPathElement;
@@ -53,6 +56,9 @@ function valueText(parent: SVGElement, color: string, anchor = 'middle') {
 
 export function buildChart(el: ChartElement, max: number, h: Helpers): ChartNodes {
   const { fx, stroke, write, parts } = h;
+  const before = parts.length;
+  /** The bars or line get about 60% of the draw time; the title, axes and labels the rest. */
+  const introWeight = () => 1.5 * parts.slice(before).reduce((sum, p) => sum + (p.kind === 'stroke' ? p.length * p.scale : p.kind === 'write' ? p.width * 0.7 : 0), 0);
   const halfW = el.width / 2;
   const halfH = el.height / 2;
   if (el.title) write(el.title, 0, -halfH + 26, 42, 'middle', 'title');
@@ -61,6 +67,7 @@ export function buildChart(el: ChartElement, max: number, h: Helpers): ChartNode
     el, max,
     values: el.data.map((d) => ({ v: d.value })),
     growth: el.data.map(() => ({ v: 1 })),
+    intro: { v: 1 },
     plot: { left: -halfW + 80, right: halfW - 20, top, bottom: halfH - 50 },
     bars: [], dots: [], slices: [], labels: [],
   };
@@ -91,8 +98,8 @@ export function buildChart(el: ChartElement, max: number, h: Helpers): ChartNode
       const color = colorOf(el, i);
       n.bars.push(svgEl('path', { stroke: color, 'stroke-width': board.stroke * 0.8, 'stroke-linejoin': 'round', fill: fill(color) }, fx));
       n.labels.push(valueText(fx, color));
-      parts.push({ kind: 'cell', cell: n.growth[i], weight: 40 });
     });
+    parts.push({ kind: 'cell', cell: n.intro, weight: introWeight() });
   } else {
     // pathLength = 1 so the draw-on still works when set-values changes the line's length.
     n.line = svgEl('path', {
@@ -100,13 +107,12 @@ export function buildChart(el: ChartElement, max: number, h: Helpers): ChartNode
       pathLength: 1,
     }, fx);
     n.line.style.strokeDasharray = '1.01 1.01';
-    parts.push({ kind: 'stroke', node: n.line, length: 1.01, scale: 1, weight: 220 });
     el.data.forEach((_, i) => {
       const color = colorOf(el, i);
       n.dots.push(svgEl('path', { fill: color, stroke: 'none' }, fx));
       n.labels.push(valueText(fx, color));
-      parts.push({ kind: 'cell', cell: n.growth[i], weight: 14 });
     });
+    parts.push({ kind: 'cell', cell: n.intro, weight: introWeight() });
   }
   return n;
 }
@@ -118,10 +124,13 @@ export function renderChart(n: ChartNodes) {
   const slot = (right - left) / el.data.length;
   const yOf = (v: number) => bottom - Math.min(v / n.max, 1.15) * (bottom - top);
 
+  const p = n.intro.v;
   if (el.kind === 'bar') {
     const bw = slot * 0.56;
+    // Bars start one after another but overlap, each easing out as it reaches its value.
+    const overlap = 2;
     n.bars.forEach((bar, i) => {
-      const g = n.growth[i].v;
+      const g = easeOut(clamp01((p * (n.bars.length + overlap - 1) - i) / overlap));
       const v = n.values[i].v;
       const cx = left + slot * (i + 0.5);
       const y = bottom - (bottom - yOf(v)) * g;
@@ -131,15 +140,22 @@ export function renderChart(n: ChartNodes) {
       label.setAttribute('x', String(cx));
       label.setAttribute('y', String(y - 24));
       label.textContent = format(el, v * g);
-      label.style.opacity = el.values && g > 0.05 ? '1' : '0';
+      label.style.opacity = el.values ? String(clamp01(g * 4)) : '0';
     });
     return;
   }
 
   const pts = n.values.map((c, i) => ({ x: left + slot * (i + 0.5), y: yOf(c.v) }));
-  n.line!.setAttribute('d', `M${pts.map((p) => `${p.x} ${p.y}`).join('L')}`);
+  n.line!.setAttribute('d', `M${pts.map((q) => `${q.x} ${q.y}`).join('L')}`);
+  // The line draws on; each point pops in (with its value) as the line reaches it.
+  const reach = easeInOut(p);
+  n.line!.style.strokeDashoffset = String(1.01 * (1 - reach));
+  const lengths = pts.map((q, i) => (i ? Math.hypot(q.x - pts[i - 1].x, q.y - pts[i - 1].y) : 0));
+  const total = lengths.reduce((a, b) => a + b, 0) || 1;
+  let along = 0;
   n.dots.forEach((dot, i) => {
-    const g = n.growth[i].v;
+    along += lengths[i];
+    const g = popOut(clamp01((reach - along / total) / 0.12 + (i === 0 ? 1 : 0) * Math.min(1, reach * 20)));
     const r = 9 * g;
     const { x, y } = pts[i];
     dot.setAttribute('d', r > 0.1 ? `M${x - r} ${y}a${r} ${r} 0 1 0 ${2 * r} 0a${r} ${r} 0 1 0 ${-2 * r} 0` : '');
@@ -147,9 +163,15 @@ export function renderChart(n: ChartNodes) {
     label.setAttribute('x', String(x));
     label.setAttribute('y', String(y - 30));
     label.textContent = format(el, n.values[i].v);
-    label.style.opacity = el.values ? String(g) : '0';
+    label.style.opacity = el.values ? String(clamp01(g)) : '0';
   });
 }
+
+const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
+const easeOut = (t: number) => 1 - (1 - t) ** 3;
+const easeInOut = (t: number) => (t < 0.5 ? 4 * t ** 3 : 1 - (-2 * t + 2) ** 3 / 2);
+/** Grows past full size a little, then settles: a small pop. */
+const popOut = (t: number) => (t <= 0 ? 0 : t >= 1 ? 1 : 1 + 2.2 * (t - 1) ** 3 + 1.2 * (t - 1) ** 2);
 
 function renderPie(n: ChartNodes) {
   const { cx, cy, r, inner } = n.pie!;
