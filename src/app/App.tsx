@@ -5,6 +5,7 @@ import { palette, type ColorName } from '../engine/palette';
 import { AiPanel } from './AiPanel';
 import { Creator, type CreateRequest } from './Creator';
 import { Settings } from './Settings';
+import { Timing } from './Timing';
 import { LibraryManager } from './LibraryManager';
 import { confirmDialog } from './confirm';
 import { imageFrom, lastFrame, rememberFrame, uploadImage } from './images';
@@ -122,6 +123,9 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
   const [creating, setCreating] = useState<CreateRequest | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [libraryOpen, setLibraryOpen] = useState(false);
+  const [timingOpen, setTimingOpen] = useState(false);
+  /** A take made in the Timing window, shown in the Video tab. */
+  const [madeTake, setMadeTake] = useState<string | undefined>();
   /** Bumped when the library gains an item, so the palette shows it. */
   const [libraryVersion, setLibraryVersion] = useState(0);
   const docRef = useRef<RawDoc | null>(null);
@@ -602,6 +606,28 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
   return (
     <div className={`app mode-${mode}`}>
       {settingsOpen && <Settings onClose={() => setSettingsOpen(false)} />}
+      {timingOpen && doc && result.ok && (
+        <Timing
+          presentation={result.presentation}
+          text={text}
+          presentationId={id}
+          voiceover={doc.voiceover}
+          onVoiceover={(v) => {
+            const next = { ...doc };
+            if (v) next.voiceover = v; else delete next.voiceover;
+            update(next);
+          }}
+          onCue={(si, bi, cue) => update(updateBeats(doc, si, (beats) => beats.map((b, i) => {
+            if (i !== bi) return b;
+            const nb = { ...b };
+            if (cue === undefined) delete nb.cue; else nb.cue = cue;
+            return nb;
+          })))}
+          onClearCues={() => update({ ...doc, scenes: doc.scenes.map((s) => ({ ...s, beats: s.beats?.map(({ cue: _cue, ...b }) => b) })) })}
+          onTake={(takeId) => { setTimingOpen(false); setMadeTake(takeId); setPanel('video'); }}
+          onClose={() => setTimingOpen(false)}
+        />
+      )}
       {libraryOpen && (
         <LibraryManager
           onClose={() => setLibraryOpen(false)}
@@ -644,6 +670,7 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
         </div>
         <button onClick={history.undo} disabled={!history.canUndo} title="Undo (Ctrl+Z)">↶</button>
         <button onClick={history.redo} disabled={!history.canRedo} title="Redo (Ctrl+Shift+Z)">↷</button>
+        <button onClick={() => setTimingOpen(true)} disabled={!result.ok} title="Time the beats to a voice-over">Timing</button>
         <button onClick={() => void togglePresent()} title="Full screen (F). Arrows, space or a clicker to step.">Present</button>
         <button onClick={() => setSettingsOpen(true)} title="Models, API keys, transcription">⚙</button>
       </header>
@@ -813,7 +840,7 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
           {panel === 'ai' ? (
             <AiPanel current={text} scene={sceneIndex} onUse={(json) => history.set(json)} chat={chatLog} onChat={setChatLog} />
           ) : panel === 'video' ? (
-            <VideoPanel presentation={text} presentationId={id} refreshKey={recorder.state.lastTake?.id} />
+            <VideoPanel presentation={text} presentationId={id} refreshKey={`${recorder.state.lastTake?.id}:${madeTake}`} select={madeTake} />
           ) : mode === 'edit' && panel === 'props' && doc ? (
             <Inspector
               doc={doc}

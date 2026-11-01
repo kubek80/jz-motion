@@ -43,26 +43,41 @@ export function autoPerformance(p: CompiledPresentation, timing: AutoTiming = DE
 }
 
 /**
- * Timing from beat cues (seconds into a recording): each beat plays when its cue comes up. A beat without
- * a cue follows the one before it; cues that go backwards are treated as missing.
+ * The clicks of a presentation: each starts a beat and runs on through the auto beats after it.
+ * `t` is when it plays: its beat's cue, or (without a usable cue) a pause after the one before.
+ * `cued` says whether `t` came from the cue; `late` says the cue was earlier than the previous click had finished.
  */
-export function cuePerformance(p: CompiledPresentation, recordingSeconds: number, timing: AutoTiming = DEFAULT_TIMING): Performance {
-  const events: PerformEvent[] = [{ t: 0, scene: 0, from: 0, until: 0 }];
+export interface Click { scene: number; beat: number; last: number; from: number; until: number; t: number; cued: boolean; late: boolean }
+
+export function cueClicks(p: CompiledPresentation, timing: AutoTiming = DEFAULT_TIMING): Click[] {
+  const clicks: Click[] = [];
   let t = 0;
   p.scenes.forEach((scene, si) => {
     for (let b = 0; b < scene.beats.length;) {
       let e = b;
       while (e + 1 < scene.beats.length && scene.beats[e + 1].auto) e++;
       const cue = scene.beats[b].cue;
-      const at = cue !== undefined && cue >= t ? cue : t + (si === 0 && b === 0 ? timing.lead : timing.gap);
+      const usable = cue !== undefined && cue >= t - 1e-6;
+      const at = usable ? cue : t + (si === 0 && b === 0 ? timing.lead : timing.gap);
       const from = scene.beats[b].start;
       const until = scene.beats[e].end;
-      events.push({ t: at, scene: si, from, until });
+      clicks.push({ scene: si, beat: b, last: e, from, until, t: at, cued: usable, late: cue !== undefined && !usable });
       t = at + (until - from);
       b = e + 1;
     }
   });
-  return { events, duration: Math.max(recordingSeconds, t + timing.tail) };
+  return clicks;
+}
+
+/**
+ * Timing from beat cues (seconds into a recording): each beat plays when its cue comes up. A beat without
+ * a cue follows the one before it; cues that go backwards are treated as missing.
+ */
+export function cuePerformance(p: CompiledPresentation, recordingSeconds: number, timing: AutoTiming = DEFAULT_TIMING): Performance {
+  const clicks = cueClicks(p, timing);
+  const events: PerformEvent[] = [{ t: 0, scene: 0, from: 0, until: 0 }, ...clicks.map((c) => ({ t: c.t, scene: c.scene, from: c.from, until: c.until }))];
+  const end = clicks.length ? clicks[clicks.length - 1].t + (clicks[clicks.length - 1].until - clicks[clicks.length - 1].from) : 0;
+  return { events, duration: Math.max(recordingSeconds, end + timing.tail) };
 }
 
 /** Scene and timeline position at `time` seconds into the performance. */

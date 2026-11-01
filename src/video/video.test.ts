@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { compile, type CompiledPresentation } from '../engine/compile';
 import { buildFfmpegArgs, resolveLayout } from './ffmpeg';
-import { autoPerformance, cuePerformance, layoutAt, layoutSegments, stateAt, type Performance } from './performance';
+import { autoPerformance, cueClicks, cuePerformance, layoutAt, layoutSegments, stateAt, type Performance } from './performance';
 
 const presentation = (): CompiledPresentation => {
   const r = compile({
@@ -62,6 +62,13 @@ describe('performance', () => {
       { t: 20, scene: 1, from: 1, until: 2 },
     ]);
     expect(perf.duration).toBe(30);
+    // The Timing window's view of the same: which clicks sit on their cue, and which cue came too early.
+    expect(cueClicks(r.presentation, { lead: 1, gap: 2, tail: 3 }).map((c) => [c.scene, c.beat, c.t, c.cued, c.late])).toEqual([
+      [0, 0, 2, true, false],
+      [0, 1, 5, false, false],
+      [1, 0, 8, false, true],
+      [1, 1, 20, true, false],
+    ]);
   });
 
   it('finds the scene and timeline position at any moment', () => {
