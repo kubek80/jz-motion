@@ -1,5 +1,7 @@
 # jz-motion
 
+<img src="docs/img/logo.png" alt="jz-motion logo" width="360">
+
 A glowing blackboard for technical explainer presentations and videos. Scenes are JSON: clipart, logos, text, boxes, arrows, charts and isometric 3D objects drawn stroke by stroke in luminous marker colors, with flows, highlights and camera zooms, stepped through beat by beat. Edit them visually, or have an LLM write them.
 
 ![The example presentation](docs/img/board.png)
@@ -57,6 +59,7 @@ From the command line: `npm run export -- presentation.json [--take <id>] [--4k]
 | `npm run build` | Production build into `dist/` |
 | `npm run export -- file.json` | Render a presentation (optionally with `--take <id>`) to MP4 |
 | `npm run mock-llm` | A fake model on port 5199 for trying the AI tab without a key |
+| `npm run logo` | Rebuild the logo files in `public/` and `docs/img/logo.png` from `scripts/build-logo.mjs` |
 | `npm run icons` | Regenerate the icon library and `docs/library.md` (Tabler clipart, Simple Icons logos, `src/engine/icons.custom.json`) |
 
 ## Docs

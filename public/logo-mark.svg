@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-27.6 -12.0 202.6 135.0"><defs>
+  <filter id="g" x="-30%" y="-30%" width="160%" height="160%">
+    <feGaussianBlur in="SourceGraphic" stdDeviation="1.6" result="nb"/><feComponentTransfer in="nb" result="n"><feFuncA type="linear" slope="0.7"/></feComponentTransfer>
+    <feGaussianBlur in="SourceGraphic" stdDeviation="9" result="fb"/><feComponentTransfer in="fb" result="f"><feFuncA type="linear" slope="0.5"/></feComponentTransfer>
+    <feMerge><feMergeNode in="f"/><feMergeNode in="n"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter></defs><g filter="url(#g)" stroke-linecap="round" stroke-linejoin="round"><g transform="skewX(-8)"><g transform="translate(5 5)" fill="none" stroke="#fff05a" stroke-width="1.4" opacity="0.7"><path d="M70 0 H156 V26 L114 78 H158 V106 H68 V80 L110 28 H70 Z"/><path d="M4 0 H78 V28 H70 V66 Q70 106 34 106 Q0 106 0 70 V56 H30 V66 Q30 76 36 76 Q42 76 42 66 V28 H4 Z"/></g>
+    <path d="M70 0 H156 V26 L114 78 H158 V106 H68 V80 L110 28 H70 Z" fill="#1a1420" stroke="#ff4fd8" stroke-width="3.2"/><path d="M70 0 H156 V26 L114 78 H158 V106 H68 V80 L110 28 H70 Z" fill="none" stroke="#ffd6f5" stroke-width="0.9"/>
+    <path d="M4 0 H78 V28 H70 V66 Q70 106 34 106 Q0 106 0 70 V56 H30 V66 Q30 76 36 76 Q42 76 42 66 V28 H4 Z" fill="#121c20" stroke="#3ef0ff" stroke-width="3.2"/><path d="M4 0 H78 V28 H70 V66 Q70 106 34 106 Q0 106 0 70 V56 H30 V66 Q30 76 36 76 Q42 76 42 66 V28 H4 Z" fill="none" stroke="#d4fbff" stroke-width="0.9"/></g></g></svg>

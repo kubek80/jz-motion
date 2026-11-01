@@ -21,7 +21,7 @@ button:hover, .file:hover, select:hover { border-color: var(--accent); }
 
 .app { display: flex; flex-direction: column; height: 100vh; }
 .bar { display: flex; gap: 10px; align-items: center; padding: 8px 14px; border-bottom: 1px solid var(--line); }
-.logo { color: var(--accent); }
+.logo { height: 58px; margin: -10px 6px -10px -4px; display: block; }
 .spacer { flex: 1; }
 
 .main { flex: 1; display: flex; min-height: 0; }
