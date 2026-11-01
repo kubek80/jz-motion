@@ -3,7 +3,7 @@ import { compile, icons, Stage, type StagePosition } from '../engine';
 import type { Camera } from '../engine/schema';
 import { palette, type ColorName } from '../engine/palette';
 import { AiPanel } from './AiPanel';
-import { Creator, type CreateKind } from './Creator';
+import { Creator, type CreateRequest } from './Creator';
 import { Settings } from './Settings';
 import { LibraryManager } from './LibraryManager';
 import { confirmDialog } from './confirm';
@@ -112,7 +112,7 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
   const [withCamera, setWithCamera] = useState(true);
   /** The AI chat for this presentation, kept while it is open. */
   const [chatLog, setChatLog] = useState<ChatMessageView[]>([]);
-  const [creating, setCreating] = useState<CreateKind | null>(null);
+  const [creating, setCreating] = useState<CreateRequest | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [libraryOpen, setLibraryOpen] = useState(false);
   /** Bumped when the library gains an item, so the palette shows it. */
@@ -548,14 +548,15 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
         <LibraryManager
           onClose={() => setLibraryOpen(false)}
           onAdd={(it) => add(it)}
-          onCreate={(kind) => setCreating(kind)}
+          onCreate={(kind, start) => setCreating({ kind, start })}
           onChanged={() => setLibraryVersion((v) => v + 1)}
           version={libraryVersion}
         />
       )}
       {creating && doc && (
         <Creator
-          initialKind={creating}
+          initialKind={creating.kind}
+          start={creating.start}
           presentation={text}
           scene={sceneIndex}
           onClose={() => setCreating(null)}
@@ -607,11 +608,11 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
             {mode === 'edit' && doc && (
               <div className="row">
                 <button className="add-scene" onClick={() => update(addScene(doc, sceneIndex))}>+ scene</button>
-                <button className="add-scene" onClick={() => setCreating('scene')} title="Describe a scene; a model makes it">+ scene with AI</button>
+                <button className="add-scene" onClick={() => setCreating({ kind: 'scene' })} title="Describe a scene; a model makes it">+ scene with AI</button>
               </div>
             )}
           </div>
-          {mode === 'edit' && doc && <Library onAdd={add} arrowActive={arrowTool} onCreate={() => setCreating('icon')} onBrowse={() => setLibraryOpen(true)} version={libraryVersion} />}
+          {mode === 'edit' && doc && <Library onAdd={add} arrowActive={arrowTool} onCreate={() => setCreating({ kind: 'icon' })} onBrowse={() => setLibraryOpen(true)} version={libraryVersion} />}
         </aside>
 
         <section className="center">

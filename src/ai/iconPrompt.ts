@@ -125,3 +125,23 @@ export function checkIso(value: unknown): Check<IsoModelDef> {
     },
   };
 }
+
+/** A follow-up in a conversation about one item: the reply it changes, and what to change. */
+export interface Refinement { previous: unknown; change: string }
+
+export const CHANGE_PREFIX = 'Change it:';
+
+/**
+ * The messages for a conversation about one item (icon, clipart, 3D model or scene): the first request,
+ * then for every follow-up the version it refers to and the change asked for. The model always replies
+ * with the whole item again, under the same rules, so every reply is checked the same way.
+ */
+export function refineMessages(first: ChatMessage[], steps: Refinement[]): ChatMessage[] {
+  return [
+    ...first,
+    ...steps.flatMap((s): ChatMessage[] => [
+      { role: 'assistant', content: JSON.stringify(s.previous) },
+      { role: 'user', content: `${CHANGE_PREFIX} ${s.change}\n\nReply with the whole thing again as one JSON object, following the same rules. Keep everything I did not ask to change.` },
+    ]),
+  ];
+}

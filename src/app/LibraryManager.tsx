@@ -4,6 +4,7 @@ import { isoModels, projectIso, type IsoModel } from '../engine/iso';
 import { icons, type IconDef } from '../engine/library';
 import { board, palette, type ColorName } from '../engine/palette';
 import { confirmDialog } from './confirm';
+import type { CreatorStart } from './Creator';
 import { IconPreview } from './editor/IconPreview';
 import { deleteFromLibrary, renameInLibrary, saveToLibrary, userItems } from './userLibrary';
 
@@ -38,8 +39,8 @@ interface Props {
   onClose: () => void;
   /** Present when opened from the editor: puts the item on the board. */
   onAdd?: (item: { kind: 'icon' | 'iso'; name: string }) => void;
-  /** Opens "New with AI" for this kind of item. */
-  onCreate?: (kind: 'icon' | 'clipart' | '3d') => void;
+  /** Opens "New with AI" for this kind of item, optionally continuing from an existing one. */
+  onCreate?: (kind: 'icon' | 'clipart' | '3d', start?: CreatorStart) => void;
   /** Something in the library changed (renamed, deleted, edited). */
   onChanged?: () => void;
   /** Bumped from outside when something was added (e.g. made with AI). */
@@ -121,7 +122,7 @@ export function LibraryManager({ onClose, onAdd, onCreate, onChanged, version: o
         </div>
         <aside className="libman-detail">
           {current ? (
-            <Detail key={keyOf(current)} item={current} onAdd={onAdd && ((it) => { onAdd(it); onClose(); })} onChanged={changed} onGone={() => setSelected(null)} onRenamed={(to) => { setSelected(`${current.kind}:${to}`); changed(); }} />
+            <Detail key={`${keyOf(current)}:${version}:${outside}`} item={current} onRefine={onCreate && ((start) => onCreate(start.kind, start))} onAdd={onAdd && ((it) => { onAdd(it); onClose(); })} onChanged={changed} onGone={() => setSelected(null)} onRenamed={(to) => { setSelected(`${current.kind}:${to}`); changed(); }} />
           ) : (
             <p className="muted">Select something to see it drawn and its details.{onAdd ? ' Double-click to put it on the board.' : ''}</p>
           )}
@@ -154,8 +155,9 @@ function IsoThumb({ model, size }: { model: IsoModel; size: number }) {
 }
 
 /** The selected item: drawn in on a small board, its details, and (for your own) editing. */
-function Detail({ item, onAdd, onChanged, onGone, onRenamed }: {
+function Detail({ item, onAdd, onRefine, onChanged, onGone, onRenamed }: {
   item: Item;
+  onRefine?: (start: CreatorStart) => void;
   onAdd?: (it: { kind: 'icon' | 'iso'; name: string }) => void;
   onChanged: () => void;
   onGone: () => void;
@@ -241,6 +243,20 @@ function Detail({ item, onAdd, onChanged, onGone, onRenamed }: {
       {error && <p className="error-text">{error}</p>}
       <div className="row">
         {onAdd && <button className="primary" onClick={() => onAdd({ kind: item.kind === '3d' ? 'iso' : 'icon', name: item.name })}>Put on the board</button>}
+        {onRefine && (
+          <button
+            title={item.mine ? 'Talk it over with a model and save the result over this one' : 'Start from this one and save the result as a new item'}
+            onClick={() => onRefine({
+              kind: item.kind === '3d' ? '3d' : item.kind === 'clipart' ? 'clipart' : 'icon',
+              from: item.name,
+              name: item.mine ? item.name : undefined,
+              description: item.description,
+              value: item.kind === '3d' ? { kind: 'iso', description: item.description, tags: item.tags, parts: item.model!.parts } : { ...item.icon },
+            })}
+          >
+            {item.mine ? 'Refine with AI' : 'Make a variation with AI'}
+          </button>
+        )}
         {item.mine && <button disabled={!dirty || busy} onClick={() => void save()}>Save changes</button>}
         {item.mine && <button className="danger" disabled={busy} onClick={() => void remove()}>Delete</button>}
       </div>
