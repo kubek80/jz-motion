@@ -3,7 +3,7 @@
 
 Icons usable as `{ "type": "icon", "icon": "<name>" }`. Every icon is drawn stroke by stroke on a 24×24 grid and scaled to `size`. 3D models are at the end.
 
-## Clipart
+## Icons
 
 From [Tabler Icons](https://tabler.io/icons), MIT.
 
@@ -28,7 +28,7 @@ From [Tabler Icons](https://tabler.io/icons), MIT.
 | `file` | Document: file, prompt, config, JSON | data |
 | `world` | Globe: internet, public web, global | infra |
 
-## Hardware and hand-drawn clipart
+## Hardware and hand-drawn icons
 
 Drawn for jz-motion in `src/engine/icons.custom.json`.
 
@@ -58,6 +58,14 @@ Brand logos are drawn as neon outlines. From [Simple Icons](https://simpleicons.
 | `nvidia` | NVIDIA logo | logo |
 | `apple` | Apple logo | logo |
 | `openai` | OpenAI logo (simplified, drawn by hand) | logo |
+
+## Clipart
+
+Multi-colour drawings in `src/engine/clipart/`; `size` is their width.
+
+| Name | What it shows / use it for | Tags |
+|---|---|---|
+| `jz-logo` | The jz-motion logo: neon JZ with handwritten "motion" and an arrow | clipart, logo, jz-motion |
 
 ## 3D (iso) models
 

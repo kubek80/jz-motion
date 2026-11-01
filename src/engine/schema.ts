@@ -184,6 +184,8 @@ export const Beat = z.object({
   notes: z.string().optional(),
   /** Play right after the previous beat instead of waiting for a click. */
   auto: z.boolean().default(false),
+  /** Seconds into a recording at which this beat starts (presentations made from a recording). */
+  cue: z.number().min(0).optional(),
   ...videoLayout,
   actions: z.array(Action),
 });

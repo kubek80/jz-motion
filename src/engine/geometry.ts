@@ -1,5 +1,6 @@
 import type { CompiledElement as Element } from './compile';
 import { projectIso, resolveIsoParts } from './iso';
+import { iconHeight } from './library';
 import type { AnchorName, ArrowElement, Camera, Point, Ref } from './schema';
 
 export const VIEW = { width: 1920, height: 1080 } as const;
@@ -17,8 +18,10 @@ export const ISO_LABEL_SIZE = 44;
 /** The element's main shape (icon square, box, text line). Arrows attach to it. */
 export function shapeBox(el: Element, lookup: (id: string) => Element | undefined): Box {
   switch (el.type) {
-    case 'icon':
-      return { x: el.x - el.size / 2, y: el.y - el.size / 2, width: el.size, height: el.size };
+    case 'icon': {
+      const h = iconHeight(el.icon, el.size);
+      return { x: el.x - el.size / 2, y: el.y - h / 2, width: el.size, height: h };
+    }
     case 'box':
       return { x: el.x - el.width / 2, y: el.y - el.height / 2, width: el.width, height: el.height };
     case 'text': {

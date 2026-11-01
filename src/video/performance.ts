@@ -42,6 +42,29 @@ export function autoPerformance(p: CompiledPresentation, timing: AutoTiming = DE
   return { events, duration: t };
 }
 
+/**
+ * Timing from beat cues (seconds into a recording): each beat plays when its cue comes up. A beat without
+ * a cue follows the one before it; cues that go backwards are treated as missing.
+ */
+export function cuePerformance(p: CompiledPresentation, recordingSeconds: number, timing: AutoTiming = DEFAULT_TIMING): Performance {
+  const events: PerformEvent[] = [{ t: 0, scene: 0, from: 0, until: 0 }];
+  let t = 0;
+  p.scenes.forEach((scene, si) => {
+    for (let b = 0; b < scene.beats.length;) {
+      let e = b;
+      while (e + 1 < scene.beats.length && scene.beats[e + 1].auto) e++;
+      const cue = scene.beats[b].cue;
+      const at = cue !== undefined && cue >= t ? cue : t + (si === 0 && b === 0 ? timing.lead : timing.gap);
+      const from = scene.beats[b].start;
+      const until = scene.beats[e].end;
+      events.push({ t: at, scene: si, from, until });
+      t = at + (until - from);
+      b = e + 1;
+    }
+  });
+  return { events, duration: Math.max(recordingSeconds, t + timing.tail) };
+}
+
 /** Scene and timeline position at `time` seconds into the performance. */
 export function stateAt(perf: Performance, time: number): { scene: number; time: number } {
   const { events } = perf;

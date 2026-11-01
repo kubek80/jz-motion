@@ -1,20 +1,20 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { generate, type GenerateResult } from '../ai/client';
-import { loadProfiles, PRESETS, saveProfiles, type ModelProfile } from '../ai/profiles';
+import { loadProfiles, type ModelProfile } from '../ai/profiles';
+import { Chat, type ChatMessageView } from './Chat';
+import { ModelsEditor } from './ModelsEditor';
 import { Preview } from './Preview';
 
 interface Run { profile: ModelProfile; status: 'running' | 'done'; result?: GenerateResult }
 
-/** Generate a presentation (or change the current one) with one or more models and pick a result. */
-export function AiPanel({ current, onUse }: { current: string; onUse: (json: string) => void }) {
+/** Generate a presentation (or change the current one) with several models side by side and pick a result. */
+export function ComparePanel({ current, onUse }: { current: string; onUse: (json: string) => void }) {
   const [profiles, setProfiles] = useState<ModelProfile[]>(loadProfiles);
-  const [editing, setEditing] = useState<ModelProfile | null>(null);
   const [request, setRequest] = useState('');
   const [mode, setMode] = useState<'new' | 'edit'>('new');
   const [runs, setRuns] = useState<Run[]>([]);
   const abort = useRef<AbortController | null>(null);
 
-  useEffect(() => saveProfiles(profiles), [profiles]);
   const enabled = profiles.filter((p) => p.enabled);
   const running = runs.some((r) => r.status === 'running');
 
@@ -35,32 +35,7 @@ export function AiPanel({ current, onUse }: { current: string; onUse: (json: str
     <div className="ai-panel">
       <section>
         <h3>Models</h3>
-        {profiles.length === 0 && <p className="muted">Add a model to generate with. Keys are kept in this browser only and sent only to that model's API, through your local dev server.</p>}
-        <ul className="profiles">
-          {profiles.map((p) => (
-            <li key={p.id}>
-              <label>
-                <input type="checkbox" checked={p.enabled} onChange={(e) => setProfiles(profiles.map((x) => (x.id === p.id ? { ...x, enabled: e.target.checked } : x)))} />
-                <span>{p.name}</span>
-              </label>
-              <span className="muted model-id">{p.model}</span>
-              <button onClick={() => setEditing(p)}>Edit</button>
-            </li>
-          ))}
-        </ul>
-        {editing ? (
-          <ProfileForm
-            profile={editing}
-            onSave={(p) => {
-              setProfiles(profiles.some((x) => x.id === p.id) ? profiles.map((x) => (x.id === p.id ? p : x)) : [...profiles, p]);
-              setEditing(null);
-            }}
-            onDelete={() => { setProfiles(profiles.filter((x) => x.id !== editing.id)); setEditing(null); }}
-            onCancel={() => setEditing(null)}
-          />
-        ) : (
-          <button className="add" onClick={() => setEditing({ id: crypto.randomUUID(), name: '', baseURL: PRESETS[0].baseURL, model: '', apiKey: '', enabled: true })}>+ add model</button>
-        )}
+        <ModelsEditor onChange={setProfiles} />
       </section>
 
       <section>
@@ -117,34 +92,24 @@ function ResultCard({ run, onUse }: { run: Run; onUse: (json: string) => void })
   );
 }
 
-function ProfileForm({ profile, onSave, onDelete, onCancel }: { profile: ModelProfile; onSave: (p: ModelProfile) => void; onDelete: () => void; onCancel: () => void }) {
-  const [p, setP] = useState(profile);
-  const preset = PRESETS.find((x) => x.baseURL === p.baseURL) ?? PRESETS.at(-1)!;
-  const set = (patch: Partial<ModelProfile>) => setP({ ...p, ...patch });
+/** The AI tab: a conversation that edits the presentation, or several models compared on one request. */
+export function AiPanel({ current, scene, onUse, chat, onChat }: {
+  current: string;
+  scene: number;
+  onUse: (json: string) => void;
+  chat: ChatMessageView[];
+  onChat: (m: ChatMessageView[]) => void;
+}) {
+  const [tab, setTab] = useState<'chat' | 'compare'>('chat');
   return (
-    <div className="profile-form">
-      <label className="field">
-        <span>provider</span>
-        <select
-          value={preset.label}
-          onChange={(e) => {
-            const next = PRESETS.find((x) => x.label === e.target.value)!;
-            set({ baseURL: next.baseURL, model: next.model || p.model });
-          }}
-        >
-          {PRESETS.map((x) => <option key={x.label}>{x.label}</option>)}
-        </select>
-      </label>
-      <p className="muted hint">{preset.hint}</p>
-      <label className="field"><span>base URL</span><input value={p.baseURL} onChange={(e) => set({ baseURL: e.target.value })} /></label>
-      <label className="field"><span>model</span><input value={p.model} placeholder="vendor/model-name" onChange={(e) => set({ model: e.target.value })} /></label>
-      <label className="field"><span>API key</span><input type="password" value={p.apiKey} autoComplete="off" onChange={(e) => set({ apiKey: e.target.value })} /></label>
-      <label className="field"><span>name</span><input value={p.name} placeholder={p.model || 'shown in results'} onChange={(e) => set({ name: e.target.value })} /></label>
-      <div className="row">
-        <button className="primary" disabled={!p.model || !p.baseURL} onClick={() => onSave({ ...p, name: p.name || p.model })}>Save</button>
-        <button onClick={onCancel}>Cancel</button>
-        <button className="danger" onClick={onDelete}>Delete</button>
+    <div className="ai-wrap">
+      <div className="toggle small ai-tabs">
+        <button className={tab === 'chat' ? 'on' : ''} onClick={() => setTab('chat')}>Chat</button>
+        <button className={tab === 'compare' ? 'on' : ''} onClick={() => setTab('compare')}>Compare models</button>
       </div>
+      {tab === 'chat'
+        ? <Chat current={current} scene={scene} onPresentation={onUse} initial={chat} onMessages={onChat} />
+        : <ComparePanel current={current} onUse={onUse} />}
     </div>
   );
 }

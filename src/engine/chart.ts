@@ -23,7 +23,7 @@ export interface ChartNodes {
 
 interface Helpers {
   fx: SVGGElement;
-  stroke: (d: string, width: number) => SVGPathElement;
+  stroke: (d: string, width: number) => SVGGraphicsElement;
   write: (text: string, x: number, y: number, size: number, anchor?: 'start' | 'middle' | 'end') => void;
   parts: DrawPart[];
 }

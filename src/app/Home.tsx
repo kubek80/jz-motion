@@ -1,4 +1,7 @@
 import { useEffect, useState } from 'react';
+import { compile } from '../engine/compile';
+import { cuePerformance } from '../video/performance';
+import { CreateWithAi, type RecordingSource } from './CreateWithAi';
 import { examples } from './examples';
 import { Preview } from './Preview';
 import { blankPresentation, type PresentationInfo, type Store } from './store';
@@ -16,6 +19,7 @@ export function Home({ store, onOpen }: { store: Store; onOpen: (id: string) => 
   const [items, setItems] = useState<(PresentationInfo & { text?: string })[] | null>(null);
   const [query, setQuery] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [aiCreate, setAiCreate] = useState<'script' | 'recording' | null>(null);
 
   const load = async () => {
     try {
@@ -28,6 +32,25 @@ export function Home({ store, onOpen }: { store: Store; onOpen: (id: string) => 
   useEffect(() => void load(), []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const create = async (text: string) => onOpen(await store.create(text));
+
+  /** A presentation made from a recording also gets the recording as its first take, timed by the beats' cues. */
+  const createFromAi = async (text: string, recording?: RecordingSource) => {
+    const id = await store.create(text);
+    if (recording) {
+      const doc = JSON.parse(text);
+      const compiled = compile(doc);
+      if (compiled.ok) {
+        const performance = cuePerformance(compiled.presentation, recording.duration);
+        const take = await (await fetch('/api/takes', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ name: `${doc.title} · recording`, performance, presentation: doc, presentationId: id }),
+        })).json();
+        await fetch(`/api/takes/${take.id}/tracks/me?from=${recording.upload}&offset=0`, { method: 'PUT' });
+      }
+    }
+    onOpen(id);
+  };
   const retitle = (text: string, title: string) => {
     const doc = JSON.parse(text);
     return JSON.stringify({ ...doc, title }, null, 2);
@@ -45,6 +68,7 @@ export function Home({ store, onOpen }: { store: Store; onOpen: (id: string) => 
 
   return (
     <div className="home">
+      {aiCreate && <CreateWithAi kind={aiCreate} onClose={() => setAiCreate(null)} onCreate={createFromAi} />}
       <header className="home-bar">
         <img src="/logo.svg" alt="jz-motion" className="home-logo" />
         <span className="spacer" />
@@ -59,6 +83,8 @@ export function Home({ store, onOpen }: { store: Store; onOpen: (id: string) => 
           <option value="" disabled>New from example…</option>
           {examples.map((x) => <option key={x.name} value={x.name}>{x.title}</option>)}
         </select>
+        <button onClick={() => setAiCreate('script')} title="Paste a script; a model turns it into a presentation">From script…</button>
+        <button onClick={() => setAiCreate('recording')} disabled={store.kind !== 'files'} title={store.kind === 'files' ? 'Upload a recording; it is transcribed and turned into a presentation timed to your speech' : 'Needs the local server (npm run dev)'}>From recording…</button>
         <button className="primary" onClick={() => void create(blankPresentation())}>+ New presentation</button>
       </header>
       <p className="muted store-note">

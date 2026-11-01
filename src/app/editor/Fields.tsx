@@ -38,6 +38,8 @@ export function Fields({ schema, value, ids, onChange, hide = [] }: Props) {
 function Field({ name, prop, value, ids, onChange }: { name: string; prop: Prop; value: unknown; ids: string[]; onChange: (v: unknown) => void }) {
   const placeholder = prop.default !== undefined ? String(prop.default) : '';
 
+  const pictures = CHOICE_ICONS[name];
+  if (prop.enum && pictures && prop.enum.every((o: string) => o in pictures)) return <IconChoice value={value as string | undefined} options={prop.enum} fallback={prop.default} pictures={pictures} onChange={onChange} />;
   if (prop.enum && prop.enum.every((c: string) => c in palette)) return <Swatches value={value as string | undefined} colors={prop.enum} fallback={prop.default} onChange={onChange} />;
   if (name === 'icon') return <Select value={value} options={Object.keys(icons).sort()} onChange={onChange} />;
   if (name === 'model') return <Select value={value} options={Object.keys(isoModels)} empty="(custom parts)" onChange={onChange} />;
@@ -181,6 +183,57 @@ function Swatches({ value, colors, fallback, onChange }: { value?: string; color
           </button>
         );
       })}
+    </span>
+  );
+}
+
+/** Small pictures for enum fields that are easier to pick by look than by name. */
+const g = (body: React.ReactNode) => (
+  <svg viewBox="0 0 32 22" width="32" height="22" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">{body}</svg>
+);
+const frame = <rect x="1.5" y="1.5" width="29" height="19" rx="2" strokeWidth="1.2" opacity="0.6" />;
+const CHOICE_ICONS: Record<string, Record<string, React.ReactNode>> = {
+  kind: {
+    bar: g(<><path d="M4 19H28" opacity="0.6" /><path d="M7 19V11H11V19M14 19V5H18V19M21 19V9H25V19" /></>),
+    line: g(<><path d="M4 19H28" opacity="0.6" /><path d="M5 15L11 9L17 13L27 4" /><circle cx="11" cy="9" r="1.3" fill="currentColor" /><circle cx="17" cy="13" r="1.3" fill="currentColor" /></>),
+    pie: g(<><path d="M16 3A8 8 0 1 1 8.1 12.4" /><path d="M16 3A8 8 0 0 0 8.1 12.4L16 11Z" /><circle cx="16" cy="11" r="3.5" /></>),
+  },
+  layout: {
+    board: g(<>{frame}<path d="M7 14L12 8L17 12L24 6" /></>),
+    pip: g(<>{frame}<path d="M6 10L10 6L14 9" /><rect x="18" y="12" width="10" height="6.5" rx="1" fill="currentColor" stroke="none" /></>),
+    'pip-left': g(<>{frame}<path d="M18 10L22 6L26 9" /><rect x="4" y="12" width="10" height="6.5" rx="1" fill="currentColor" stroke="none" /></>),
+    camera: g(<>{frame}<circle cx="13" cy="10" r="3" /><path d="M7 19C7 15 19 15 19 19" /><rect x="21" y="3.5" width="7.5" height="5" rx="1" strokeWidth="1.2" /></>),
+    side: g(<>{frame}<path d="M16 2V20" opacity="0.6" /><circle cx="8.5" cy="9" r="2.4" /><path d="M4.5 18C4.5 14.5 12.5 14.5 12.5 18" /><circle cx="23.5" cy="9" r="2.4" /><path d="M19.5 18C19.5 14.5 27.5 14.5 27.5 18" /></>),
+  },
+  align: {
+    start: g(<path d="M6 6H26M6 11H18M6 16H22" />),
+    middle: g(<path d="M6 6H26M10 11H22M8 16H24" />),
+    end: g(<path d="M6 6H26M14 11H26M10 16H26" />),
+  },
+  head: {
+    end: g(<><path d="M5 11H27" /><path d="M22 6L27 11L22 16" /></>),
+    start: g(<><path d="M5 11H27" /><path d="M10 6L5 11L10 16" /></>),
+    both: g(<><path d="M5 11H27" /><path d="M22 6L27 11L22 16M10 6L5 11L10 16" /></>),
+    none: g(<path d="M5 11H27" />),
+  },
+};
+
+function IconChoice({ value, options, fallback, pictures, onChange }: { value?: string; options: string[]; fallback?: string; pictures: Record<string, React.ReactNode>; onChange: (v: unknown) => void }) {
+  const current = value ?? fallback;
+  return (
+    <span className="icon-choice">
+      {options.map((o) => (
+        <button
+          key={o}
+          type="button"
+          title={o + (value === undefined && o === fallback ? ' (default)' : '')}
+          className={o === current ? 'on' : ''}
+          // Clicking the chosen one again (or the default) clears the field.
+          onClick={() => onChange((o === fallback || o === value) && value !== undefined ? undefined : o)}
+        >
+          {pictures[o]}
+        </button>
+      ))}
     </span>
   );
 }

@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { isoModels } from '../../engine/iso';
-import { icons } from '../../engine/library';
+import { icons, type IconDef } from '../../engine/library';
+import { IconPreview } from './IconPreview';
 
 export type AddRequest =
   | { kind: 'icon'; name: string }
@@ -8,12 +9,18 @@ export type AddRequest =
   | { kind: 'text' | 'box' | 'arrow' | 'chart' };
 
 /** Palette of things to put on the board. Clicking adds the item in the middle of the view. */
-export function Library({ onAdd, arrowActive }: { onAdd: (r: AddRequest) => void; arrowActive: boolean }) {
+export function Library({ onAdd, arrowActive, onCreate, version }: { onAdd: (r: AddRequest) => void; arrowActive: boolean; onCreate?: () => void; version?: number }) {
   const [query, setQuery] = useState('');
   const shown = useMemo(() => {
     const q = query.trim().toLowerCase();
     return Object.entries(icons).filter(([name, d]) => !q || name.includes(q) || d.tags.some((t) => t.includes(q)) || d.description.toLowerCase().includes(q));
-  }, [query]);
+  }, [query, version]);
+
+  const groups: [string, [string, IconDef][]][] = [
+    ['Icons', shown.filter(([, d]) => !d.parts && !d.tags.includes('logo'))],
+    ['Logos', shown.filter(([, d]) => !d.parts && d.tags.includes('logo'))],
+    ['Clipart', shown.filter(([, d]) => !!d.parts)],
+  ];
 
   return (
     <div className="library">
@@ -29,19 +36,21 @@ export function Library({ onAdd, arrowActive }: { onAdd: (r: AddRequest) => void
           Arrow
         </button>
       </div>
-      <input className="search" placeholder="Search icons…" value={query} onChange={(e) => setQuery(e.target.value)} />
-      <div className="icon-grid">
-        {shown.map(([name, d]) => (
-          <button key={name} className="icon-tile" title={d.description} onClick={() => onAdd({ kind: 'icon', name })}>
-            <svg viewBox="0 0 24 24" width="30" height="30">
-              <g fill="none" stroke="currentColor" strokeWidth={d.style === 'logo' ? 0.8 : 1.6} strokeLinecap="round" strokeLinejoin="round">
-                {d.paths.map((p, i) => <path key={i} d={p} />)}
-              </g>
-            </svg>
-            <span>{name}</span>
-          </button>
-        ))}
-      </div>
+      <input className="search" placeholder="Search icons, logos, clipart…" value={query} onChange={(e) => setQuery(e.target.value)} />
+      {onCreate && <button className="add" onClick={onCreate} title="Describe an icon or clipart and let a model draw it">+ New icon or clipart with AI</button>}
+      {groups.map(([title, list]) => list.length > 0 && (
+        <div key={title}>
+          <div className="subhead">{title}</div>
+          <div className={title === 'Clipart' ? 'icon-grid wide' : 'icon-grid'}>
+            {list.map(([name, d]) => (
+              <button key={name} className="icon-tile" title={d.description} onClick={() => onAdd({ kind: 'icon', name })}>
+                <IconPreview def={d} size={title === 'Clipart' ? 64 : 30} />
+                <span>{name}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      ))}
       <div className="subhead">3D models</div>
       <div className="model-list">
         {Object.entries(isoModels).map(([name, m]) => (

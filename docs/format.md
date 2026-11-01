@@ -33,7 +33,7 @@ All elements take `id`, `color` and optionally `visible`. An element that a beat
 
 | type | Fields | Notes |
 |---|---|---|
-| `icon` | `icon`, `x`, `y`, `size` (120), `label` | `x`, `y` is the center. Label is written under the icon. Icon names: [library.md](library.md). |
+| `icon` | `icon`, `x`, `y`, `size` (120), `label` | `x`, `y` is the center. Label is written under the icon. Names of icons, logos and clipart: [library.md](library.md). Clipart is multi-coloured (`color` only affects its uncoloured parts) and `size` is its width. |
 | `text` | `text`, `x`, `y`, `size` (56), `align` (`middle`, `start`, `end`) | Handwritten marker font. `y` is the vertical middle of the line. |
 | `box` | `x`, `y`, `width`, `height`, `radius` (18), `label`, `dashed` | `x`, `y` is the center. Label is written inside. |
 | `arrow` | `from`, `to`, `curve` (0), `head` (`end`, `start`, `both`, `none`), `label`, `dashed` | See below. |
@@ -99,7 +99,7 @@ For video export, a beat or a scene can say where the recorded camera goes while
 
 ## Beats and actions
 
-A beat is one click while presenting. Its actions run in order: each starts when the previous one ends, unless it says `"start": "with"` (start together with the previous action). Every action also takes `delay` (seconds) and `duration` (seconds, default depends on the action). A beat with `"auto": true` plays straight after the previous beat.
+A beat is one click while presenting. Its actions run in order: each starts when the previous one ends, unless it says `"start": "with"` (start together with the previous action). Every action also takes `delay` (seconds) and `duration` (seconds, default depends on the action). A beat with `"auto": true` plays straight after the previous beat. A beat's `cue` (seconds) is when it starts in a recording, for presentations made from one: the video plays each beat at its cue.
 
 Actions with `target` accept one id or a list. With a list, targets start `stagger` seconds apart (default 0.25).
 

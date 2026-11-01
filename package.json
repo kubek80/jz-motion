@@ -15,7 +15,14 @@
     "logo": "node scripts/build-logo.mjs"
   },
   "dependencies": {
+    "@codemirror/lang-json": "^6.0.2",
+    "@codemirror/language": "^6.13.1",
+    "@codemirror/lint": "^6.9.7",
+    "@codemirror/state": "^6.7.6",
+    "@codemirror/view": "^6.43.14",
     "@fontsource/caveat": "^5.3.0",
+    "@lezer/highlight": "^1.2.5",
+    "codemirror": "^6.0.2",
     "gsap": "^3.15.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",

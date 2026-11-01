@@ -1,23 +1,35 @@
 import formatDoc from '../../docs/format.md?raw';
 import libraryDoc from '../../docs/library.md?raw';
+import { generatedIcons } from '../engine/icons.generated';
+import { icons } from '../engine/library';
 
 // What the model reads: our own format reference and library list, so keeping the docs right keeps generation right.
 
-export const SYSTEM_PROMPT = `You write presentations for jz-motion: technical explainers drawn on a dark blackboard with luminous marker colors, stepped through beat by beat.
+const TASK = `You write presentations for jz-motion: technical explainers drawn on a dark blackboard with luminous marker colors, stepped through beat by beat.
 
-Reply with ONE JSON object: a complete presentation in the format below. No prose, no Markdown code fences.
+Reply with ONE JSON object: a complete presentation in the format below. No prose, no Markdown code fences.`;
 
-How to make a good one:
+const CRAFT = `How to make a good one:
 - The board is 1920×1080 at zoom 1, y pointing down. Keep each scene's main content inside it; zoom into details with a camera action and back out with "focus": "all".
 - 3 to 7 beats per scene. A beat is one idea the presenter talks over; give each a short title.
 - Draw things in the order you would explain them. Connect components with labelled arrows; use "flow" to show data moving.
-- Only use icons and 3D models listed in the library. Give icons a label.
+- Only use icons, clipart and 3D models listed in the library. Give icons a label.
 - Leave room: about 300 board units between icon centers, text sizes 40 to 90, nothing overlapping.
-- Use 2 to 4 colors and keep their meaning consistent (for example one color per kind of component).
+- Use 2 to 4 colors and keep their meaning consistent (for example one color per kind of component).`;
 
-${formatDoc}
+/** The format reference and the library, including icons and clipart made in this app. */
+export function referenceDocs(): string {
+  const own = Object.entries(icons).filter(([name]) => !(name in generatedIcons));
+  const extra = own.length
+    ? `\n\n## Made in this app\n\n| Name | What it shows |\n|---|---|\n${own.map(([n, d]) => `| \`${n}\` | ${d.description} |`).join('\n')}\n`
+    : '';
+  return `${CRAFT}\n\n${formatDoc}\n\n${libraryDoc}${extra}`;
+}
 
-${libraryDoc}`;
+/** System prompt for "write me a presentation" requests. */
+export function systemPrompt(): string {
+  return `${TASK}\n\n${referenceDocs()}`;
+}
 
 export type GenerateMode = 'new' | 'edit';
 
