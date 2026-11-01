@@ -24,7 +24,7 @@ export interface ChartNodes {
 interface Helpers {
   fx: SVGGElement;
   stroke: (d: string, width: number) => SVGGraphicsElement;
-  write: (text: string, x: number, y: number, size: number, anchor?: 'start' | 'middle' | 'end') => void;
+  write: (text: string, x: number, y: number, size: number, anchor?: 'start' | 'middle' | 'end', field?: string) => void;
   parts: DrawPart[];
 }
 
@@ -55,7 +55,7 @@ export function buildChart(el: ChartElement, max: number, h: Helpers): ChartNode
   const { fx, stroke, write, parts } = h;
   const halfW = el.width / 2;
   const halfH = el.height / 2;
-  if (el.title) write(el.title, 0, -halfH + 26, 42);
+  if (el.title) write(el.title, 0, -halfH + 26, 42, 'middle', 'title');
   const top = -halfH + (el.title ? 86 : 30);
   const n: ChartNodes = {
     el, max,

@@ -23,6 +23,7 @@ Open the printed URL. The home screen lists your presentations: create one (blan
 | Do | How |
 |---|---|
 | Select, move, resize | Click an element and drag it; drag a corner handle to resize. Shift+click selects several. |
+| Edit text in place | Double-click a text, label or chart title on the board (or select the element and press Enter), type, Enter to keep, Esc to cancel. |
 | Pan, zoom | Drag the empty board; scroll. |
 | Add | Click an icon, logo, clipart, Text, Box, Chart or a 3D model in the library. **Arrow**: click it, then the start element, then the end element. **+ New icon or clipart with AI** draws a new one from your description and saves it to your library (`library/`). |
 | Animate | **+ beat** under the board (it draws the selected elements), or **+ action** inside a beat. |

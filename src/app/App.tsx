@@ -36,6 +36,23 @@ interface Drag {
   resize?: { id: string; el: Raw; origin: { x: number; y: number }; start: { x: number; y: number }; sx: number; sy: number };
 }
 
+/** The text of an element that can be edited in place on the board. */
+const TEXT_FIELD: Record<string, 'text' | 'label' | 'title'> = { text: 'text', icon: 'label', box: 'label', arrow: 'label', iso: 'label', chart: 'title' };
+
+interface InlineEdit {
+  id: string;
+  field: 'text' | 'label' | 'title';
+  value: string;
+  /** Position inside the board frame, and how the text looks there. */
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+  fontPx: number;
+  color: string;
+  align: 'start' | 'middle' | 'end';
+}
+
 /** Elements that resize around their position; the rest (arrows) follow what they connect. */
 const RESIZABLE = new Set(['icon', 'text', 'box', 'chart', 'iso']);
 /** These keep their proportions; boxes and charts stretch freely (Shift keeps proportions). */
@@ -72,6 +89,8 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
   const [picked, setPicked] = useState<string[]>([]);
   /** Arrow tool: click the start element, then the end element. */
   const [arrowFrom, setArrowFrom] = useState<string | null | undefined>(undefined);
+  /** Text being edited in place on the board. */
+  const [inline, setInline] = useState<InlineEdit | null>(null);
   const arrowTool = arrowFrom !== undefined;
   const [selection, setSelection] = useState<Selection>(null);
   const stageHost = useRef<HTMLDivElement>(null);
@@ -277,9 +296,49 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
     setArrowFrom(undefined);
   };
 
+  /** Opens a text box over an element's text, label or title, in the same handwriting and size. */
+  const startInline = (id: string) => {
+    const s = stage.current;
+    const el = scene?.elements?.find((x) => x.id === id);
+    const frame = stageFrame.current?.getBoundingClientRect();
+    if (!s || !el || !frame || !editable.has(id)) return;
+    const field = TEXT_FIELD[el.type];
+    const spot = field && s.textField(id, field);
+    if (!spot) return;
+    s.setTextHidden(id, field, true);
+    setPicked([id]);
+    setInline({
+      id, field, value: String(el[field] ?? ''),
+      left: spot.left - frame.left, top: spot.top - frame.top, width: spot.width, height: spot.height,
+      fontPx: spot.fontPx, color: spot.color, align: spot.align,
+    });
+  };
+
+  const finishInline = (save: boolean) => {
+    const edit = inline;
+    if (!edit) return;
+    setInline(null);
+    stage.current?.setTextHidden(edit.id, edit.field, false);
+    const el = scene?.elements?.find((x) => x.id === edit.id);
+    if (!save || !doc || !el) return;
+    const value = edit.value.trim();
+    if (value === String(el[edit.field] ?? '')) return;
+    // A text element keeps its words if emptied; an empty label or title is removed.
+    if (!value && edit.field === 'text') return;
+    update(updateElement(doc, sceneIndex, edit.id, { [edit.field]: value || undefined }));
+  };
+
+  const onDoubleClick = (e: React.MouseEvent) => {
+    const s = stage.current;
+    if (mode !== 'edit' || !s || arrowTool) return;
+    const hit = s.elementAt(s.boardPoint(e.clientX, e.clientY), editable);
+    if (hit) startInline(hit);
+  };
+
   const onPointerDown = (e: React.PointerEvent) => {
     const s = stage.current;
     if (mode !== 'edit' || !s || !doc) return;
+    if (inline) return;
     const board = s.boardPoint(e.clientX, e.clientY);
     const hit = s.elementAt(board, new Set(ids));
     if (arrowTool) {
@@ -390,8 +449,8 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
 
   // ---------------------------------------------------------------- keyboard
 
-  const keyState = useRef({ mode, picked, deletePicked, history, duplicate });
-  keyState.current = { mode, picked, deletePicked, history, duplicate };
+  const keyState = useRef({ mode, picked, deletePicked, history, duplicate, startInline });
+  keyState.current = { mode, picked, deletePicked, history, duplicate, startInline };
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const k = keyState.current;
@@ -407,6 +466,7 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
       } else if (k.mode === 'edit') {
         if (e.key === 'Delete' || e.key === 'Backspace') k.deletePicked(k.picked);
         else if (e.key === 'Escape') { setPicked([]); setSelection(null); setArrowFrom(undefined); }
+        else if ((e.key === 'Enter' || e.key === 'F2') && k.picked.length === 1) k.startInline(k.picked[0]);
         else if (mod && e.key.toLowerCase() === 'd' && k.picked.length === 1) k.duplicate(k.picked[0]);
         else return;
       } else {
@@ -499,9 +559,33 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
             onPointerMove={onPointerMove}
             onPointerUp={onPointerUp}
             onWheel={onWheel}
+            onDoubleClick={onDoubleClick}
           >
             <div className="host" ref={stageHost} />
             <video ref={preview} className={recording && recorder.state.stream?.getVideoTracks().length ? 'cam-preview on' : 'cam-preview'} autoPlay muted playsInline />
+            {inline && (
+              <input
+                className="inline-edit"
+                autoFocus
+                value={inline.value}
+                style={{
+                  // Anchored like the text it replaces: centred, or from its left or right edge.
+                  top: inline.top + inline.height / 2,
+                  left: inline.align === 'start' ? inline.left : inline.align === 'end' ? inline.left + inline.width : inline.left + inline.width / 2,
+                  transform: `translate(${inline.align === 'start' ? '0' : inline.align === 'end' ? '-100%' : '-50%'}, -50%)`,
+                  fontSize: inline.fontPx, color: inline.color, textAlign: inline.align === 'middle' ? 'center' : inline.align === 'end' ? 'right' : 'left',
+                }}
+                placeholder={inline.field}
+                onChange={(e) => setInline({ ...inline, value: e.target.value })}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') finishInline(true);
+                  else if (e.key === 'Escape') finishInline(false);
+                  e.stopPropagation();
+                }}
+                onBlur={() => finishInline(true)}
+                onPointerDown={(e) => e.stopPropagation()}
+              />
+            )}
             {arrowTool && mode === 'edit' && (
               <div className="tool-hint">
                 {arrowFrom ? <>Arrow from <b>{arrowFrom}</b>: now click where it goes.</> : <>Arrow: click the element it starts from.</>} <span className="muted">Esc to cancel</span>

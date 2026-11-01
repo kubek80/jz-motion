@@ -212,3 +212,11 @@ Jakub's next list: a nicer JSON view (full screen, folding, colours, this scene 
 ![Pictures for choices](journey/26-icon-choices.jpg)
 ![The logo as clipart, drawing in](journey/27-logo-clipart.jpg)
 ![AI features](journey/28-ai-features.jpg)
+
+## Step 16: Editing text on the board
+
+Jakub wanted to edit text and labels where they are. Double-clicking a text, a label (icon, box, arrow, 3D) or a chart title (or pressing Enter with the element selected) opens a text box exactly over it, in the same handwriting, colour and size, following the zoom; Enter keeps it, Esc cancels, clicking away keeps it. An element without a label gets one; clearing a label removes it. The renderer now marks which piece of text belongs to which field, so the editor knows where each one is on screen.
+
+**Checked by:** a browser run that edits a title, edits a label while zoomed in, cancels with Esc, removes and re-adds a label with the keyboard, and checks the saved file after each step.
+
+![Editing text in place](journey/29-inline-edit.jpg)
