@@ -373,7 +373,7 @@ export function App() {
   return (
     <div className={`app mode-${mode}`}>
       <header className="bar">
-        <strong className="logo">jz-motion</strong>
+        <img className="logo" src="/logo.svg" alt="jz-motion" />
         <span className="muted">{doc?.title ?? 'fix the JSON to continue'}</span>
         <span className="spacer" />
         <div className="toggle">
