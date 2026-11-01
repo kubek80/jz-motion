@@ -54,7 +54,7 @@ input, textarea, select { font: inherit; color: var(--text); background: var(--b
 .icon-tile { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 2px; font-size: 10px; color: var(--muted); }
 .icon-tile svg { color: var(--accent); }
 .icon-tile span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
-.subhead { color: var(--muted); font-size: 12px; margin-top: 4px; }
+.subhead { color: var(--muted); font-size: 12px; margin: 8px 0 6px; }
 .model-list { display: flex; flex-wrap: wrap; gap: 4px; }
 .model-list button { font-size: 12px; padding: 3px 7px; }
 
@@ -239,7 +239,8 @@ input, textarea, select { font: inherit; color: var(--text); background: var(--b
 .drawings.wide { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); }
 .drawings.wide .drawing-art { padding: 0; filter: none; }
 .drawing-art .preview { width: 100%; }
-.scenes .row .add-scene { flex: 1; font-size: 12px; }
+.scene-adds { display: flex; flex-direction: column; gap: 6px; }
+.scene-adds .add-scene { width: 100%; font-size: 12px; text-align: left; padding: 6px 10px; }
 .drawing-art { width: 100%; min-height: 130px; display: flex; align-items: center; justify-content: center; background: #0d1114; border-radius: 6px; padding: 10px; filter: drop-shadow(0 0 4px #3ef0ff55); }
 .drawing-meta { font-size: 12px; }
 

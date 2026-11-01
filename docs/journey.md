@@ -289,3 +289,9 @@ Jakub's notes: scrollbars too big, position and size fields that don't look like
 
 ![Position and size](journey/45-position-size.jpg)
 ![Line styles](journey/46-line-styles.jpg)
+
+## Step 21: Tidier left panel
+
+"+ New scene" and "✦ New scene with AI" now sit on their own lines under the scenes, and the Icons / Logos / Clipart / 3D headings have a little space above and below so they read as headings over their pictures.
+
+![Left panel](journey/47-left-panel.jpg)
