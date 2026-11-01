@@ -10,6 +10,17 @@ const ok = (input: unknown): CompiledPresentation => {
 
 const deck = (scene: object) => ({ version: 1, title: 't', scenes: [{ id: 's', ...scene }] });
 
+describe('text styles', () => {
+  it('sizes multi-line code by its longest line and its number of lines', async () => {
+    const { shapeBox } = await import('./geometry');
+    const el = { id: 'c', type: 'text', text: 'ab\nabcd', x: 100, y: 100, size: 40, align: 'middle', style: 'code', color: 'white' } as const;
+    const b = shapeBox(el as never, () => undefined);
+    expect(b.width).toBeCloseTo(4 * 40 * 0.6);
+    expect(b.height).toBeCloseTo(40 + 40 * 1.25);
+    expect(b.y).toBeCloseTo(100 - b.height / 2);
+  });
+});
+
 describe('compile', () => {
   const shotDoc = (beats: unknown[]) => ({
     version: 1, title: 't',

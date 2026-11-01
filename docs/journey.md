@@ -312,3 +312,13 @@ For explainer videos Jakub wanted to paste a screenshot of an interface and draw
 ![Screenshot drawn in, spotlight dark, spotlight fade, and the editing view](journey/48-screenshot-spotlight.jpg)
 ![Area with one-click beats](journey/49-area-quick-beats.jpg)
 ![Picture properties](journey/50-image-properties.jpg)
+
+## Step 23: Reset view, text styles, colourful tools
+
+- **Reset view:** panning and zooming can lose the board, so the board has **Reset view** (back to the scene's start view, key 0) and **Fit all** (everything on it, Shift+0) in its corner.
+- **Text styles:** `marker` (the handwriting so far), `bold` (chunky outlined capitals with an offset echo, in the spirit of the JZ in the logo; Bungee font) and `code` (JetBrains Mono). Text can now have several lines; code keeps its indentation and its lines line up on the left wherever the block is placed. Code is edited in place in a box that takes new lines (Ctrl+Enter keeps it), and in the properties in a monospace box where Tab indents. Exports load the new fonts before the first frame.
+- **Tools with colour:** Text, Box, Chart, Arrow, Image and Area each have a small line picture in their own marker colour, with a faint tint and glow; "New scene with AI" and "New with AI" have a pink sparkle.
+
+![Text styles, and editing code in place](journey/51-text-styles.jpg)
+![Tools](journey/52-tool-icons.jpg)
+![Text properties](journey/53-text-properties.jpg)

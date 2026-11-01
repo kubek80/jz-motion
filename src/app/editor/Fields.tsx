@@ -36,7 +36,7 @@ const FIELD_INFO: Record<string, FieldInfo> = {
   url: { label: 'address bar', help: 'Text in the browser frame\'s address bar.' },
   src: { label: 'picture file', group: 'advanced' },
   shape: { help: 'Shape of the area (and of a spotlight on it).' },
-  style: { label: 'outside', help: '"dark": everything else goes darker; "fade": everything else fades into the board.' },
+  style: { label: 'style', help: 'Text: handwritten marker, bold outlined capitals, or code (several lines allowed). Spotlight: what happens outside it, darker or faded.' },
   amount: { label: 'strength', help: 'How much darker or fainter, from 0 to 1.' },
   on: { help: 'Off turns it off.' },
 };
@@ -69,6 +69,8 @@ export function Fields({ schema, value, ids, onChange, hide = [], currentView, a
         <span>{info.label ?? key}{info.help ? <i className="help">?</i> : null}</span>
         {key === 'camera' && p.type === 'object'
           ? <StartView value={value[key] as Raw | undefined} currentView={currentView} onChange={(v) => onChange(key, v)} />
+          : key === 'text' && value.type === 'text' && (value.style === 'code' || String(value.text ?? '').includes('\n'))
+            ? <TextAreaField value={value[key] as string | undefined} onChange={(v) => onChange(key, v)} />
           : key === 'track'
             ? <TrackField value={value[key] as string | undefined} onChange={(v) => onChange(key, v)} />
             : <Field name={key} prop={p} value={key === 'line' ? value.line ?? (value.dashed ? 'dashed' : undefined) : value[key]} ids={ids} onChange={(v) => onChange(key, v)} />}
@@ -196,6 +198,30 @@ function TextField({ value, placeholder, onChange }: { value?: string; placehold
   return <input value={draft} placeholder={placeholder} onChange={(e) => setDraft(e.target.value)} onBlur={commit} onKeyDown={(e) => e.key === 'Enter' && commit()} />;
 }
 
+/** Several lines (code): commits when focus leaves, or with Ctrl+Enter. */
+function TextAreaField({ value, onChange }: { value?: string; onChange: (v: unknown) => void }) {
+  const [draft, setDraft] = useState(value ?? '');
+  useEffect(() => setDraft(value ?? ''), [value]);
+  const commit = () => draft !== (value ?? '') && onChange(draft === '' ? undefined : draft);
+  return (
+    <textarea
+      className="code-input" rows={Math.min(12, Math.max(3, draft.split('\n').length + 1))} value={draft} spellCheck={false}
+      onChange={(e) => setDraft(e.target.value)} onBlur={commit}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) commit();
+        // Tab indents instead of leaving the field.
+        if (e.key === 'Tab') {
+          e.preventDefault();
+          const t = e.currentTarget;
+          const at = t.selectionStart;
+          setDraft(draft.slice(0, at) + '  ' + draft.slice(t.selectionEnd));
+          requestAnimationFrame(() => t.setSelectionRange(at + 2, at + 2));
+        }
+      }}
+    />
+  );
+}
+
 function NumberField({ value, placeholder, onChange }: { value?: number; placeholder?: string; onChange: (v: number | undefined) => void }) {
   const [draft, setDraft] = useState(value === undefined ? '' : String(value));
   useEffect(() => setDraft(value === undefined ? '' : String(value)), [value]);
@@ -315,6 +341,13 @@ const CHOICE_ICONS: Record<string, Record<string, React.ReactNode>> = {
     middle: g(<path d="M6 6H26M10 11H22M8 16H24" />),
     end: g(<path d="M6 6H26M14 11H26M10 16H26" />),
   },
+  style: {
+    marker: <svg viewBox="0 0 40 22" width="40" height="22"><text x="20" y="16" textAnchor="middle" fontFamily="Caveat, cursive" fontWeight="700" fontSize="18" fill="currentColor">Aa</text></svg>,
+    bold: <svg viewBox="0 0 40 22" width="40" height="22"><text x="21" y="17" textAnchor="middle" fontFamily="Bungee, 'Arial Black', sans-serif" fontSize="14" fill="none" stroke="currentColor" strokeWidth="0.6" opacity="0.5" transform="translate(1 1)">AB</text><text x="20" y="16" textAnchor="middle" fontFamily="Bungee, 'Arial Black', sans-serif" fontSize="14" fill="#0d1114" stroke="currentColor" strokeWidth="1">AB</text></svg>,
+    code: <svg viewBox="0 0 40 22" width="40" height="22"><text x="20" y="15.5" textAnchor="middle" fontFamily="'JetBrains Mono', monospace" fontWeight="500" fontSize="11" fill="currentColor">{'</>'}</text></svg>,
+    dark: g(<><rect x="1.5" y="1.5" width="29" height="19" rx="2" fill="#000" stroke="none" /><rect x="10" y="6" width="12" height="10" rx="2" fill="currentColor" opacity="0.9" stroke="none" /></>),
+    fade: g(<><rect x="1.5" y="1.5" width="29" height="19" rx="2" fill="currentColor" opacity="0.18" stroke="none" /><rect x="10" y="6" width="12" height="10" rx="2" fill="currentColor" opacity="0.9" stroke="none" /></>),
+  },
   frame: {
     none: g(<><rect x="5" y="4" width="22" height="14" rx="1.5" fill="currentColor" opacity="0.35" stroke="none" /><path d="M8 14L13 9L17 12L24 7" strokeWidth="1.4" /></>),
     browser: g(<><rect x="3" y="2.5" width="26" height="17" rx="3" /><path d="M3 7.5H29" strokeWidth="1.4" /><circle cx="6.2" cy="5" r="0.6" fill="currentColor" /><circle cx="8.6" cy="5" r="0.6" fill="currentColor" /><circle cx="11" cy="5" r="0.6" fill="currentColor" /><rect x="7" y="10" width="18" height="7" rx="1" fill="currentColor" opacity="0.35" stroke="none" /></>),
@@ -322,10 +355,6 @@ const CHOICE_ICONS: Record<string, Record<string, React.ReactNode>> = {
   shape: {
     rect: g(<rect x="5" y="4" width="22" height="14" rx="2" strokeDasharray="3 2.5" />),
     ellipse: g(<ellipse cx="16" cy="11" rx="11.5" ry="7.5" strokeDasharray="3 2.5" />),
-  },
-  style: {
-    dark: g(<><rect x="1.5" y="1.5" width="29" height="19" rx="2" fill="#000" stroke="none" /><rect x="10" y="6" width="12" height="10" rx="2" fill="currentColor" opacity="0.9" stroke="none" /></>),
-    fade: g(<><rect x="1.5" y="1.5" width="29" height="19" rx="2" fill="currentColor" opacity="0.18" stroke="none" /><rect x="10" y="6" width="12" height="10" rx="2" fill="currentColor" opacity="0.9" stroke="none" /></>),
   },
   line: {
     solid: g(<path d="M4 11H28" strokeWidth="2.2" />),

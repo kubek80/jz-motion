@@ -34,7 +34,7 @@ All elements take `id`, `color` and optionally `visible`. An element that a beat
 | type | Fields | Notes |
 |---|---|---|
 | `icon` | `icon`, `x`, `y`, `size` (120), `label` | `x`, `y` is the center. Label is written under the icon. Names of icons, logos and clipart: [library.md](library.md). Clipart is multi-coloured (`color` only affects its uncoloured parts) and `size` is its width. |
-| `text` | `text`, `x`, `y`, `size` (56), `align` (`middle`, `start`, `end`) | Handwritten marker font. `y` is the vertical middle of the line. |
+| `text` | `text`, `x`, `y`, `size` (56), `align` (`middle`, `start`, `end`), `style` (`marker`, `bold`, `code`) | `marker`: handwriting (default). `bold`: chunky outlined capitals for headlines, like the logo. `code`: monospace for code; its lines keep their indentation and line up on the left. `\n` starts a new line. `y` is the vertical middle. |
 | `box` | `x`, `y`, `width`, `height`, `radius` (18), `label`, `line` (`solid`, `dashed`, `dotted`), `weight` (`normal`, `bold`) | `x`, `y` is the center. Label is written inside. |
 | `arrow` | `from`, `to`, `curve` (0), `head` (`end`, `start`, `both`, `none`), `label`, `line` (`solid`, `dashed`, `dotted`), `weight` (`normal`, `bold`: thicker, bigger head) | See below. |
 | `iso` | `model` or `parts`, `x`, `y`, `scale` (70), `rotate` (0), `label` | Isometric 3D object, see below. `x`, `y` is its middle. |

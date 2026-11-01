@@ -19,7 +19,7 @@ import {
   updateBeats, updateElement, updateScene, type Raw, type RawDoc,
 } from './editor/doc';
 import { Inspector } from './editor/Inspector';
-import { Library, type AddRequest } from './editor/Library';
+import { Library, TOOL_ICONS, type AddRequest } from './editor/Library';
 import { SceneAsk } from './editor/SceneAsk';
 import type { Selection } from './editor/types';
 import { useHistory } from './useHistory';
@@ -58,6 +58,10 @@ interface InlineEdit {
   fontPx: number;
   color: string;
   align: 'start' | 'middle' | 'end';
+  family: string;
+  weight: string;
+  /** Code and text with several lines are edited in a box that takes new lines. */
+  multiline: boolean;
 }
 
 /** Elements that resize around their position; the rest (arrows) follow what they connect. */
@@ -364,7 +368,8 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
     setInline({
       id, field, value: String(el[field] ?? ''),
       left: spot.left - frame.left, top: spot.top - frame.top, width: spot.width, height: spot.height,
-      fontPx: spot.fontPx, color: spot.color, align: spot.align,
+      fontPx: spot.fontPx, color: spot.color, align: spot.align, family: spot.family, weight: spot.weight,
+      multiline: el.type === 'text' && (el.style === 'code' || String(el.text).includes('\n')),
     });
   };
 
@@ -375,7 +380,7 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
     stage.current?.setTextHidden(edit.id, edit.field, false);
     const el = scene?.elements?.find((x) => x.id === edit.id);
     if (!save || !doc || !el) return;
-    const value = edit.value.trim();
+    const value = inline?.multiline ? edit.value.replace(/\s+$/, '') : edit.value.trim();
     if (value === String(el[edit.field] ?? '')) return;
     // A text element keeps its words if emptied; an empty label or title is removed.
     if (!value && edit.field === 'text') return;
@@ -504,10 +509,20 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
     s.setSelection(picked, [], { handles: canResize });
   };
 
+  /** Back to the view the scene starts with, or (fit) to everything on the board. */
+  const resetView = (fit = false) => {
+    const s = stage.current;
+    if (!s || mode !== 'edit') return;
+    const start = result.ok ? result.presentation.scenes[sceneIndex]?.camera : undefined;
+    s.camera = fit || !start ? s.fitCamera() : start;
+    editCams.current.set(sceneIndex, s.camera);
+    s.setSelection(picked, [], { handles: canResize });
+  };
+
   // ---------------------------------------------------------------- keyboard
 
-  const keyState = useRef({ mode, picked, deletePicked, history, duplicate, startInline });
-  keyState.current = { mode, picked, deletePicked, history, duplicate, startInline };
+  const keyState = useRef({ mode, picked, deletePicked, history, duplicate, startInline, resetView });
+  keyState.current = { mode, picked, deletePicked, history, duplicate, startInline, resetView };
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const k = keyState.current;
@@ -525,6 +540,7 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
         else if (e.key === 'Escape') { setPicked([]); setSelection(null); setArrowFrom(undefined); }
         else if ((e.key === 'Enter' || e.key === 'F2') && k.picked.length === 1) k.startInline(k.picked[0]);
         else if (mod && e.key.toLowerCase() === 'd' && k.picked.length === 1) k.duplicate(k.picked[0]);
+        else if (e.key === '0' || e.key === 'Home') k.resetView(e.shiftKey);
         else return;
       } else {
         const s = stage.current;
@@ -649,8 +665,8 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
             ))}
             {mode === 'edit' && doc && (
               <div className="scene-adds">
-                <button className="add-scene" onClick={() => update(addScene(doc, sceneIndex))}>+ New scene</button>
-                <button className="add-scene" onClick={() => setCreating({ kind: 'scene' })} title="Describe a scene; a model makes it">✦ New scene with AI</button>
+                <button className="add-scene" onClick={() => update(addScene(doc, sceneIndex))}><span className="plus">+</span> New scene</button>
+                <button className="add-scene ai-add" onClick={() => setCreating({ kind: 'scene' })} title="Describe a scene; a model makes it">{TOOL_ICONS.sparkle} New scene with AI</button>
               </div>
             )}
           </div>
@@ -672,28 +688,60 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
           >
             <div className="host" ref={stageHost} />
             <video ref={preview} className={recording && recorder.state.stream?.getVideoTracks().length ? 'cam-preview on' : 'cam-preview'} autoPlay muted playsInline />
-            {inline && (
-              <input
-                className="inline-edit"
-                autoFocus
-                value={inline.value}
-                style={{
-                  // Anchored like the text it replaces: centred, or from its left or right edge.
-                  top: inline.top + inline.height / 2,
-                  left: inline.align === 'start' ? inline.left : inline.align === 'end' ? inline.left + inline.width : inline.left + inline.width / 2,
-                  transform: `translate(${inline.align === 'start' ? '0' : inline.align === 'end' ? '-100%' : '-50%'}, -50%)`,
-                  fontSize: inline.fontPx, color: inline.color, textAlign: inline.align === 'middle' ? 'center' : inline.align === 'end' ? 'right' : 'left',
-                }}
-                placeholder={inline.field}
-                onChange={(e) => setInline({ ...inline, value: e.target.value })}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') finishInline(true);
-                  else if (e.key === 'Escape') finishInline(false);
-                  e.stopPropagation();
-                }}
-                onBlur={() => finishInline(true)}
-                onPointerDown={(e) => e.stopPropagation()}
-              />
+            {inline && (() => {
+              const style: React.CSSProperties = {
+                // Anchored like the text it replaces: centred, or from its left or right edge.
+                top: inline.top + inline.height / 2,
+                left: inline.align === 'start' ? inline.left : inline.align === 'end' ? inline.left + inline.width : inline.left + inline.width / 2,
+                transform: `translate(${inline.align === 'start' ? '0' : inline.align === 'end' ? '-100%' : '-50%'}, -50%)`,
+                fontSize: inline.fontPx, color: inline.color, fontFamily: inline.family, fontWeight: inline.weight as React.CSSProperties['fontWeight'],
+                textAlign: inline.align === 'middle' ? 'center' : inline.align === 'end' ? 'right' : 'left',
+              };
+              const common = {
+                className: inline.multiline ? 'inline-edit multiline' : 'inline-edit',
+                autoFocus: true,
+                value: inline.value,
+                style,
+                placeholder: inline.field,
+                onBlur: () => finishInline(true),
+                onPointerDown: (e: React.PointerEvent) => e.stopPropagation(),
+              };
+              // Several lines (code): Enter starts a new line; Ctrl+Enter or clicking away keeps it.
+              return inline.multiline ? (
+                <textarea
+                  {...common}
+                  rows={inline.value.split('\n').length}
+                  style={{ ...style, minWidth: inline.width + inline.fontPx * 2 }}
+                  onChange={(e) => setInline({ ...inline, value: e.target.value })}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) finishInline(true);
+                    else if (e.key === 'Escape') finishInline(false);
+                    e.stopPropagation();
+                  }}
+                />
+              ) : (
+                <input
+                  {...common}
+                  onChange={(e) => setInline({ ...inline, value: e.target.value })}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') finishInline(true);
+                    else if (e.key === 'Escape') finishInline(false);
+                    e.stopPropagation();
+                  }}
+                />
+              );
+            })()}
+            {mode === 'edit' && (
+              <div className="view-tools" onPointerDown={(e) => e.stopPropagation()} onDoubleClick={(e) => e.stopPropagation()}>
+                <button onClick={() => resetView()} title="Back to the scene's start view (0)">
+                  <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M2.5 8a5.5 5.5 0 1 0 1.8-4.1" /><path d="M2.5 2.5v3.2h3.2" /></svg>
+                  Reset view
+                </button>
+                <button onClick={() => resetView(true)} title="Show everything on the board (Shift+0)">
+                  <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4" /></svg>
+                  Fit all
+                </button>
+              </div>
             )}
             {arrowTool && mode === 'edit' && (
               <div className="tool-hint">

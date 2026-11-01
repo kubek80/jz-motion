@@ -40,6 +40,8 @@ export const TextElement = z.object({
   y: z.number(),
   size: z.number().positive().default(56),
   align: z.enum(['start', 'middle', 'end']).default('middle'),
+  /** "marker" handwriting, "bold" chunky outlined capitals, "code" monospace. New lines ("\n") start new lines. */
+  style: z.enum(['marker', 'bold', 'code']).default('marker'),
 });
 
 export const BoxElement = z.object({
