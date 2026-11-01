@@ -7,9 +7,11 @@ import { pipeline } from 'node:stream/promises';
 import type { Plugin, PreviewServer, ViteDevServer } from 'vite';
 import { exportVideo } from './export';
 import { findOffset } from './media';
+import { createPresentation, deletePresentation, listPresentations, readPresentation, writePresentation } from './presentations';
 import { addTrack, createTake, deleteTake, getTake, listTakes, TAKES_DIR, trackPath, updateTake } from './takes';
 
 // The local server side of the app, mounted into the Vite dev and preview servers:
+//   /api/presentations  list, create, read, save, delete presentations (presentations/<id>.json)
 //   /api/llm      proxy to OpenAI-compatible model APIs (browsers can't call most of them directly)
 //   /api/takes    recordings: create, upload tracks, set offsets, auto-sync, delete
 //   /api/export   render a presentation (and a take) to MP4; /exports/<file> to download it
@@ -18,6 +20,31 @@ export const EXPORTS_DIR = resolve(process.env.JZM_EXPORTS_DIR ?? 'exports');
 
 interface Job { id: string; status: 'running' | 'done' | 'failed'; done: number; total: number; file?: string; error?: string; started: number }
 const jobs = new Map<string, Job>();
+
+async function readText(req: IncomingMessage): Promise<string> {
+  const chunks: Buffer[] = [];
+  for await (const c of req) chunks.push(c as Buffer);
+  return Buffer.concat(chunks).toString('utf8');
+}
+
+async function presentations(req: IncomingMessage, res: ServerResponse, id: string | undefined) {
+  const m = req.method;
+  if (!id && m === 'GET') return send(res, 200, await listPresentations());
+  if (!id && m === 'POST') return send(res, 200, { id: await createPresentation(await readText(req)) });
+  if (id && m === 'GET') {
+    res.setHeader('content-type', 'application/json');
+    return res.end(await readPresentation(id));
+  }
+  if (id && m === 'PUT') {
+    await writePresentation(id, await readText(req));
+    return send(res, 200, { ok: true });
+  }
+  if (id && m === 'DELETE') {
+    await deletePresentation(id);
+    return send(res, 200, { ok: true });
+  }
+  return send(res, 404, { error: 'not found' });
+}
 
 async function readJson(req: IncomingMessage): Promise<any> { // eslint-disable-line @typescript-eslint/no-explicit-any
   const chunks: Buffer[] = [];
@@ -118,6 +145,7 @@ export function jzmServer(): Plugin {
       const parts = url.pathname.split('/').filter(Boolean);
       try {
         if (url.pathname === '/api/llm' && req.method === 'POST') return await llm(req, res);
+        if (parts[0] === 'api' && parts[1] === 'presentations') return await presentations(req, res, parts[2]);
         if (parts[0] === 'api' && parts[1] === 'takes') return await takes(req, res, parts.slice(2), url.searchParams);
         if (url.pathname === '/api/export' && req.method === 'POST') return send(res, 200, startExport(await readJson(req), appUrl()));
         if (parts[0] === 'api' && parts[1] === 'export' && parts[2]) return send(res, jobs.has(parts[2]) ? 200 : 404, jobs.get(parts[2]) ?? { error: 'no such export' });

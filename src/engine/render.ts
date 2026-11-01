@@ -57,6 +57,8 @@ interface IsoNodes {
 
 interface FlowState { on: number; dir: number; speed: number }
 
+export type Corner = 'nw' | 'ne' | 'sw' | 'se';
+
 /** Scene `scene` plays from timeline position `from` until `until` (equal when standing still). */
 export interface PerformState { scene: number; from: number; until: number }
 
@@ -429,8 +431,9 @@ export class Stage {
   }
 
   /** Dashed boxes around the selected elements; `secondary` ones (e.g. an action's targets) are drawn fainter. */
-  setSelection(ids: string[], secondary: string[] = []) {
+  setSelection(ids: string[], secondary: string[] = [], opts: { handles?: boolean } = {}) {
     this.overlay.replaceChildren();
+    this.handles = [];
     const k = this.unitsPerPixel;
     const draw = (id: string, strong: boolean) => {
       const b = this.elementBox(id);
@@ -441,9 +444,34 @@ export class Stage {
         fill: 'none', stroke: strong ? '#3ef0ff' : '#fff05a', 'stroke-width': (strong ? 2 : 1.5) * k,
         'stroke-dasharray': `${6 * k} ${5 * k}`, opacity: strong ? 0.95 : 0.7,
       }, this.overlay);
+      if (strong && opts.handles && ids.length === 1) {
+        const size = 12 * k;
+        const corners: [Corner, number, number][] = [
+          ['nw', b.x - pad, b.y - pad], ['ne', b.x + b.width + pad, b.y - pad],
+          ['sw', b.x - pad, b.y + b.height + pad], ['se', b.x + b.width + pad, b.y + b.height + pad],
+        ];
+        for (const [corner, x, y] of corners) {
+          svgEl('rect', { x: x - size / 2, y: y - size / 2, width: size, height: size, rx: 2 * k, fill: '#0d1114', stroke: '#3ef0ff', 'stroke-width': 2 * k }, this.overlay);
+          this.handles.push({ corner, x, y });
+        }
+      }
     };
     secondary.filter((id) => !ids.includes(id)).forEach((id) => draw(id, false));
     ids.forEach((id) => draw(id, true));
+  }
+
+  private handles: { corner: Corner; x: number; y: number }[] = [];
+
+  /** The resize handle under a board point, if any (see setSelection's `handles`). */
+  handleAt(point: { x: number; y: number }): Corner | undefined {
+    const r = 12 * this.unitsPerPixel;
+    return this.handles.find((h) => Math.abs(h.x - point.x) <= r && Math.abs(h.y - point.y) <= r)?.corner;
+  }
+
+  /** Stretches an element around its own position while a resize handle is dragged. */
+  previewScale(id: string, sx: number, sy: number) {
+    const n = this.nodes.get(id);
+    if (n) gsap.set(n.fx, { scaleX: sx, scaleY: sy, svgOrigin: '0 0' });
   }
 
   private boxOf(n: ElementNodes) {

@@ -146,6 +146,28 @@ input, textarea, select { font: inherit; color: var(--text); background: var(--b
 .job { display: flex; flex-direction: column; gap: 6px; }
 .job progress { width: 100%; }
 
+.swatches { display: flex; gap: 6px; flex-wrap: wrap; }
+.swatch { width: 24px; height: 24px; padding: 0; border-radius: 50%; border: 2px solid transparent; }
+.swatch.on { border-color: #fff; }
+.basics button.on { border-color: var(--accent); color: var(--accent); }
+.tool-hint { position: absolute; left: 50%; top: 10px; transform: translateX(-50%); padding: 6px 12px; background: #000c; border: 1px solid var(--accent); border-radius: 6px; font-size: 13px; pointer-events: none; }
+
+.logo-button { background: none; border: 0; padding: 0; }
+.home { min-height: 100vh; padding: 0 28px 40px; overflow: auto; height: 100vh; box-sizing: border-box; }
+.home-bar { display: flex; gap: 10px; align-items: center; padding: 18px 0 6px; }
+.home-logo { height: 96px; }
+.home .search { width: 240px; }
+.store-note { margin: 0 0 18px; font-size: 12px; }
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; }
+.card:hover { border-color: var(--accent); }
+.card-open { padding: 0; border: 0; border-radius: 0; display: block; }
+.thumb { aspect-ratio: 16 / 9; width: 100%; background: #0d1114; pointer-events: none; }
+.card-body { padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; }
+.card-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.card-tools { margin-top: 4px; flex-wrap: wrap; }
+.card-tools button { font-size: 12px; padding: 3px 8px; }
+
 @media (max-width: 900px) {
   .main { flex-direction: column; }
   .left, .right { width: auto; border: 0; border-top: 1px solid var(--line); }

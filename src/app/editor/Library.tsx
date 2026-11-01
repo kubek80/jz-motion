@@ -8,7 +8,7 @@ export type AddRequest =
   | { kind: 'text' | 'box' | 'arrow' | 'chart' };
 
 /** Palette of things to put on the board. Clicking adds the item in the middle of the view. */
-export function Library({ onAdd, canConnect }: { onAdd: (r: AddRequest) => void; canConnect: boolean }) {
+export function Library({ onAdd, arrowActive }: { onAdd: (r: AddRequest) => void; arrowActive: boolean }) {
   const [query, setQuery] = useState('');
   const shown = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -22,9 +22,9 @@ export function Library({ onAdd, canConnect }: { onAdd: (r: AddRequest) => void;
         <button onClick={() => onAdd({ kind: 'box' })}>Box</button>
         <button onClick={() => onAdd({ kind: 'chart' })}>Chart</button>
         <button
+          className={arrowActive ? 'on' : ''}
           onClick={() => onAdd({ kind: 'arrow' })}
-          disabled={!canConnect}
-          title={canConnect ? 'Arrow between the two selected elements' : 'Select two elements (shift+click) to connect them'}
+          title="Connect two elements: click the start, then the end (or select two elements first)"
         >
           Arrow
         </button>

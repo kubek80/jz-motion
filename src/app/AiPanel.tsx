@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { generate, type GenerateResult } from '../ai/client';
 import { loadProfiles, PRESETS, saveProfiles, type ModelProfile } from '../ai/profiles';
-import { compile, Stage } from '../engine';
+import { Preview } from './Preview';
 
 interface Run { profile: ModelProfile; status: 'running' | 'done'; result?: GenerateResult }
 
@@ -115,19 +115,6 @@ function ResultCard({ run, onUse }: { run: Run; onUse: (json: string) => void })
       )}
     </div>
   );
-}
-
-/** Small board showing the end of the first scene. */
-function Preview({ json }: { json: string }) {
-  const host = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const result = compile(JSON.parse(json));
-    if (!result.ok || !host.current) return;
-    const stage = new Stage(host.current);
-    void stage.load(result.presentation, { scene: 0, beat: result.presentation.scenes[0].beats.length });
-    return () => stage.destroy();
-  }, [json]);
-  return <div className="preview" ref={host} />;
 }
 
 function ProfileForm({ profile, onSave, onDelete, onCancel }: { profile: ModelProfile; onSave: (p: ModelProfile) => void; onDelete: () => void; onCancel: () => void }) {

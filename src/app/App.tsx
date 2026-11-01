@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { compile, Stage, type StagePosition } from '../engine';
 import type { Camera } from '../engine/schema';
-import intro from '../examples/intro.json';
 import { AiPanel } from './AiPanel';
 import { VideoPanel } from './VideoPanel';
 import { useRecorder } from './useRecorder';
@@ -13,28 +12,8 @@ import {
 import { Inspector } from './editor/Inspector';
 import { Library, type AddRequest } from './editor/Library';
 import type { Selection } from './editor/types';
+import { examples } from './examples';
 import { useHistory } from './useHistory';
-
-const DRAFT_KEY = 'jzm.draft';
-const example = JSON.stringify(intro, null, 2);
-const examples = Object.entries(import.meta.glob<{ title: string }>('../examples/*.json', { eager: true, import: 'default' }))
-  .map(([path, data]) => ({ name: path.split('/').pop()!.replace('.json', ''), title: data.title, text: JSON.stringify(data, null, 2) }));
-
-function loadDraft(): string {
-  try {
-    return localStorage.getItem(DRAFT_KEY) ?? example;
-  } catch {
-    return example;
-  }
-}
-
-function saveDraft(text: string) {
-  try {
-    localStorage.setItem(DRAFT_KEY, text);
-  } catch {
-    // Storage can be unavailable (private mode); the draft just won't survive a reload.
-  }
-}
 
 type Mode = 'edit' | 'play';
 type Panel = 'props' | 'json' | 'ai' | 'video';
@@ -51,15 +30,47 @@ interface Drag {
   board: { x: number; y: number };
   camera: Camera;
   unitsPerPixel: number;
+  /** Dragging a resize handle of one element, scaling it around its own position. */
+  resize?: { id: string; el: Raw; origin: { x: number; y: number }; start: { x: number; y: number }; sx: number; sy: number };
 }
 
-export function App() {
-  const history = useHistory(loadDraft());
+/** Elements that resize around their position; the rest (arrows) follow what they connect. */
+const RESIZABLE = new Set(['icon', 'text', 'box', 'chart', 'iso']);
+/** These keep their proportions; boxes and charts stretch freely (Shift keeps proportions). */
+const UNIFORM = new Set(['icon', 'text', 'iso']);
+
+/** New size fields after scaling an element by sx × sy. */
+function resized(el: Raw, sx: number, sy: number): Raw {
+  const r = (v: number) => Math.max(4, Math.round(v));
+  switch (el.type) {
+    case 'icon': return { size: r((el.size ?? 120) * sx) };
+    case 'text': return { size: r((el.size ?? 56) * sx) };
+    case 'iso': return { scale: Math.round((el.scale ?? 70) * sx * 10) / 10 };
+    case 'box': return { width: r(el.width * sx), height: r(el.height * sy) };
+    case 'chart': return { width: r((el.width ?? 640) * sx), height: r((el.height ?? 380) * sy) };
+    default: return {};
+  }
+}
+
+interface EditorProps {
+  id: string;
+  initial: string;
+  /** Called (debounced) with the presentation text after changes. */
+  onSave: (text: string) => void;
+  onHome: () => void;
+}
+
+/** One open presentation: board, editor panels, play mode, recording. */
+export function Editor({ id, initial, onSave, onHome }: EditorProps) {
+  const history = useHistory(initial);
   const text = history.value;
   const [mode, setMode] = useState<Mode>('edit');
   const [panel, setPanel] = useState<Panel>('props');
   const [pos, setPos] = useState<StagePosition>({ scene: 0, beat: 0, time: 0, duration: 0, playing: false });
   const [picked, setPicked] = useState<string[]>([]);
+  /** Arrow tool: click the start element, then the end element. */
+  const [arrowFrom, setArrowFrom] = useState<string | null | undefined>(undefined);
+  const arrowTool = arrowFrom !== undefined;
   const [selection, setSelection] = useState<Selection>(null);
   const stageHost = useRef<HTMLDivElement>(null);
   const stageFrame = useRef<HTMLDivElement>(null);
@@ -71,12 +82,21 @@ export function App() {
   posRef.current = pos;
   const [withCamera, setWithCamera] = useState(true);
   const docRef = useRef<RawDoc | null>(null);
-  const recorder = useRecorder(stage, () => JSON.parse(history.value), () => docRef.current?.title ?? 'take');
+  const recorder = useRecorder(stage, () => JSON.parse(history.value), () => docRef.current?.title ?? 'take', id);
   const preview = useRef<HTMLVideoElement>(null);
   const recording = recorder.state.status === 'recording';
   const sceneIndex = pos.scene;
 
-  useEffect(() => saveDraft(text), [text]);
+  // Save shortly after edits stop, and on the way out.
+  const saved = useRef(initial);
+  const latest = useRef(text);
+  latest.current = text;
+  useEffect(() => {
+    if (text === saved.current) return;
+    const timer = window.setTimeout(() => { saved.current = text; onSave(text); }, 500);
+    return () => clearTimeout(timer);
+  }, [text, onSave]);
+  useEffect(() => () => { if (latest.current !== saved.current) onSave(latest.current); }, [onSave]);
 
   const doc = useMemo<RawDoc | null>(() => {
     try {
@@ -121,6 +141,8 @@ export function App() {
     };
   }, []);
 
+  const pickedEl = picked.length === 1 ? scene?.elements?.find((e) => e.id === picked[0]) : undefined;
+  const canResize = !!pickedEl && RESIZABLE.has(pickedEl.type);
   const highlight = useCallback(() => {
     const s = stage.current;
     if (!s || mode !== 'edit') return;
@@ -129,8 +151,8 @@ export function App() {
       const a = scene?.beats?.[selection.beat]?.actions[selection.action];
       secondary = a ? [a.target ?? a.focus ?? []].flat() : [];
     }
-    s.setSelection(picked, secondary);
-  }, [mode, picked, selection, scene]);
+    s.setSelection(picked, secondary, { handles: canResize });
+  }, [mode, picked, selection, scene, canResize]);
 
   // Rebuild the board when the presentation or mode changes.
   useEffect(() => {
@@ -204,7 +226,11 @@ export function App() {
         };
         break;
       case 'arrow':
-        if (picked.length !== 2) return;
+        if (picked.length !== 2) {
+          // Start the arrow tool; a single selected element is where the arrow starts.
+          setArrowFrom(picked.length === 1 ? picked[0] : null);
+          return;
+        }
         el = { id: uniqueId(doc, sceneIndex, `${picked[0]}-${picked[1]}`), type: 'arrow', from: picked[0], to: picked[1] };
         break;
     }
@@ -234,11 +260,35 @@ export function App() {
 
   // ---------------------------------------------------------------- board pointer handling (edit mode)
 
+  const connect = (from: string, to: string) => {
+    if (!doc) return;
+    const el = { id: uniqueId(doc, sceneIndex, `${from}-${to}`), type: 'arrow', from, to };
+    update(addElement(doc, sceneIndex, el));
+    setPicked([el.id]);
+    setArrowFrom(undefined);
+  };
+
   const onPointerDown = (e: React.PointerEvent) => {
     const s = stage.current;
     if (mode !== 'edit' || !s || !doc) return;
     const board = s.boardPoint(e.clientX, e.clientY);
     const hit = s.elementAt(board, new Set(ids));
+    if (arrowTool) {
+      if (!hit) setArrowFrom(null);
+      else if (!arrowFrom) { setArrowFrom(hit); setPicked([hit]); }
+      else if (hit !== arrowFrom) connect(arrowFrom, hit);
+      return;
+    }
+    const corner = canResize ? s.handleAt(board) : undefined;
+    if (corner && pickedEl) {
+      drag.current = {
+        pointer: e.pointerId, startX: e.clientX, startY: e.clientY, moved: false, items: [], pan: false,
+        board, camera: s.camera, unitsPerPixel: s.unitsPerPixel,
+        resize: { id: pickedEl.id, el: pickedEl, origin: { x: pickedEl.x, y: pickedEl.y }, start: board, sx: 1, sy: 1 },
+      };
+      (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+      return;
+    }
     let nextPicked = picked;
     if (hit) {
       if (e.shiftKey) nextPicked = picked.includes(hit) ? picked.filter((i) => i !== hit) : [...picked, hit];
@@ -262,18 +312,39 @@ export function App() {
   const onPointerMove = (e: React.PointerEvent) => {
     const d = drag.current;
     const s = stage.current;
+    if (s && !d && mode === 'edit') {
+      // Hover feedback: resize cursors over handles, a crosshair while connecting.
+      const corner = canResize ? s.handleAt(s.boardPoint(e.clientX, e.clientY)) : undefined;
+      (e.currentTarget as HTMLElement).style.cursor = arrowTool ? 'cell' : corner ? (corner === 'nw' || corner === 'se' ? 'nwse-resize' : 'nesw-resize') : '';
+    }
     if (!d || !s || d.pointer !== e.pointerId) return;
+    if (d.resize) {
+      const r = d.resize;
+      const p = s.boardPoint(e.clientX, e.clientY);
+      const o = r.origin;
+      const ratio = (a: number, b: number) => Math.max(0.1, Math.abs(a) / Math.max(Math.abs(b), 1));
+      if (UNIFORM.has(r.el.type) || e.shiftKey) {
+        r.sx = r.sy = ratio(Math.hypot(p.x - o.x, p.y - o.y), Math.hypot(r.start.x - o.x, r.start.y - o.y));
+      } else {
+        r.sx = ratio(p.x - o.x, r.start.x - o.x);
+        r.sy = ratio(p.y - o.y, r.start.y - o.y);
+      }
+      d.moved = true;
+      s.previewScale(r.id, r.sx, r.sy);
+      s.setSelection(picked, [], { handles: true });
+      return;
+    }
     const dx = (e.clientX - d.startX) * d.unitsPerPixel;
     const dy = (e.clientY - d.startY) * d.unitsPerPixel;
     if (!d.moved && Math.hypot(e.clientX - d.startX, e.clientY - d.startY) < 4) return;
     d.moved = true;
     if (d.items.length) {
       for (const it of d.items) s.previewMove(it.id, it.x + dx, it.y + dy);
-      s.setSelection(picked);
+      s.setSelection(picked, [], { handles: canResize });
     } else if (d.pan) {
       s.camera = { ...d.camera, x: d.camera.x - dx, y: d.camera.y - dy };
       editCams.current.set(sceneIndex, s.camera);
-      s.setSelection(picked);
+      s.setSelection(picked, [], { handles: canResize });
     }
   };
 
@@ -281,6 +352,10 @@ export function App() {
     const d = drag.current;
     drag.current = null;
     if (!d || !doc) return;
+    if (d.resize) {
+      if (d.moved) update(updateElement(doc, sceneIndex, d.resize.id, resized(d.resize.el, d.resize.sx, d.resize.sy)));
+      return;
+    }
     if (!d.moved) {
       if (d.pan) { setPicked([]); setSelection(null); }
       return;
@@ -301,7 +376,7 @@ export function App() {
     // Keep the point under the cursor in place.
     s.camera = { zoom, x: p.x - (p.x - cam.x) * (cam.zoom / zoom), y: p.y - (p.y - cam.y) * (cam.zoom / zoom) };
     editCams.current.set(sceneIndex, s.camera);
-    s.setSelection(picked);
+    s.setSelection(picked, [], { handles: canResize });
   };
 
   // ---------------------------------------------------------------- keyboard
@@ -322,7 +397,7 @@ export function App() {
         return;
       } else if (k.mode === 'edit') {
         if (e.key === 'Delete' || e.key === 'Backspace') k.deletePicked(k.picked);
-        else if (e.key === 'Escape') { setPicked([]); setSelection(null); }
+        else if (e.key === 'Escape') { setPicked([]); setSelection(null); setArrowFrom(undefined); }
         else if (mod && e.key.toLowerCase() === 'd' && k.picked.length === 1) k.duplicate(k.picked[0]);
         else return;
       } else {
@@ -373,7 +448,7 @@ export function App() {
   return (
     <div className={`app mode-${mode}`}>
       <header className="bar">
-        <img className="logo" src="/logo.svg" alt="jz-motion" />
+        <button className="logo-button" onClick={onHome} title="All presentations"><img className="logo" src="/logo.svg" alt="jz-motion" /></button>
         <span className="muted">{doc?.title ?? 'fix the JSON to continue'}</span>
         <span className="spacer" />
         <div className="toggle">
@@ -402,7 +477,7 @@ export function App() {
             ))}
             {mode === 'edit' && doc && <button className="add-scene" onClick={() => update(addScene(doc, sceneIndex))}>+ scene</button>}
           </div>
-          {mode === 'edit' && doc && <Library onAdd={add} canConnect={picked.length === 2} />}
+          {mode === 'edit' && doc && <Library onAdd={add} arrowActive={arrowTool} />}
         </aside>
 
         <section className="center">
@@ -417,6 +492,11 @@ export function App() {
           >
             <div className="host" ref={stageHost} />
             <video ref={preview} className={recording && recorder.state.stream?.getVideoTracks().length ? 'cam-preview on' : 'cam-preview'} autoPlay muted playsInline />
+            {arrowTool && mode === 'edit' && (
+              <div className="tool-hint">
+                {arrowFrom ? <>Arrow from <b>{arrowFrom}</b>: now click where it goes.</> : <>Arrow: click the element it starts from.</>} <span className="muted">Esc to cancel</span>
+              </div>
+            )}
             {!result.ok && mode === 'edit' && <div className="frame-note">The board shows the last valid version. Fix: {result.errors[0]}</div>}
           </div>
 
@@ -477,7 +557,7 @@ export function App() {
           {panel === 'ai' ? (
             <AiPanel current={text} onUse={replaceAll} />
           ) : panel === 'video' ? (
-            <VideoPanel presentation={text} refreshKey={recorder.state.lastTake?.id} />
+            <VideoPanel presentation={text} presentationId={id} refreshKey={recorder.state.lastTake?.id} />
           ) : mode === 'edit' && panel === 'props' && doc ? (
             <Inspector
               doc={doc}
