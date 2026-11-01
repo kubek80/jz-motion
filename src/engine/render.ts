@@ -57,6 +57,9 @@ interface IsoNodes {
 
 interface FlowState { on: number; dir: number; speed: number }
 
+/** Scene `scene` plays from timeline position `from` until `until` (equal when standing still). */
+export interface PerformState { scene: number; from: number; until: number }
+
 export interface StagePosition {
   scene: number;
   /** Beats completed in the current scene. */
@@ -86,6 +89,10 @@ export class Stage {
   private stopAt: number | null = null;
   private playThrough = false;
   private listeners = new Set<(p: StagePosition) => void>();
+  private performers = new Set<(e: PerformState) => void>();
+  /** Export mode: frames are drawn only by renderAt, not by the real-time ticker. */
+  private manual = false;
+  private builtFor?: CompiledScene;
   private prefix = `jzm${uid++}`;
 
   constructor(container: HTMLElement) {
@@ -115,6 +122,41 @@ export class Stage {
     this.listeners.clear();
   }
 
+  /** Called whenever playback starts, stops or jumps: the raw material of a recorded performance. */
+  onPerform(fn: (e: PerformState) => void): () => void {
+    this.performers.add(fn);
+    return () => this.performers.delete(fn);
+  }
+
+  /** What is playing right now, as a performance event. */
+  performState(): PerformState {
+    const t = this.tl.time();
+    return { scene: this.sceneIndex, from: t, until: !this.tl.paused() && this.stopAt !== null ? this.stopAt : t };
+  }
+
+  private perform() {
+    const e = this.performState();
+    this.performers.forEach((fn) => fn(e));
+  }
+
+  /**
+   * Export: draws scene `scene` at timeline position `time`, with `ambient` seconds on the clock that
+   * drives flows and spins. Turns off real-time playback; call with increasing `ambient` for each frame.
+   */
+  renderAt(scene: number, time: number, ambient: number) {
+    if (!this.presentation) return;
+    this.manual = true;
+    this.stopAt = null;
+    if (scene !== this.sceneIndex || this.builtFor !== this.presentation.scenes[scene]) {
+      this.sceneIndex = scene;
+      this.buildScene(this.presentation.scenes[scene]);
+    }
+    this.tl.pause(time);
+    const dt = Math.max(0, ambient - this.ambient);
+    this.ambient = ambient;
+    this.frame(dt);
+  }
+
   onChange(fn: (p: StagePosition) => void): () => void {
     this.listeners.add(fn);
     fn(this.position());
@@ -140,6 +182,7 @@ export class Stage {
     await Promise.all([
       document.fonts.load(`40px Caveat`),
       document.fonts.load(`700 40px Caveat`),
+      this.backgroundReady,
     ]).catch(() => undefined);
     const scene = Math.min(at.scene, p.scenes.length - 1);
     this.showScene(scene, Math.min(at.beat, p.scenes[scene].beats.length));
@@ -160,6 +203,7 @@ export class Stage {
     this.beat = Math.max(0, Math.min(beat, scene.beats.length));
     const t = this.beat === 0 ? 0 : scene.beats[this.beat - 1].end;
     this.tl.pause(t);
+    this.perform();
     this.emit();
   }
 
@@ -171,6 +215,7 @@ export class Stage {
     this.playThrough = false;
     this.tl.pause(time);
     this.beat = scene.beats.filter((b) => b.end <= time + 1e-6).length;
+    this.perform();
     this.emit();
   }
 
@@ -216,6 +261,7 @@ export class Stage {
     this.playThrough = true;
     this.stopAt = this.scene!.duration;
     this.tl.play();
+    this.perform();
     this.emit();
   }
 
@@ -224,6 +270,7 @@ export class Stage {
     this.stopAt = null;
     this.tl.pause();
     this.beat = this.scene?.beats.filter((b) => b.end <= this.tl.time() + 1e-6).length ?? 0;
+    this.perform();
     this.emit();
   }
 
@@ -232,6 +279,7 @@ export class Stage {
     this.tl.pause(b.start);
     this.stopAt = b.end;
     this.tl.play();
+    this.perform();
     this.emit();
   }
 
@@ -239,6 +287,7 @@ export class Stage {
     const scene = this.scene!;
     this.beat = scene.beats.filter((b) => b.end <= this.tl.time() + 1e-6).length;
     this.stopAt = null;
+    this.perform();
     if (this.playThrough) {
       if (this.sceneIndex < this.presentation!.scenes.length - 1) {
         this.showScene(this.sceneIndex + 1, 0);
@@ -264,18 +313,25 @@ export class Stage {
   }
 
   private tick = (_time: number, deltaMs: number) => {
-    this.ambient += Math.min(deltaMs, 100) / 1000;
+    if (this.manual) return;
+    const dt = Math.min(deltaMs, 100) / 1000;
+    this.ambient += dt;
     if (this.stopAt !== null && !this.tl.paused() && this.tl.time() >= this.stopAt - 1e-6) {
       this.tl.pause(this.stopAt);
       this.finishBeat();
     } else if (!this.tl.paused()) {
       this.emit();
     }
+    this.frame(dt);
+  };
+
+  /** Draws the parts that are computed rather than tweened: camera, charts, 3D, flows. */
+  private frame(dt: number) {
     this.applyCamera();
     for (const n of this.nodes.values()) {
       if (n.chart) renderChart(n.chart);
       if (!n.iso) continue;
-      if (n.iso.spin.on > 0.5) n.iso.phase += (Math.min(deltaMs, 100) / 1000) * n.iso.spin.speed;
+      if (n.iso.spin.on > 0.5) n.iso.phase += dt * n.iso.spin.speed;
       renderIso(n.iso);
     }
     for (const [id, f] of this.flows) {
@@ -284,7 +340,7 @@ export class Stage {
       path.style.opacity = f.on > 0.5 ? '1' : '0';
       path.style.strokeDashoffset = String(-((this.ambient * f.speed * f.dir) % FLOW_PERIOD));
     }
-  };
+  }
 
   // ---------------------------------------------------------------- editing
 
@@ -434,9 +490,41 @@ export class Stage {
     }
     svgEl('rect', { width: VIEW.width, height: VIEW.height, filter: `url(#${p}-grain)` }, bg);
     svgEl('rect', { width: VIEW.width, height: VIEW.height, fill: `url(#${p}-vignette)` }, bg);
+    this.backgroundReady = this.flattenBackground(bg);
+  }
+
+  /** Resolves once the board background has been flattened (see flattenBackground). */
+  private backgroundReady: Promise<void> = Promise.resolve();
+
+  /**
+   * The board texture is static but its filters (noise, a large blur) cost more to redraw than
+   * everything else on the board. Paint it once into a bitmap and show that instead.
+   */
+  private async flattenBackground(bg: SVGGElement) {
+    if (typeof Image === 'undefined' || typeof document === 'undefined') return;
+    try {
+      const scale = 1;
+      const markup = `<svg xmlns="http://www.w3.org/2000/svg" width="${VIEW.width * scale}" height="${VIEW.height * scale}" viewBox="0 0 ${VIEW.width} ${VIEW.height}"><defs>${this.defs.innerHTML}</defs>${bg.innerHTML}</svg>`;
+      const svgUrl = URL.createObjectURL(new Blob([markup], { type: 'image/svg+xml' }));
+      const img = new Image();
+      img.src = svgUrl;
+      await img.decode();
+      const canvas = document.createElement('canvas');
+      canvas.width = VIEW.width * scale;
+      canvas.height = VIEW.height * scale;
+      canvas.getContext('2d')!.drawImage(img, 0, 0);
+      URL.revokeObjectURL(svgUrl);
+      const blob = await new Promise<Blob | null>((r) => canvas.toBlob(r, 'image/png'));
+      if (!blob) return;
+      const flat = svgEl('image', { href: URL.createObjectURL(blob), width: VIEW.width, height: VIEW.height, preserveAspectRatio: 'none' });
+      bg.replaceChildren(flat);
+    } catch {
+      // Keep the live (slower) background.
+    }
   }
 
   private buildScene(scene: CompiledScene) {
+    this.builtFor = scene;
     this.tl.kill();
     this.tl = gsap.timeline({ paused: true });
     this.layer.replaceChildren();

@@ -2,7 +2,7 @@ import { DEFAULT_CAMERA, frameBox, fullBox, union, type Box } from './geometry';
 import { isoModels } from './iso';
 import { icons } from './library';
 import type { ColorName } from './palette';
-import { Presentation, type Action, type Camera, type Element, type Point } from './schema';
+import { Presentation, type Action, type LayoutName, type Camera, type Element, type Point } from './schema';
 
 // Turns a presentation into a flat, timed plan per scene. Pure and DOM-free so it is easy to test;
 // render.ts turns the plan into SVG and a GSAP timeline.
@@ -35,7 +35,16 @@ export type Op =
   | { kind: 'spin'; id: string; from: number | null; to: number | null; t: number }
   | { kind: 'values'; id: string; from: number[]; to: number[]; t: number; dur: number };
 
-export interface CompiledBeat { title?: string; notes?: string; auto: boolean; start: number; end: number }
+export interface CompiledBeat {
+  title?: string;
+  notes?: string;
+  auto: boolean;
+  start: number;
+  end: number;
+  /** Video layout and camera track, with the scene's defaults applied. */
+  layout?: LayoutName;
+  track?: string;
+}
 
 export interface CompiledScene {
   id: string;
@@ -45,6 +54,9 @@ export interface CompiledScene {
   final: Record<string, ElementState>;
   camera: Camera;
   finalCamera: Camera;
+  /** Video layout and camera track for the scene's beats that don't set their own. */
+  layout?: LayoutName;
+  track?: string;
   ops: Op[];
   beats: CompiledBeat[];
   duration: number;
@@ -403,7 +415,10 @@ export function compile(input: unknown): CompileResult {
         beatEnd = Math.max(beatEnd, end);
       });
 
-      beats.push({ title: beat.title, notes: beat.notes, auto: beat.auto, start: beatStart, end: beatEnd });
+      beats.push({
+        title: beat.title, notes: beat.notes, auto: beat.auto, start: beatStart, end: beatEnd,
+        layout: beat.layout ?? scene.layout, track: beat.track ?? scene.track,
+      });
       time = beatEnd;
     });
 
@@ -421,6 +436,8 @@ export function compile(input: unknown): CompileResult {
       initial,
       final: structuredClone(state),
       camera: startCamera,
+      layout: scene.layout,
+      track: scene.track,
       finalCamera: camera,
       ops,
       beats,

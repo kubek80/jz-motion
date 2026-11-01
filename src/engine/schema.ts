@@ -166,12 +166,25 @@ export const Action = z.discriminatedUnion('do', [
   z.object({ do: z.literal('wait'), ...timing }),
 ]);
 
+/**
+ * How the video frame is laid out while a beat plays (video export only):
+ * board = board only; pip / pip-left = board with a small camera bottom-right / bottom-left;
+ * camera = camera full screen with the board small; side = two cameras side by side.
+ */
+export const layoutNames = ['board', 'pip', 'pip-left', 'camera', 'side'] as const;
+const videoLayout = {
+  layout: z.enum(layoutNames).optional(),
+  /** Which recorded track the camera layouts show, e.g. "me" (default) or "friend". */
+  track: z.string().optional(),
+};
+
 export const Beat = z.object({
   title: z.string().optional(),
   /** Speaker notes. */
   notes: z.string().optional(),
   /** Play right after the previous beat instead of waiting for a click. */
   auto: z.boolean().default(false),
+  ...videoLayout,
   actions: z.array(Action),
 });
 
@@ -183,6 +196,8 @@ export const Scene = z.object({
   /** Start with the previous scene's visible elements and camera. */
   inherit: z.boolean().default(false),
   camera: Camera.optional(),
+  /** Video layout for the scene's beats that don't set their own. */
+  ...videoLayout,
   elements: z.array(Element).default([]),
   beats: z.array(Beat).default([]),
 });
@@ -193,6 +208,7 @@ export const Presentation = z.object({
   scenes: z.array(Scene).min(1),
 });
 
+export type LayoutName = (typeof layoutNames)[number];
 export type Point = z.infer<typeof Point>;
 export type Ref = z.infer<typeof Ref>;
 export type Element = z.infer<typeof Element>;
