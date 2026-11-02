@@ -93,3 +93,5 @@ Usable as `{ "type": "iso", "model": "<name>" }`. Defined in `src/engine/iso-mod
 | `datacenter` | Two rows of four racks | 9 |
 | `layers` | Three stacked layers (e.g. app / model / hardware). Explode to separate them. | 3 |
 | `podium` | Winners' podium: three blocks for 1st (middle, tallest), 2nd (left) and 3rd (right). Use for leaderboards, rankings, 'who is best'. Reads best with "rotate": -30 (all three blocks in a row). | 4 |
+| `document-stack` | A long document as a stack of pages. Explode it to show it being cut into chunks. | 5 |
+| `vector-index` | Vector index: a plate with bars standing for stored vectors (embeddings). Use for a vector database or search index in RAG. | 8 |

@@ -1210,6 +1210,617 @@
       ]
     },
     {
+      "id": "rag-3d",
+      "title": "RAG in 3D: what each model does",
+      "elements": [
+        {
+          "id": "head",
+          "type": "text",
+          "text": "THREE MODELS INSIDE RAG",
+          "x": 960,
+          "y": 80,
+          "size": 52,
+          "color": "white",
+          "style": "bold"
+        },
+        {
+          "id": "docs",
+          "type": "iso",
+          "x": 190,
+          "y": 250,
+          "scale": 85,
+          "rotate": 0,
+          "color": "white",
+          "model": "document-stack",
+          "label": "a long document"
+        },
+        {
+          "id": "chunker",
+          "type": "iso",
+          "x": 540,
+          "y": 300,
+          "scale": 58,
+          "rotate": 0,
+          "color": "orange",
+          "model": "chip",
+          "label": "chunking model"
+        },
+        {
+          "id": "chunks",
+          "type": "iso",
+          "x": 880,
+          "y": 300,
+          "scale": 70,
+          "rotate": 0,
+          "color": "white",
+          "parts": [
+            {
+              "shape": "box",
+              "size": [
+                0.7,
+                0.14,
+                0.9
+              ],
+              "at": [
+                -1.2,
+                0,
+                0
+              ],
+              "color": "orange"
+            },
+            {
+              "shape": "box",
+              "size": [
+                0.7,
+                0.14,
+                0.9
+              ],
+              "at": [
+                -0.4,
+                0,
+                0
+              ],
+              "color": "white"
+            },
+            {
+              "shape": "box",
+              "size": [
+                0.7,
+                0.14,
+                0.9
+              ],
+              "at": [
+                0.4,
+                0,
+                0
+              ],
+              "color": "orange"
+            },
+            {
+              "shape": "box",
+              "size": [
+                0.7,
+                0.14,
+                0.9
+              ],
+              "at": [
+                1.2,
+                0,
+                0
+              ],
+              "color": "white"
+            }
+          ],
+          "label": "chunks"
+        },
+        {
+          "id": "embedder",
+          "type": "iso",
+          "x": 1220,
+          "y": 300,
+          "scale": 58,
+          "rotate": 0,
+          "color": "cyan",
+          "model": "chip",
+          "label": "embedding model"
+        },
+        {
+          "id": "index",
+          "type": "iso",
+          "x": 1640,
+          "y": 270,
+          "scale": 85,
+          "rotate": 0,
+          "color": "cyan",
+          "model": "vector-index",
+          "label": "vector index"
+        },
+        {
+          "id": "a1",
+          "type": "arrow",
+          "from": "docs",
+          "to": "chunker",
+          "color": "white"
+        },
+        {
+          "id": "a2",
+          "type": "arrow",
+          "from": "chunker",
+          "to": "chunks",
+          "color": "orange"
+        },
+        {
+          "id": "a3",
+          "type": "arrow",
+          "from": "chunks",
+          "to": "embedder",
+          "color": "white"
+        },
+        {
+          "id": "a4",
+          "type": "arrow",
+          "from": "embedder",
+          "to": "index",
+          "color": "cyan",
+          "label": "vectors"
+        },
+        {
+          "id": "user",
+          "type": "icon",
+          "icon": "user",
+          "x": 200,
+          "y": 840,
+          "size": 120,
+          "color": "white",
+          "label": "a question"
+        },
+        {
+          "id": "embed2",
+          "type": "iso",
+          "x": 540,
+          "y": 840,
+          "scale": 58,
+          "rotate": 0,
+          "color": "cyan",
+          "model": "chip",
+          "label": "same embedding model"
+        },
+        {
+          "id": "q1",
+          "type": "arrow",
+          "from": "user",
+          "to": "embed2",
+          "color": "white"
+        },
+        {
+          "id": "q2",
+          "type": "arrow",
+          "from": "embed2",
+          "to": "index",
+          "color": "cyan",
+          "line": "dashed",
+          "label": "nearest vectors",
+          "curve": -0.2
+        },
+        {
+          "id": "reranker",
+          "type": "iso",
+          "x": 1640,
+          "y": 640,
+          "scale": 50,
+          "rotate": 0,
+          "color": "pink",
+          "model": "chip",
+          "label": "reranking model"
+        },
+        {
+          "id": "r1",
+          "type": "arrow",
+          "from": "index",
+          "to": "reranker",
+          "color": "white",
+          "label": "top 50"
+        },
+        {
+          "id": "c1",
+          "type": "iso",
+          "x": 1300,
+          "y": 930,
+          "scale": 58,
+          "rotate": 0,
+          "color": "white",
+          "parts": [
+            {
+              "shape": "box",
+              "size": [
+                1.2,
+                0.3,
+                1.5
+              ],
+              "at": [
+                0,
+                0,
+                0
+              ]
+            }
+          ]
+        },
+        {
+          "id": "c2",
+          "type": "iso",
+          "x": 1470,
+          "y": 930,
+          "scale": 58,
+          "rotate": 0,
+          "color": "white",
+          "parts": [
+            {
+              "shape": "box",
+              "size": [
+                1.2,
+                0.3,
+                1.5
+              ],
+              "at": [
+                0,
+                0,
+                0
+              ]
+            }
+          ]
+        },
+        {
+          "id": "c3",
+          "type": "iso",
+          "x": 1640,
+          "y": 930,
+          "scale": 58,
+          "rotate": 0,
+          "color": "white",
+          "parts": [
+            {
+              "shape": "box",
+              "size": [
+                1.2,
+                0.3,
+                1.5
+              ],
+              "at": [
+                0,
+                0,
+                0
+              ]
+            }
+          ]
+        },
+        {
+          "id": "c4",
+          "type": "iso",
+          "x": 1810,
+          "y": 930,
+          "scale": 58,
+          "rotate": 0,
+          "color": "white",
+          "parts": [
+            {
+              "shape": "box",
+              "size": [
+                1.2,
+                0.3,
+                1.5
+              ],
+              "at": [
+                0,
+                0,
+                0
+              ]
+            }
+          ]
+        },
+        {
+          "id": "r2",
+          "type": "arrow",
+          "from": "reranker",
+          "to": {
+            "x": 1640,
+            "y": 860
+          },
+          "color": "pink",
+          "label": "scores"
+        },
+        {
+          "id": "llm",
+          "type": "icon",
+          "icon": "chatbot",
+          "x": 980,
+          "y": 920,
+          "size": 130,
+          "color": "green",
+          "label": "answer"
+        },
+        {
+          "id": "t-ch",
+          "type": "text",
+          "text": "we test: does each\npiece stand alone?",
+          "x": 540,
+          "y": 165,
+          "size": 34,
+          "color": "yellow"
+        },
+        {
+          "id": "t-em",
+          "type": "text",
+          "text": "we test: is the right\nchunk in the top 10?",
+          "x": 1220,
+          "y": 165,
+          "size": 34,
+          "color": "yellow"
+        },
+        {
+          "id": "t-rr",
+          "type": "text",
+          "text": "we test: is the\nbest one first?",
+          "x": 1320,
+          "y": 640,
+          "size": 34,
+          "color": "yellow"
+        },
+        {
+          "id": "a5",
+          "type": "arrow",
+          "from": {
+            "x": 1210,
+            "y": 925
+          },
+          "to": "llm",
+          "color": "green",
+          "weight": "bold",
+          "label": "top 5"
+        }
+      ],
+      "beats": [
+        {
+          "title": "The same pipeline, in 3D",
+          "notes": "Let's look at the same pipeline in 3D, and at what each of the three retrieval models actually does. It starts with a long document.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "head"
+            },
+            {
+              "do": "draw",
+              "target": "docs"
+            }
+          ]
+        },
+        {
+          "title": "Chunking cuts it",
+          "notes": "The chunking model decides where to cut. Too big and a chunk mixes topics; too small and it loses its meaning. That's why we test it on our own policies, manuals and transcripts.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "a1",
+                "chunker"
+              ],
+              "stagger": 0.4
+            },
+            {
+              "do": "explode",
+              "target": "docs",
+              "amount": 1.0
+            },
+            {
+              "do": "draw",
+              "target": [
+                "a2",
+                "chunks"
+              ],
+              "stagger": 0.4
+            },
+            {
+              "do": "flow",
+              "target": [
+                "a1",
+                "a2"
+              ]
+            },
+            {
+              "do": "draw",
+              "target": "t-ch"
+            }
+          ]
+        },
+        {
+          "title": "Embedding turns chunks into vectors",
+          "notes": "The embedding model turns every chunk into a vector, a long list of numbers, and stores it in the index.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "a3",
+                "embedder"
+              ],
+              "stagger": 0.4
+            },
+            {
+              "do": "spin",
+              "target": "embedder",
+              "speed": 40
+            },
+            {
+              "do": "draw",
+              "target": [
+                "a4",
+                "index"
+              ],
+              "stagger": 0.5
+            },
+            {
+              "do": "flow",
+              "target": [
+                "a3",
+                "a4"
+              ]
+            },
+            {
+              "do": "draw",
+              "target": "t-em"
+            }
+          ]
+        },
+        {
+          "title": "Close in meaning, close in space",
+          "notes": "Chunks that mean similar things end up close together, even when they use different words, or different languages.",
+          "actions": [
+            {
+              "do": "spin",
+              "target": "embedder",
+              "on": false
+            },
+            {
+              "do": "rotate",
+              "target": "index",
+              "by": 90,
+              "duration": 1.6
+            }
+          ]
+        },
+        {
+          "title": "The question takes the same path",
+          "notes": "A question goes through the same embedding model, and the index returns the nearest vectors.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "user",
+                "q1",
+                "embed2"
+              ],
+              "stagger": 0.4
+            },
+            {
+              "do": "draw",
+              "target": "q2"
+            },
+            {
+              "do": "flow",
+              "target": [
+                "q1",
+                "q2"
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Fifty candidates, roughly sorted",
+          "notes": "Vector search is fast but rough: it gives us the top fifty, and the best one is often not on top.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "r1"
+            },
+            {
+              "do": "pop",
+              "target": [
+                "c1",
+                "c2",
+                "c3",
+                "c4"
+              ],
+              "stagger": 0.15
+            },
+            {
+              "do": "flow",
+              "target": "r1"
+            }
+          ]
+        },
+        {
+          "title": "Reranking puts the best first",
+          "notes": "The reranker reads the question together with each candidate and scores them properly. The one that really answers the question moves to the front.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "reranker"
+            },
+            {
+              "do": "spin",
+              "target": "reranker",
+              "speed": 60,
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "r2"
+            },
+            {
+              "do": "recolor",
+              "target": "c3",
+              "color": "green"
+            },
+            {
+              "do": "pulse",
+              "target": "c3"
+            },
+            {
+              "do": "move",
+              "target": "c3",
+              "to": {
+                "x": 1300,
+                "y": 930
+              }
+            },
+            {
+              "do": "move",
+              "target": "c1",
+              "to": {
+                "x": 1640,
+                "y": 930
+              },
+              "start": "with"
+            },
+            {
+              "do": "spin",
+              "target": "reranker",
+              "on": false
+            },
+            {
+              "do": "draw",
+              "target": "t-rr"
+            }
+          ]
+        },
+        {
+          "title": "Only the best reach the answer",
+          "notes": "Only the top five go to the language model. Three small models decide what it gets to read, and that's why these are the ones we test.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "a5",
+                "llm"
+              ],
+              "stagger": 0.4
+            },
+            {
+              "do": "flow",
+              "target": "a5"
+            },
+            {
+              "do": "pulse",
+              "target": [
+                "chunker",
+                "embedder",
+                "reranker"
+              ],
+              "stagger": 0.2
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "why-these",
       "title": "Why these models",
       "elements": [
