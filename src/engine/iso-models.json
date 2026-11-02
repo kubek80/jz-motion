@@ -434,5 +434,66 @@
     "color": "pink"
    }
   ]
+ },
+ "podium": {
+  "description": "Winners' podium: three blocks for 1st (middle, tallest), 2nd (left) and 3rd (right). Use for leaderboards, rankings, 'who is best'. Reads best with \"rotate\": -30 (all three blocks in a row).",
+  "parts": [
+   {
+    "shape": "box",
+    "size": [
+     1,
+     1.0,
+     1
+    ],
+    "at": [
+     -1.05,
+     0,
+     0
+    ],
+    "color": "cyan"
+   },
+   {
+    "shape": "box",
+    "size": [
+     1,
+     1.5,
+     1
+    ],
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "color": "yellow"
+   },
+   {
+    "shape": "box",
+    "size": [
+     1,
+     0.7,
+     1
+    ],
+    "at": [
+     1.05,
+     0,
+     0
+    ],
+    "color": "pink"
+   },
+   {
+    "shape": "cylinder",
+    "size": [
+     0.5,
+     0.35,
+     0.5
+    ],
+    "at": [
+     0,
+     1.5,
+     0
+    ],
+    "color": "yellow"
+   }
+  ]
  }
 }

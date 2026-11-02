@@ -310,6 +310,178 @@ export const generatedIcons: Record<string, IconDef> = {
       "M15.00 18.40h.01"
     ]
   },
+  "balance-scale": {
+    "description": "Balance scale: weighing options, best value, trade-off between quality and cost, fairness",
+    "tags": [
+      "compare",
+      "value"
+    ],
+    "paths": [
+      "M12 5v15",
+      "M8 20h8",
+      "M5 7h14",
+      "M5 7l-3 6a3 3 0 0 0 6 0l-3 -6",
+      "M19 7l-3 6a3 3 0 0 0 6 0l-3 -6",
+      "M11 4.5a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"
+    ]
+  },
+  "checklist": {
+    "description": "Checklist with ticks: test cases, a test set, requirements that pass",
+    "tags": [
+      "test",
+      "data"
+    ],
+    "paths": [
+      "M3 6l1.5 1.5l2.5 -3",
+      "M10 6h11",
+      "M3 12l1.5 1.5l2.5 -3",
+      "M10 12h11",
+      "M3 18l1.5 1.5l2.5 -3",
+      "M10 18h11"
+    ]
+  },
+  "coin": {
+    "description": "Coin with a dollar sign: cost, price, cheapest option, money spent per task",
+    "tags": [
+      "money",
+      "cost"
+    ],
+    "paths": [
+      "M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0",
+      "M14.8 9a2 2 0 0 0 -1.8 -1h-2a2 2 0 0 0 0 4h2a2 2 0 0 1 0 4h-2a2 2 0 0 1 -1.8 -1",
+      "M12 6v2",
+      "M12 16v2"
+    ]
+  },
+  "flask": {
+    "description": "Lab flask: experiments, evaluation lab, testing models",
+    "tags": [
+      "lab",
+      "test"
+    ],
+    "paths": [
+      "M9 3h6",
+      "M10 3v6l-5.5 9.5a1.5 1.5 0 0 0 1.3 2.5h12.4a1.5 1.5 0 0 0 1.3 -2.5l-5.5 -9.5v-6",
+      "M7 15h10",
+      "M11 18a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"
+    ]
+  },
+  "id-card": {
+    "description": "ID card: personal data, PII, identity, compliance",
+    "tags": [
+      "security",
+      "data"
+    ],
+    "paths": [
+      "M3 7a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z",
+      "M7 10a2 2 0 1 0 4 0a2 2 0 1 0 -4 0",
+      "M6 16a3 3 0 0 1 6 0",
+      "M14 9h4",
+      "M14 13h3"
+    ]
+  },
+  "magnifier": {
+    "description": "Magnifying glass: search, retrieval, finding matching documents, looking closer",
+    "tags": [
+      "search"
+    ],
+    "paths": [
+      "M3 10a7 7 0 1 0 14 0a7 7 0 1 0 -14 0",
+      "M21 21l-6 -6"
+    ]
+  },
+  "rerank-list": {
+    "description": "List with an arrow moving an item up: reranking, reordering results, putting the best first",
+    "tags": [
+      "search",
+      "ranking"
+    ],
+    "paths": [
+      "M3 6h10",
+      "M3 12h7",
+      "M3 18h10",
+      "M18 19v-13",
+      "M15 9l3 -3l3 3"
+    ]
+  },
+  "scissors": {
+    "description": "Scissors: chunking, splitting documents into pieces, cutting",
+    "tags": [
+      "data",
+      "split"
+    ],
+    "paths": [
+      "M3 7a3 3 0 1 0 6 0a3 3 0 1 0 -6 0",
+      "M3 17a3 3 0 1 0 6 0a3 3 0 1 0 -6 0",
+      "M8.6 8.6l11.4 11.4",
+      "M8.6 15.4l11.4 -11.4"
+    ]
+  },
+  "stopwatch": {
+    "description": "Stopwatch: speed, latency, fastest option, time limits",
+    "tags": [
+      "time",
+      "speed"
+    ],
+    "paths": [
+      "M5 13a7 7 0 1 0 14 0a7 7 0 1 0 -14 0",
+      "M12 10v3l2 2",
+      "M10 3h4",
+      "M12 3v3",
+      "M18 6.5l1.5 -1.5"
+    ]
+  },
+  "tag": {
+    "description": "Label tag: classification, labels, categories, sorting items",
+    "tags": [
+      "data",
+      "label"
+    ],
+    "paths": [
+      "M3 5v6.2a2 2 0 0 0 .6 1.4l7.8 7.8a2 2 0 0 0 2.8 0l6.2 -6.2a2 2 0 0 0 0 -2.8l-7.8 -7.8a2 2 0 0 0 -1.4 -.6h-6.2a2 2 0 0 0 -2 2",
+      "M6.5 7.5a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"
+    ]
+  },
+  "target": {
+    "description": "Target: goal, criteria, the bar a result must reach, accuracy",
+    "tags": [
+      "goal"
+    ],
+    "paths": [
+      "M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0",
+      "M7 12a5 5 0 1 0 10 0a5 5 0 1 0 -10 0",
+      "M11 12a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"
+    ]
+  },
+  "trophy": {
+    "description": "Trophy cup: winner, best quality, top of a leaderboard or ranking",
+    "tags": [
+      "award",
+      "ranking"
+    ],
+    "paths": [
+      "M7 4h10v5a5 5 0 0 1 -10 0z",
+      "M7 6h-2a2 2 0 0 0 0 4h2.4",
+      "M17 6h2a2 2 0 0 1 0 4h-2.4",
+      "M12 14v7",
+      "M8 21h8"
+    ]
+  },
+  "vector-space": {
+    "description": "Points in a coordinate space: embeddings, vectors, text turned into numbers, semantic similarity (close points mean similar meaning)",
+    "tags": [
+      "ai",
+      "data",
+      "search"
+    ],
+    "paths": [
+      "M4 3v17h17",
+      "M8.5 14.5a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0",
+      "M12.5 8.5a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0",
+      "M16 13a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0",
+      "M11 13l2 -3"
+    ]
+  },
   "anthropic": {
     "description": "Anthropic logo",
     "tags": [

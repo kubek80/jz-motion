@@ -18,7 +18,7 @@ Video export also needs [FFmpeg](https://ffmpeg.org) (`brew install ffmpeg`), or
 
 **Models.** If Claude Code is installed and logged in on your computer, **⚙ Settings** offers **Add Opus, Sonnet and Haiku**: the app then uses your Claude subscription, with no API key. Every model menu recommends the model that is enough for its job (Haiku for an icon, Opus for a whole presentation from a script). Otherwise add an OpenRouter key or any OpenAI-compatible endpoint. Details, and which model to use for what: [docs/models.md](docs/models.md).
 
-New here? Open the example **jz-motion: explainers, fast (about this app)** from the home screen: ten scenes on what the app does and how, with its voice-over script in [docs/explainer-script.md](docs/explainer-script.md).
+New here? Open the example **jz-motion: explainers, fast (about this app)** from the home screen: ten scenes on what the app does and how, with its voice-over script in [docs/explainer-script.md](docs/explainer-script.md). **LLM Lab: choosing AI models on our own terms** is a second one, built around screenshots of another app ([script](docs/llm-lab-script.md)).
 
 ## Making a presentation
 

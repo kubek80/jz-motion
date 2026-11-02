@@ -392,3 +392,18 @@ Jakub asked whether Opus should be available, and then for the model menus to re
 **Checked by:** 59 unit tests and a browser run with Opus, Sonnet and Haiku through the subscription: the home box (topic → Sonnet, script → Opus), New with AI (icon and 3D → Haiku, clipart → Sonnet, a choice of Opus for icons remembered), and Settings.
 
 ![Recommendations on the home screen, in New with AI and in Settings](journey/61-model-recommendations.jpg)
+
+## Step 29: An LLM Lab explainer, from a script
+
+Jakub gave a five-minute script for a video about LLM Lab, his prototype for choosing AI models with the team's own data and rules, and asked for a template made from it, with the screenshots, icons and animations it needs. He also asked to expand on RAG and on why the lab tests the models it does: only models that are worth fine-tuning.
+
+- **The example** `src/examples/llm-lab.json`, 16 scenes and 70 beats, the script's lines as speaker notes: opening (a new "#1" every week, three questions, the title); how models get chosen (leaderboard, sales deck, first team's pick); someone else's test (a chart whose bars swap from English to Polish tickets, two points for thirty times the price, nobody re-checks); our data, our criteria, our decision, then each one in detail; **new:** where the four kinds of model sit in RAG (documents → chunking → embedding → index; question → classification → embedding → top 50 → reranking → top 5 → answer); **new:** why these four (big general models are prompted, not tuned; narrow, high-volume building blocks are worth fine-tuning, so they are worth testing, with the ModernBERT cost numbers); then the walkthrough on screenshots (the four categories in the sidebar, three numbers and four answers, quality vs cost and the quality bar, the ModernBERT row, intents only, ties and ± ranges, test and training sets); why it matters; close.
+- **Screenshots** of LLM Lab in its dark theme, taken with Playwright from the addresses in the script's recording notes, ship in `public/examples/llm-lab/`. Areas over them drive the spotlights and circles.
+- **Thirteen new built-in drawings**, all in `src/engine/icons.custom.json` and `iso-models.json` so the bundled example works anywhere: `trophy`, `coin`, `stopwatch`, `balance-scale`, `scissors`, `tag`, `magnifier`, `rerank-list`, `flask`, `target`, `id-card`, `checklist`, `vector-space`, and a 3D `podium`.
+- **The script** with recording notes is in `docs/llm-lab-script.md` (about 1,000 words, generated from the speaker notes).
+- **Bug found by it:** `npm run snapshot` never loaded `library/`, and only ignored "unknown icon" errors, so a presentation using your own icon in an arrow or a beat failed with "unknown element". It now loads the library before checking, like `npm run check` and the page do.
+
+**Checked by:** `npm run check` and snapshots of every scene and beat (fixed on the way: spotlights on sidebar rows lit two rows until the padding was cut, a circle around the whole quality line, cost values rounded to 0.0 until shown in cents, a podium that read best turned by −30°), 60 unit tests (including every bundled example compiling), and opening the example from the home screen in the browser with no errors.
+
+![LLM Lab template, six of its sixteen scenes](journey/62-llm-lab-template.jpg)
+![Opened from the home screen in the editor](journey/63-llm-lab-in-editor.jpg)

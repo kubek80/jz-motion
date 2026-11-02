@@ -38,6 +38,19 @@ Drawn for jz-motion in `src/engine/icons.custom.json`.
 | `mac-studio` | Mac Studio: compact desktop Mac, popular for running local LLMs | hardware, device, apple |
 | `mac-mini` | Mac mini: small flat desktop Mac, home server | hardware, device, apple |
 | `dgx-spark` | NVIDIA DGX Spark: small desktop AI supercomputer with a metal-foam front | hardware, ai, nvidia |
+| `balance-scale` | Balance scale: weighing options, best value, trade-off between quality and cost, fairness | compare, value |
+| `checklist` | Checklist with ticks: test cases, a test set, requirements that pass | test, data |
+| `coin` | Coin with a dollar sign: cost, price, cheapest option, money spent per task | money, cost |
+| `flask` | Lab flask: experiments, evaluation lab, testing models | lab, test |
+| `id-card` | ID card: personal data, PII, identity, compliance | security, data |
+| `magnifier` | Magnifying glass: search, retrieval, finding matching documents, looking closer | search |
+| `rerank-list` | List with an arrow moving an item up: reranking, reordering results, putting the best first | search, ranking |
+| `scissors` | Scissors: chunking, splitting documents into pieces, cutting | data, split |
+| `stopwatch` | Stopwatch: speed, latency, fastest option, time limits | time, speed |
+| `tag` | Label tag: classification, labels, categories, sorting items | data, label |
+| `target` | Target: goal, criteria, the bar a result must reach, accuracy | goal |
+| `trophy` | Trophy cup: winner, best quality, top of a leaderboard or ranking | award, ranking |
+| `vector-space` | Points in a coordinate space: embeddings, vectors, text turned into numbers, semantic similarity (close points mean similar meaning) | ai, data, search |
 
 ## Logos
 
@@ -79,3 +92,4 @@ Usable as `{ "type": "iso", "model": "<name>" }`. Defined in `src/engine/iso-mod
 | `chip` | Chip: package with a die on top | 2 |
 | `datacenter` | Two rows of four racks | 9 |
 | `layers` | Three stacked layers (e.g. app / model / hardware). Explode to separate them. | 3 |
+| `podium` | Winners' podium: three blocks for 1st (middle, tallest), 2nd (left) and 3rd (right). Use for leaderboards, rankings, 'who is best'. Reads best with "rotate": -30 (all three blocks in a row). | 4 |
