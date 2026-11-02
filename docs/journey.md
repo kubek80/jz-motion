@@ -409,3 +409,15 @@ Jakub gave a five-minute script for a video about LLM Lab, his prototype for cho
 ![LLM Lab template, six of its sixteen scenes](journey/62-llm-lab-template.jpg)
 ![Opened from the home screen in the editor](journey/63-llm-lab-in-editor.jpg)
 ![RAG in 3D: chunking, embedding, the question, reranking](journey/64-rag-3d.jpg)
+
+## Step 30: Keeping the audience's eyes in the right place
+
+Jakub asked for another pass on the LLM Lab template so that camera moves, areas and circles keep attention where the narration is. The first version mostly drew things at full-board size and lit screenshots with spotlights, which left the screenshots' text too small to read in a video.
+
+- **The camera follows the explanation.** Diagrams are taken one part at a time: the benchmark chart, then each column of *our data / criteria / decision*, each row of the RAG pipeline, and each stage of the 3D scene (the document and chunker, the embedder and index, a close-up of the index as it turns, the reranker and its cards). Each scene pulls back to the full board at the end.
+- **Screenshots are read up close.** On the Recommendations page the camera zooms into one card's three numbers, then into the row of four answers. On Classification it zooms into the chart while the "better" arrow is drawn and the quality bar label is circled. On the ModernBERT row it takes the row, then its price with the note, then the personal-data warning with its note. On intents it shows the tab with its note, then the cards. On embedding it shows the ± scores, then the circled tie. On training sets it shows the overlap column. Notes that would sit off-screen during a zoom are written when the camera pulls back, as a summary.
+- **One emphasis per beat.** Circles now mark the one thing you'll keep talking about (the price claim, "nobody checks", the classifier at the front door, the quality bar, the personal-data minimum, the tie). Each circle is erased before the next one when they would compete.
+
+**Checked by:** snapshots of all 78 beats (a frame that went past the board's right edge was replaced by the full view), `npm run check`, 60 unit tests, typecheck and build.
+
+![Zoomed beats: the benchmark chart, the classifier, the turning index, the quality bar, the personal-data minimum, the tie](journey/65-attention-pass.jpg)

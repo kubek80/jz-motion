@@ -423,8 +423,18 @@
           "notes": "A public benchmark measures someone else's documents, someone else's languages and someone else's idea of good.",
           "actions": [
             {
+              "do": "camera",
+              "focus": [
+                "bench",
+                "en"
+              ],
+              "padding": 160,
+              "duration": 1.1
+            },
+            {
               "do": "draw",
-              "target": "bench"
+              "target": "bench",
+              "start": "with"
             },
             {
               "do": "draw",
@@ -460,12 +470,25 @@
           "notes": "A model that's two points better might cost thirty times more.",
           "actions": [
             {
+              "do": "camera",
+              "x": 960,
+              "y": 540,
+              "zoom": 1,
+              "duration": 1.1
+            },
+            {
               "do": "draw",
               "target": [
                 "coin",
                 "price"
               ],
-              "stagger": 0.5
+              "stagger": 0.5,
+              "start": "with"
+            },
+            {
+              "do": "circle",
+              "target": "price",
+              "color": "pink"
             }
           ]
         },
@@ -474,16 +497,26 @@
           "notes": "And once a model is in production, nobody checks whether it's still the right choice.",
           "actions": [
             {
+              "do": "erase",
+              "target": "price-circle"
+            },
+            {
               "do": "draw",
               "target": [
                 "prod2",
                 "loop"
               ],
-              "stagger": 0.6
+              "stagger": 0.6,
+              "start": "with"
             },
             {
               "do": "draw",
               "target": "never"
+            },
+            {
+              "do": "circle",
+              "target": "never",
+              "color": "orange"
             }
           ]
         }
@@ -761,8 +794,19 @@
           "notes": "Our data. The test cases come from our own work: real support questions, real contracts, real tickets.",
           "actions": [
             {
+              "do": "camera",
+              "focus": [
+                "t1",
+                "cases",
+                "repo"
+              ],
+              "padding": 140,
+              "duration": 1.1
+            },
+            {
               "do": "draw",
-              "target": "t1"
+              "target": "t1",
+              "start": "with"
             },
             {
               "do": "draw",
@@ -789,8 +833,19 @@
           "notes": "Our criteria. We decide what good enough means.",
           "actions": [
             {
+              "do": "camera",
+              "focus": [
+                "t2",
+                "bars",
+                "miss"
+              ],
+              "padding": 120,
+              "duration": 1.1
+            },
+            {
               "do": "draw",
-              "target": "t2"
+              "target": "t2",
+              "start": "with"
             },
             {
               "do": "draw",
@@ -818,8 +873,21 @@
           "notes": "Our decision. A model we call through an API and a model we host ourselves face exactly the same tests.",
           "actions": [
             {
+              "do": "camera",
+              "focus": [
+                "t3",
+                "api",
+                "self",
+                "lab",
+                "plan-b"
+              ],
+              "padding": 120,
+              "duration": 1.1
+            },
+            {
               "do": "draw",
-              "target": "t3"
+              "target": "t3",
+              "start": "with"
             },
             {
               "do": "draw",
@@ -862,6 +930,13 @@
               "do": "circle",
               "target": "plan-b",
               "color": "green"
+            },
+            {
+              "do": "camera",
+              "x": 960,
+              "y": 540,
+              "zoom": 1,
+              "duration": 1.1
             }
           ]
         }
@@ -1089,6 +1164,16 @@
           "notes": "First we prepare the documents: chunking cuts them into pieces that make sense on their own, and an embedding model turns every piece into numbers, so similar meanings end up close together.",
           "actions": [
             {
+              "do": "camera",
+              "focus": [
+                "docs",
+                "index",
+                "prep"
+              ],
+              "padding": 110,
+              "duration": 1.1
+            },
+            {
               "do": "draw",
               "target": [
                 "d-c",
@@ -1098,7 +1183,8 @@
                 "e-i",
                 "index"
               ],
-              "stagger": 0.5
+              "stagger": 0.5,
+              "start": "with"
             },
             {
               "do": "draw",
@@ -1119,8 +1205,19 @@
           "notes": "When a question comes in, we turn it into numbers the same way and look for the closest chunks.",
           "actions": [
             {
+              "do": "camera",
+              "focus": [
+                "user",
+                "search",
+                "index"
+              ],
+              "padding": 110,
+              "duration": 1.1
+            },
+            {
               "do": "draw",
-              "target": "user"
+              "target": "user",
+              "start": "with"
             },
             {
               "do": "draw",
@@ -1154,6 +1251,16 @@
           "notes": "Search is fast but rough, so a reranker reads the top fifty and puts the best ones first. Only the top five reach the language model that writes the answer.",
           "actions": [
             {
+              "do": "camera",
+              "focus": [
+                "search",
+                "rerank",
+                "llm"
+              ],
+              "padding": 160,
+              "duration": 1.1
+            },
+            {
               "do": "draw",
               "target": [
                 "s-r",
@@ -1161,7 +1268,8 @@
                 "r-l",
                 "llm"
               ],
-              "stagger": 0.5
+              "stagger": 0.5,
+              "start": "with"
             },
             {
               "do": "flow",
@@ -1177,13 +1285,24 @@
           "notes": "And before any of that, a classifier decides what the message is about, how urgent it is, and whether it contains personal data.",
           "actions": [
             {
-              "do": "draw",
-              "target": "cls"
+              "do": "camera",
+              "focus": [
+                "user",
+                "cls",
+                "embed2"
+              ],
+              "padding": 200,
+              "duration": 1.1
             },
             {
-              "do": "pulse",
+              "do": "draw",
               "target": "cls",
-              "times": 2
+              "start": "with"
+            },
+            {
+              "do": "circle",
+              "target": "cls",
+              "color": "yellow"
             }
           ]
         },
@@ -1192,6 +1311,18 @@
           "notes": "If the chunks are bad or the search misses, the best language model in the world answers from the wrong page. These four small steps decide the quality, and they run on every document and every question.",
           "actions": [
             {
+              "do": "camera",
+              "x": 960,
+              "y": 540,
+              "zoom": 1,
+              "duration": 1.1
+            },
+            {
+              "do": "erase",
+              "target": "cls-circle",
+              "start": "with"
+            },
+            {
               "do": "pulse",
               "target": [
                 "chunk",
@@ -1199,7 +1330,8 @@
                 "embed2",
                 "rerank"
               ],
-              "stagger": 0.15
+              "stagger": 0.15,
+              "start": "with"
             },
             {
               "do": "draw",
@@ -1584,8 +1716,18 @@
           "notes": "Let's look at the same pipeline in 3D, and at what each of the three retrieval models actually does. It starts with a long document.",
           "actions": [
             {
+              "do": "camera",
+              "focus": [
+                "docs",
+                "chunker"
+              ],
+              "padding": 260,
+              "duration": 1.1
+            },
+            {
               "do": "draw",
-              "target": "head"
+              "target": "head",
+              "start": "with"
             },
             {
               "do": "draw",
@@ -1598,12 +1740,24 @@
           "notes": "The chunking model decides where to cut. Too big and a chunk mixes topics; too small and it loses its meaning. That's why we test it on our own policies, manuals and transcripts.",
           "actions": [
             {
+              "do": "camera",
+              "focus": [
+                "docs",
+                "chunker",
+                "chunks",
+                "t-ch"
+              ],
+              "padding": 120,
+              "duration": 1.1
+            },
+            {
               "do": "draw",
               "target": [
                 "a1",
                 "chunker"
               ],
-              "stagger": 0.4
+              "stagger": 0.4,
+              "start": "with"
             },
             {
               "do": "explode",
@@ -1636,12 +1790,24 @@
           "notes": "The embedding model turns every chunk into a vector, a long list of numbers, and stores it in the index.",
           "actions": [
             {
+              "do": "camera",
+              "focus": [
+                "chunks",
+                "embedder",
+                "index",
+                "t-em"
+              ],
+              "padding": 110,
+              "duration": 1.1
+            },
+            {
               "do": "draw",
               "target": [
                 "a3",
                 "embedder"
               ],
-              "stagger": 0.4
+              "stagger": 0.4,
+              "start": "with"
             },
             {
               "do": "spin",
@@ -1674,9 +1840,16 @@
           "notes": "Chunks that mean similar things end up close together, even when they use different words, or different languages.",
           "actions": [
             {
+              "do": "camera",
+              "focus": "index",
+              "padding": 260,
+              "duration": 1.1
+            },
+            {
               "do": "spin",
               "target": "embedder",
-              "on": false
+              "on": false,
+              "start": "with"
             },
             {
               "do": "rotate",
@@ -1691,13 +1864,21 @@
           "notes": "A question goes through the same embedding model, and the index returns the nearest vectors.",
           "actions": [
             {
+              "do": "camera",
+              "x": 960,
+              "y": 540,
+              "zoom": 1,
+              "duration": 1.1
+            },
+            {
               "do": "draw",
               "target": [
                 "user",
                 "q1",
                 "embed2"
               ],
-              "stagger": 0.4
+              "stagger": 0.4,
+              "start": "with"
             },
             {
               "do": "draw",
@@ -1741,8 +1922,20 @@
           "notes": "The reranker reads the question together with each candidate and scores them properly. The one that really answers the question moves to the front.",
           "actions": [
             {
+              "do": "camera",
+              "focus": [
+                "reranker",
+                "t-rr",
+                "c1",
+                "c4"
+              ],
+              "padding": 90,
+              "duration": 1.1
+            },
+            {
               "do": "draw",
-              "target": "reranker"
+              "target": "reranker",
+              "start": "with"
             },
             {
               "do": "spin",
@@ -1796,12 +1989,20 @@
           "notes": "Only the top five go to the language model. Three small models decide what it gets to read, and that's why these are the ones we test.",
           "actions": [
             {
+              "do": "camera",
+              "x": 960,
+              "y": 540,
+              "zoom": 1,
+              "duration": 1.1
+            },
+            {
               "do": "draw",
               "target": [
                 "a5",
                 "llm"
               ],
-              "stagger": 0.4
+              "stagger": 0.4,
+              "start": "with"
             },
             {
               "do": "flow",
@@ -1980,8 +2181,19 @@
           "notes": "A frontier language model is huge, general, and replaced every few months. We use it through prompts and RAG; fine-tuning it ourselves rarely pays off.",
           "actions": [
             {
+              "do": "camera",
+              "focus": [
+                "big",
+                "big-note",
+                "big-do"
+              ],
+              "padding": 160,
+              "duration": 1.1
+            },
+            {
               "do": "draw",
-              "target": "big"
+              "target": "big",
+              "start": "with"
             },
             {
               "do": "draw",
@@ -1998,6 +2210,19 @@
           "notes": "The building blocks are different. They do one narrow job, millions of times. A small open model trained on a few thousand of our own examples can match a big one at a fraction of the cost.",
           "actions": [
             {
+              "do": "camera",
+              "focus": [
+                "s1",
+                "s2",
+                "s3",
+                "s4",
+                "small-note",
+                "small-do"
+              ],
+              "padding": 160,
+              "duration": 1.1
+            },
+            {
               "do": "draw",
               "target": [
                 "s1",
@@ -2005,7 +2230,8 @@
                 "s3",
                 "s4"
               ],
-              "stagger": 0.3
+              "stagger": 0.3,
+              "start": "with"
             },
             {
               "do": "draw",
@@ -2022,8 +2248,18 @@
           "notes": "On our support intents, a fine-tuned ModernBERT matches Claude Sonnet within the noise, at less than half a cent per thousand tickets instead of a dollar.",
           "actions": [
             {
+              "do": "camera",
+              "focus": [
+                "cost",
+                "ratio"
+              ],
+              "padding": 110,
+              "duration": 1.1
+            },
+            {
               "do": "draw",
-              "target": "cost"
+              "target": "cost",
+              "start": "with"
             },
             {
               "do": "draw",
@@ -2036,8 +2272,16 @@
           "notes": "So the rule is simple: if a model is worth fine-tuning, it's worth testing here, against the API models, on exactly the same cases.",
           "actions": [
             {
+              "do": "camera",
+              "x": 960,
+              "y": 540,
+              "zoom": 1,
+              "duration": 1.1
+            },
+            {
               "do": "pop",
-              "target": "rule"
+              "target": "rule",
+              "start": "with"
             },
             {
               "do": "circle",
@@ -2470,6 +2714,31 @@
               "padding": 16
             },
             {
+              "do": "camera",
+              "focus": "nums",
+              "padding": 320,
+              "duration": 1.1,
+              "start": "with"
+            }
+          ]
+        },
+        {
+          "title": "Only what we choose on",
+          "notes": "We left out everything else, because those three are what we actually choose on.",
+          "actions": [
+            {
+              "do": "camera",
+              "x": 960,
+              "y": 540,
+              "zoom": 1,
+              "duration": 1.1
+            },
+            {
+              "do": "circle",
+              "target": "nums",
+              "color": "yellow"
+            },
+            {
               "do": "draw",
               "target": [
                 "i-q",
@@ -2479,18 +2748,7 @@
                 "i-s",
                 "n-s"
               ],
-              "stagger": 0.35
-            }
-          ]
-        },
-        {
-          "title": "Only what we choose on",
-          "notes": "We left out everything else, because those three are what we actually choose on.",
-          "actions": [
-            {
-              "do": "circle",
-              "target": "nums",
-              "color": "yellow"
+              "stagger": 0.3
             }
           ]
         },
@@ -2509,12 +2767,11 @@
               "padding": 12
             },
             {
-              "do": "draw",
-              "target": "i-t"
-            },
-            {
-              "do": "draw",
-              "target": "four"
+              "do": "camera",
+              "focus": "cards",
+              "padding": 60,
+              "duration": 1.1,
+              "start": "with"
             }
           ]
         },
@@ -2523,8 +2780,28 @@
           "notes": "",
           "actions": [
             {
+              "do": "wait",
+              "duration": 1.5
+            },
+            {
+              "do": "camera",
+              "x": 960,
+              "y": 540,
+              "zoom": 1,
+              "duration": 1.1
+            },
+            {
               "do": "spotlight",
-              "on": false
+              "on": false,
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "i-t"
+            },
+            {
+              "do": "draw",
+              "target": "four"
             }
           ],
           "auto": true
@@ -2630,12 +2907,15 @@
               "amount": 0.6
             },
             {
-              "do": "draw",
-              "target": "better"
+              "do": "camera",
+              "focus": "chart",
+              "padding": 60,
+              "duration": 1.1,
+              "start": "with"
             },
             {
               "do": "draw",
-              "target": "n1"
+              "target": "better"
             }
           ]
         },
@@ -2647,14 +2927,6 @@
               "do": "circle",
               "target": "bar",
               "color": "orange"
-            },
-            {
-              "do": "draw",
-              "target": [
-                "n2",
-                "n3"
-              ],
-              "stagger": 0.6
             }
           ]
         },
@@ -2663,8 +2935,20 @@
           "notes": "",
           "actions": [
             {
+              "do": "wait",
+              "duration": 1.5
+            },
+            {
+              "do": "camera",
+              "x": 960,
+              "y": 540,
+              "zoom": 1,
+              "duration": 1.1
+            },
+            {
               "do": "spotlight",
-              "on": false
+              "on": false,
+              "start": "with"
             },
             {
               "do": "erase",
@@ -2673,6 +2957,15 @@
                 "better"
               ],
               "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": [
+                "n1",
+                "n2",
+                "n3"
+              ],
+              "stagger": 0.5
             }
           ],
           "auto": true
@@ -2781,8 +3074,10 @@
           "notes": "On average it looks great,",
           "actions": [
             {
-              "do": "draw",
-              "target": "n1"
+              "do": "camera",
+              "focus": "row",
+              "padding": 140,
+              "duration": 1.1
             }
           ]
         },
@@ -2791,8 +3086,18 @@
           "notes": "and it costs a tiny fraction of the alternatives.",
           "actions": [
             {
+              "do": "camera",
+              "focus": [
+                "price",
+                "n2"
+              ],
+              "padding": 120,
+              "duration": 1.1
+            },
+            {
               "do": "pulse",
-              "target": "price"
+              "target": "price",
+              "start": "with"
             },
             {
               "do": "draw",
@@ -2805,9 +3110,20 @@
           "notes": "But on personal-data detection it falls below the minimum we set, so the lab won't recommend it as our one classifier for everything.",
           "actions": [
             {
+              "do": "camera",
+              "focus": [
+                "pii",
+                "n3",
+                "n4"
+              ],
+              "padding": 120,
+              "duration": 1.1
+            },
+            {
               "do": "circle",
               "target": "pii",
-              "color": "orange"
+              "color": "orange",
+              "start": "with"
             },
             {
               "do": "draw",
@@ -2824,8 +3140,24 @@
           "notes": "",
           "actions": [
             {
+              "do": "wait",
+              "duration": 1.5
+            },
+            {
+              "do": "camera",
+              "x": 960,
+              "y": 540,
+              "zoom": 1,
+              "duration": 1.1
+            },
+            {
               "do": "spotlight",
-              "on": false
+              "on": false,
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "n1"
             }
           ],
           "auto": true
@@ -2904,6 +3236,15 @@
               "target": "shot"
             },
             {
+              "do": "camera",
+              "focus": [
+                "tab",
+                "n1"
+              ],
+              "padding": 140,
+              "duration": 1.1
+            },
+            {
               "do": "circle",
               "target": "tab",
               "color": "yellow"
@@ -2919,10 +3260,24 @@
           "notes": "Here it becomes the cheapest and fastest choice.",
           "actions": [
             {
+              "do": "erase",
+              "target": "tab-circle"
+            },
+            {
+              "do": "camera",
+              "focus": [
+                "cards",
+                "n2"
+              ],
+              "padding": 100,
+              "duration": 1.1
+            },
+            {
               "do": "spotlight",
               "target": "cards",
               "style": "dark",
-              "padding": 12
+              "padding": 12,
+              "start": "with"
             },
             {
               "do": "draw",
@@ -2935,8 +3290,16 @@
           "notes": "It's the same data with a more precise question: use the model where it's strong.",
           "actions": [
             {
+              "do": "camera",
+              "x": 960,
+              "y": 540,
+              "zoom": 1,
+              "duration": 1.1
+            },
+            {
               "do": "spotlight",
-              "on": false
+              "on": false,
+              "start": "with"
             },
             {
               "do": "draw",
@@ -3051,8 +3414,14 @@
               "padding": 10
             },
             {
-              "do": "draw",
-              "target": "n1"
+              "do": "camera",
+              "focus": [
+                "s1",
+                "s2"
+              ],
+              "padding": 280,
+              "duration": 1.1,
+              "start": "with"
             }
           ]
         },
@@ -3071,13 +3440,20 @@
               "padding": 10
             },
             {
+              "do": "camera",
+              "focus": [
+                "s1",
+                "s2",
+                "tie"
+              ],
+              "padding": 260,
+              "duration": 1.1,
+              "start": "with"
+            },
+            {
               "do": "circle",
               "target": "tie",
               "color": "orange"
-            },
-            {
-              "do": "draw",
-              "target": "n2"
             }
           ]
         },
@@ -3086,12 +3462,25 @@
           "notes": "and tells us to decide on cost or speed, instead of paying for a difference that isn't real.",
           "actions": [
             {
-              "do": "draw",
-              "target": "n3"
+              "do": "camera",
+              "x": 960,
+              "y": 540,
+              "zoom": 1,
+              "duration": 1.1
             },
             {
               "do": "spotlight",
-              "on": false
+              "on": false,
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": [
+                "n1",
+                "n2",
+                "n3"
+              ],
+              "stagger": 0.5
             }
           ]
         }
@@ -3227,10 +3616,20 @@
           "notes": "and they're checked for overlap with the test sets, so no model scores higher just because it has already seen the answers.",
           "actions": [
             {
+              "do": "camera",
+              "focus": [
+                "overlap",
+                "n3"
+              ],
+              "padding": 100,
+              "duration": 1.1
+            },
+            {
               "do": "spotlight",
               "target": "overlap",
               "style": "dark",
-              "padding": 8
+              "padding": 8,
+              "start": "with"
             },
             {
               "do": "draw",
@@ -3243,8 +3642,20 @@
           "notes": "",
           "actions": [
             {
+              "do": "wait",
+              "duration": 1.5
+            },
+            {
+              "do": "camera",
+              "x": 960,
+              "y": 540,
+              "zoom": 1,
+              "duration": 1.1
+            },
+            {
               "do": "spotlight",
-              "on": false
+              "on": false,
+              "start": "with"
             }
           ],
           "auto": true
@@ -3368,12 +3779,24 @@
           "notes": "This gives us decisions we can explain. When someone asks why this model,",
           "actions": [
             {
+              "do": "camera",
+              "focus": [
+                "asker",
+                "ask",
+                "bad",
+                "good"
+              ],
+              "padding": 140,
+              "duration": 1.1
+            },
+            {
               "do": "draw",
               "target": [
                 "asker",
                 "ask"
               ],
-              "stagger": 0.5
+              "stagger": 0.5,
+              "start": "with"
             }
           ],
           "layout": "camera"
@@ -3399,6 +3822,10 @@
             {
               "do": "draw",
               "target": "good"
+            },
+            {
+              "do": "pulse",
+              "target": "good"
             }
           ]
         },
@@ -3406,6 +3833,13 @@
           "title": "A new model comes out",
           "notes": "And when a new model comes out, we add it, run it, and the lab shows us whether it's worth switching.",
           "actions": [
+            {
+              "do": "camera",
+              "x": 960,
+              "y": 540,
+              "zoom": 1,
+              "duration": 1.1
+            },
             {
               "do": "draw",
               "target": [
@@ -3416,7 +3850,8 @@
                 "switch",
                 "c3"
               ],
-              "stagger": 0.5
+              "stagger": 0.5,
+              "start": "with"
             },
             {
               "do": "flow",
