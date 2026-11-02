@@ -41,7 +41,9 @@ Presentations, your library and your pictures are plain files (`presentations/`,
 | Pan, zoom | Drag the empty board, scroll. **Reset view** (0) returns to the scene's start view, **Fit all** (Shift+0) shows everything. |
 | Undo, delete, duplicate | Ctrl+Z / Ctrl+Shift+Z, Delete, Ctrl+D |
 
-**Screenshots.** Paste one (Ctrl+V), drop it on the board, or click **Image**. Its properties offer a **frame**: a browser window drawn in marker, with your own address. Pictures sit under the drawing, so you can draw on them. To point at a part, select the picture and click **Area**, fit the dashed area over the part, and use the area's one-click beats: spotlight and circle it, spotlight it, circle it, zoom to it. A **spotlight** darkens or fades everything else until it is turned off; anything drawn meanwhile stays bright.
+**Fixed on screen.** Tick **fixed on screen** on any element (a title, an explanation) and it stays in place and size while the camera moves, above spotlights too; it stays exactly where it looks when you tick it.
+
+**Screenshots.** Paste one (Ctrl+V), drop it on the board, or click **Image**. Animated ones (APNG, GIF, animated WebP: a short screen recording, for example) show their first frame until a **Play** action starts them; another **Play** with *on* off pauses, *from* jumps, *speed* changes the pace, and the picture's **loop** repeats it. Its properties offer a **frame**: a browser window drawn in marker, with your own address. Pictures sit under the drawing, so you can draw on them. To point at a part, select the picture and click **Area**, fit the dashed area over the part, and use the area's one-click beats: spotlight and circle it, spotlight it, circle it, zoom to it. A **spotlight** darkens or fades everything else until it is turned off; anything drawn meanwhile stays bright.
 
 ## AI while editing
 
@@ -50,6 +52,8 @@ Presentations, your library and your pictures are plain files (`presentations/`,
 - **New with AI** (library window, left panel): an icon, clipart or 3D model made in a conversation. Every reply is a version with a preview; ask for changes until you like one, then save it to your library. **Refine with AI** continues from one of your items, **Make a variation** from a built-in one.
 
 Every model reply is checked against the format and the drawing rules, and sent back with the problems when it breaks them.
+
+**You can see what happens.** While a model works, its steps appear live under the message: what was sent (with the full text: **view**), what came back, what the check found. With **Claude Code (my subscription)** the app runs Claude Code *in this project* with its skills, the way Claude Desktop or a terminal would: it reads the rules and examples, writes a draft, checks it and looks at snapshots, and you see each step (reading a file, running the check, looking at a snapshot). The command to continue the same session in a terminal is shown underneath.
 
 ## Narration, timing and video
 

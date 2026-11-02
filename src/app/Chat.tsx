@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { assistantMessages, checkAssistant, type Turn } from '../ai/assistant';
-import { askJson } from '../ai/client';
+import { askJson, checkPresentation } from '../ai/client';
+import { agentPrompt, isAgent, runAgent } from '../ai/agent';
+import { Activity, agentStep, type ActivityStep, type AgentSession } from './Activity';
 import { loadProfiles, type ModelProfile } from '../ai/profiles';
 import { advice, pickFor, rememberedFor, rememberFor, type Task } from '../ai/recommend';
 import { ModelSelect } from './ModelSelect';
@@ -11,6 +13,9 @@ interface Message extends Turn {
   changed?: boolean;
   errors?: string[];
   meta?: string;
+  /** What the model did to get there. */
+  activity?: ActivityStep[];
+  session?: AgentSession;
 }
 
 interface Props {
@@ -43,6 +48,11 @@ export function Chat({ current, scene, onPresentation, wrapFirst, placeholder, i
   const [messages, setMessages] = useState<Message[]>(initial ?? []);
   const [input, setInput] = useState(initialInput ?? '');
   const [busy, setBusy] = useState(false);
+  /** Steps of the request in progress. */
+  const [live, setLive] = useState<ActivityStep[]>([]);
+  /** Agent mode: the draft file and the Claude Code session, kept across the conversation. */
+  const draftId = useRef(`chat-${Math.random().toString(36).slice(2, 10)}`);
+  const agentSession = useRef<AgentSession | undefined>(undefined);
   const [managing, setManaging] = useState(false);
   const list = useRef<HTMLDivElement>(null);
 
@@ -60,15 +70,60 @@ export function Chat({ current, scene, onPresentation, wrapFirst, placeholder, i
     setMessages((m) => [...m, { role: 'user', text }]);
     setInput('');
     setBusy(true);
-    const r = await askJson(profile, assistantMessages(history, request, current, scene), checkAssistant);
+    setLive([]);
+    const steps: ActivityStep[] = [];
+    const add = (s: ActivityStep) => { steps.push(s); setLive([...steps]); };
+
+    if (isAgent(profile)) {
+      // Claude Code works in the project with its skills, on a draft copy of the presentation.
+      const file = `presentations/.drafts/${draftId.current}.json`;
+      try {
+        const done = await runAgent(profile, {
+          prompt: agentPrompt({ file, request, existing: current !== null, followUp: !!agentSession.current, scene }),
+          draftId: draftId.current,
+          draft: current ?? undefined,
+          resume: agentSession.current?.id,
+        }, (ev) => {
+          if (ev.e === 'start') agentSession.current = { id: ev.session, cwd: ev.cwd };
+          const s = agentStep(ev);
+          if (s) add(s);
+        });
+        if (done.session) agentSession.current = { id: done.session, cwd: agentSession.current?.cwd ?? '' };
+        // Its last words are the reply shown above; don't list them twice.
+        const last = steps.at(-1);
+        if (last?.kind === 'note' && done.reply.startsWith((last.detail ?? last.text).slice(0, 40))) steps.pop();
+        const meta = `${profile.name} · ${done.turns ?? '?'} steps · ${(done.ms / 1000).toFixed(0)}s`;
+        let changed = false;
+        let errors: string[] | undefined;
+        if (done.changed && done.presentation) {
+          try {
+            const value = JSON.parse(done.presentation);
+            const check = checkPresentation(value);
+            if (check.ok) { onPresentation(JSON.stringify(value, null, 2)); changed = true; } else errors = check.errors;
+          } catch (e) {
+            errors = [`the draft is not valid JSON: ${(e as Error).message}`];
+          }
+        }
+        setMessages((m) => [...m, { role: 'assistant', text: done.reply || (changed ? 'Done.' : 'No changes.'), changed, errors, meta, activity: steps, session: agentSession.current }]);
+      } catch (e) {
+        setMessages((m) => [...m, { role: 'assistant', text: 'That did not work.', errors: [(e as Error).message], activity: steps, session: agentSession.current }]);
+      } finally {
+        setBusy(false);
+      }
+      return;
+    }
+
+    const r = await askJson(profile, assistantMessages(history, request, current, scene), checkAssistant, {
+      onStep: (s) => add({ kind: s.kind, text: s.text, detail: s.detail }),
+    });
     setBusy(false);
     const meta = `${profile.name} · ${(r.ms / 1000).toFixed(1)}s${r.attempts > 1 ? ` · ${r.attempts} tries` : ''}${r.usage.cost !== undefined ? ` · $${r.usage.cost.toFixed(4)}` : ''}`;
     if (!r.ok || !r.value) {
-      setMessages((m) => [...m, { role: 'assistant', text: 'That did not work.', errors: r.errors, meta }]);
+      setMessages((m) => [...m, { role: 'assistant', text: 'That did not work.', errors: r.errors, meta, activity: steps }]);
       return;
     }
     if (r.value.presentation) onPresentation(JSON.stringify(r.value.presentation, null, 2));
-    setMessages((m) => [...m, { role: 'assistant', text: r.value!.reply, changed: !!r.value!.presentation, meta }]);
+    setMessages((m) => [...m, { role: 'assistant', text: r.value!.reply, changed: !!r.value!.presentation, meta, activity: steps }]);
   };
 
   // Sent once, on the way in (from the home screen's prompt box).
@@ -97,9 +152,15 @@ export function Chat({ current, scene, onPresentation, wrapFirst, placeholder, i
             {m.changed && <div className="msg-tag">✓ changed the presentation (undo with Ctrl+Z)</div>}
             {m.errors && <details><summary>{m.errors.length} problem{m.errors.length === 1 ? '' : 's'}</summary><ul>{m.errors.slice(0, 12).map((e) => <li key={e}>{e}</li>)}</ul></details>}
             {m.meta && <div className="msg-meta">{m.meta}</div>}
+            {m.activity && <Activity steps={m.activity} session={m.session} />}
           </div>
         ))}
-        {busy && <div className="msg assistant pending">thinking…</div>}
+        {busy && (
+          <div className="msg assistant pending">
+            <div className="msg-text">{isAgent(profile) ? `${profile?.name} is working in the project…` : 'Working…'}</div>
+            <Activity steps={live} live />
+          </div>
+        )}
       </div>
       <div className="chat-input">
         <textarea

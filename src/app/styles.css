@@ -220,7 +220,7 @@ input, textarea, select { font: inherit; color: var(--text); background: var(--b
 .msg.pending { color: var(--muted); font-style: italic; }
 .msg-tag { color: var(--accent); font-size: 12px; margin-top: 4px; }
 .msg-meta { color: var(--muted); font-size: 11px; margin-top: 4px; }
-.msg details { font-size: 12px; color: var(--error); }
+.msg > details { font-size: 12px; color: var(--error); }
 .chat-input { display: flex; gap: 6px; align-items: flex-end; }
 .chat-input textarea { flex: 1; resize: vertical; }
 .models { display: flex; flex-direction: column; gap: 6px; border: 1px solid var(--line); border-radius: 8px; padding: 8px; }
@@ -489,3 +489,24 @@ body.dragging { user-select: none; -webkit-user-select: none; }
 .size-badge.small { color: #3dff8b; border-color: #3dff8b55; }
 .size-badge.medium { color: #3ef0ff; border-color: #3ef0ff55; }
 .size-badge.large { color: #ff4fd8; border-color: #ff4fd855; }
+
+/* What a model did, step by step */
+.activity { font-size: 12px; margin-top: 6px; }
+.activity summary { cursor: pointer; color: var(--muted); }
+.activity-steps { list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-direction: column; gap: 3px; }
+.act { display: flex; gap: 6px; align-items: baseline; line-height: 1.35; }
+.act i { font-style: normal; width: 14px; flex-shrink: 0; text-align: center; color: var(--muted); }
+.act.step i { color: var(--accent); }
+.act.checked i { color: #3dff8b; }
+.act.failed i, .act.problem i { color: #ff6b7d; }
+.act.note .act-text { color: var(--muted); font-style: italic; }
+.act-text { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.act .link { font-size: 11px; }
+.act.working i.spinner { width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--accent); border-right-color: transparent; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.act-session { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 6px; }
+.act-session code { font-size: 11px; background: var(--bg); padding: 2px 6px; border-radius: 4px; overflow-wrap: anywhere; }
+.act-detail pre { flex: 1; overflow: auto; margin: 0; white-space: pre-wrap; font-size: 12px; background: var(--bg); padding: 12px; border-radius: 8px; }
+.scene-ask-live, .scene-ask-done { flex-basis: 100%; font-size: 12px; display: flex; flex-direction: column; gap: 2px; }
+.scene-ask-live .activity { max-height: 140px; overflow: auto; }
+.activity details { color: var(--text); }

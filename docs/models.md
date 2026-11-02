@@ -15,6 +15,14 @@ Everything a model does in jz-motion goes through one path: the app builds a req
 
 Keys are kept in this browser (local storage) and sent only to that provider, through your local server.
 
+## Agent mode (Claude Code)
+
+With **Claude Code (my subscription)**, the app doesn't ask for JSON in one go: it runs Claude Code in this repository (`server/claudeAgent.ts`) with the project's skills, on a draft copy of the presentation in `presentations/.drafts/`. It reads `docs/style.md`, `docs/format.md` and the examples, writes the draft, runs `npm run check`, looks at `npm run snapshot` pictures and fixes what looks wrong, as it would in Claude Desktop with the repository as context. It can only read files, write files, use skills and run those two commands. The app shows every step live and, when it finishes, loads the draft, checks it again and applies it (Ctrl+Z undoes it). A conversation keeps its Claude Code session, and the command to continue that session in a terminal is shown under each reply.
+
+It takes longer (typically 30–90 seconds) and gives noticeably better results. Turn it off per model (Settings → Edit → *work in the project*) to get the quick one-request mode. Skills and docs are the place to improve its results: edit them, and the next request uses them.
+
+Other models get one request with the style guide, the format, the library and a finished example presentation; their steps (the full text sent and received, the check results) can be opened from the message too.
+
 ## Which model for which job
 
 Every model menu knows its job and recommends the smallest model that is enough for it: the menu marks each model (**★ recommended**, *enough*, *works, smaller than ideal*, *may struggle*, *more than needed*) and a line under it says why. Until you choose otherwise, the recommended model is selected; once you pick one for a job, that job remembers it.

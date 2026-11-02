@@ -21,6 +21,51 @@ describe('text styles', () => {
   });
 });
 
+describe('animated pictures', () => {
+  it('plays, pauses and jumps, and a beat ending on a switch ends just after it', () => {
+    const r = compile({
+      version: 1, title: 't',
+      scenes: [{ id: 's', elements: [{ id: 'clip', type: 'image', src: '/images/a.png', x: 0, y: 0, width: 100, height: 60 }, { id: 'b', type: 'box', x: 0, y: 0, width: 10, height: 10 }], beats: [
+        { actions: [{ do: 'play', target: 'clip' }] },
+        { actions: [{ do: 'play', target: 'clip', on: false }] },
+        { actions: [{ do: 'play', target: 'clip', from: 2, speed: 0.5 }] },
+      ] }],
+    });
+    if (!r.ok) throw new Error(r.errors.join('; '));
+    const s = r.presentation.scenes[0];
+    expect(s.ops.filter((o) => o.kind === 'play')).toMatchObject([{ from: null, to: 1 }, { from: 1, to: null }, { from: null, to: 0.5, seek: 2 }]);
+    expect(s.beats[0].end).toBeGreaterThan(s.ops[0].t);
+    const bad = compile({ version: 1, title: 't', scenes: [{ id: 's', elements: [{ id: 'b', type: 'box', x: 0, y: 0, width: 10, height: 10 }], beats: [{ actions: [{ do: 'play', target: 'b' }] }] }] });
+    expect(bad.ok ? '' : bad.errors.join()).toMatch(/only works on \(animated\) images/);
+  });
+});
+
+describe('pinned elements', () => {
+  const doc = (extra: object[], actions: object[]) => ({
+    version: 1, title: 't',
+    scenes: [{ id: 's', elements: [
+      { id: 'a', type: 'box', x: 400, y: 400, width: 200, height: 100 },
+      { id: 'note', type: 'text', text: 'explained', x: 1600, y: 120, pinned: true },
+      ...extra,
+    ], beats: [{ actions }] }],
+  });
+
+  it('keeps pinned elements out of the camera, and circles them on the screen', () => {
+    const r = compile(doc([], [{ do: 'camera', focus: 'all' }, { do: 'circle', target: 'note' }]));
+    if (!r.ok) throw new Error(r.errors.join('; '));
+    const cam = r.presentation.scenes[0].ops.find((o) => o.kind === 'camera') as { to: { x: number } };
+    expect(cam.to.x).toBeCloseTo(400, 0);
+    expect(r.presentation.scenes[0].elements.find((e) => e.type === 'ring')).toMatchObject({ pinned: true });
+  });
+
+  it('explains what cannot work', () => {
+    const errors = (d: object) => { const r = compile(d); return r.ok ? [] : r.errors.join(' | '); };
+    expect(errors(doc([], [{ do: 'camera', focus: 'note' }]))).toMatch(/fixed on the screen/);
+    expect(errors(doc([{ id: 'arr', type: 'arrow', from: 'note', to: 'a' }], []))).toMatch(/pin both ends and the arrow, or none/);
+    expect(errors(doc([], [{ do: 'circle', target: ['note', 'a'] }]))).toMatch(/one circle/);
+  });
+});
+
 describe('compile', () => {
   const shotDoc = (beats: unknown[]) => ({
     version: 1, title: 't',

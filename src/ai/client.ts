@@ -11,6 +11,9 @@ export type Fetch = (input: string, init: RequestInit) => Promise<Response>;
 /** What a check says about a reply: the value to keep, or the problems to send back. */
 export type Check<T> = { ok: true; value: T } | { ok: false; errors: string[] };
 
+/** One step of a request, for showing what was sent and what came back. */
+export interface TraceStep { kind: 'sent' | 'received' | 'checked' | 'failed'; text: string; detail?: string; ms: number }
+
 export interface AskResult<T> {
   ok: boolean;
   value?: T;
@@ -21,6 +24,8 @@ export interface AskResult<T> {
   attempts: number;
   ms: number;
   usage: Usage;
+  /** What happened, step by step. */
+  trace?: TraceStep[];
 }
 
 const MAX_REPAIRS = 2;
@@ -58,38 +63,61 @@ export async function askJson<T>(
   profile: ModelProfile,
   messages: ChatMessage[],
   check: (value: unknown) => Check<T>,
-  opts: { fetcher?: Fetch; signal?: AbortSignal } = {},
+  opts: { fetcher?: Fetch; signal?: AbortSignal; onStep?: (s: TraceStep) => void } = {},
 ): Promise<AskResult<T>> {
   const started = Date.now();
   const usage: Usage = { prompt: 0, completion: 0 };
   const convo = [...messages];
+  const trace: TraceStep[] = [];
+  const step = (s: Omit<TraceStep, 'ms'>) => {
+    const t = { ...s, ms: Date.now() - started };
+    trace.push(t);
+    opts.onStep?.(t);
+  };
   let raw: unknown;
   let errors: string[] = [];
 
   for (let attempt = 1; attempt <= MAX_REPAIRS + 1; attempt++) {
+    const sent = attempt === 1 ? convo : convo.slice(-1);
+    step({
+      kind: 'sent',
+      text: attempt === 1 ? `Asked ${profile.name} (${chars(convo)} of instructions and context)` : `Sent the problems back to ${profile.name} to fix (try ${attempt})`,
+      detail: sent.map((m) => `── ${m.role} ──\n${m.content}`).join('\n\n'),
+    });
     let reply;
     try {
       reply = await chat(profile, convo, opts.fetcher, opts.signal);
     } catch (e) {
-      return { ok: false, raw, errors: [`request failed: ${(e as Error).message}`], attempts: attempt, ms: Date.now() - started, usage };
+      step({ kind: 'failed', text: `The request failed: ${(e as Error).message}` });
+      return { ok: false, raw, errors: [`request failed: ${(e as Error).message}`], attempts: attempt, ms: Date.now() - started, usage, trace };
     }
     usage.prompt += reply.usage.prompt;
     usage.completion += reply.usage.completion;
     if (reply.usage.cost !== undefined) usage.cost = (usage.cost ?? 0) + reply.usage.cost;
     convo.push({ role: 'assistant', content: reply.content });
+    step({ kind: 'received', text: `Got a reply (${chars([{ role: 'assistant', content: reply.content }])})`, detail: reply.content });
 
     try {
       raw = extractJson(reply.content);
       const result = check(raw);
-      if (result.ok) return { ok: true, value: result.value, raw, errors: [], attempts: attempt, ms: Date.now() - started, usage };
+      if (result.ok) {
+        step({ kind: 'checked', text: 'Checked: it follows the rules' });
+        return { ok: true, value: result.value, raw, errors: [], attempts: attempt, ms: Date.now() - started, usage, trace };
+      }
       errors = result.errors;
     } catch (e) {
       errors = [`the reply is not valid JSON: ${(e as Error).message}`];
     }
+    step({ kind: 'failed', text: `Checked: ${errors.length} problem${errors.length === 1 ? '' : 's'}`, detail: errors.join('\n') });
     convo.push({ role: 'user', content: repairPrompt(errors.slice(0, 30)) });
   }
-  return { ok: false, raw, errors, attempts: MAX_REPAIRS + 1, ms: Date.now() - started, usage };
+  return { ok: false, raw, errors, attempts: MAX_REPAIRS + 1, ms: Date.now() - started, usage, trace };
 }
+
+const chars = (ms: ChatMessage[]) => {
+  const n = ms.reduce((a, m) => a + m.content.length, 0);
+  return n > 1500 ? `${Math.round(n / 1000)}k characters` : `${n} characters`;
+};
 
 /** Checks that a value is a presentation that loads. */
 export function checkPresentation(value: unknown): Check<unknown> {

@@ -32,6 +32,7 @@ const VERBS: Record<string, { icon: string; label: string; family: 'reveal' | 'h
   explode: { icon: '✺', label: 'Explode', family: 'motion' },
   camera: { icon: '⌖', label: 'Camera', family: 'camera' },
   spotlight: { icon: '◎', label: 'Spotlight', family: 'attention' },
+  play: { icon: '▶', label: 'Play', family: 'motion' },
   'set-values': { icon: '▤', label: 'New values', family: 'data' },
   wait: { icon: '⋯', label: 'Pause', family: 'wait' },
 };
@@ -49,6 +50,7 @@ const QUICK: { do: string; needs: boolean; hint: string }[] = [
   { do: 'move', needs: true, hint: 'Move it somewhere else' },
   { do: 'flow', needs: true, hint: 'Dots travel along an arrow' },
   { do: 'erase', needs: true, hint: 'Wipe it off the board' },
+  { do: 'play', needs: true, hint: 'Play an animated picture (APNG, GIF, animated WebP); add another with "on" off to pause it' },
   { do: 'wait', needs: false, hint: 'Pause before the next action' },
 ];
 

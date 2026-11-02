@@ -20,6 +20,11 @@ const base = {
   color: Color.default('white'),
   /** Visible before any beat. Defaults to false when a beat reveals the element, true otherwise. */
   visible: z.boolean().optional(),
+  /**
+   * Fixed on the screen instead of the board: it stays in place (and in size) while the camera moves.
+   * Its x, y are then screen positions on the 1920×1080 frame. For titles, notes and explanations.
+   */
+  pinned: z.boolean().optional(),
 };
 
 export const IconElement = z.object({
@@ -138,6 +143,8 @@ export const ImageElement = z.object({
   frame: z.enum(['none', 'browser']).default('none'),
   /** Text in the browser frame's address bar. */
   url: z.string().optional(),
+  /** Animated pictures (APNG, GIF, animated WebP): start again at the end instead of stopping on the last frame. */
+  loop: z.boolean().default(false),
   label: z.string().optional(),
 });
 
@@ -222,6 +229,19 @@ export const Action = z.discriminatedUnion('do', [
     shape: z.enum(['rect', 'ellipse']).optional(),
     /** Room around the targets, in board units. */
     padding: z.number().min(0).default(24),
+  }),
+  /**
+   * Plays an animated picture (APNG, GIF, animated WebP); it keeps playing between beats until it ends
+   * (or loops), or another `play` with "on": false pauses it. Without `play` it shows its first frame.
+   */
+  z.object({
+    do: z.literal('play'),
+    ...timing,
+    target: Targets,
+    on: z.boolean().default(true),
+    /** Seconds into the animation to jump to first; without it, it continues from where it is. */
+    from: z.number().min(0).optional(),
+    speed: z.number().positive().default(1),
   }),
   z.object({ do: z.literal('wait'), ...timing }),
 ]);

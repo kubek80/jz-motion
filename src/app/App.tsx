@@ -34,14 +34,15 @@ interface Drag {
   startY: number;
   moved: boolean;
   /** Elements being moved, with their starting positions. */
-  items: { id: string; x: number; y: number }[];
+  /** `k`: units per pixel for this item (screen units for pinned elements, board units otherwise). */
+  items: { id: string; x: number; y: number; k: number }[];
   /** Pressed on the empty board: dragging pans. */
   pan: boolean;
   board: { x: number; y: number };
   camera: Camera;
   unitsPerPixel: number;
   /** Dragging a resize handle of one element, scaling it around its own position. */
-  resize?: { id: string; el: Raw; origin: { x: number; y: number }; start: { x: number; y: number }; sx: number; sy: number };
+  resize?: { id: string; el: Raw; origin: { x: number; y: number }; start: { x: number; y: number }; sx: number; sy: number; pinned: boolean };
 }
 
 /** The text of an element that can be edited in place on the board. */
@@ -329,6 +330,21 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
     setSelection(null);
   };
 
+  /**
+   * Fixing an element on the screen (or back on the board) keeps it exactly where and how big it looks now:
+   * its position switches between board and screen coordinates through the current view.
+   */
+  const pinPatch = (id: string, pin: boolean): Raw => {
+    const el = scene?.elements?.find((x) => x.id === id);
+    const cam = stage.current?.camera ?? { x: 960, y: 540, zoom: 1 };
+    if (!el || typeof el.x !== 'number') return { pinned: pin || undefined };
+    const k = pin ? cam.zoom : 1 / cam.zoom;
+    const at = pin
+      ? { x: Math.round((el.x - cam.x) * cam.zoom + 960), y: Math.round((el.y - cam.y) * cam.zoom + 540) }
+      : { x: Math.round((el.x - 960) / cam.zoom + cam.x), y: Math.round((el.y - 540) / cam.zoom + cam.y) };
+    return { pinned: pin || undefined, ...at, ...(Math.abs(k - 1) > 0.01 ? resized(el, k, k) : {}) };
+  };
+
   const duplicate = (id: string) => {
     if (!doc) return;
     const el = doc.scenes[sceneIndex].elements?.find((e) => e.id === id);
@@ -415,7 +431,7 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
       drag.current = {
         pointer: e.pointerId, startX: e.clientX, startY: e.clientY, moved: false, items: [], pan: false,
         board, camera: s.camera, unitsPerPixel: s.unitsPerPixel,
-        resize: { id: pickedEl.id, el: pickedEl, origin: { x: pickedEl.x, y: pickedEl.y }, start: board, sx: 1, sy: 1 },
+        resize: { id: pickedEl.id, el: pickedEl, origin: { x: pickedEl.x, y: pickedEl.y }, start: pickedEl.pinned ? s.screenPoint(e.clientX, e.clientY) : board, sx: 1, sy: 1, pinned: !!pickedEl.pinned },
       };
       (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
       return;
@@ -430,7 +446,7 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
     const movable = hit && !e.shiftKey
       ? nextPicked.flatMap((id) => {
           const el = scene?.elements?.find((x) => x.id === id);
-          return el && typeof el.x === 'number' ? [{ id, x: el.x as number, y: el.y as number }] : [];
+          return el && typeof el.x === 'number' ? [{ id, x: el.x as number, y: el.y as number, k: el.pinned ? s.screenUnitsPerPixel : s.unitsPerPixel }] : [];
         })
       : [];
     document.body.classList.add('dragging');
@@ -453,7 +469,7 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
     if (!d || !s || d.pointer !== e.pointerId) return;
     if (d.resize) {
       const r = d.resize;
-      const p = s.boardPoint(e.clientX, e.clientY);
+      const p = r.pinned ? s.screenPoint(e.clientX, e.clientY) : s.boardPoint(e.clientX, e.clientY);
       const o = r.origin;
       const ratio = (a: number, b: number) => Math.max(0.1, Math.abs(a) / Math.max(Math.abs(b), 1));
       if (UNIFORM.has(r.el.type) || e.shiftKey) {
@@ -472,7 +488,7 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
     if (!d.moved && Math.hypot(e.clientX - d.startX, e.clientY - d.startY) < 4) return;
     d.moved = true;
     if (d.items.length) {
-      for (const it of d.items) s.previewMove(it.id, it.x + dx, it.y + dy);
+      for (const it of d.items) s.previewMove(it.id, it.x + (e.clientX - d.startX) * it.k, it.y + (e.clientY - d.startY) * it.k);
       s.setSelection(picked, [], { handles: canResize });
     } else if (d.pan) {
       s.camera = { ...d.camera, x: d.camera.x - dx, y: d.camera.y - dy };
@@ -495,9 +511,9 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
       return;
     }
     if (d.items.length) {
-      const dx = Math.round((e.clientX - d.startX) * d.unitsPerPixel);
-      const dy = Math.round((e.clientY - d.startY) * d.unitsPerPixel);
-      update(d.items.reduce((acc, it) => updateElement(acc, sceneIndex, it.id, { x: it.x + dx, y: it.y + dy }), doc));
+      update(d.items.reduce((acc, it) => updateElement(acc, sceneIndex, it.id, {
+        x: Math.round(it.x + (e.clientX - d.startX) * it.k), y: Math.round(it.y + (e.clientY - d.startY) * it.k),
+      }), doc));
     }
   };
 
@@ -854,7 +870,7 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
               editable={editable}
               ids={ids}
               selection={selection}
-              onElement={(id, k, v) => { if (k === 'frame') rememberFrame(v); update(updateElement(doc, sceneIndex, id, k === 'line' ? { line: v, dashed: undefined } : { [k]: v })); }}
+              onElement={(id, k, v) => { if (k === 'frame') rememberFrame(v); update(updateElement(doc, sceneIndex, id, k === 'line' ? { line: v, dashed: undefined } : k === 'pinned' ? pinPatch(id, !!v) : { [k]: v })); }}
               onRename={rename}
               onDelete={deletePicked}
               onDuplicate={duplicate}

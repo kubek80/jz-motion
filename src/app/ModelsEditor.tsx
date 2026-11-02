@@ -88,6 +88,12 @@ function ProfileForm({ profile, onSave, onDelete, onCancel }: { profile: ModelPr
       {!local && <label className="field"><span>base URL</span><input value={p.baseURL} onChange={(e) => set({ baseURL: e.target.value })} /></label>}
       <label className="field"><span>model</span><input value={p.model} placeholder={local ? 'sonnet, opus or haiku' : 'vendor/model-name'} onChange={(e) => set({ model: e.target.value })} /></label>
       {!local && <label className="field"><span>API key</span><input type="password" value={p.apiKey} autoComplete="off" onChange={(e) => set({ apiKey: e.target.value })} /></label>}
+      {local && (
+        <label className="field" title="On: Claude Code works in this project the way it does in a terminal or Claude Desktop: it uses the project's skills, reads the examples, checks its work and looks at snapshots, and you see each step. Slower, better results. Off: one request for JSON, like other models.">
+          <span>work in the project<i className="help">?</i></span>
+          <span className="pair"><input type="checkbox" className="check-input" checked={p.agent !== false} onChange={(e) => set({ agent: e.target.checked ? undefined : false })} /><span className="muted">uses the skills, checks and looks at its work (slower, better)</span></span>
+        </label>
+      )}
       <label className="field" title="Used to recommend models for each job: small for icons and small edits, large for whole presentations from a script or recording">
         <span>size<i className="help">?</i></span>
         <select value={p.size ?? ''} onChange={(e) => set({ size: (e.target.value || undefined) as ModelProfile['size'] })}>
