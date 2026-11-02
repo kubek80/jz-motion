@@ -5,6 +5,9 @@ import { mkdir, readFile } from 'node:fs/promises';
 import { basename, join, resolve } from 'node:path';
 import { createServer } from 'vite';
 import { compile } from '../src/engine/compile';
+import { addIsoModels, type IsoModel } from '../src/engine/iso';
+import { addIcons, type IconDef } from '../src/engine/library';
+import { readLibrary } from './library';
 import type { Performance } from '../src/video/performance';
 
 const args = process.argv.slice(2);
@@ -18,13 +21,15 @@ if (!input) {
   process.exit(1);
 }
 const presentation = JSON.parse(await readFile(input, 'utf8'));
+// Icons, clipart and 3D models made in the app (library/), as the page loads them too.
+for (const [name, def] of Object.entries(await readLibrary()) as [string, { kind?: string }][]) {
+  if (def.kind === 'iso') addIsoModels({ [name]: def as IsoModel });
+  else addIcons({ [name]: def as IconDef });
+}
 const r = compile(presentation);
 if (!r.ok) {
-  // Library items made in the app are only known to the page; let it report what is really wrong.
-  if (!r.errors.every((e) => /unknown (icon|iso model)/.test(e))) {
-    console.error(`${input} does not load:\n${r.errors.map((e) => `  - ${e}`).join('\n')}`);
-    process.exit(1);
-  }
+  console.error(`${input} does not load:\n${r.errors.map((e) => `  - ${e}`).join('\n')}`);
+  process.exit(1);
 }
 const out = resolve(value('out') ?? join('snapshots', basename(input).replace(/\.json$/, '')));
 await mkdir(out, { recursive: true });
@@ -32,7 +37,7 @@ await mkdir(out, { recursive: true });
 // One moment per picture: a scene at the end of a beat (or of the whole scene), each a second apart.
 const shots: { file: string; scene: number; time: number }[] = [];
 const onlyScene = value('scene') ? Number(value('scene')) - 1 : undefined;
-const scenes = r.ok ? r.presentation.scenes : (presentation.scenes as unknown[]).map(() => null);
+const scenes = r.presentation.scenes;
 scenes.forEach((sc, si) => {
   if (onlyScene !== undefined && si !== onlyScene) return;
   const beats = sc?.beats ?? [];

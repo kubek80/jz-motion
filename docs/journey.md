@@ -392,3 +392,32 @@ Jakub asked whether Opus should be available, and then for the model menus to re
 **Checked by:** 59 unit tests and a browser run with Opus, Sonnet and Haiku through the subscription: the home box (topic → Sonnet, script → Opus), New with AI (icon and 3D → Haiku, clipart → Sonnet, a choice of Opus for icons remembered), and Settings.
 
 ![Recommendations on the home screen, in New with AI and in Settings](journey/61-model-recommendations.jpg)
+
+## Step 29: An LLM Lab explainer, from a script
+
+Jakub gave a five-minute script for a video about LLM Lab, his prototype for choosing AI models with the team's own data and rules, and asked for a template made from it, with the screenshots, icons and animations it needs. He also asked to expand on RAG and on why the lab tests the models it does: only models that are worth fine-tuning.
+
+- **The example** `src/examples/llm-lab.json`, 17 scenes and 78 beats, the script's lines as speaker notes: opening (a new "#1" every week, three questions, the title); how models get chosen (leaderboard, sales deck, first team's pick); someone else's test (a chart whose bars swap from English to Polish tickets, two points for thirty times the price, nobody re-checks); our data, our criteria, our decision, then each one in detail; **new:** where the four kinds of model sit in RAG (documents → chunking → embedding → index; question → classification → embedding → top 50 → reranking → top 5 → answer); **new:** why these four (big general models are prompted, not tuned; narrow, high-volume building blocks are worth fine-tuning, so they are worth testing, with the ModernBERT cost numbers); then the walkthrough on screenshots (the four categories in the sidebar, three numbers and four answers, quality vs cost and the quality bar, the ModernBERT row, intents only, ties and ± ranges, test and training sets); why it matters; close.
+- **RAG in 3D** (asked for after the first version): an isometric scene of the three retrieval models at work. A document stack explodes into pieces as the chunking model cuts it; the chunks go through a spinning embedding chip into a 3D vector index, which turns to show its points; the question takes the same embedding model to the index; four result cards pop up, the reranking chip scores them, and the best one turns green and swaps places to the front before the top five go to the answer. Each model gets a yellow "we test:" note (does each piece stand alone? is the right chunk in the top 10? is the best one first?). Two new 3D models for it: `document-stack` and `vector-index`.
+- **Screenshots** of LLM Lab in its dark theme, taken with Playwright from the addresses in the script's recording notes, ship in `public/examples/llm-lab/`. Areas over them drive the spotlights and circles.
+- **Thirteen new built-in drawings**, all in `src/engine/icons.custom.json` and `iso-models.json` so the bundled example works anywhere: `trophy`, `coin`, `stopwatch`, `balance-scale`, `scissors`, `tag`, `magnifier`, `rerank-list`, `flask`, `target`, `id-card`, `checklist`, `vector-space`, and the 3D models `podium`, `document-stack` and `vector-index`.
+- **The script** with recording notes is in `docs/llm-lab-script.md` (about 1,180 words, generated from the speaker notes).
+- **Bug found by it:** `npm run snapshot` never loaded `library/`, and only ignored "unknown icon" errors, so a presentation using your own icon in an arrow or a beat failed with "unknown element". It now loads the library before checking, like `npm run check` and the page do.
+
+**Checked by:** `npm run check` and snapshots of every scene and beat (fixed on the way: spotlights on sidebar rows lit two rows until the padding was cut, a circle around the whole quality line, cost values rounded to 0.0 until shown in cents, a podium that read best turned by −30°), 60 unit tests (including every bundled example compiling), and opening the example from the home screen in the browser with no errors.
+
+![LLM Lab template, six of its sixteen scenes](journey/62-llm-lab-template.jpg)
+![Opened from the home screen in the editor](journey/63-llm-lab-in-editor.jpg)
+![RAG in 3D: chunking, embedding, the question, reranking](journey/64-rag-3d.jpg)
+
+## Step 30: Keeping the audience's eyes in the right place
+
+Jakub asked for another pass on the LLM Lab template so that camera moves, areas and circles keep attention where the narration is. The first version mostly drew things at full-board size and lit screenshots with spotlights, which left the screenshots' text too small to read in a video.
+
+- **The camera follows the explanation.** Diagrams are taken one part at a time: the benchmark chart, then each column of *our data / criteria / decision*, each row of the RAG pipeline, and each stage of the 3D scene (the document and chunker, the embedder and index, a close-up of the index as it turns, the reranker and its cards). Each scene pulls back to the full board at the end.
+- **Screenshots are read up close.** On the Recommendations page the camera zooms into one card's three numbers, then into the row of four answers. On Classification it zooms into the chart while the "better" arrow is drawn and the quality bar label is circled. On the ModernBERT row it takes the row, then its price with the note, then the personal-data warning with its note. On intents it shows the tab with its note, then the cards. On embedding it shows the ± scores, then the circled tie. On training sets it shows the overlap column. Notes that would sit off-screen during a zoom are written when the camera pulls back, as a summary.
+- **One emphasis per beat.** Circles now mark the one thing you'll keep talking about (the price claim, "nobody checks", the classifier at the front door, the quality bar, the personal-data minimum, the tie). Each circle is erased before the next one when they would compete.
+
+**Checked by:** snapshots of all 78 beats (a frame that went past the board's right edge was replaced by the full view), `npm run check`, 60 unit tests, typecheck and build.
+
+![Zoomed beats: the benchmark chart, the classifier, the turning index, the quality bar, the personal-data minimum, the tie](journey/65-attention-pass.jpg)
