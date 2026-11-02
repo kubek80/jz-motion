@@ -30,6 +30,8 @@ Choose actions for what the viewer should do, not just to make things appear. Ev
 | see numbers change | `set-values` on a chart | a new chart for each number |
 | look inside a 3D object | `explode`, then put it back with `"amount": 0`; `rotate` or `spin` to show its sides | spinning while you explain something else |
 | look at a detail | `camera` with `focus`, then back with `"focus": "all"` | small text you never zoom into |
+| watch something happen in an interface | an animated screenshot (APNG, GIF): `play` when you start describing it, `"on": false` to hold a frame while you explain | playing it before you talk about it |
+| keep reading an explanation while the camera moves | the explanation `"pinned": true` (fixed on screen), placed in a corner the zoomed view leaves free | notes on the board that fly away when you zoom |
 | clear space for the next idea | `erase` (feels like wiping the board); `fade-out` when it should leave quietly | a crowded board; erasing what the next sentence refers to |
 | pause and take it in | a beat with no actions, or `wait` inside one | waits longer than a breath; let the narration set the pace |
 

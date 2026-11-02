@@ -37,7 +37,7 @@ Read `docs/design.md` first: architecture, decisions and the code map. Essential
 - `src/engine/schema.ts` (zod) is the format's source of truth. Any change to it must be reflected in `docs/format.md` in the same change: models learn the format from that document.
 - Every LLM output goes through `askJson` (`src/ai/client.ts`): ask for JSON, check it, send the errors back, at most twice. New AI features use it too.
 - The board (`src/engine/render.ts`, SVG + GSAP) also renders every export frame, so what the editor shows is what the video shows.
-- Models are any OpenAI-compatible endpoint, or the local `claude` command (`server/claudeCode.ts`, "Claude Code (my subscription)"); see `docs/models.md`.
+- Models are any OpenAI-compatible endpoint, or the local `claude` command (`server/claudeCode.ts`, "Claude Code (my subscription)"); see `docs/models.md`. With that provider the app runs Claude Code in this repository in agent mode (`server/claudeAgent.ts`): **the skills in `.claude/skills/` are what it follows**, on draft files in `presentations/.drafts/`. When you change a skill, you change what the app's AI does.
 
 Checks before committing: `npm test`, `npm run typecheck`, `npm run build`. UI changes are checked in a real browser with Playwright (Chromium is preinstalled in Claude cloud sessions; `npm run mock-llm` gives a fake model on port 5199 for AI flows).
 

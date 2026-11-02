@@ -1,6 +1,7 @@
 import formatDoc from '../../docs/format.md?raw';
 import libraryDoc from '../../docs/library.md?raw';
 import styleDoc from '../../docs/style.md?raw';
+import example from '../examples/hardware.json?raw';
 import { generatedIcons } from '../engine/icons.generated';
 import builtInIso from '../engine/iso-models.json';
 import { isoModels } from '../engine/iso';
@@ -25,7 +26,9 @@ export function referenceDocs(): string {
       ...ownIso.map(([n, d]) => `| \`${n}\` | iso model | ${d.description} |`),
     ].join('\n')}\n`
     : '';
-  return `${CRAFT}\n\n${formatDoc}\n\n${libraryDoc}${extra}`;
+  // A finished scene in the house style, so a single-request model sees what "good" looks like, as an agent would by reading the examples.
+  const sample = `## A finished example\n\nOne scene that follows the style guide: placement, colours with a meaning, labelled arrows, a flow, a camera zoom with a circle for the one thing that matters, and speaker notes for every beat.\n\n\`\`\`json\n${example.trim()}\n\`\`\``;
+  return `${CRAFT}\n\n${formatDoc}\n\n${libraryDoc}${extra}\n\n${sample}`;
 }
 
 /** System prompt for "write me a presentation" requests. */

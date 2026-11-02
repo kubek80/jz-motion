@@ -9,6 +9,8 @@ export interface ModelProfile {
   enabled: boolean;
   /** How capable it is, for model recommendations; guessed from the name when unset. */
   size?: 'small' | 'medium' | 'large';
+  /** Claude Code only: work in the project with its skills (default), or answer in one request (false). */
+  agent?: boolean;
 }
 
 export const PRESETS = [

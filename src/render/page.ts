@@ -10,7 +10,7 @@ import { stateAt, type Performance } from '../video/performance';
 
 export interface RenderApi {
   load(presentation: unknown, performance: Performance): Promise<void>;
-  frame(time: number): void;
+  frame(time: number): Promise<void>;
 }
 
 declare global {
@@ -33,8 +33,10 @@ window.jzmRender = {
     await document.fonts.ready;
     perf = performance;
   },
-  frame(time) {
+  async frame(time) {
     const st = stateAt(perf, time);
     stage.renderAt(st.scene, st.time, time);
+    // Animated pictures decode their frame asynchronously; wait so the capture shows the right one.
+    await stage.settled();
   },
 };

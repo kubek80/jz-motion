@@ -8,7 +8,10 @@ import { Presentation, type Action, type LayoutName, type Camera, type Element, 
 // render.ts turns the plan into SVG and a GSAP timeline.
 
 /** Highlight ellipse created by a "circle" action. */
-export interface RingElement { type: 'ring'; id: string; x: number; y: number; rx: number; ry: number; color: ColorName }
+export interface RingElement { type: 'ring'; id: string; x: number; y: number; rx: number; ry: number; color: ColorName; pinned?: boolean }
+
+/** On the screen rather than the board (see `pinned` in the schema). */
+export const isPinned = (el?: { pinned?: boolean }) => !!el?.pinned;
 export type CompiledElement = Element | RingElement;
 
 export interface ElementState {
@@ -19,6 +22,8 @@ export interface ElementState {
   flow: { reverse: boolean; speed: number } | null;
   /** Only for iso elements. */
   iso?: { rotate: number; explode: number; spin: number | null };
+  /** Only for images: playing speed of an animated picture (null: paused). */
+  play?: number | null;
   /** Only for charts: the values shown now. */
   chart?: { values: number[]; max: number };
 }
@@ -34,7 +39,8 @@ export type Op =
   | { kind: 'iso'; id: string; from: { rotate: number; explode: number }; to: { rotate: number; explode: number }; t: number; dur: number }
   | { kind: 'spin'; id: string; from: number | null; to: number | null; t: number }
   | { kind: 'values'; id: string; from: number[]; to: number[]; t: number; dur: number }
-  | { kind: 'spotlight'; from: Spotlight | null; to: Spotlight | null; t: number; dur: number };
+  | { kind: 'spotlight'; from: Spotlight | null; to: Spotlight | null; t: number; dur: number }
+  | { kind: 'play'; id: string; from: number | null; to: number | null; seek?: number; t: number };
 
 /** A spotlight: the lit region in board coordinates, and how everything outside it is dimmed. */
 export interface Spotlight { x: number; y: number; width: number; height: number; shape: 'rect' | 'ellipse'; style: 'dark' | 'fade'; amount: number }
@@ -117,10 +123,18 @@ function defaultDuration(action: Action, el?: CompiledElement): number {
       return 1;
     case 'spotlight':
       return 0.6;
+    case 'play':
+      return 0;
     case 'flow':
       return 0;
   }
 }
+
+/**
+ * How long an instant switch (flow, spin, play on or off) takes: just long enough that a beat ending on one
+ * stops after it rather than exactly on it, so the switch has happened when the beat is shown.
+ */
+const SWITCH = 0.002;
 
 const isPositioned = (el: CompiledElement): el is Exclude<CompiledElement, { type: 'arrow' }> => el.type !== 'arrow';
 
@@ -212,6 +226,13 @@ export function compile(input: unknown): CompileResult {
     });
 
     const lookup = (id: string) => byId.get(id);
+    // An arrow lives either on the screen or on the board, and so must what it connects.
+    for (const [ei, el] of scene.elements.entries()) {
+      if (el.type !== 'arrow') continue;
+      const ends = [el.from, el.to].filter((r): r is string => typeof r === 'string').map((r) => r.split('.')[0]);
+      const odd = ends.filter((id) => byId.has(id) && isPinned(byId.get(id)) !== isPinned(el));
+      if (odd.length) errors.push(`${where}.elements.${ei}: the arrow "${el.id}" is ${isPinned(el) ? 'fixed on the screen' : 'on the board'} but ${odd.map((m) => `"${m}"`).join(' and ')} ${isPinned(el) ? "isn't" : 'is fixed on the screen'}; pin both ends and the arrow, or none`);
+    }
     for (const [ei, el] of scene.elements.entries()) {
       if (el.type !== 'arrow' || byId.get(el.id) !== el) continue;
       try {
@@ -333,7 +354,7 @@ export function compile(input: unknown): CompileResult {
               const to = action.on ? { reverse: action.reverse, speed: action.speed } : null;
               ops.push({ kind: 'flow', id, from: state[id].flow, to, t });
               state[id].flow = to;
-              return action.duration ?? 0;
+              return Math.max(action.duration ?? 0, SWITCH);
             });
             break;
           case 'set-values':
@@ -366,7 +387,7 @@ export function compile(input: unknown): CompileResult {
                 const to = action.on ? action.speed : null;
                 ops.push({ kind: 'spin', id, from: iso.spin, to, t });
                 iso.spin = to;
-                return action.duration ?? 0;
+                return Math.max(action.duration ?? 0, SWITCH);
               }
               const d = dur(el);
               const from = { rotate: iso.rotate, explode: iso.explode };
@@ -377,6 +398,11 @@ export function compile(input: unknown): CompileResult {
             });
             break;
           case 'circle': {
+            const pinnedTargets = targets.filter((id) => isPinned(byId.get(id)));
+            if (pinnedTargets.length && pinnedTargets.length < targets.length) {
+              errors.push(`${at}: one circle can't go around things fixed on the screen and things on the board together`);
+              return;
+            }
             const box = union(targets.map(boxOf));
             const ring: RingElement = {
               type: 'ring',
@@ -386,6 +412,7 @@ export function compile(input: unknown): CompileResult {
               rx: box.width / 2 + Math.max(24, box.width * 0.12),
               ry: box.height / 2 + Math.max(16, box.height * 0.3),
               color: action.color,
+              ...(pinnedTargets.length ? { pinned: true } : {}),
             };
             rings++;
             if (byId.has(ring.id)) {
@@ -404,12 +431,18 @@ export function compile(input: unknown): CompileResult {
           case 'camera': {
             let to: Camera;
             if (action.focus !== undefined) {
+              // Things fixed on the screen aren't on the board, so the camera doesn't frame them.
               const ids = action.focus === 'all'
-                ? Object.keys(state).filter((id) => state[id].visible)
+                ? Object.keys(state).filter((id) => state[id].visible && !isPinned(byId.get(id)))
                 : [action.focus].flat();
               const unknown = ids.filter((id) => !byId.has(id));
               if (unknown.length) {
                 errors.push(`${at}: unknown element ${unknown.map((m) => `"${m}"`).join(', ')}`);
+                return;
+              }
+              const onScreen = ids.filter((id) => isPinned(byId.get(id)));
+              if (onScreen.length) {
+                errors.push(`${at}: ${onScreen.map((m) => `"${m}"`).join(', ')} ${onScreen.length === 1 ? 'is' : 'are'} fixed on the screen ("pinned"), so the camera can't move to ${onScreen.length === 1 ? 'it' : 'them'}`);
                 return;
               }
               to = ids.length ? frameBox(union(ids.map(boxOf)), action.padding) : DEFAULT_CAMERA;
@@ -423,8 +456,24 @@ export function compile(input: unknown): CompileResult {
             end = start + d;
             break;
           }
+          case 'play':
+            each((id, t, el) => {
+              if (el.type !== 'image') {
+                errors.push(`${at}: play only works on (animated) images, "${id}" is a ${el.type}`);
+                return 0;
+              }
+              const to = action.on ? action.speed : null;
+              ops.push({ kind: 'play', id, from: state[id].play ?? null, to, seek: action.from, t });
+              state[id].play = to;
+              return Math.max(action.duration ?? 0, SWITCH);
+            });
+            break;
           case 'spotlight': {
             let to: Spotlight | null = null;
+            if (targets.some((id) => isPinned(byId.get(id)))) {
+              errors.push(`${at}: a spotlight lights part of the board; things fixed on the screen ("pinned") are always lit`);
+              return;
+            }
             if (action.on) {
               const ids = targets.length ? targets : [];
               if (!ids.length) {

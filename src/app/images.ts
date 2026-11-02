@@ -3,7 +3,7 @@
 
 export interface PlacedImage { src: string; width: number; height: number }
 
-const EXT: Record<string, string> = { 'image/png': 'png', 'image/jpeg': 'jpg', 'image/webp': 'webp', 'image/gif': 'gif', 'image/svg+xml': 'svg' };
+const EXT: Record<string, string> = { 'image/png': 'png', 'image/apng': 'png', 'image/jpeg': 'jpg', 'image/webp': 'webp', 'image/gif': 'gif', 'image/svg+xml': 'svg' };
 
 export const isImageFile = (f: File | null | undefined): f is File => !!f && f.type in EXT;
 

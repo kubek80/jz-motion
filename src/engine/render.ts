@@ -45,13 +45,36 @@ interface ElementNodes {
   image?: ImageNodes;
   /** An area's outline: shown only while editing. */
   areaOutline?: SVGElement;
+  /** Fixed on the screen, outside the camera. */
+  pinned?: boolean;
 }
 
 /**
  * A picture lives in its own layer under the marker glow (so it stays crisp), and copies the element's
  * position, scale and opacity every frame. It is revealed left to right while `reveal.v` goes 0 → 1.
  */
-interface ImageNodes { outer: SVGGElement; fx: SVGGElement; clip: SVGRectElement; img: SVGImageElement; left: number; width: number; reveal: { v: number } }
+interface ImageNodes { outer: SVGGElement; fx: SVGGElement; clip: SVGRectElement; img: SVGImageElement; left: number; width: number; reveal: { v: number }; anim?: AnimNodes }
+
+/**
+ * An animated picture (APNG, GIF, animated WebP), decoded frame by frame on demand into a canvas. `state` is set
+ * by the timeline (speed; `epoch` changes when a play jumps to `seekTo`); `clip` advances with the board's clock.
+ */
+interface AnimNodes {
+  decoder: ImageDecoder;
+  frames: number;
+  frameSeconds: number;
+  loop: boolean;
+  canvas: HTMLCanvasElement;
+  box: SVGForeignObjectElement;
+  state: { speed: number; epoch: number; seekTo: number };
+  epoch: number;
+  /** While scheduling plays in order: the jump count and position so far. */
+  planned: { epoch: number; seekTo: number };
+  clip: number;
+  shown: number;
+  want: number;
+  busy: Promise<void> | null;
+}
 
 interface IsoNodes {
   parts: IsoPart[];
@@ -100,6 +123,9 @@ export class Stage {
   private layerTop: SVGGElement;
   private spot = { on: 0, x: 0, y: 0, width: 0, height: 0, amount: 0.7, ellipse: 0, fade: 0 };
   private overlay: SVGGElement;
+  /** Things fixed on the screen ("pinned"): outside the camera, above everything on the board. */
+  private screenImages: SVGGElement;
+  private screenLayer: SVGGElement;
   private defs: SVGDefsElement;
   private presentation?: CompiledPresentation;
   private sceneIndex = 0;
@@ -137,6 +163,8 @@ export class Stage {
     this.layerTop = svgEl('g', { filter: `url(#${this.prefix}-glow)` }, this.camGroup);
     // Editor selection boxes: above the drawing, without the glow.
     this.overlay = svgEl('g', { 'pointer-events': 'none' }, this.camGroup);
+    this.screenImages = svgEl('g', {}, this.svg);
+    this.screenLayer = svgEl('g', { filter: `url(#${this.prefix}-glow)` }, this.svg);
     container.appendChild(this.svg);
     gsap.ticker.add(this.tick);
   }
@@ -332,6 +360,95 @@ export class Stage {
     this.emit();
   }
 
+  // ---------------------------------------------------------------- animated pictures
+
+  private animations = new Set<AnimNodes>();
+  private loading = new Set<Promise<unknown>>();
+
+  /** If the picture is animated, swaps in a canvas that shows whichever frame the timeline asks for. */
+  private watchAnimation(image: ImageNodes, src: string, o: { x: number; y: number; width: number; height: number; clipId: string; loop: boolean; state?: number | null }) {
+    if (!/\.(png|apng|gif|webp)(\?|$)/i.test(src) && !/^data:image\/(png|gif|webp)/.test(src)) return;
+    if (typeof ImageDecoder === 'undefined') return;
+    const built = this.builtFor;
+    const job = (async () => {
+      const res = await fetch(src);
+      const type = res.headers.get('content-type')?.split(';')[0] || (/\.gif/i.test(src) ? 'image/gif' : /\.webp/i.test(src) ? 'image/webp' : 'image/png');
+      if (!(await ImageDecoder.isTypeSupported(type))) return;
+      const decoder = new ImageDecoder({ data: await res.arrayBuffer(), type });
+      await decoder.tracks.ready;
+      const track = decoder.tracks.selectedTrack;
+      if (!track?.animated || track.frameCount < 2 || this.builtFor !== built) { decoder.close(); return; }
+      const first = await decoder.decode({ frameIndex: 0 });
+      const canvas = document.createElement('canvas');
+      canvas.width = first.image.displayWidth;
+      canvas.height = first.image.displayHeight;
+      canvas.style.cssText = 'width:100%;height:100%;display:block;object-fit:cover';
+      canvas.getContext('2d')!.drawImage(first.image, 0, 0);
+      const frameSeconds = (first.image.duration ?? 100_000) / 1e6 || 0.1;
+      first.image.close();
+      const box = svgEl('foreignObject', { x: o.x, y: o.y, width: o.width, height: o.height, 'clip-path': `url(#${o.clipId})` }) as SVGForeignObjectElement;
+      box.appendChild(canvas);
+      image.fx.appendChild(box);
+      image.img.style.display = 'none';
+      const anim: AnimNodes = {
+        decoder, frames: track.frameCount, frameSeconds, loop: o.loop, canvas, box,
+        state: { speed: o.state ?? 0, epoch: 0, seekTo: 0 }, epoch: 0, planned: { epoch: 0, seekTo: 0 }, clip: 0, shown: 0, want: 0, busy: null,
+      };
+      image.anim = anim;
+      this.animations.add(anim);
+      // Plays scheduled before the decoder was ready: hook them up now.
+      for (const play of this.pendingPlays.filter((p) => p.image === image)) this.schedulePlay(anim, play.op);
+    })().catch(() => undefined);
+    this.loading.add(job);
+    void job.finally(() => this.loading.delete(job));
+  }
+
+  private pendingPlays: { image: ImageNodes; op: Extract<Op, { kind: 'play' }> }[] = [];
+
+  /** Plays are scheduled in order; only one with `from` counts as a jump (a new epoch). */
+  private schedulePlay(anim: AnimNodes, op: Extract<Op, { kind: 'play' }>) {
+    const before = { speed: op.from ?? 0, ...anim.planned };
+    if (op.seek !== undefined) anim.planned = { epoch: anim.planned.epoch + 1, seekTo: op.seek };
+    const after = { speed: op.to ?? 0, ...anim.planned };
+    this.tl.fromTo(anim.state, before, { ...after, duration: 0.001, immediateRender: false }, op.t);
+    // Apply it now if the timeline is already past it (the picture finished loading after a jump).
+    this.tl.time(this.tl.time(), true);
+  }
+
+  private renderAnimations(dt: number) {
+    for (const a of this.animations) {
+      if (a.state.epoch !== a.epoch) {
+        a.epoch = a.state.epoch;
+        a.clip = a.state.seekTo;
+      }
+      const length = a.frames * a.frameSeconds;
+      if (a.state.speed > 0) a.clip += dt * a.state.speed;
+      if (a.clip >= length) a.clip = a.loop ? a.clip % length : length - 1e-6;
+      const index = Math.min(a.frames - 1, Math.floor(a.clip / a.frameSeconds));
+      if (index !== a.shown) this.showFrame(a, index);
+    }
+  }
+
+  private showFrame(a: AnimNodes, index: number) {
+    a.want = index;
+    if (a.busy) return;
+    a.busy = (async () => {
+      while (a.shown !== a.want) {
+        const i = a.want;
+        const r = await a.decoder.decode({ frameIndex: i });
+        a.canvas.getContext('2d')!.drawImage(r.image, 0, 0);
+        r.image.close();
+        a.shown = i;
+      }
+    })().catch(() => undefined).finally(() => { a.busy = null; });
+  }
+
+  /** Resolves when every animated picture has loaded and drawn the frame asked for (export waits for this). */
+  async settled() {
+    while (this.loading.size) await Promise.all([...this.loading]);
+    for (const a of this.animations) while (a.busy) await a.busy;
+  }
+
   /** The dimming outside the spotlight: a huge rectangle with the lit region cut out of it. */
   private renderSpotlight() {
     const s = this.spot;
@@ -380,6 +497,7 @@ export class Stage {
   private frame(dt: number) {
     this.applyCamera();
     this.renderSpotlight();
+    this.renderAnimations(dt);
     for (const n of this.nodes.values()) if (n.image) renderImage(n);
     for (const n of this.nodes.values()) {
       if (n.chart) renderChart(n.chart);
@@ -436,7 +554,7 @@ export class Stage {
 
   /** Camera that shows everything currently drawn, with some room around it. */
   fitCamera(padding = 90): Camera {
-    const boxes = [...this.nodes.values()].filter((n) => Number(gsap.getProperty(n.outer, 'opacity')) > 0).map((n) => this.boxOf(n));
+    const boxes = [...this.nodes.values()].filter((n) => !n.pinned && Number(gsap.getProperty(n.outer, 'opacity')) > 0).map((n) => this.boxOf(n));
     if (!boxes.length) return { x: VIEW.width / 2, y: VIEW.height / 2, zoom: 1 };
     const x1 = Math.min(...boxes.map((b) => b.x));
     const y1 = Math.min(...boxes.map((b) => b.y));
@@ -452,6 +570,25 @@ export class Stage {
     if (!m) return { x: 0, y: 0 };
     const p = new DOMPoint(clientX, clientY).matrixTransform(m.inverse());
     return { x: p.x, y: p.y };
+  }
+
+  /** A point on the screen frame (1920×1080, where pinned elements live) under a point in the window. */
+  screenPoint(clientX: number, clientY: number): { x: number; y: number } {
+    const m = this.svg.getScreenCTM();
+    if (!m) return { x: 0, y: 0 };
+    const p = new DOMPoint(clientX, clientY).matrixTransform(m.inverse());
+    return { x: p.x, y: p.y };
+  }
+
+  /** Screen-frame units per pixel (for dragging pinned elements). */
+  get screenUnitsPerPixel(): number {
+    const m = this.svg.getScreenCTM();
+    return m ? 1 / m.a : 1;
+  }
+
+  /** Whether an element is fixed on the screen. */
+  isPinned(id: string): boolean {
+    return !!this.nodes.get(id)?.pinned;
   }
 
   /** Board units per screen pixel, for drag thresholds and handles. */
@@ -645,6 +782,11 @@ export class Stage {
     this.layer.replaceChildren();
     this.layerTop.replaceChildren();
     this.images.replaceChildren();
+    this.screenLayer.replaceChildren();
+    this.screenImages.replaceChildren();
+    for (const a of this.animations) a.decoder.close();
+    this.animations.clear();
+    this.pendingPlays = [];
     this.overlay.replaceChildren();
     Object.assign(this.spot, { on: 0 });
     this.nodes.clear();
@@ -684,7 +826,8 @@ export class Stage {
   }
 
   private buildElement(el: CompiledElement, lookup: (id: string) => CompiledElement | undefined, initial?: ElementState): ElementNodes {
-    const outer = svgEl('g', { 'data-id': el.id, class: `jzm-el jzm-${el.type}` }, this.builtFor?.above.includes(el.id) ? this.layerTop : this.layer);
+    const pinned = !!(el as { pinned?: boolean }).pinned;
+    const outer = svgEl('g', { 'data-id': el.id, class: `jzm-el jzm-${el.type}` }, pinned ? this.screenLayer : this.builtFor?.above.includes(el.id) ? this.layerTop : this.layer);
     const fx = svgEl('g', {}, outer);
     const parts: DrawPart[] = [];
     const stroke = (d: string, width: number, parent: SVGElement = fx, line: LineStyle = 'solid', scale = 1): SVGGraphicsElement => {
@@ -875,7 +1018,7 @@ export class Stage {
         const bottom = it + el.height;
         // An invisible box so the element can be picked and framed even without a frame drawn.
         svgEl('rect', { x: -w, y: t, width: el.width, height: el.height + bar, fill: 'none', stroke: 'none' }, fx);
-        const outer2 = svgEl('g', {}, this.images) as SVGGElement;
+        const outer2 = svgEl('g', {}, pinned ? this.screenImages : this.images) as SVGGElement;
         const fx2 = svgEl('g', {}, outer2) as SVGGElement;
         const clipId = `${this.prefix}-c${uid++}`;
         const clipPath = svgEl('clipPath', { id: clipId, 'data-scene': '' }, this.defs);
@@ -883,6 +1026,7 @@ export class Stage {
         const img = svgEl('image', { href: el.src, x: -w, y: it, width: el.width, height: el.height, preserveAspectRatio: 'xMidYMid slice', 'clip-path': `url(#${clipId})` }, fx2) as SVGImageElement;
         const reveal = { v: 1 };
         image = { outer: outer2, fx: fx2, clip, img, left: -w, width: el.width, reveal };
+        this.watchAnimation(image, el.src, { x: -w, y: it, width: el.width, height: el.height, clipId, loop: el.loop, state: initial?.play });
         if (bar) {
           // A browser window in marker: outline, the bar's bottom edge, three dots, the address field.
           const r = Math.min(18, bar * 0.45);
@@ -938,7 +1082,7 @@ export class Stage {
         break;
       }
     }
-    return { outer, fx, parts, pivot, flowPath, iso, chart, image, areaOutline };
+    return { outer, fx, parts, pivot, flowPath, iso, chart, image, areaOutline, pinned };
   }
 
   private addOp(op: Op) {
@@ -946,6 +1090,14 @@ export class Stage {
     const instant = 0.001;
     if (op.kind === 'camera') {
       tl.fromTo(this.cam, { ...op.from }, { ...op.to, duration: op.dur, ease: 'power2.inOut', immediateRender: false }, op.t);
+      return;
+    }
+    if (op.kind === 'play') {
+      const image = this.nodes.get(op.id)?.image;
+      if (!image) return;
+      // The picture may still be loading; the play is hooked up when it is ready.
+      if (image.anim) this.schedulePlay(image.anim, op);
+      else this.pendingPlays.push({ image, op });
       return;
     }
     if (op.kind === 'spotlight') {
@@ -1105,6 +1257,7 @@ function renderImage(n: ElementNodes) {
   const v = Math.max(0, Math.min(1, im.reveal.v));
   im.clip.setAttribute('width', String(im.width * v));
   im.img.style.opacity = String(Math.min(1, v * 2.5));
+  if (im.anim) im.anim.box.style.opacity = im.img.style.opacity;
 }
 
 function preloadImage(src: string): Promise<void> {

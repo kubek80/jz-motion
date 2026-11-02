@@ -32,6 +32,8 @@ const FIELD_INFO: Record<string, FieldInfo> = {
   line: { label: 'line', help: 'Solid, dashed or dotted.' },
   weight: { label: 'thickness' },
   head: { label: 'arrowhead' },
+  loop: { label: 'loop', help: 'Animated pictures (APNG, GIF, animated WebP): start again at the end instead of stopping on the last frame.' },
+  pinned: { label: 'fixed on screen', help: 'Stays in the same place and size on screen while the camera moves: for titles, notes and explanations next to something you zoom into. Turning it on keeps it where it looks now.' },
   frame: { label: 'frame', help: 'Draw a browser window around the picture, in the element\'s colour.' },
   url: { label: 'address bar', help: 'Text in the browser frame\'s address bar.' },
   src: { label: 'picture file', group: 'advanced' },
