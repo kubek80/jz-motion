@@ -1,0 +1,2676 @@
+{
+  "version": 1,
+  "title": "LLM Lab",
+  "scenes": [
+    {
+      "id": "opening",
+      "title": "Opening",
+      "layout": "camera",
+      "elements": [
+        {
+          "id": "title",
+          "type": "text",
+          "text": "LLM LAB",
+          "style": "bold",
+          "x": 960,
+          "y": 260,
+          "size": 140,
+          "color": "cyan"
+        },
+        {
+          "id": "claim1",
+          "type": "icon",
+          "icon": "sparkles",
+          "x": 560,
+          "y": 560,
+          "size": 120,
+          "color": "pink",
+          "label": "“the best!”"
+        },
+        {
+          "id": "claim2",
+          "type": "icon",
+          "icon": "sparkles",
+          "x": 960,
+          "y": 560,
+          "size": 120,
+          "color": "pink",
+          "label": "“no, the best!”"
+        },
+        {
+          "id": "claim3",
+          "type": "icon",
+          "icon": "sparkles",
+          "x": 1360,
+          "y": 560,
+          "size": 120,
+          "color": "pink",
+          "label": "“actually the best!”"
+        },
+        {
+          "id": "q1",
+          "type": "text",
+          "text": "whose data?",
+          "x": 560,
+          "y": 800,
+          "size": 44,
+          "color": "yellow"
+        },
+        {
+          "id": "q2",
+          "type": "text",
+          "text": "which job?",
+          "x": 960,
+          "y": 800,
+          "size": 44,
+          "color": "yellow"
+        },
+        {
+          "id": "q3",
+          "type": "text",
+          "text": "what price?",
+          "x": 1360,
+          "y": 800,
+          "size": 44,
+          "color": "yellow"
+        },
+        {
+          "id": "ours",
+          "type": "text",
+          "text": "our own data · our own rules",
+          "x": 960,
+          "y": 960,
+          "size": 52,
+          "color": "green"
+        }
+      ],
+      "beats": [
+        {
+          "title": "A new “best” every week",
+          "cue": 0,
+          "notes": "Every week a new AI model claims to be the best.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "title"
+            },
+            {
+              "do": "pop",
+              "target": [
+                "claim1",
+                "claim2",
+                "claim3"
+              ],
+              "stagger": 0.4
+            }
+          ]
+        },
+        {
+          "title": "Best for what?",
+          "cue": 5,
+          "notes": "But best on whose data? Best for which job? And best at what price?",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "q1",
+                "q2",
+                "q3"
+              ],
+              "stagger": 1.2
+            }
+          ]
+        },
+        {
+          "title": "Why we built LLM Lab",
+          "cue": 14,
+          "notes": "We built LLM Lab so we can answer those questions ourselves, with our own data and by our own rules.",
+          "actions": [
+            {
+              "do": "pulse",
+              "target": "title"
+            },
+            {
+              "do": "draw",
+              "target": "ours"
+            },
+            {
+              "do": "circle",
+              "target": "ours",
+              "color": "green"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "problem",
+      "title": "The problem",
+      "layout": "pip",
+      "elements": [
+        {
+          "id": "p-head",
+          "type": "text",
+          "text": "HOW MODELS GET CHOSEN",
+          "style": "bold",
+          "x": 960,
+          "y": 90,
+          "size": 64,
+          "color": "white"
+        },
+        {
+          "id": "p-badge",
+          "type": "text",
+          "text": "“#1 on the benchmark!”",
+          "x": 420,
+          "y": 220,
+          "size": 36,
+          "color": "yellow"
+        },
+        {
+          "id": "p-board",
+          "type": "icon",
+          "icon": "world",
+          "x": 420,
+          "y": 390,
+          "size": 130,
+          "color": "pink",
+          "label": "public leaderboard"
+        },
+        {
+          "id": "p-deck",
+          "type": "icon",
+          "icon": "file",
+          "x": 960,
+          "y": 390,
+          "size": 130,
+          "color": "pink",
+          "label": "vendor sales deck"
+        },
+        {
+          "id": "p-team",
+          "type": "icon",
+          "icon": "users",
+          "x": 1500,
+          "y": 390,
+          "size": 130,
+          "color": "pink",
+          "label": "first team's pick"
+        },
+        {
+          "id": "p-choice",
+          "type": "box",
+          "x": 960,
+          "y": 760,
+          "width": 420,
+          "height": 130,
+          "color": "white",
+          "label": "our model choice"
+        },
+        {
+          "id": "p-a1",
+          "type": "arrow",
+          "from": "p-board",
+          "to": "p-choice",
+          "color": "pink"
+        },
+        {
+          "id": "p-a2",
+          "type": "arrow",
+          "from": "p-deck",
+          "to": "p-choice",
+          "color": "pink"
+        },
+        {
+          "id": "p-a3",
+          "type": "arrow",
+          "from": "p-team",
+          "to": "p-choice",
+          "color": "pink"
+        },
+        {
+          "id": "p-weak",
+          "type": "text",
+          "text": "the test wasn't ours",
+          "x": 960,
+          "y": 960,
+          "size": 60,
+          "color": "pink"
+        }
+      ],
+      "beats": [
+        {
+          "title": "Three ways to choose",
+          "cue": 25,
+          "notes": "Most companies choose models in one of three ways: a public leaderboard, a vendor’s sales deck, or whatever the first team happened to use.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "p-head"
+            },
+            {
+              "do": "draw",
+              "target": [
+                "p-board",
+                "p-badge",
+                "p-deck",
+                "p-team"
+              ],
+              "stagger": 0.8
+            },
+            {
+              "do": "draw",
+              "target": "p-choice"
+            },
+            {
+              "do": "draw",
+              "target": [
+                "p-a1",
+                "p-a2",
+                "p-a3"
+              ],
+              "stagger": 0.3
+            },
+            {
+              "do": "flow",
+              "target": [
+                "p-a1",
+                "p-a2",
+                "p-a3"
+              ]
+            }
+          ]
+        },
+        {
+          "title": "One shared weakness",
+          "cue": 35,
+          "notes": "All three share one weakness: the test wasn’t ours.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "p-weak"
+            },
+            {
+              "do": "circle",
+              "target": "p-weak",
+              "color": "yellow"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "their-test",
+      "title": "Someone else's test",
+      "layout": "pip",
+      "elements": [
+        {
+          "id": "t-head",
+          "type": "text",
+          "text": "SOMEONE ELSE'S TEST",
+          "style": "bold",
+          "x": 960,
+          "y": 90,
+          "size": 64,
+          "color": "white"
+        },
+        {
+          "id": "t-others",
+          "type": "text",
+          "text": "their documents · their languages · their idea of “good”",
+          "x": 960,
+          "y": 230,
+          "size": 46,
+          "color": "pink"
+        },
+        {
+          "id": "t-lang",
+          "type": "chart",
+          "kind": "bar",
+          "x": 380,
+          "y": 660,
+          "width": 520,
+          "height": 440,
+          "color": "cyan",
+          "title": "same model, quality",
+          "max": 100,
+          "values": false,
+          "data": [
+            {
+              "label": "English",
+              "value": 92,
+              "color": "green"
+            },
+            {
+              "label": "Polish tickets",
+              "value": 61,
+              "color": "pink"
+            }
+          ]
+        },
+        {
+          "id": "t-qual",
+          "type": "chart",
+          "kind": "bar",
+          "x": 960,
+          "y": 660,
+          "width": 480,
+          "height": 440,
+          "color": "cyan",
+          "title": "quality",
+          "max": 100,
+          "data": [
+            {
+              "label": "model A",
+              "value": 88
+            },
+            {
+              "label": "model B",
+              "value": 90
+            }
+          ]
+        },
+        {
+          "id": "t-cost",
+          "type": "chart",
+          "kind": "bar",
+          "x": 1540,
+          "y": 660,
+          "width": 480,
+          "height": 440,
+          "color": "orange",
+          "title": "cost per 1k tasks",
+          "unit": "×",
+          "data": [
+            {
+              "label": "model A",
+              "value": 1,
+              "color": "green"
+            },
+            {
+              "label": "model B",
+              "value": 30,
+              "color": "orange"
+            }
+          ]
+        },
+        {
+          "id": "t-note",
+          "type": "text",
+          "text": "illustrative numbers",
+          "x": 960,
+          "y": 1020,
+          "size": 30,
+          "color": "white"
+        },
+        {
+          "id": "t-prod",
+          "type": "icon",
+          "icon": "server",
+          "x": 680,
+          "y": 580,
+          "size": 150,
+          "color": "green",
+          "label": "in production"
+        },
+        {
+          "id": "t-new",
+          "type": "icon",
+          "icon": "sparkles",
+          "x": 1260,
+          "y": 580,
+          "size": 150,
+          "color": "yellow",
+          "label": "still the right choice?"
+        },
+        {
+          "id": "t-check",
+          "type": "arrow",
+          "from": "t-prod",
+          "to": "t-new",
+          "line": "dotted",
+          "color": "white",
+          "label": "nobody re-checks"
+        }
+      ],
+      "beats": [
+        {
+          "title": "Someone else's data",
+          "cue": 40,
+          "notes": "A public benchmark measures someone else’s documents, someone else’s languages and someone else’s idea of “good”.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "t-head"
+            },
+            {
+              "do": "draw",
+              "target": "t-others"
+            }
+          ]
+        },
+        {
+          "title": "English vs Polish",
+          "cue": 48,
+          "notes": "A model that tops the charts in English may struggle with Polish support tickets.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "t-lang",
+                "t-note"
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Two points, thirty times the price",
+          "cue": 55,
+          "notes": "A model that’s two points better might cost thirty times more.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "t-qual"
+            },
+            {
+              "do": "draw",
+              "target": "t-cost"
+            },
+            {
+              "do": "circle",
+              "target": "t-cost",
+              "color": "orange"
+            }
+          ]
+        },
+        {
+          "title": "Nobody re-checks",
+          "cue": 63,
+          "notes": "And once a model is in production, nobody checks whether it’s still the right choice.",
+          "actions": [
+            {
+              "do": "erase",
+              "target": [
+                "t-lang",
+                "t-qual",
+                "t-cost",
+                "t-cost-circle",
+                "t-note",
+                "t-others"
+              ],
+              "stagger": 0.1
+            },
+            {
+              "do": "draw",
+              "target": [
+                "t-prod",
+                "t-check",
+                "t-new"
+              ],
+              "stagger": 0.7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sovereignty",
+      "title": "Sovereignty",
+      "layout": "pip",
+      "elements": [
+        {
+          "id": "s-head",
+          "type": "text",
+          "text": "SOVEREIGNTY",
+          "style": "bold",
+          "x": 960,
+          "y": 90,
+          "size": 68,
+          "color": "white"
+        },
+        {
+          "id": "s-sub",
+          "type": "text",
+          "text": "we don't build the models. we own the decision.",
+          "x": 960,
+          "y": 180,
+          "size": 42,
+          "color": "white"
+        },
+        {
+          "id": "line-data",
+          "type": "text",
+          "text": "OUR DATA.",
+          "style": "bold",
+          "x": 360,
+          "y": 320,
+          "size": 56,
+          "color": "green"
+        },
+        {
+          "id": "line-crit",
+          "type": "text",
+          "text": "OUR CRITERIA.",
+          "style": "bold",
+          "x": 360,
+          "y": 540,
+          "size": 56,
+          "color": "yellow"
+        },
+        {
+          "id": "line-dec",
+          "type": "text",
+          "text": "OUR DECISION.",
+          "style": "bold",
+          "x": 360,
+          "y": 760,
+          "size": 56,
+          "color": "cyan"
+        },
+        {
+          "id": "d-cases",
+          "type": "icon",
+          "icon": "file",
+          "x": 800,
+          "y": 310,
+          "size": 90,
+          "color": "green",
+          "label": "real cases"
+        },
+        {
+          "id": "d-repo",
+          "type": "icon",
+          "icon": "database",
+          "x": 1150,
+          "y": 310,
+          "size": 90,
+          "color": "green",
+          "label": "our repository"
+        },
+        {
+          "id": "d-arrow",
+          "type": "arrow",
+          "from": "d-cases",
+          "to": "d-repo",
+          "color": "green"
+        },
+        {
+          "id": "d-review",
+          "type": "text",
+          "text": "reviewed like code",
+          "style": "code",
+          "x": 1580,
+          "y": 310,
+          "size": 38,
+          "color": "green"
+        },
+        {
+          "id": "crit-pii",
+          "type": "text",
+          "text": "personal data: high bar\n(a miss = compliance incident)",
+          "x": 720,
+          "y": 540,
+          "size": 36,
+          "align": "start",
+          "color": "pink"
+        },
+        {
+          "id": "crit-search",
+          "type": "text",
+          "text": "product search:\nthe bar can be lower",
+          "x": 1400,
+          "y": 540,
+          "size": 36,
+          "align": "start",
+          "color": "cyan"
+        },
+        {
+          "id": "dec-api",
+          "type": "icon",
+          "icon": "cloud",
+          "x": 790,
+          "y": 750,
+          "size": 90,
+          "color": "white",
+          "label": "API model"
+        },
+        {
+          "id": "dec-self",
+          "type": "icon",
+          "icon": "server",
+          "x": 1090,
+          "y": 750,
+          "size": 90,
+          "color": "white",
+          "label": "self-hosted"
+        },
+        {
+          "id": "dec-tests",
+          "type": "box",
+          "x": 1560,
+          "y": 750,
+          "width": 300,
+          "height": 110,
+          "color": "cyan",
+          "label": "same tests"
+        },
+        {
+          "id": "dec-a1",
+          "type": "arrow",
+          "from": "dec-api",
+          "to": "dec-tests",
+          "curve": 0.3,
+          "color": "cyan"
+        },
+        {
+          "id": "dec-a2",
+          "type": "arrow",
+          "from": "dec-self",
+          "to": "dec-tests",
+          "color": "cyan"
+        },
+        {
+          "id": "dec-plan",
+          "type": "text",
+          "text": "price hike or new terms? we already know plan B and its cost",
+          "x": 1250,
+          "y": 950,
+          "size": 38,
+          "color": "orange"
+        }
+      ],
+      "beats": [
+        {
+          "title": "Our data. Our criteria. Our decision.",
+          "cue": 70,
+          "notes": "That’s what sovereignty means here. We’re not building our own models. We’re owning the decision.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "s-head"
+            },
+            {
+              "do": "draw",
+              "target": [
+                "line-data",
+                "line-crit",
+                "line-dec"
+              ],
+              "stagger": 1
+            },
+            {
+              "do": "draw",
+              "target": "s-sub"
+            }
+          ]
+        },
+        {
+          "title": "Our data",
+          "cue": 80,
+          "notes": "Our data. The test cases come from our own work: real support questions, real contracts, real tickets. They live in our own repository and get reviewed like code.",
+          "actions": [
+            {
+              "do": "pulse",
+              "target": "line-data"
+            },
+            {
+              "do": "draw",
+              "target": [
+                "d-cases",
+                "d-arrow",
+                "d-repo"
+              ],
+              "stagger": 0.7
+            },
+            {
+              "do": "flow",
+              "target": "d-arrow"
+            },
+            {
+              "do": "draw",
+              "target": "d-review"
+            }
+          ]
+        },
+        {
+          "title": "Our criteria",
+          "cue": 92,
+          "notes": "Our criteria. We decide what “good enough” means. For detecting personal data the bar is high, because a miss is a compliance incident. For product search it can be lower.",
+          "actions": [
+            {
+              "do": "pulse",
+              "target": "line-crit"
+            },
+            {
+              "do": "draw",
+              "target": "crit-pii"
+            },
+            {
+              "do": "draw",
+              "target": "crit-search",
+              "delay": 1
+            }
+          ]
+        },
+        {
+          "title": "Our decision",
+          "cue": 103,
+          "notes": "Our decision. A model we call through an API and a model we host ourselves face exactly the same tests. If a provider raises prices or changes its terms, we already know our next-best option and what it costs.",
+          "actions": [
+            {
+              "do": "pulse",
+              "target": "line-dec"
+            },
+            {
+              "do": "draw",
+              "target": [
+                "dec-api",
+                "dec-self"
+              ],
+              "stagger": 0.5
+            },
+            {
+              "do": "draw",
+              "target": "dec-tests"
+            },
+            {
+              "do": "draw",
+              "target": [
+                "dec-a1",
+                "dec-a2"
+              ],
+              "stagger": 0.3
+            },
+            {
+              "do": "flow",
+              "target": [
+                "dec-a1",
+                "dec-a2"
+              ]
+            },
+            {
+              "do": "draw",
+              "target": "dec-plan",
+              "delay": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "what-we-test",
+      "title": "What we test",
+      "layout": "pip",
+      "elements": [
+        {
+          "id": "w-head",
+          "type": "text",
+          "text": "WHAT WE TEST",
+          "style": "bold",
+          "x": 960,
+          "y": 90,
+          "size": 68,
+          "color": "white"
+        },
+        {
+          "id": "w-sub",
+          "type": "text",
+          "text": "building blocks behind search, assistants and automation",
+          "x": 960,
+          "y": 190,
+          "size": 42,
+          "color": "white"
+        },
+        {
+          "id": "emb",
+          "type": "icon",
+          "icon": "file",
+          "x": 300,
+          "y": 420,
+          "size": 130,
+          "color": "cyan",
+          "label": "embedding"
+        },
+        {
+          "id": "emb-desc",
+          "type": "text",
+          "text": "text → numbers,\nfind matching documents",
+          "x": 300,
+          "y": 650,
+          "size": 34,
+          "color": "cyan"
+        },
+        {
+          "id": "emb-code",
+          "type": "text",
+          "text": "[0.12, -0.83, 0.40, …]",
+          "style": "code",
+          "x": 300,
+          "y": 780,
+          "size": 28,
+          "color": "cyan"
+        },
+        {
+          "id": "chunk",
+          "type": "icon",
+          "icon": "queue",
+          "x": 740,
+          "y": 420,
+          "size": 130,
+          "color": "green",
+          "label": "chunking"
+        },
+        {
+          "id": "chunk-desc",
+          "type": "text",
+          "text": "long documents →\npieces that make sense\non their own",
+          "x": 740,
+          "y": 670,
+          "size": 34,
+          "color": "green"
+        },
+        {
+          "id": "rerank",
+          "type": "icon",
+          "icon": "sparkles",
+          "x": 1180,
+          "y": 420,
+          "size": 130,
+          "color": "orange",
+          "label": "reranking"
+        },
+        {
+          "id": "rerank-desc",
+          "type": "text",
+          "text": "top search results →\nbest answer first",
+          "x": 1180,
+          "y": 650,
+          "size": 34,
+          "color": "orange"
+        },
+        {
+          "id": "cls",
+          "type": "icon",
+          "icon": "robot",
+          "x": 1620,
+          "y": 420,
+          "size": 130,
+          "color": "pink",
+          "label": "classification"
+        },
+        {
+          "id": "cls-desc",
+          "type": "text",
+          "text": "what does the customer want?\nhow urgent is it?\npersonal data inside?",
+          "x": 1620,
+          "y": 670,
+          "size": 34,
+          "color": "pink"
+        },
+        {
+          "id": "more",
+          "type": "box",
+          "x": 960,
+          "y": 940,
+          "width": 520,
+          "height": 100,
+          "line": "dashed",
+          "color": "white",
+          "label": "+ more categories"
+        }
+      ],
+      "beats": [
+        {
+          "title": "Four types of models",
+          "cue": 115,
+          "notes": "We’re starting with four types of models, the building blocks behind search, assistants and automation:",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "w-head",
+                "w-sub"
+              ],
+              "stagger": 0.6
+            }
+          ]
+        },
+        {
+          "title": "Embedding",
+          "cue": 123,
+          "notes": "Embedding models turn text into numbers, so we can find the documents that match a question.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "emb",
+                "emb-desc",
+                "emb-code"
+              ],
+              "stagger": 0.6
+            }
+          ]
+        },
+        {
+          "title": "Chunking",
+          "cue": 130,
+          "notes": "Chunking splits long documents into pieces that make sense on their own.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "chunk",
+                "chunk-desc"
+              ],
+              "stagger": 0.6
+            }
+          ]
+        },
+        {
+          "title": "Reranking",
+          "cue": 136,
+          "notes": "Reranking takes the top search results and puts the best answer first.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "rerank",
+                "rerank-desc"
+              ],
+              "stagger": 0.6
+            }
+          ]
+        },
+        {
+          "title": "Classification",
+          "cue": 142,
+          "notes": "Classification sorts incoming items: what the customer wants, how urgent it is, whether the message contains personal data.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "cls",
+                "cls-desc"
+              ],
+              "stagger": 0.6
+            }
+          ]
+        },
+        {
+          "title": "Built to grow",
+          "cue": 150,
+          "notes": "More categories will follow. The lab is built to grow.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "more"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scene-12",
+      "title": "Scene 12",
+      "elements": [
+        {
+          "id": "embedding-chunking",
+          "type": "iso",
+          "model": "embedding-chunking",
+          "x": 960,
+          "y": 560,
+          "scale": 195,
+          "color": "cyan",
+          "visible": false
+        },
+        {
+          "id": "rag-head",
+          "type": "text",
+          "text": "WHERE THEY RUN IN RAG",
+          "style": "bold",
+          "x": 960,
+          "y": 70,
+          "size": 60,
+          "color": "white",
+          "visible": false
+        },
+        {
+          "id": "lane-index",
+          "type": "text",
+          "text": "INDEXING · offline",
+          "x": 260,
+          "y": 330,
+          "size": 36,
+          "color": "white",
+          "visible": false
+        },
+        {
+          "id": "lane-query",
+          "type": "text",
+          "text": "QUERY · live",
+          "x": 260,
+          "y": 830,
+          "size": 36,
+          "color": "white",
+          "visible": false
+        },
+        {
+          "id": "a-chunk",
+          "type": "area",
+          "x": 776,
+          "y": 583,
+          "width": 260,
+          "height": 230,
+          "shape": "ellipse"
+        },
+        {
+          "id": "a-emb-idx",
+          "type": "area",
+          "x": 875,
+          "y": 490,
+          "width": 240,
+          "height": 230,
+          "shape": "ellipse"
+        },
+        {
+          "id": "a-vdb",
+          "type": "area",
+          "x": 1091,
+          "y": 438,
+          "width": 260,
+          "height": 260,
+          "shape": "ellipse"
+        },
+        {
+          "id": "a-emb-q",
+          "type": "area",
+          "x": 820,
+          "y": 700,
+          "width": 220,
+          "height": 200,
+          "shape": "ellipse"
+        },
+        {
+          "id": "a-rerank",
+          "type": "area",
+          "x": 1216,
+          "y": 381,
+          "width": 260,
+          "height": 220,
+          "shape": "ellipse"
+        },
+        {
+          "id": "a-llm",
+          "type": "area",
+          "x": 1350,
+          "y": 493,
+          "width": 260,
+          "height": 240,
+          "shape": "ellipse"
+        },
+        {
+          "id": "l-chunk",
+          "type": "text",
+          "text": "1 CHUNKING",
+          "x": 711,
+          "y": 454,
+          "size": 36,
+          "color": "pink",
+          "visible": false
+        },
+        {
+          "id": "l-emb-idx",
+          "type": "text",
+          "text": "2 EMBEDDING",
+          "x": 860,
+          "y": 302,
+          "size": 36,
+          "color": "cyan",
+          "visible": false
+        },
+        {
+          "id": "l-vdb",
+          "type": "text",
+          "text": "VECTOR DB",
+          "x": 1068,
+          "y": 214,
+          "size": 36,
+          "color": "green",
+          "visible": false
+        },
+        {
+          "id": "l-rerank",
+          "type": "text",
+          "text": "4 RERANKING",
+          "x": 1343,
+          "y": 243,
+          "size": 34,
+          "color": "yellow",
+          "visible": false
+        },
+        {
+          "id": "l-llm",
+          "type": "text",
+          "text": "LLM",
+          "x": 1429,
+          "y": 676,
+          "size": 34,
+          "color": "orange",
+          "visible": false
+        }
+      ],
+      "beats": [
+        {
+          "title": "RAG in one picture",
+          "notes": "This is a RAG system: retrieval-augmented generation. It has two lanes. At the back, indexing happens offline, before anyone asks anything. At the front, a question comes in and gets answered live. Our three model types sit in exactly these two lanes.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "rag-head"
+            },
+            {
+              "do": "draw",
+              "target": "embedding-chunking",
+              "duration": 3
+            },
+            {
+              "do": "fade-in",
+              "target": [
+                "lane-index",
+                "lane-query"
+              ],
+              "stagger": 0.4
+            }
+          ]
+        },
+        {
+          "title": "Chunking: cut the documents",
+          "notes": "First, chunking. In the indexing lane, our documents are cut into small pieces that make sense on their own. Without good chunks, the system can only retrieve half a thought.",
+          "actions": [
+            {
+              "do": "camera",
+              "focus": [
+                "a-chunk",
+                "l-chunk"
+              ],
+              "padding": 260
+            },
+            {
+              "do": "spotlight",
+              "target": "a-chunk",
+              "start": "with"
+            },
+            {
+              "do": "fade-in",
+              "target": "l-chunk"
+            },
+            {
+              "do": "circle",
+              "target": "a-chunk",
+              "color": "pink"
+            }
+          ]
+        },
+        {
+          "title": "Embedding: chunks become vectors",
+          "notes": "Next, embedding. Each chunk is turned into a vector, a list of numbers that captures its meaning, and stored in the vector database. This is still offline work, done once and updated when documents change.",
+          "actions": [
+            {
+              "do": "camera",
+              "focus": [
+                "a-emb-idx",
+                "a-vdb",
+                "l-emb-idx",
+                "l-vdb"
+              ],
+              "padding": 200
+            },
+            {
+              "do": "spotlight",
+              "target": "a-emb-idx",
+              "start": "with"
+            },
+            {
+              "do": "fade-in",
+              "target": "l-emb-idx"
+            },
+            {
+              "do": "circle",
+              "target": "a-emb-idx",
+              "color": "cyan"
+            },
+            {
+              "do": "fade-in",
+              "target": "l-vdb",
+              "delay": 0.5
+            }
+          ]
+        },
+        {
+          "title": "Embedding again, at query time",
+          "notes": "Now a user asks a question. The same embedding model turns the question into a vector, and the vector database returns the chunks closest to it. That is why the embedding model must be the same at both ends.",
+          "actions": [
+            {
+              "do": "camera",
+              "focus": [
+                "a-emb-q",
+                "a-vdb"
+              ],
+              "padding": 220
+            },
+            {
+              "do": "spotlight",
+              "target": [
+                "a-emb-q",
+                "a-vdb"
+              ],
+              "start": "with"
+            },
+            {
+              "do": "circle",
+              "target": "a-emb-q",
+              "color": "cyan"
+            }
+          ]
+        },
+        {
+          "title": "Reranking: best chunk first",
+          "notes": "Search returns many candidates, and the best one is not always on top. Reranking looks at them again and sorts them by relevance, so the model sees the strongest evidence first.",
+          "actions": [
+            {
+              "do": "camera",
+              "focus": [
+                "a-rerank",
+                "l-rerank"
+              ],
+              "padding": 260
+            },
+            {
+              "do": "spotlight",
+              "target": "a-rerank",
+              "start": "with"
+            },
+            {
+              "do": "fade-in",
+              "target": "l-rerank"
+            },
+            {
+              "do": "circle",
+              "target": "a-rerank",
+              "color": "yellow"
+            }
+          ]
+        },
+        {
+          "title": "The LLM writes the answer",
+          "notes": "Finally the top chunks go to the large language model, which writes the answer. Chunking, embedding and reranking decide what the model gets to read, so each of them is worth testing on our own data.",
+          "actions": [
+            {
+              "do": "camera",
+              "focus": [
+                "a-llm",
+                "l-llm"
+              ],
+              "padding": 260
+            },
+            {
+              "do": "spotlight",
+              "target": "a-llm",
+              "start": "with"
+            },
+            {
+              "do": "fade-in",
+              "target": "l-llm"
+            },
+            {
+              "do": "wait",
+              "duration": 1.5
+            },
+            {
+              "do": "spotlight",
+              "target": "a-llm",
+              "on": false
+            },
+            {
+              "do": "camera",
+              "focus": "all",
+              "padding": 120
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "recommendations",
+      "title": "Recommendations",
+      "layout": "pip",
+      "elements": [
+        {
+          "id": "r-head",
+          "type": "text",
+          "text": "RECOMMENDATIONS",
+          "style": "bold",
+          "x": 960,
+          "y": 90,
+          "size": 64,
+          "color": "white"
+        },
+        {
+          "id": "m-q",
+          "type": "box",
+          "x": 520,
+          "y": 330,
+          "width": 380,
+          "height": 120,
+          "color": "green",
+          "label": "quality (our tests)"
+        },
+        {
+          "id": "m-cost",
+          "type": "box",
+          "x": 960,
+          "y": 330,
+          "width": 380,
+          "height": 120,
+          "color": "orange",
+          "label": "cost per 1k tasks"
+        },
+        {
+          "id": "m-speed",
+          "type": "box",
+          "x": 1400,
+          "y": 330,
+          "width": 380,
+          "height": 120,
+          "color": "cyan",
+          "label": "speed"
+        },
+        {
+          "id": "left-out",
+          "type": "text",
+          "text": "everything else: left out",
+          "x": 960,
+          "y": 540,
+          "size": 44,
+          "color": "white"
+        },
+        {
+          "id": "a-best",
+          "type": "box",
+          "x": 300,
+          "y": 760,
+          "width": 340,
+          "height": 120,
+          "color": "green",
+          "label": "best quality"
+        },
+        {
+          "id": "a-value",
+          "type": "box",
+          "x": 740,
+          "y": 760,
+          "width": 340,
+          "height": 120,
+          "color": "yellow",
+          "label": "best value"
+        },
+        {
+          "id": "a-cheap",
+          "type": "box",
+          "x": 1180,
+          "y": 760,
+          "width": 340,
+          "height": 120,
+          "color": "orange",
+          "label": "cheapest"
+        },
+        {
+          "id": "a-fast",
+          "type": "box",
+          "x": 1620,
+          "y": 760,
+          "width": 340,
+          "height": 120,
+          "color": "cyan",
+          "label": "fastest"
+        },
+        {
+          "id": "ar1",
+          "type": "arrow",
+          "from": "m-q",
+          "to": "a-best",
+          "color": "green"
+        },
+        {
+          "id": "ar2",
+          "type": "arrow",
+          "from": "m-q",
+          "to": "a-value",
+          "color": "green"
+        },
+        {
+          "id": "ar3",
+          "type": "arrow",
+          "from": "m-cost",
+          "to": "a-value",
+          "color": "orange"
+        },
+        {
+          "id": "ar4",
+          "type": "arrow",
+          "from": "m-cost",
+          "to": "a-cheap",
+          "color": "orange"
+        },
+        {
+          "id": "ar5",
+          "type": "arrow",
+          "from": "m-speed",
+          "to": "a-fast",
+          "color": "cyan"
+        },
+        {
+          "id": "r-every",
+          "type": "text",
+          "text": "for every category",
+          "x": 960,
+          "y": 950,
+          "size": 44,
+          "color": "yellow"
+        }
+      ],
+      "beats": [
+        {
+          "title": "Three numbers",
+          "cue": 155,
+          "notes": "Every model gets just three numbers: quality on our tests, cost per thousand tasks, and speed.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "r-head"
+            },
+            {
+              "do": "draw",
+              "target": [
+                "m-q",
+                "m-cost",
+                "m-speed"
+              ],
+              "stagger": 0.8
+            }
+          ]
+        },
+        {
+          "title": "Everything else left out",
+          "cue": 163,
+          "notes": "We left out everything else, because those three are what we actually choose on.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "left-out"
+            },
+            {
+              "do": "circle",
+              "target": [
+                "m-q",
+                "m-cost",
+                "m-speed"
+              ],
+              "color": "yellow",
+              "id": "three-circle"
+            }
+          ]
+        },
+        {
+          "title": "Four answers",
+          "cue": 169,
+          "notes": "From them, the lab gives four answers for every category: best quality, best value, cheapest and fastest.",
+          "actions": [
+            {
+              "do": "erase",
+              "target": [
+                "left-out",
+                "three-circle"
+              ]
+            },
+            {
+              "do": "draw",
+              "target": [
+                "ar1",
+                "ar2",
+                "ar3",
+                "ar4",
+                "ar5"
+              ],
+              "stagger": 0.15
+            },
+            {
+              "do": "pop",
+              "target": [
+                "a-best",
+                "a-value",
+                "a-cheap",
+                "a-fast"
+              ],
+              "stagger": 0.5
+            },
+            {
+              "do": "draw",
+              "target": "r-every"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "classification",
+      "title": "Classification ranking",
+      "layout": "pip",
+      "elements": [
+        {
+          "id": "c-head",
+          "type": "text",
+          "text": "CLASSIFICATION",
+          "style": "bold",
+          "x": 960,
+          "y": 80,
+          "size": 60,
+          "color": "white"
+        },
+        {
+          "id": "ax-y",
+          "type": "arrow",
+          "from": {
+            "x": 200,
+            "y": 860
+          },
+          "to": {
+            "x": 200,
+            "y": 170
+          },
+          "color": "white",
+          "label": "quality"
+        },
+        {
+          "id": "ax-x",
+          "type": "arrow",
+          "from": {
+            "x": 200,
+            "y": 860
+          },
+          "to": {
+            "x": 1120,
+            "y": 860
+          },
+          "color": "white",
+          "label": "cost"
+        },
+        {
+          "id": "dot-mb",
+          "type": "box",
+          "x": 300,
+          "y": 370,
+          "width": 34,
+          "height": 34,
+          "radius": 17,
+          "color": "green"
+        },
+        {
+          "id": "lab-mb",
+          "type": "text",
+          "text": "ModernBERT",
+          "x": 335,
+          "y": 370,
+          "size": 32,
+          "align": "start",
+          "color": "green"
+        },
+        {
+          "id": "dot-a",
+          "type": "box",
+          "x": 700,
+          "y": 300,
+          "width": 34,
+          "height": 34,
+          "radius": 17,
+          "color": "cyan"
+        },
+        {
+          "id": "lab-a",
+          "type": "text",
+          "text": "large model",
+          "x": 735,
+          "y": 300,
+          "size": 32,
+          "align": "start",
+          "color": "cyan"
+        },
+        {
+          "id": "dot-b",
+          "type": "box",
+          "x": 1000,
+          "y": 230,
+          "width": 34,
+          "height": 34,
+          "radius": 17,
+          "color": "cyan"
+        },
+        {
+          "id": "lab-b",
+          "type": "text",
+          "text": "premium model",
+          "x": 965,
+          "y": 230,
+          "size": 32,
+          "align": "end",
+          "color": "cyan"
+        },
+        {
+          "id": "dot-c",
+          "type": "box",
+          "x": 430,
+          "y": 620,
+          "width": 34,
+          "height": 34,
+          "radius": 17,
+          "color": "pink"
+        },
+        {
+          "id": "lab-c",
+          "type": "text",
+          "text": "cheap model",
+          "x": 465,
+          "y": 620,
+          "size": 32,
+          "align": "start",
+          "color": "pink"
+        },
+        {
+          "id": "better",
+          "type": "arrow",
+          "from": {
+            "x": 1040,
+            "y": 740
+          },
+          "to": {
+            "x": 860,
+            "y": 580
+          },
+          "color": "white",
+          "label": "better"
+        },
+        {
+          "id": "qbar",
+          "type": "arrow",
+          "from": {
+            "x": 200,
+            "y": 430
+          },
+          "to": {
+            "x": 1100,
+            "y": 430
+          },
+          "head": "none",
+          "line": "dashed",
+          "color": "yellow",
+          "label": "our quality bar"
+        },
+        {
+          "id": "not-rec",
+          "type": "text",
+          "text": "not recommended",
+          "x": 465,
+          "y": 670,
+          "size": 30,
+          "align": "start",
+          "color": "pink"
+        },
+        {
+          "id": "mb-card",
+          "type": "box",
+          "x": 1530,
+          "y": 260,
+          "width": 600,
+          "height": 100,
+          "color": "green",
+          "label": "ModernBERT (fine-tuned)"
+        },
+        {
+          "id": "mb-avg",
+          "type": "text",
+          "text": "average quality: looks great",
+          "x": 1530,
+          "y": 380,
+          "size": 36,
+          "color": "green"
+        },
+        {
+          "id": "mb-cost",
+          "type": "text",
+          "text": "cost: a tiny fraction",
+          "x": 1530,
+          "y": 445,
+          "size": 36,
+          "color": "green"
+        },
+        {
+          "id": "mb-pii",
+          "type": "text",
+          "text": "personal data: below our minimum",
+          "x": 1530,
+          "y": 520,
+          "size": 36,
+          "color": "pink"
+        },
+        {
+          "id": "mb-verdict",
+          "type": "text",
+          "text": "→ not our one classifier for everything",
+          "x": 1530,
+          "y": 600,
+          "size": 34,
+          "color": "yellow"
+        },
+        {
+          "id": "switch",
+          "type": "box",
+          "x": 1530,
+          "y": 760,
+          "width": 600,
+          "height": 90,
+          "color": "cyan",
+          "label": "Recommend for: Support intents"
+        },
+        {
+          "id": "intents",
+          "type": "text",
+          "text": "intent detection: cheapest + fastest",
+          "x": 1530,
+          "y": 880,
+          "size": 36,
+          "color": "green"
+        },
+        {
+          "id": "lesson",
+          "type": "text",
+          "text": "same data, a more precise question",
+          "x": 1530,
+          "y": 970,
+          "size": 36,
+          "color": "white"
+        }
+      ],
+      "beats": [
+        {
+          "title": "Quality against cost",
+          "cue": 176,
+          "notes": "Here’s classification. The chart shows quality against cost, and up and to the left is better.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "c-head"
+            },
+            {
+              "do": "draw",
+              "target": [
+                "ax-y",
+                "ax-x"
+              ],
+              "stagger": 0.4
+            },
+            {
+              "do": "pop",
+              "target": [
+                "dot-mb",
+                "dot-a",
+                "dot-b",
+                "dot-c"
+              ],
+              "stagger": 0.3
+            },
+            {
+              "do": "fade-in",
+              "target": [
+                "lab-mb",
+                "lab-a",
+                "lab-b",
+                "lab-c"
+              ],
+              "start": "with",
+              "stagger": 0.3
+            },
+            {
+              "do": "draw",
+              "target": "better"
+            }
+          ]
+        },
+        {
+          "title": "The quality bar",
+          "cue": 184,
+          "notes": "The dashed line is our quality bar. Anything below it isn’t recommended, however cheap it is.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "qbar"
+            },
+            {
+              "do": "circle",
+              "target": "dot-c",
+              "color": "pink"
+            },
+            {
+              "do": "draw",
+              "target": "not-rec"
+            }
+          ]
+        },
+        {
+          "title": "ModernBERT looks great",
+          "cue": 192,
+          "notes": "This fine-tuned model is a good example. On average it looks great, and it costs a tiny fraction of the alternatives.",
+          "actions": [
+            {
+              "do": "circle",
+              "target": "dot-mb",
+              "color": "green"
+            },
+            {
+              "do": "draw",
+              "target": "mb-card"
+            },
+            {
+              "do": "draw",
+              "target": [
+                "mb-avg",
+                "mb-cost"
+              ],
+              "stagger": 0.8
+            }
+          ]
+        },
+        {
+          "title": "But not on personal data",
+          "cue": 200,
+          "notes": "But on personal-data detection it falls below the minimum we set, so the lab won’t recommend it as our one classifier for everything.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "mb-pii"
+            },
+            {
+              "do": "pulse",
+              "target": "mb-pii"
+            },
+            {
+              "do": "draw",
+              "target": "mb-verdict"
+            }
+          ]
+        },
+        {
+          "title": "Support intents only",
+          "cue": 209,
+          "notes": "Now look at intent detection alone. Here it becomes the cheapest and fastest choice.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "switch"
+            },
+            {
+              "do": "draw",
+              "target": "intents"
+            },
+            {
+              "do": "pulse",
+              "target": "dot-mb",
+              "times": 2
+            }
+          ]
+        },
+        {
+          "title": "Use it where it's strong",
+          "cue": 216,
+          "notes": "It’s the same data with a more precise question: use the model where it’s strong.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "lesson"
+            },
+            {
+              "do": "circle",
+              "target": "switch",
+              "color": "yellow"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ties",
+      "title": "Embedding ranking: ties",
+      "layout": "pip",
+      "elements": [
+        {
+          "id": "e-head",
+          "type": "text",
+          "text": "EMBEDDING RANKING",
+          "style": "bold",
+          "x": 960,
+          "y": 90,
+          "size": 64,
+          "color": "white"
+        },
+        {
+          "id": "e-sub",
+          "type": "text",
+          "text": "every score comes with a range",
+          "x": 960,
+          "y": 190,
+          "size": 44,
+          "color": "white"
+        },
+        {
+          "id": "n1",
+          "type": "text",
+          "text": "model X",
+          "x": 640,
+          "y": 400,
+          "size": 44,
+          "align": "end",
+          "color": "cyan"
+        },
+        {
+          "id": "n2",
+          "type": "text",
+          "text": "model Y",
+          "x": 640,
+          "y": 560,
+          "size": 44,
+          "align": "end",
+          "color": "green"
+        },
+        {
+          "id": "r1",
+          "type": "arrow",
+          "from": {
+            "x": 800,
+            "y": 400
+          },
+          "to": {
+            "x": 1160,
+            "y": 400
+          },
+          "head": "both",
+          "color": "cyan"
+        },
+        {
+          "id": "r2",
+          "type": "arrow",
+          "from": {
+            "x": 760,
+            "y": 560
+          },
+          "to": {
+            "x": 1120,
+            "y": 560
+          },
+          "head": "both",
+          "color": "green"
+        },
+        {
+          "id": "s1",
+          "type": "box",
+          "x": 980,
+          "y": 400,
+          "width": 34,
+          "height": 34,
+          "radius": 17,
+          "color": "cyan"
+        },
+        {
+          "id": "s2",
+          "type": "box",
+          "x": 940,
+          "y": 560,
+          "width": 34,
+          "height": 34,
+          "radius": 17,
+          "color": "green"
+        },
+        {
+          "id": "v1",
+          "type": "text",
+          "text": "82 ± 2",
+          "x": 1220,
+          "y": 400,
+          "size": 44,
+          "align": "start",
+          "color": "cyan"
+        },
+        {
+          "id": "v2",
+          "type": "text",
+          "text": "81 ± 2",
+          "x": 1220,
+          "y": 560,
+          "size": 44,
+          "align": "start",
+          "color": "green"
+        },
+        {
+          "id": "tie",
+          "type": "box",
+          "x": 1620,
+          "y": 480,
+          "width": 240,
+          "height": 130,
+          "weight": "bold",
+          "color": "yellow",
+          "label": "TIE"
+        },
+        {
+          "id": "decide",
+          "type": "text",
+          "text": "→ decide on cost or speed",
+          "x": 960,
+          "y": 800,
+          "size": 52,
+          "color": "orange"
+        },
+        {
+          "id": "not-real",
+          "type": "text",
+          "text": "don't pay for a difference that isn't real",
+          "x": 960,
+          "y": 910,
+          "size": 42,
+          "color": "white"
+        }
+      ],
+      "beats": [
+        {
+          "title": "Scores with ranges",
+          "cue": 222,
+          "notes": "The lab is also honest about uncertainty. Every score comes with a range.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "e-head",
+                "e-sub"
+              ],
+              "stagger": 0.5
+            },
+            {
+              "do": "draw",
+              "target": [
+                "n1",
+                "r1",
+                "n2",
+                "r2"
+              ],
+              "stagger": 0.4
+            },
+            {
+              "do": "pop",
+              "target": [
+                "s1",
+                "s2"
+              ],
+              "stagger": 0.2
+            },
+            {
+              "do": "draw",
+              "target": [
+                "v1",
+                "v2"
+              ],
+              "stagger": 0.3
+            }
+          ]
+        },
+        {
+          "title": "Within range = tie",
+          "cue": 228,
+          "notes": "When two models are within that range of each other, the lab calls it a tie",
+          "actions": [
+            {
+              "do": "circle",
+              "target": [
+                "r1",
+                "r2"
+              ],
+              "color": "yellow",
+              "id": "overlap"
+            },
+            {
+              "do": "pop",
+              "target": "tie"
+            }
+          ]
+        },
+        {
+          "title": "Decide on cost or speed",
+          "cue": 232,
+          "notes": "and tells us to decide on cost or speed, instead of paying for a difference that isn’t real.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "decide"
+            },
+            {
+              "do": "draw",
+              "target": "not-real"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "datasets",
+      "title": "Test sets and training sets",
+      "layout": "pip",
+      "elements": [
+        {
+          "id": "ds-head",
+          "type": "text",
+          "text": "THE DATA ITSELF",
+          "style": "bold",
+          "x": 960,
+          "y": 90,
+          "size": 64,
+          "color": "white"
+        },
+        {
+          "id": "ds-test",
+          "type": "icon",
+          "icon": "database",
+          "x": 560,
+          "y": 400,
+          "size": 150,
+          "color": "cyan",
+          "label": "test sets"
+        },
+        {
+          "id": "ds-score",
+          "type": "box",
+          "x": 560,
+          "y": 760,
+          "width": 340,
+          "height": 120,
+          "color": "cyan",
+          "label": "scoring only"
+        },
+        {
+          "id": "ds-a1",
+          "type": "arrow",
+          "from": "ds-test",
+          "to": "ds-score",
+          "color": "cyan"
+        },
+        {
+          "id": "ds-train",
+          "type": "icon",
+          "icon": "database",
+          "x": 1360,
+          "y": 400,
+          "size": 150,
+          "color": "orange",
+          "label": "training sets"
+        },
+        {
+          "id": "ds-tune",
+          "type": "box",
+          "x": 1360,
+          "y": 760,
+          "width": 340,
+          "height": 120,
+          "color": "orange",
+          "label": "fine-tuning only"
+        },
+        {
+          "id": "ds-a2",
+          "type": "arrow",
+          "from": "ds-train",
+          "to": "ds-tune",
+          "color": "orange"
+        },
+        {
+          "id": "ds-overlap",
+          "type": "arrow",
+          "from": "ds-test",
+          "to": "ds-train",
+          "head": "both",
+          "line": "dashed",
+          "color": "yellow",
+          "label": "checked for overlap"
+        },
+        {
+          "id": "ds-seen",
+          "type": "text",
+          "text": "no model scores higher because it has seen the answers",
+          "x": 960,
+          "y": 960,
+          "size": 42,
+          "color": "green"
+        }
+      ],
+      "beats": [
+        {
+          "title": "Test sets: scoring only",
+          "cue": 237,
+          "notes": "Finally, the data itself. Test sets are used only for scoring.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "ds-head"
+            },
+            {
+              "do": "draw",
+              "target": [
+                "ds-test",
+                "ds-a1",
+                "ds-score"
+              ],
+              "stagger": 0.6
+            },
+            {
+              "do": "flow",
+              "target": "ds-a1"
+            }
+          ]
+        },
+        {
+          "title": "Training sets: fine-tuning only",
+          "cue": 241,
+          "notes": "Training sets are used only for fine-tuning,",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "ds-train",
+                "ds-a2",
+                "ds-tune"
+              ],
+              "stagger": 0.6
+            },
+            {
+              "do": "flow",
+              "target": "ds-a2"
+            }
+          ]
+        },
+        {
+          "title": "Checked for overlap",
+          "cue": 245,
+          "notes": "and they’re checked for overlap with the test sets, so no model scores higher just because it has already seen the answers.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "ds-overlap"
+            },
+            {
+              "do": "draw",
+              "target": "ds-seen"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "why",
+      "title": "Why it matters",
+      "layout": "pip",
+      "elements": [
+        {
+          "id": "y-head",
+          "type": "text",
+          "text": "DECISIONS WE CAN EXPLAIN",
+          "style": "bold",
+          "x": 960,
+          "y": 90,
+          "size": 64,
+          "color": "white"
+        },
+        {
+          "id": "y-user",
+          "type": "icon",
+          "icon": "user",
+          "x": 260,
+          "y": 340,
+          "size": 130,
+          "color": "white",
+          "label": "someone asks"
+        },
+        {
+          "id": "y-q",
+          "type": "text",
+          "text": "“why this model?”",
+          "x": 640,
+          "y": 340,
+          "size": 52,
+          "color": "yellow"
+        },
+        {
+          "id": "y-bad",
+          "type": "text",
+          "text": "“it was top of a leaderboard”",
+          "x": 1400,
+          "y": 340,
+          "size": 44,
+          "color": "pink"
+        },
+        {
+          "id": "y-good",
+          "type": "text",
+          "text": "passed our tests\non our data\nat this price\n+ here's the evidence",
+          "x": 1400,
+          "y": 400,
+          "size": 42,
+          "color": "green"
+        },
+        {
+          "id": "y-new",
+          "type": "icon",
+          "icon": "sparkles",
+          "x": 300,
+          "y": 820,
+          "size": 120,
+          "color": "yellow",
+          "label": "new model"
+        },
+        {
+          "id": "y-add",
+          "type": "box",
+          "x": 760,
+          "y": 820,
+          "width": 240,
+          "height": 110,
+          "color": "cyan",
+          "label": "add it"
+        },
+        {
+          "id": "y-run",
+          "type": "box",
+          "x": 1160,
+          "y": 820,
+          "width": 240,
+          "height": 110,
+          "color": "cyan",
+          "label": "run it"
+        },
+        {
+          "id": "y-switch",
+          "type": "box",
+          "x": 1610,
+          "y": 820,
+          "width": 380,
+          "height": 110,
+          "color": "orange",
+          "label": "worth switching?"
+        },
+        {
+          "id": "y-a1",
+          "type": "arrow",
+          "from": "y-new",
+          "to": "y-add",
+          "color": "white"
+        },
+        {
+          "id": "y-a2",
+          "type": "arrow",
+          "from": "y-add",
+          "to": "y-run",
+          "color": "white"
+        },
+        {
+          "id": "y-a3",
+          "type": "arrow",
+          "from": "y-run",
+          "to": "y-switch",
+          "color": "white"
+        }
+      ],
+      "beats": [
+        {
+          "title": "Decisions we can explain",
+          "cue": 253,
+          "notes": "This gives us decisions we can explain.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "y-head"
+            }
+          ]
+        },
+        {
+          "title": "Not “top of a leaderboard”",
+          "cue": 257,
+          "notes": "When someone asks “why this model?”, the answer isn’t “it was top of a leaderboard”.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "y-user",
+                "y-q"
+              ],
+              "stagger": 0.6
+            },
+            {
+              "do": "draw",
+              "target": "y-bad"
+            }
+          ]
+        },
+        {
+          "title": "Our tests, our data, this price",
+          "cue": 263,
+          "notes": "It’s: it passed our tests, on our data, at this price, and here’s the evidence.",
+          "actions": [
+            {
+              "do": "erase",
+              "target": "y-bad"
+            },
+            {
+              "do": "draw",
+              "target": "y-good"
+            },
+            {
+              "do": "circle",
+              "target": "y-good",
+              "color": "green"
+            }
+          ]
+        },
+        {
+          "title": "New model? Run it.",
+          "cue": 270,
+          "notes": "And when a new model comes out, we add it, run it, and the lab shows us whether it’s worth switching.",
+          "actions": [
+            {
+              "do": "pop",
+              "target": "y-new"
+            },
+            {
+              "do": "draw",
+              "target": [
+                "y-a1",
+                "y-add",
+                "y-a2",
+                "y-run",
+                "y-a3",
+                "y-switch"
+              ],
+              "stagger": 0.5
+            },
+            {
+              "do": "flow",
+              "target": [
+                "y-a1",
+                "y-a2",
+                "y-a3"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "close",
+      "title": "Close",
+      "layout": "board",
+      "elements": [
+        {
+          "id": "c-title",
+          "type": "text",
+          "text": "LLM LAB",
+          "style": "bold",
+          "x": 960,
+          "y": 200,
+          "size": 130,
+          "color": "cyan"
+        },
+        {
+          "id": "now-h",
+          "type": "text",
+          "text": "TODAY",
+          "x": 520,
+          "y": 420,
+          "size": 44,
+          "color": "yellow"
+        },
+        {
+          "id": "now",
+          "type": "text",
+          "text": "working prototype\non example data",
+          "x": 520,
+          "y": 530,
+          "size": 44,
+          "color": "green"
+        },
+        {
+          "id": "next-h",
+          "type": "text",
+          "text": "NEXT",
+          "x": 1400,
+          "y": 420,
+          "size": 44,
+          "color": "yellow"
+        },
+        {
+          "id": "next",
+          "type": "text",
+          "text": "real evaluation runs\ncompare two models case by case",
+          "x": 1400,
+          "y": 530,
+          "size": 40,
+          "color": "cyan"
+        },
+        {
+          "id": "now-next",
+          "type": "arrow",
+          "from": "now",
+          "to": "next",
+          "line": "dashed",
+          "color": "white"
+        },
+        {
+          "id": "contrib",
+          "type": "icon",
+          "icon": "file",
+          "x": 640,
+          "y": 790,
+          "size": 120,
+          "color": "orange",
+          "label": "your test cases"
+        },
+        {
+          "id": "contrib-t",
+          "type": "text",
+          "text": "the most valuable thing\nyou can contribute",
+          "x": 1200,
+          "y": 790,
+          "size": 46,
+          "color": "orange"
+        },
+        {
+          "id": "thanks",
+          "type": "text",
+          "text": "thank you",
+          "x": 960,
+          "y": 1000,
+          "size": 64,
+          "color": "white"
+        }
+      ],
+      "beats": [
+        {
+          "title": "Working prototype",
+          "cue": 282,
+          "notes": "LLM Lab is a working prototype today, running on example data.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "c-title"
+            },
+            {
+              "do": "draw",
+              "target": [
+                "now-h",
+                "now"
+              ],
+              "stagger": 0.4
+            }
+          ]
+        },
+        {
+          "title": "Next steps",
+          "cue": 287,
+          "notes": "Next we’re connecting it to real evaluation runs and adding a way to compare two models case by case.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "now-next"
+            },
+            {
+              "do": "draw",
+              "target": [
+                "next-h",
+                "next"
+              ],
+              "stagger": 0.4
+            }
+          ]
+        },
+        {
+          "title": "Your test cases",
+          "cue": 293,
+          "notes": "If your team has examples of real work, test cases are the most valuable thing you can contribute.",
+          "actions": [
+            {
+              "do": "pop",
+              "target": "contrib"
+            },
+            {
+              "do": "draw",
+              "target": "contrib-t"
+            }
+          ]
+        },
+        {
+          "title": "Thank you",
+          "cue": 299,
+          "layout": "camera",
+          "notes": "Thank you.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "thanks"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

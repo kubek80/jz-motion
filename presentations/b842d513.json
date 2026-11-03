@@ -1,0 +1,1711 @@
+{
+  "version": 1,
+  "title": "jz-motion: explainers, fast (about this app)",
+  "scenes": [
+    {
+      "id": "title",
+      "title": "jz-motion",
+      "elements": [
+        {
+          "id": "logo",
+          "type": "icon",
+          "icon": "jz-logo",
+          "x": 960,
+          "y": 360,
+          "size": 760,
+          "color": "cyan"
+        },
+        {
+          "id": "headline",
+          "type": "text",
+          "text": "EXPLAINERS, FAST",
+          "x": 960,
+          "y": 720,
+          "size": 96,
+          "color": "cyan",
+          "style": "bold"
+        },
+        {
+          "id": "tagline",
+          "type": "text",
+          "text": "an LLM-first studio for explainer videos",
+          "x": 960,
+          "y": 850,
+          "size": 56,
+          "color": "yellow"
+        }
+      ],
+      "beats": [
+        {
+          "title": "Logo",
+          "notes": "Hi, I'm Jakub. This is jz-motion: the little studio I built to make explainer videos like this one.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "logo",
+              "duration": 2.4
+            }
+          ]
+        },
+        {
+          "title": "What it is",
+          "notes": "Everything you'll see here was drawn by it: a glowing marker board, animated beat by beat, with an LLM doing most of the work.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "headline",
+                "tagline"
+              ],
+              "stagger": 0.8
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "why",
+      "title": "Why I built it",
+      "elements": [
+        {
+          "id": "ideas",
+          "type": "icon",
+          "icon": "brain",
+          "x": 300,
+          "y": 330,
+          "size": 170,
+          "color": "yellow",
+          "label": "ideas"
+        },
+        {
+          "id": "notes",
+          "type": "icon",
+          "icon": "file",
+          "x": 760,
+          "y": 330,
+          "size": 150,
+          "color": "cyan",
+          "label": "a script"
+        },
+        {
+          "id": "a-notes",
+          "type": "arrow",
+          "from": "ideas",
+          "to": "notes",
+          "color": "white"
+        },
+        {
+          "id": "video",
+          "type": "text",
+          "text": "a video?",
+          "x": 1230,
+          "y": 330,
+          "size": 64,
+          "color": "pink"
+        },
+        {
+          "id": "a-video",
+          "type": "arrow",
+          "from": "notes",
+          "to": "video",
+          "color": "pink",
+          "line": "dashed"
+        },
+        {
+          "id": "never",
+          "type": "text",
+          "text": "never published",
+          "x": 1620,
+          "y": 330,
+          "size": 48,
+          "color": "orange"
+        },
+        {
+          "id": "ibm",
+          "type": "image",
+          "src": "/examples/about/inspiration-ibm.jpg",
+          "x": 960,
+          "y": 850,
+          "width": 1500,
+          "height": 248,
+          "color": "white"
+        },
+        {
+          "id": "ibm-label",
+          "type": "text",
+          "text": "inspiration: IBM Technology lightboard explainers",
+          "x": 960,
+          "y": 1030,
+          "size": 40,
+          "color": "white"
+        }
+      ],
+      "beats": [
+        {
+          "title": "Ideas",
+          "notes": "I have far more ideas than videos. I write notes, sometimes a full script…",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "ideas",
+                "a-notes",
+                "notes"
+              ],
+              "stagger": 0.6
+            }
+          ]
+        },
+        {
+          "title": "The gap",
+          "notes": "…and then it stops. Recording, drawing, editing, publishing: I never have the time, so the video never happens.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "a-video",
+                "video"
+              ],
+              "stagger": 0.4
+            },
+            {
+              "do": "draw",
+              "target": "never"
+            },
+            {
+              "do": "circle",
+              "target": "never",
+              "color": "pink"
+            }
+          ]
+        },
+        {
+          "title": "Inspiration",
+          "notes": "My inspiration was IBM Technology's lightboard explainers: one person, a glass board, neon diagrams. Clear, calm, and fast to follow.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "ibm"
+            },
+            {
+              "do": "draw",
+              "target": "ibm-label",
+              "start": "with",
+              "delay": 0.6
+            }
+          ]
+        },
+        {
+          "title": "The idea",
+          "notes": "So the question became: what if the board could draw itself, and a model could help me write it?",
+          "actions": [
+            {
+              "do": "spotlight",
+              "target": "ibm",
+              "style": "fade",
+              "amount": 0.6
+            },
+            {
+              "do": "pulse",
+              "target": "ideas"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "start",
+      "title": "Start with a sentence",
+      "elements": [
+        {
+          "id": "home",
+          "type": "image",
+          "src": "/examples/about/home.jpg",
+          "x": 960,
+          "y": 560,
+          "width": 1150,
+          "height": 719,
+          "frame": "browser",
+          "url": "localhost:5173",
+          "color": "cyan"
+        },
+        {
+          "id": "prompt",
+          "type": "area",
+          "x": 960,
+          "y": 468,
+          "width": 561,
+          "height": 106,
+          "shape": "rect",
+          "color": "yellow"
+        },
+        {
+          "id": "modes",
+          "type": "area",
+          "x": 772,
+          "y": 502,
+          "width": 175,
+          "height": 23,
+          "shape": "rect",
+          "color": "yellow"
+        },
+        {
+          "id": "model",
+          "type": "area",
+          "x": 1140,
+          "y": 502,
+          "width": 194,
+          "height": 26,
+          "shape": "rect",
+          "color": "yellow"
+        },
+        {
+          "id": "n-prompt",
+          "type": "text",
+          "text": "say what\nto explain",
+          "x": 1730,
+          "y": 300,
+          "size": 46,
+          "color": "yellow"
+        },
+        {
+          "id": "n-modes",
+          "type": "text",
+          "text": "a topic, a script\nor a recording",
+          "x": 1730,
+          "y": 520,
+          "size": 42,
+          "color": "pink"
+        },
+        {
+          "id": "n-model",
+          "type": "text",
+          "text": "a model\nfor each",
+          "x": 1730,
+          "y": 740,
+          "size": 46,
+          "color": "green"
+        }
+      ],
+      "beats": [
+        {
+          "title": "Home",
+          "notes": "It starts like a chat. One box in the middle of the screen.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "home"
+            }
+          ]
+        },
+        {
+          "title": "Prompt",
+          "notes": "I type what I want to explain, one sentence is enough, and a model drafts the whole presentation: scenes, drawings, beats and speaker notes.",
+          "actions": [
+            {
+              "do": "spotlight",
+              "target": "prompt",
+              "padding": 14
+            },
+            {
+              "do": "circle",
+              "target": "prompt",
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "n-prompt"
+            }
+          ]
+        },
+        {
+          "title": "Three ways in",
+          "notes": "I can start from a topic, from a script I already wrote, or from a recording: then it transcribes me and cues every beat to the moment I say it.",
+          "actions": [
+            {
+              "do": "spotlight",
+              "target": "modes",
+              "padding": 10
+            },
+            {
+              "do": "draw",
+              "target": "n-modes"
+            }
+          ]
+        },
+        {
+          "title": "Model per job",
+          "notes": "And each way of starting can use a different model. More on why that matters in a minute.",
+          "actions": [
+            {
+              "do": "spotlight",
+              "target": "model",
+              "padding": 10
+            },
+            {
+              "do": "draw",
+              "target": "n-model"
+            }
+          ]
+        },
+        {
+          "title": "Lights on",
+          "notes": "",
+          "actions": [
+            {
+              "do": "spotlight",
+              "on": false
+            }
+          ],
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "editor",
+      "title": "Edit like a whiteboard",
+      "elements": [
+        {
+          "id": "editor",
+          "type": "image",
+          "src": "/examples/about/editor.jpg",
+          "x": 900,
+          "y": 560,
+          "width": 1150,
+          "height": 719,
+          "frame": "browser",
+          "url": "localhost:5173/#/p/how-it-works",
+          "color": "cyan"
+        },
+        {
+          "id": "beats",
+          "type": "area",
+          "x": 853,
+          "y": 789,
+          "width": 717,
+          "height": 131,
+          "shape": "rect",
+          "color": "yellow"
+        },
+        {
+          "id": "ask",
+          "type": "area",
+          "x": 853,
+          "y": 702,
+          "width": 710,
+          "height": 32,
+          "shape": "rect",
+          "color": "yellow"
+        },
+        {
+          "id": "props",
+          "type": "area",
+          "x": 1343,
+          "y": 431,
+          "width": 254,
+          "height": 236,
+          "shape": "rect",
+          "color": "yellow"
+        },
+        {
+          "id": "n-beats",
+          "type": "text",
+          "text": "beats =\nclicks",
+          "x": 1700,
+          "y": 790,
+          "size": 48,
+          "color": "green"
+        },
+        {
+          "id": "n-ask",
+          "type": "text",
+          "text": "ask AI to\nchange it",
+          "x": 1700,
+          "y": 600,
+          "size": 48,
+          "color": "pink"
+        },
+        {
+          "id": "n-props",
+          "type": "text",
+          "text": "like a\ndrawing app",
+          "x": 1700,
+          "y": 280,
+          "size": 46,
+          "color": "cyan"
+        }
+      ],
+      "beats": [
+        {
+          "title": "Editor",
+          "notes": "The draft opens in the editor. The board in the middle, the library on the left, properties on the right.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "editor"
+            }
+          ]
+        },
+        {
+          "title": "Beats",
+          "notes": "Under the board is the storyboard. Each card is a beat: one click while I present, with its actions on a small timeline.",
+          "actions": [
+            {
+              "do": "spotlight",
+              "target": "beats",
+              "padding": 10
+            },
+            {
+              "do": "draw",
+              "target": "n-beats"
+            }
+          ]
+        },
+        {
+          "title": "Ask",
+          "notes": "Above it I can just ask: 'split this beat in two', 'zoom into the database first'. Only this scene changes, and undo always works.",
+          "actions": [
+            {
+              "do": "spotlight",
+              "target": "ask",
+              "padding": 8
+            },
+            {
+              "do": "draw",
+              "target": "n-ask"
+            }
+          ]
+        },
+        {
+          "title": "Properties",
+          "notes": "And everything has properties, with positions and sizes like a drawing program, colours as marker tips, styles as little pictures.",
+          "actions": [
+            {
+              "do": "spotlight",
+              "target": "props",
+              "padding": 8
+            },
+            {
+              "do": "draw",
+              "target": "n-props"
+            }
+          ]
+        },
+        {
+          "title": "Lights on",
+          "notes": "",
+          "actions": [
+            {
+              "do": "spotlight",
+              "on": false
+            }
+          ],
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "llm-first",
+      "title": "LLM first",
+      "elements": [
+        {
+          "id": "h",
+          "type": "text",
+          "text": "LLM FIRST",
+          "x": 960,
+          "y": 110,
+          "size": 80,
+          "color": "yellow",
+          "style": "bold"
+        },
+        {
+          "id": "docs",
+          "type": "icon",
+          "icon": "file",
+          "x": 230,
+          "y": 330,
+          "size": 130,
+          "color": "cyan",
+          "label": "format + rules"
+        },
+        {
+          "id": "lib",
+          "type": "icon",
+          "icon": "database",
+          "x": 230,
+          "y": 640,
+          "size": 130,
+          "color": "green",
+          "label": "library"
+        },
+        {
+          "id": "model",
+          "type": "icon",
+          "icon": "brain",
+          "x": 760,
+          "y": 480,
+          "size": 190,
+          "color": "pink",
+          "label": "any model"
+        },
+        {
+          "id": "a-docs",
+          "type": "arrow",
+          "from": "docs",
+          "to": "model",
+          "color": "cyan"
+        },
+        {
+          "id": "a-lib",
+          "type": "arrow",
+          "from": "lib",
+          "to": "model",
+          "color": "green"
+        },
+        {
+          "id": "check",
+          "type": "box",
+          "x": 1230,
+          "y": 480,
+          "width": 300,
+          "height": 150,
+          "color": "orange",
+          "label": "check"
+        },
+        {
+          "id": "a-check",
+          "type": "arrow",
+          "from": "model",
+          "to": "check",
+          "color": "white",
+          "label": "JSON"
+        },
+        {
+          "id": "repair",
+          "type": "arrow",
+          "from": "check.top",
+          "to": "model.top",
+          "color": "orange",
+          "curve": -0.5,
+          "line": "dashed",
+          "label": "repair"
+        },
+        {
+          "id": "board",
+          "type": "icon",
+          "icon": "browser",
+          "x": 1680,
+          "y": 480,
+          "size": 150,
+          "color": "yellow",
+          "label": "the board"
+        },
+        {
+          "id": "a-board",
+          "type": "arrow",
+          "from": "check",
+          "to": "board",
+          "color": "yellow",
+          "weight": "bold"
+        },
+        {
+          "id": "code",
+          "type": "text",
+          "text": "{ \"type\": \"icon\", \"icon\": \"gpu\",\n  \"color\": \"cyan\", \"label\": \"GPU\" }",
+          "x": 960,
+          "y": 900,
+          "size": 40,
+          "color": "green",
+          "style": "code"
+        }
+      ],
+      "beats": [
+        {
+          "title": "LLM first",
+          "notes": "Under the hood, jz-motion is LLM first. A presentation is not pixels: it's one JSON document.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "h"
+            }
+          ]
+        },
+        {
+          "title": "Context",
+          "notes": "Every request sends the model the format reference, the drawing rules and the whole library: every icon, logo, clipart and 3D model it may use.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "docs",
+                "lib"
+              ],
+              "stagger": 0.4
+            },
+            {
+              "do": "draw",
+              "target": [
+                "a-docs",
+                "a-lib",
+                "model"
+              ],
+              "stagger": 0.3
+            }
+          ]
+        },
+        {
+          "title": "Check",
+          "notes": "What comes back is checked against the schema: unknown icons, missing elements, wrong colours…",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "a-check",
+                "check"
+              ],
+              "stagger": 0.5
+            }
+          ]
+        },
+        {
+          "title": "Repair",
+          "notes": "…and if anything is wrong, the exact errors go back to the model to fix. That loop is why even small, cheap models produce something that loads.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "repair"
+            },
+            {
+              "do": "flow",
+              "target": "repair"
+            }
+          ]
+        },
+        {
+          "title": "Board",
+          "notes": "Only valid JSON reaches the board, and from there it's all deterministic drawing.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "a-board",
+                "board"
+              ],
+              "stagger": 0.4
+            }
+          ]
+        },
+        {
+          "title": "The JSON",
+          "notes": "And because it's plain JSON, I can read it, diff it, keep it in git, or edit it by hand.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "code"
+            },
+            {
+              "do": "camera",
+              "focus": [
+                "code"
+              ],
+              "padding": 260
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "style",
+      "title": "One style for everything",
+      "elements": [
+        {
+          "id": "h",
+          "type": "text",
+          "text": "SAME MARKERS",
+          "x": 960,
+          "y": 120,
+          "size": 80,
+          "color": "pink",
+          "style": "bold"
+        },
+        {
+          "id": "i-icon",
+          "type": "icon",
+          "icon": "gpu",
+          "x": 280,
+          "y": 470,
+          "size": 200,
+          "color": "cyan",
+          "label": "icons"
+        },
+        {
+          "id": "i-clip",
+          "type": "icon",
+          "icon": "jz-logo",
+          "x": 760,
+          "y": 470,
+          "size": 360,
+          "color": "cyan"
+        },
+        {
+          "id": "l-clip",
+          "type": "text",
+          "text": "clipart",
+          "x": 760,
+          "y": 680,
+          "size": 44,
+          "color": "white"
+        },
+        {
+          "id": "i-iso",
+          "type": "iso",
+          "model": "datacenter",
+          "x": 1200,
+          "y": 470,
+          "scale": 60,
+          "color": "green",
+          "label": "3D"
+        },
+        {
+          "id": "i-chart",
+          "type": "chart",
+          "kind": "bar",
+          "x": 1640,
+          "y": 470,
+          "width": 360,
+          "height": 300,
+          "color": "yellow",
+          "data": [
+            {
+              "label": "A",
+              "value": 3
+            },
+            {
+              "label": "B",
+              "value": 5
+            },
+            {
+              "label": "C",
+              "value": 4,
+              "color": "pink"
+            }
+          ],
+          "title": "charts"
+        },
+        {
+          "id": "rule",
+          "type": "text",
+          "text": "six marker colours · one stroke · drawn in order",
+          "x": 960,
+          "y": 860,
+          "size": 48,
+          "color": "yellow"
+        },
+        {
+          "id": "creator",
+          "type": "image",
+          "src": "/examples/about/creator.jpg",
+          "x": 960,
+          "y": 1720,
+          "width": 1150,
+          "height": 719,
+          "frame": "browser",
+          "url": "localhost:5173 · new clipart with AI",
+          "color": "pink"
+        },
+        {
+          "id": "versions",
+          "type": "area",
+          "x": 665,
+          "y": 1597,
+          "width": 279,
+          "height": 200,
+          "shape": "rect",
+          "color": "yellow"
+        },
+        {
+          "id": "preview",
+          "type": "area",
+          "x": 1240,
+          "y": 1614,
+          "width": 308,
+          "height": 310,
+          "shape": "rect",
+          "color": "yellow"
+        }
+      ],
+      "beats": [
+        {
+          "title": "Same markers",
+          "notes": "The other promise is consistency. Whatever a model makes has to look like it came from the same set of markers.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "h"
+            }
+          ]
+        },
+        {
+          "title": "Everything",
+          "notes": "Icons, clipart, isometric 3D, charts, text: the same six colours, the same stroke, drawn in the order a person would draw them.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "i-icon",
+                "i-clip",
+                "l-clip",
+                "i-iso",
+                "i-chart"
+              ],
+              "stagger": 0.5
+            },
+            {
+              "do": "draw",
+              "target": "rule"
+            }
+          ]
+        },
+        {
+          "title": "Make your own",
+          "notes": "When the library doesn't have something, I describe it, and the model draws it under the same rules. The rules are shown, and every reply is checked.",
+          "actions": [
+            {
+              "do": "camera",
+              "focus": "creator",
+              "padding": 80
+            },
+            {
+              "do": "draw",
+              "target": "creator",
+              "start": "with",
+              "delay": 0.6
+            }
+          ]
+        },
+        {
+          "title": "Versions",
+          "notes": "It's a conversation: every reply is a version. 'Make it pink', 'add a fan on top'… until I like one.",
+          "actions": [
+            {
+              "do": "spotlight",
+              "target": "versions",
+              "padding": 10
+            }
+          ]
+        },
+        {
+          "title": "Keep it",
+          "notes": "Then I save it, and from then on it's part of the library, for me and for every model that writes a presentation.",
+          "actions": [
+            {
+              "do": "spotlight",
+              "target": "preview",
+              "padding": 10
+            },
+            {
+              "do": "circle",
+              "target": "preview",
+              "start": "with"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "library",
+      "title": "A library that lowers the cost",
+      "elements": [
+        {
+          "id": "library",
+          "type": "image",
+          "src": "/examples/about/library.jpg",
+          "x": 640,
+          "y": 560,
+          "width": 1060,
+          "height": 662,
+          "frame": "browser",
+          "url": "localhost:5173 · library",
+          "color": "green"
+        },
+        {
+          "id": "mine",
+          "type": "area",
+          "x": 174,
+          "y": 446,
+          "width": 117,
+          "height": 26,
+          "shape": "rect",
+          "color": "yellow"
+        },
+        {
+          "id": "detail",
+          "type": "area",
+          "x": 1045,
+          "y": 425,
+          "width": 244,
+          "height": 254,
+          "shape": "rect",
+          "color": "yellow"
+        },
+        {
+          "id": "cost",
+          "type": "chart",
+          "kind": "line",
+          "x": 1560,
+          "y": 560,
+          "width": 600,
+          "height": 440,
+          "color": "yellow",
+          "unit": "%",
+          "title": "cost per explainer",
+          "data": [
+            {
+              "label": "1st",
+              "value": 100
+            },
+            {
+              "label": "5th",
+              "value": 100
+            },
+            {
+              "label": "10th",
+              "value": 100
+            },
+            {
+              "label": "20th",
+              "value": 100
+            }
+          ]
+        }
+      ],
+      "beats": [
+        {
+          "title": "Library",
+          "notes": "All of that lives in the library: built-in icons, logos and models, and everything I've made.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "library"
+            }
+          ]
+        },
+        {
+          "title": "Mine",
+          "notes": "What I make is saved next to my presentations, with a description the models read to decide when to use it.",
+          "actions": [
+            {
+              "do": "spotlight",
+              "target": "mine",
+              "padding": 8
+            },
+            {
+              "do": "circle",
+              "target": "mine",
+              "start": "with"
+            }
+          ]
+        },
+        {
+          "title": "Reuse",
+          "notes": "And this is the long game. Every explainer adds a few drawings…",
+          "actions": [
+            {
+              "do": "spotlight",
+              "target": "detail",
+              "padding": 8
+            }
+          ]
+        },
+        {
+          "title": "Cost",
+          "notes": "…so the next one needs fewer new ones. Reusing is free; generating costs tokens. The library makes every explainer cheaper than the one before.",
+          "actions": [
+            {
+              "do": "spotlight",
+              "on": false
+            },
+            {
+              "do": "draw",
+              "target": "cost",
+              "start": "with"
+            },
+            {
+              "do": "set-values",
+              "target": "cost",
+              "values": [
+                100,
+                62,
+                38,
+                22
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "architecture",
+      "title": "Architecture",
+      "elements": [
+        {
+          "id": "h",
+          "type": "text",
+          "text": "HOW IT FITS TOGETHER",
+          "x": 960,
+          "y": 100,
+          "size": 64,
+          "color": "cyan",
+          "style": "bold"
+        },
+        {
+          "id": "browser",
+          "type": "box",
+          "x": 450,
+          "y": 580,
+          "width": 640,
+          "height": 760,
+          "color": "cyan",
+          "line": "dashed"
+        },
+        {
+          "id": "t-browser",
+          "type": "text",
+          "text": "in the browser",
+          "x": 450,
+          "y": 250,
+          "size": 44,
+          "color": "cyan"
+        },
+        {
+          "id": "editor-b",
+          "type": "box",
+          "x": 450,
+          "y": 410,
+          "width": 500,
+          "height": 130,
+          "color": "yellow",
+          "label": "editor · React"
+        },
+        {
+          "id": "stage",
+          "type": "box",
+          "x": 450,
+          "y": 600,
+          "width": 500,
+          "height": 130,
+          "color": "pink",
+          "label": "board · SVG + GSAP"
+        },
+        {
+          "id": "ai",
+          "type": "box",
+          "x": 450,
+          "y": 790,
+          "width": 500,
+          "height": 130,
+          "color": "green",
+          "label": "chat · creators"
+        },
+        {
+          "id": "server",
+          "type": "box",
+          "x": 1130,
+          "y": 580,
+          "width": 460,
+          "height": 760,
+          "color": "green",
+          "line": "dashed"
+        },
+        {
+          "id": "t-server",
+          "type": "text",
+          "text": "local server",
+          "x": 1130,
+          "y": 250,
+          "size": 44,
+          "color": "green"
+        },
+        {
+          "id": "s-list",
+          "type": "text",
+          "text": "presentations/\nlibrary/  images/\nLLM proxy\ntranscription\nexport: Playwright\n+ FFmpeg → MP4",
+          "x": 1130,
+          "y": 610,
+          "size": 40,
+          "color": "white"
+        },
+        {
+          "id": "anthropic",
+          "type": "icon",
+          "icon": "anthropic",
+          "x": 1680,
+          "y": 330,
+          "size": 110,
+          "color": "orange",
+          "label": "Claude"
+        },
+        {
+          "id": "openai",
+          "type": "icon",
+          "icon": "openai",
+          "x": 1680,
+          "y": 560,
+          "size": 110,
+          "color": "white",
+          "label": "any OpenAI-compatible"
+        },
+        {
+          "id": "fal",
+          "type": "box",
+          "x": 1680,
+          "y": 820,
+          "width": 300,
+          "height": 120,
+          "color": "pink",
+          "line": "dotted",
+          "label": "fal.ai · soon"
+        },
+        {
+          "id": "a1",
+          "type": "arrow",
+          "from": "browser",
+          "to": "server",
+          "color": "white"
+        },
+        {
+          "id": "a2",
+          "type": "arrow",
+          "from": "server",
+          "to": "anthropic",
+          "color": "orange"
+        },
+        {
+          "id": "a3",
+          "type": "arrow",
+          "from": "server",
+          "to": "openai",
+          "color": "white"
+        },
+        {
+          "id": "a4",
+          "type": "arrow",
+          "from": "server",
+          "to": "fal",
+          "color": "pink",
+          "line": "dotted"
+        }
+      ],
+      "beats": [
+        {
+          "title": "Overview",
+          "notes": "Here's how it fits together.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "h"
+            }
+          ]
+        },
+        {
+          "title": "Browser",
+          "notes": "In the browser: a React editor, and the board itself, which is plain SVG animated with GSAP. That's also what renders every video frame.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "browser",
+                "t-browser",
+                "editor-b",
+                "stage",
+                "ai"
+              ],
+              "stagger": 0.35
+            }
+          ]
+        },
+        {
+          "title": "Server",
+          "notes": "Next to it, a small local server: it keeps presentations, the library and images as plain files, proxies the model calls, transcribes recordings and exports MP4s with Playwright and FFmpeg.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "a1",
+                "server",
+                "t-server",
+                "s-list"
+              ],
+              "stagger": 0.4
+            },
+            {
+              "do": "flow",
+              "target": "a1"
+            }
+          ]
+        },
+        {
+          "title": "Models",
+          "notes": "And the models are swappable: Claude, or anything OpenAI-compatible through OpenRouter or my own GPUs.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "a2",
+                "anthropic",
+                "a3",
+                "openai"
+              ],
+              "stagger": 0.35
+            },
+            {
+              "do": "flow",
+              "target": [
+                "a2",
+                "a3"
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Next",
+          "notes": "Next on the list: image models through fal.ai, for the few things markers can't draw.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "a4",
+                "fal"
+              ],
+              "stagger": 0.4
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "models",
+      "title": "The right model for each job",
+      "elements": [
+        {
+          "id": "h",
+          "type": "text",
+          "text": "RIGHT MODEL, RIGHT JOB",
+          "x": 480,
+          "y": 130,
+          "size": 52,
+          "color": "yellow",
+          "style": "bold"
+        },
+        {
+          "id": "task0",
+          "type": "text",
+          "text": "write the story",
+          "x": 90,
+          "y": 320,
+          "size": 46,
+          "color": "white",
+          "align": "start"
+        },
+        {
+          "id": "ar0",
+          "type": "arrow",
+          "from": {
+            "x": 520,
+            "y": 320
+          },
+          "to": {
+            "x": 640,
+            "y": 320
+          },
+          "color": "pink"
+        },
+        {
+          "id": "model0",
+          "type": "text",
+          "text": "a big model",
+          "x": 660,
+          "y": 320,
+          "size": 48,
+          "color": "pink",
+          "align": "start"
+        },
+        {
+          "id": "task1",
+          "type": "text",
+          "text": "change a beat",
+          "x": 90,
+          "y": 490,
+          "size": 46,
+          "color": "white",
+          "align": "start"
+        },
+        {
+          "id": "ar1",
+          "type": "arrow",
+          "from": {
+            "x": 520,
+            "y": 490
+          },
+          "to": {
+            "x": 640,
+            "y": 490
+          },
+          "color": "cyan"
+        },
+        {
+          "id": "model1",
+          "type": "text",
+          "text": "Haiku",
+          "x": 660,
+          "y": 490,
+          "size": 48,
+          "color": "cyan",
+          "align": "start"
+        },
+        {
+          "id": "task2",
+          "type": "text",
+          "text": "icons, charts, 3D",
+          "x": 90,
+          "y": 660,
+          "size": 46,
+          "color": "white",
+          "align": "start"
+        },
+        {
+          "id": "ar2",
+          "type": "arrow",
+          "from": {
+            "x": 520,
+            "y": 660
+          },
+          "to": {
+            "x": 640,
+            "y": 660
+          },
+          "color": "green"
+        },
+        {
+          "id": "model2",
+          "type": "text",
+          "text": "Haiku + rules",
+          "x": 660,
+          "y": 660,
+          "size": 48,
+          "color": "green",
+          "align": "start"
+        },
+        {
+          "id": "task3",
+          "type": "text",
+          "text": "illustrations",
+          "x": 90,
+          "y": 830,
+          "size": 46,
+          "color": "white",
+          "align": "start"
+        },
+        {
+          "id": "ar3",
+          "type": "arrow",
+          "from": {
+            "x": 520,
+            "y": 830
+          },
+          "to": {
+            "x": 640,
+            "y": 830
+          },
+          "color": "orange"
+        },
+        {
+          "id": "model3",
+          "type": "text",
+          "text": "fal.ai",
+          "x": 660,
+          "y": 830,
+          "size": 48,
+          "color": "orange",
+          "align": "start"
+        },
+        {
+          "id": "settings",
+          "type": "image",
+          "src": "/examples/about/settings.jpg",
+          "x": 1400,
+          "y": 560,
+          "width": 900,
+          "height": 562,
+          "frame": "browser",
+          "url": "localhost:5173 · settings",
+          "color": "white"
+        },
+        {
+          "id": "per-mode",
+          "type": "area",
+          "x": 1400,
+          "y": 534,
+          "width": 477,
+          "height": 83,
+          "shape": "rect",
+          "color": "yellow"
+        }
+      ],
+      "beats": [
+        {
+          "title": "Right job",
+          "notes": "Because every request is checked and repaired, I don't need the biggest model for everything.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "h"
+            }
+          ]
+        },
+        {
+          "title": "Story",
+          "notes": "A strong model writes the story: the structure, the scenes, the words.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "task0",
+                "ar0",
+                "model0"
+              ],
+              "stagger": 0.3
+            }
+          ]
+        },
+        {
+          "title": "Small edits",
+          "notes": "Small edits, like changing a beat, work fine with a fast, cheap model like Haiku.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "task1",
+                "ar1",
+                "model1"
+              ],
+              "stagger": 0.3
+            }
+          ]
+        },
+        {
+          "title": "Drawings",
+          "notes": "Icons, charts and 3D models are small, strict JSON. Haiku plus the rules is enough, and the library means most are never generated twice.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "task2",
+                "ar2",
+                "model2"
+              ],
+              "stagger": 0.3
+            }
+          ]
+        },
+        {
+          "title": "Images",
+          "notes": "And for real illustrations, a specialised image model, later.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "task3",
+                "ar3",
+                "model3"
+              ],
+              "stagger": 0.3
+            }
+          ]
+        },
+        {
+          "title": "Settings",
+          "notes": "It's one setting: a model per way of starting, and any model for chat or drawings.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "settings"
+            },
+            {
+              "do": "spotlight",
+              "target": "per-mode",
+              "start": "with",
+              "delay": 0.9,
+              "padding": 8
+            }
+          ]
+        },
+        {
+          "title": "Lights on",
+          "notes": "",
+          "actions": [
+            {
+              "do": "spotlight",
+              "on": false
+            }
+          ],
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "publish",
+      "title": "Publish more",
+      "elements": [
+        {
+          "id": "h",
+          "type": "text",
+          "text": "PUBLISH MORE",
+          "x": 960,
+          "y": 120,
+          "size": 84,
+          "color": "green",
+          "style": "bold"
+        },
+        {
+          "id": "you",
+          "type": "icon",
+          "icon": "user",
+          "x": 240,
+          "y": 380,
+          "size": 150,
+          "color": "pink",
+          "label": "you talk"
+        },
+        {
+          "id": "txt",
+          "type": "icon",
+          "icon": "chatbot",
+          "x": 720,
+          "y": 380,
+          "size": 150,
+          "color": "cyan",
+          "label": "transcript"
+        },
+        {
+          "id": "cue",
+          "type": "icon",
+          "icon": "brain",
+          "x": 1200,
+          "y": 380,
+          "size": 150,
+          "color": "yellow",
+          "label": "beats on cue"
+        },
+        {
+          "id": "mp4",
+          "type": "icon",
+          "icon": "file",
+          "x": 1680,
+          "y": 380,
+          "size": 150,
+          "color": "green",
+          "label": "MP4"
+        },
+        {
+          "id": "f0",
+          "type": "arrow",
+          "from": "you",
+          "to": "txt",
+          "color": "white"
+        },
+        {
+          "id": "f1",
+          "type": "arrow",
+          "from": "txt",
+          "to": "cue",
+          "color": "white"
+        },
+        {
+          "id": "f2",
+          "type": "arrow",
+          "from": "cue",
+          "to": "mp4",
+          "color": "white"
+        },
+        {
+          "id": "logo",
+          "type": "icon",
+          "icon": "jz-logo",
+          "x": 960,
+          "y": 800,
+          "size": 520,
+          "color": "cyan"
+        },
+        {
+          "id": "bye",
+          "type": "text",
+          "text": "thanks for watching",
+          "x": 960,
+          "y": 1000,
+          "size": 52,
+          "color": "yellow"
+        }
+      ],
+      "beats": [
+        {
+          "title": "Record",
+          "notes": "And the last mile: I click Record and present, like I'm doing now. My voice, my camera and every click are saved as a take.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "h"
+            },
+            {
+              "do": "draw",
+              "target": [
+                "you",
+                "f0",
+                "txt"
+              ],
+              "stagger": 0.4
+            }
+          ]
+        },
+        {
+          "title": "Export",
+          "notes": "It exports straight to an MP4, with my camera in the corner or side by side with a friend. Or I record first, and it builds the presentation from the transcript.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "cue",
+                "f1",
+                "mp4",
+                "f2"
+              ],
+              "stagger": 0.4
+            },
+            {
+              "do": "flow",
+              "target": [
+                "f0",
+                "f1",
+                "f2"
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Thanks",
+          "notes": "That's jz-motion: explainers in minutes, in one consistent style, a little cheaper every time. Thanks for watching.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "logo",
+                "bye"
+              ],
+              "stagger": 1.2
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

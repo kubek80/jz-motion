@@ -1,0 +1,437 @@
+{
+ "kind": "iso",
+ "description": "RAG pipeline in two lanes; the build order plays the data flow. BACK LANE (indexing, offline): WHITE document stack, then the PINK CHUNKING model (box with a white blade) cuts it into small pink chunks. The CYAN EMBEDDING model turns the chunks into vectors, which flow along a cyan pipe into the GREEN VECTOR DATABASE (stacked disks). FRONT LANE (query time): the WHITE USER QUESTION goes through the same CYAN EMBEDDING model (smaller copy), and its vector travels to the vector database to find similar chunks. Candidates then go to the YELLOW RERANKING model, whose bars are sorted by relevance (the tallest, white bar is the best match). The top chunks flow forward into the ORANGE LLM, which writes the WHITE ANSWER at the front. Specialised models: pink = chunking, cyan = embedding, yellow = reranking.",
+ "tags": [
+  "made-with-ai",
+  "made-with-ai",
+  "RAG",
+  "chunking",
+  "embedding",
+  "reranking",
+  "vector database",
+  "LLM",
+  "pipeline"
+ ],
+ "parts": [
+  {
+   "shape": "box",
+   "size": [
+    5,
+    0.1,
+    2.6
+   ],
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "color": "white"
+  },
+  {
+   "shape": "box",
+   "size": [
+    0.6,
+    0.1,
+    0.5
+   ],
+   "at": [
+    -2.05,
+    0.1,
+    -0.75
+   ],
+   "color": "white"
+  },
+  {
+   "shape": "box",
+   "size": [
+    0.6,
+    0.1,
+    0.5
+   ],
+   "at": [
+    -2.05,
+    0.2,
+    -0.75
+   ],
+   "color": "white"
+  },
+  {
+   "shape": "box",
+   "size": [
+    0.6,
+    0.1,
+    0.5
+   ],
+   "at": [
+    -2.05,
+    0.3,
+    -0.75
+   ],
+   "color": "white"
+  },
+  {
+   "shape": "box",
+   "size": [
+    0.2,
+    0.04,
+    0.08
+   ],
+   "at": [
+    -1.65,
+    0.1,
+    -0.75
+   ],
+   "color": "white"
+  },
+  {
+   "shape": "box",
+   "size": [
+    0.4,
+    0.3,
+    0.5
+   ],
+   "at": [
+    -1.35,
+    0.1,
+    -0.75
+   ],
+   "color": "pink"
+  },
+  {
+   "shape": "box",
+   "size": [
+    0.04,
+    0.25,
+    0.4
+   ],
+   "at": [
+    -1.35,
+    0.4,
+    -0.75
+   ],
+   "color": "white"
+  },
+  {
+   "shape": "box",
+   "size": [
+    0.15,
+    0.15,
+    0.15
+   ],
+   "at": [
+    -1,
+    0.1,
+    -0.75
+   ],
+   "color": "pink"
+  },
+  {
+   "shape": "box",
+   "size": [
+    0.15,
+    0.15,
+    0.15
+   ],
+   "at": [
+    -0.78,
+    0.1,
+    -0.75
+   ],
+   "color": "pink"
+  },
+  {
+   "shape": "box",
+   "size": [
+    0.15,
+    0.15,
+    0.15
+   ],
+   "at": [
+    -0.56,
+    0.1,
+    -0.75
+   ],
+   "color": "pink"
+  },
+  {
+   "shape": "box",
+   "size": [
+    0.15,
+    0.04,
+    0.08
+   ],
+   "at": [
+    -0.41,
+    0.1,
+    -0.75
+   ],
+   "color": "pink"
+  },
+  {
+   "shape": "cylinder",
+   "size": [
+    0.6,
+    0.45,
+    0.6
+   ],
+   "at": [
+    -0.03,
+    0.1,
+    -0.75
+   ],
+   "color": "cyan"
+  },
+  {
+   "shape": "cylinder",
+   "size": [
+    0.3,
+    0.15,
+    0.3
+   ],
+   "at": [
+    -0.03,
+    0.55,
+    -0.75
+   ],
+   "color": "cyan"
+  },
+  {
+   "shape": "box",
+   "size": [
+    0.93,
+    0.04,
+    0.08
+   ],
+   "at": [
+    0.735,
+    0.1,
+    -0.75
+   ],
+   "color": "cyan"
+  },
+  {
+   "shape": "cylinder",
+   "size": [
+    0.7,
+    0.2,
+    0.7
+   ],
+   "at": [
+    1.2,
+    0.1,
+    -0.3
+   ],
+   "color": "green"
+  },
+  {
+   "shape": "cylinder",
+   "size": [
+    0.7,
+    0.2,
+    0.7
+   ],
+   "at": [
+    1.2,
+    0.3,
+    -0.3
+   ],
+   "color": "green"
+  },
+  {
+   "shape": "cylinder",
+   "size": [
+    0.7,
+    0.2,
+    0.7
+   ],
+   "at": [
+    1.2,
+    0.5,
+    -0.3
+   ],
+   "color": "green"
+  },
+  {
+   "shape": "box",
+   "size": [
+    0.7,
+    0.08,
+    0.5
+   ],
+   "at": [
+    1.9,
+    0.1,
+    -0.3
+   ],
+   "color": "yellow"
+  },
+  {
+   "shape": "box",
+   "size": [
+    0.15,
+    0.6,
+    0.3
+   ],
+   "at": [
+    1.7,
+    0.18,
+    -0.3
+   ],
+   "color": "white"
+  },
+  {
+   "shape": "box",
+   "size": [
+    0.15,
+    0.4,
+    0.3
+   ],
+   "at": [
+    1.9,
+    0.18,
+    -0.3
+   ],
+   "color": "yellow"
+  },
+  {
+   "shape": "box",
+   "size": [
+    0.15,
+    0.2,
+    0.3
+   ],
+   "at": [
+    2.1,
+    0.18,
+    -0.3
+   ],
+   "color": "yellow"
+  },
+  {
+   "shape": "box",
+   "size": [
+    0.5,
+    0.3,
+    0.35
+   ],
+   "at": [
+    -2.05,
+    0.1,
+    0.75
+   ],
+   "color": "white"
+  },
+  {
+   "shape": "box",
+   "size": [
+    0.95,
+    0.04,
+    0.08
+   ],
+   "at": [
+    -1.325,
+    0.1,
+    0.75
+   ],
+   "color": "white"
+  },
+  {
+   "shape": "cylinder",
+   "size": [
+    0.4,
+    0.35,
+    0.4
+   ],
+   "at": [
+    -0.65,
+    0.1,
+    0.75
+   ],
+   "color": "cyan"
+  },
+  {
+   "shape": "box",
+   "size": [
+    1.69,
+    0.04,
+    0.08
+   ],
+   "at": [
+    0.395,
+    0.1,
+    0.75
+   ],
+   "color": "cyan"
+  },
+  {
+   "shape": "box",
+   "size": [
+    0.08,
+    0.04,
+    0.66
+   ],
+   "at": [
+    1.2,
+    0.1,
+    0.38
+   ],
+   "color": "cyan"
+  },
+  {
+   "shape": "box",
+   "size": [
+    0.08,
+    0.04,
+    0.55
+   ],
+   "at": [
+    1.9,
+    0.1,
+    0.225
+   ],
+   "color": "yellow"
+  },
+  {
+   "shape": "box",
+   "size": [
+    0.6,
+    0.5,
+    0.5
+   ],
+   "at": [
+    1.9,
+    0.1,
+    0.75
+   ],
+   "color": "orange"
+  },
+  {
+   "shape": "cylinder",
+   "size": [
+    0.25,
+    0.15,
+    0.25
+   ],
+   "at": [
+    1.9,
+    0.6,
+    0.75
+   ],
+   "color": "orange"
+  },
+  {
+   "shape": "box",
+   "size": [
+    0.5,
+    0.1,
+    0.2
+   ],
+   "at": [
+    1.9,
+    0.1,
+    1.15
+   ],
+   "color": "white"
+  }
+ ]
+}
