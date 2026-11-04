@@ -51,7 +51,19 @@ export function Root() {
     location.hash = id ? `#/p/${id}` : '';
     setOpenId(id);
   };
-  const save = useCallback((t: string) => void store?.save(openId!, t), [store, openId]);
+  const save = useCallback((t: string) => {
+    if (!store || !openId) return;
+    void store.save(openId, t).catch((e: Error & { stale?: boolean }) => {
+      if (e.stale) {
+        // Disk copy is newer than ours. Refuse to clobber; reload the presentation from disk
+        // (which replaces our in-memory copy) and tell the user what happened.
+        alert('This presentation was changed on disk by another tool while you had it open. The editor will reload the latest version — your unsaved edits are not applied to the file.');
+        store.load(openId).then(setText, (err: Error) => setError(err.message));
+      } else {
+        setError(e.message);
+      }
+    });
+  }, [store, openId]);
 
   if (!store) return <div className="home"><p className="muted">Loading…</p></div>;
   if (!openId) return <Home store={store} onOpen={open} />;

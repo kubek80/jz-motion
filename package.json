@@ -14,7 +14,9 @@
     "export": "tsx server/cli-export.ts",
     "logo": "node scripts/build-logo.mjs",
     "check": "tsx server/cli-check.ts",
-    "snapshot": "tsx server/cli-snapshot.ts"
+    "snapshot": "tsx server/cli-snapshot.ts",
+    "snap": "node scripts/snap.mjs",
+    "record": "node scripts/record.mjs"
   },
   "dependencies": {
     "@codemirror/lang-json": "^6.0.2",
@@ -45,6 +47,7 @@
     "simple-icons": "^16.36.0",
     "tsx": "^4.23.15",
     "typescript": "~5.9",
+    "upng-js": "^2.1.0",
     "vite": "^8.3.5",
     "vitest": "^4.1.12"
   }

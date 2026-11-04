@@ -7,12 +7,13 @@ export type Size = 'small' | 'medium' | 'large';
 const ORDER: Size[] = ['small', 'medium', 'large'];
 
 export type Task =
-  | 'icon' | 'clipart' | '3d'
+  | 'icon' | 'logo' | 'clipart' | '3d'
   | 'scene-edit' | 'scene-new' | 'chat'
   | 'from-topic' | 'from-script' | 'from-recording';
 
 export const TASKS: Record<Task, { size: Size; job: string; why: string }> = {
   icon: { size: 'small', job: 'an icon', why: 'a few strokes, and the rules and checks keep it on style' },
+  logo: { size: 'small', job: 'a logo', why: 'a brand mark is a handful of closed paths — the trick is recognisability, not complexity' },
   '3d': { size: 'small', job: 'a 3D model', why: 'boxes and cylinders placed by numbers' },
   clipart: { size: 'medium', job: 'clipart', why: 'many shapes that must look like something; a small model often manages, a medium one draws cleaner' },
   'scene-edit': { size: 'small', job: 'a change to one scene', why: 'a focused edit' },

@@ -6,6 +6,7 @@ import { AiPanel } from './AiPanel';
 import { Creator, type CreateRequest } from './Creator';
 import { Settings } from './Settings';
 import { Timing } from './Timing';
+import { Script } from './Script';
 import { LibraryManager } from './LibraryManager';
 import { confirmDialog } from './confirm';
 import { imageFrom, lastFrame, rememberFrame, uploadImage } from './images';
@@ -125,6 +126,7 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [libraryOpen, setLibraryOpen] = useState(false);
   const [timingOpen, setTimingOpen] = useState(false);
+  const [scriptOpen, setScriptOpen] = useState(false);
   /** A take made in the Timing window, shown in the Video tab. */
   const [madeTake, setMadeTake] = useState<string | undefined>();
   /** Bumped when the library gains an item, so the palette shows it. */
@@ -645,8 +647,37 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
               }),
             })),
           })}
+          onNotes={(scene, beat, notes) => update({
+            ...doc,
+            scenes: doc.scenes.map((s, si) => si !== scene ? s : ({
+              ...s,
+              beats: s.beats?.map((b, bi) => {
+                if (bi !== beat) return b;
+                const { notes: _n, ...rest } = b;
+                return notes.trim() ? { ...rest, notes } : rest;
+              }),
+            })),
+          })}
           onTake={(takeId) => { setTimingOpen(false); setMadeTake(takeId); setPanel('video'); }}
           onClose={() => setTimingOpen(false)}
+        />
+      )}
+      {scriptOpen && doc && result.ok && (
+        <Script
+          presentation={result.presentation}
+          presentationId={id}
+          onNotes={(scene, beat, notes) => update({
+            ...doc,
+            scenes: doc.scenes.map((s, si) => si !== scene ? s : ({
+              ...s,
+              beats: s.beats?.map((b, bi) => {
+                if (bi !== beat) return b;
+                const { notes: _n, ...rest } = b;
+                return notes.trim() ? { ...rest, notes } : rest;
+              }),
+            })),
+          })}
+          onClose={() => setScriptOpen(false)}
         />
       )}
       {libraryOpen && (
@@ -691,6 +722,7 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
         </div>
         <button onClick={history.undo} disabled={!history.canUndo} title="Undo (Ctrl+Z)">↶</button>
         <button onClick={history.redo} disabled={!history.canRedo} title="Redo (Ctrl+Shift+Z)">↷</button>
+        <button onClick={() => setScriptOpen(true)} disabled={!result.ok} title="Read and edit the whole narration beat by beat, with reading-time estimates">Script</button>
         <button onClick={() => setTimingOpen(true)} disabled={!result.ok} title="Time the beats to a voice-over">Timing</button>
         <button onClick={() => void togglePresent()} title="Full screen (F). Arrows, space or a clicker to step.">Present</button>
         <button onClick={() => setSettingsOpen(true)} title="Models, API keys, transcription">⚙</button>

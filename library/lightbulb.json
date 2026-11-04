@@ -1,0 +1,78 @@
+{
+ "description": "A glowing lightbulb switched on, centred in the frame, with a soft yellow halo, a lit filament, a white highlight on the glass and light rays radiating outward.",
+ "tags": [
+  "clipart",
+  "made-with-ai",
+  "clipart",
+  "made-with-ai",
+  "lightbulb",
+  "light",
+  "on",
+  "idea",
+  "electricity",
+  "energy",
+  "glow"
+ ],
+ "paths": [],
+ "box": [
+  320,
+  180
+ ],
+ "parts": [
+  {
+   "d": "M 240 4 A 64 64 0 1 1 239.9 4 Z",
+   "color": "yellow",
+   "width": 1.5,
+   "fill": "yellow",
+   "fillOpacity": 0.12,
+   "opacity": 0.4,
+   "transform": "translate(-80,18)"
+  },
+  {
+   "d": "M 222 112 C 222 96 200 88 200 64 A 40 40 0 0 1 280 64 C 280 88 258 96 258 112 Z",
+   "color": "ink",
+   "width": 4,
+   "fill": "yellow",
+   "fillOpacity": 0.35,
+   "transform": "translate(-80,18)"
+  },
+  {
+   "d": "M 222 112 L 258 112 L 256 134 L 224 134 Z",
+   "color": "ink",
+   "width": 3.5,
+   "fill": "board",
+   "transform": "translate(-80,18)"
+  },
+  {
+   "d": "M 224 120 L 256 118 M 224 127 L 256 125",
+   "color": "ink",
+   "width": 2.5,
+   "transform": "translate(-80,18)"
+  },
+  {
+   "d": "M 230 134 Q 240 146 250 134",
+   "color": "ink",
+   "width": 3.5,
+   "transform": "translate(-80,18)"
+  },
+  {
+   "d": "M 232 112 L 232 90 M 248 112 L 248 90 M 232 90 Q 236 80 240 90 Q 244 80 248 90",
+   "color": "yellow",
+   "width": 3,
+   "transform": "translate(-80,18)"
+  },
+  {
+   "d": "M 214 56 Q 216 40 230 34",
+   "color": "white",
+   "width": 3,
+   "opacity": 0.8,
+   "transform": "translate(-80,18)"
+  },
+  {
+   "d": "M 240 16 L 240 4 M 190 64 L 178 64 M 290 64 L 302 64 M 204.6 28.6 L 196.2 20.2 M 275.4 28.6 L 283.8 20.2 M 196.7 89 L 188 94 M 283.3 89 L 292 94",
+   "color": "yellow",
+   "width": 4,
+   "transform": "translate(-80,18)"
+  }
+ ]
+}

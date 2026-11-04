@@ -14,6 +14,7 @@ import { claudeCodeChat, claudeCodeStatus } from './claudeCode';
 import { runAgent } from './claudeAgent';
 import { createPresentation, deletePresentation, listPresentations, readPresentation, writePresentation } from './presentations';
 import { addTrack, createTake, deleteTake, getTake, listTakes, TAKES_DIR, trackPath, updateTake } from './takes';
+import { generateTts, readSidecar as readTtsSidecar, serveTts } from './tts';
 
 // The local server side of the app, mounted into the Vite dev and preview servers:
 //   /api/presentations  list, create, read, save, delete presentations (presentations/<id>.json)
@@ -21,6 +22,7 @@ import { addTrack, createTake, deleteTake, getTake, listTakes, TAKES_DIR, trackP
 //   /api/transcribe  upload a recording and transcribe it (to make a presentation from it)
 //   /api/llm      proxy to OpenAI-compatible model APIs (browsers can't call most of them directly)
 //   /api/takes    recordings: create, upload tracks, set offsets, auto-sync, delete
+//   /api/tts      generate a voice clip for a sentence; the cache (tts/<id>.json) is served from /api/tts/<id>
 //   /api/images   screenshots and pictures for the board (images/<hash>.<ext>), served at /images/<file>
 //   /api/export   render a presentation (and a take) to MP4; /exports/<file> to download it
 
@@ -41,11 +43,27 @@ async function presentations(req: IncomingMessage, res: ServerResponse, id: stri
   if (!id && m === 'POST') return send(res, 200, { id: await createPresentation(await readText(req)) });
   if (id && m === 'GET') {
     res.setHeader('content-type', 'application/json');
-    return res.end(await readPresentation(id));
+    const { text, modifiedAt } = await readPresentation(id);
+    // Expose the file's mtime so the editor knows which version it loaded and can detect
+    // conflicts on save (when the file was changed outside the app since the load).
+    res.setHeader('last-modified', new Date(modifiedAt).toUTCString());
+    res.setHeader('x-modified-at', modifiedAt);
+    return res.end(text);
   }
   if (id && m === 'PUT') {
-    await writePresentation(id, await readText(req));
-    return send(res, 200, { ok: true });
+    const body = await readText(req);
+    const expected = String(req.headers['if-unmodified-since'] ?? '') || undefined;
+    const expectedISO = expected ? new Date(expected).toISOString() : (String(req.headers['x-modified-at'] ?? '') || undefined);
+    try {
+      const { modifiedAt } = await writePresentation(id, body, expectedISO);
+      // Hand back the new mtime so the editor can track it for the next save — otherwise every
+      // save after the first looks stale against the file it just wrote.
+      res.setHeader('x-modified-at', modifiedAt);
+      return send(res, 200, { ok: true, modifiedAt });
+    } catch (e) {
+      if ((e as Error & { code?: string }).code === 'STALE') return send(res, 409, { error: (e as Error).message });
+      throw e;
+    }
   }
   if (id && m === 'DELETE') {
     await deletePresentation(id);
@@ -206,6 +224,9 @@ export function jzmServer(): Plugin {
         }
         if (parts[0] === 'api' && parts[1] === 'presentations') return await presentations(req, res, parts[2]);
         if (parts[0] === 'api' && parts[1] === 'takes') return await takes(req, res, parts.slice(2), url.searchParams);
+        if (parts[0] === 'api' && parts[1] === 'tts' && parts[2] && req.method === 'GET') return send(res, 200, await readTtsSidecar(parts[2]));
+        if (url.pathname === '/api/tts' && req.method === 'POST') return send(res, 200, await generateTts(await readJson(req)));
+        if (parts[0] === 'tts' && parts[1] && parts[2] && req.method === 'GET' && (await serveTts(res, parts[1], parts[2]))) return;
         if (url.pathname === '/api/export' && req.method === 'POST') return send(res, 200, startExport(await readJson(req), appUrl()));
         if (parts[0] === 'api' && parts[1] === 'export' && parts[2]) return send(res, jobs.has(parts[2]) ? 200 : 404, jobs.get(parts[2]) ?? { error: 'no such export' });
         if (parts[0] === 'exports' && parts[1]) return await serveExport(res, parts[1]);

@@ -6,31 +6,46 @@ import { board, palette, type ColorName } from '../engine/palette';
 import { confirmDialog } from './confirm';
 import type { CreatorStart } from './Creator';
 import { IconPreview } from './editor/IconPreview';
+import { MarkerTray } from './MarkerTray';
 import { deleteFromLibrary, renameInLibrary, saveToLibrary, userItems } from './userLibrary';
 
-export type LibraryGroup = 'all' | 'icon' | 'logo' | 'clipart' | '3d' | 'mine';
+export type LibraryGroup = 'all' | 'icon' | 'logo' | 'clipart' | '3d';
 type ItemKind = 'icon' | 'logo' | 'clipart' | '3d';
+/** Where a library item came from: hand-drawn by the user, made with AI, or imported from UnDraw. */
+type Source = 'drawn' | 'ai' | 'undraw';
 
-interface Item { name: string; kind: ItemKind; description: string; tags: string[]; mine: boolean; icon?: IconDef; model?: IsoModel }
+interface Item { name: string; kind: ItemKind; source: Source; description: string; tags: string[]; mine: boolean; icon?: IconDef; model?: IsoModel }
 
+// The "Made by me" filter is gone: this is the user's personal studio, everything in here is
+// theirs in some sense. Browse by what it IS (icon/logo/clipart/3D).
 const GROUPS: { group: LibraryGroup; label: string }[] = [
   { group: 'all', label: 'Everything' },
   { group: 'icon', label: 'Icons' },
   { group: 'logo', label: 'Logos' },
   { group: 'clipart', label: 'Clipart' },
   { group: '3d', label: '3D models' },
-  { group: 'mine', label: 'Made by me' },
 ];
 const KIND_LABEL: Record<ItemKind, string> = { icon: 'Icon', logo: 'Logo', clipart: 'Clipart', '3d': '3D model' };
+const SOURCE_LABEL: Record<Source, string> = { drawn: 'Hand-drawn', ai: 'Made with AI', undraw: 'From UnDraw' };
+// Sub-section order within a kind: hand-drawn first (most polished), then UnDraw imports, then AI.
+const SOURCE_ORDER: Source[] = ['drawn', 'undraw', 'ai'];
+
+/** Classify a library item by where it came from, from its raw tags. */
+function sourceOf(rawTags: string[]): Source {
+  if (rawTags.includes('undraw') || rawTags.includes('external')) return 'undraw';
+  if (rawTags.includes('made-with-ai')) return 'ai';
+  return 'drawn';
+}
 
 function allItems(): Item[] {
   const out: Item[] = Object.entries(icons).map(([name, d]) => ({
-    name, icon: d, description: d.description, tags: d.tags.filter((t) => t !== 'made-with-ai' && t !== 'clipart'),
+    name, icon: d, description: d.description, tags: d.tags.filter((t) => t !== 'made-with-ai' && t !== 'clipart' && t !== 'undraw' && t !== 'external'),
     kind: d.parts ? 'clipart' : d.tags.includes('logo') ? 'logo' : 'icon', mine: name in userItems,
+    source: sourceOf(d.tags),
   }));
   for (const [name, m] of Object.entries(isoModels)) {
     const tags = (userItems[name] as { tags?: string[] } | undefined)?.tags ?? [];
-    out.push({ name, model: m, description: m.description, tags: tags.filter((t) => t !== 'made-with-ai'), kind: '3d', mine: name in userItems });
+    out.push({ name, model: m, description: m.description, tags: tags.filter((t) => t !== 'made-with-ai'), kind: '3d', mine: name in userItems, source: sourceOf(tags) });
   }
   return out;
 }
@@ -40,7 +55,7 @@ interface Props {
   /** Present when opened from the editor: puts the item on the board. */
   onAdd?: (item: { kind: 'icon' | 'iso'; name: string }) => void;
   /** Opens "New with AI" for this kind of item, optionally continuing from an existing one. */
-  onCreate?: (kind: 'icon' | 'clipart' | '3d', start?: CreatorStart) => void;
+  onCreate?: (kind: 'icon' | 'logo' | 'clipart' | '3d', start?: CreatorStart) => void;
   /** Something in the library changed (renamed, deleted, edited). */
   onChanged?: () => void;
   /** Bumped from outside when something was added (e.g. made with AI). */
@@ -63,9 +78,22 @@ export function LibraryManager({ onClose, onAdd, onCreate, onChanged, version: o
     return items
       .filter((i) => inGroup(i, group))
       .filter((i) => !q || i.name.includes(q) || i.tags.some((t) => t.includes(q)) || i.description.toLowerCase().includes(q))
-      // Your own things first, then by name.
-      .sort((a, b) => Number(b.mine) - Number(a.mine) || a.name.localeCompare(b.name));
+      .sort((a, b) => a.name.localeCompare(b.name));
   }, [items, group, query]);
+  // Within a specific category, split into sections by source (hand-drawn / UnDraw / AI).
+  // Under "Everything" skip subheadings — too many kinds mixed to make the split meaningful.
+  const sections = useMemo(() => {
+    if (group === 'all') return [{ source: null as Source | null, items: shown }];
+    const bySource = new Map<Source, Item[]>();
+    for (const item of shown) {
+      const list = bySource.get(item.source) ?? [];
+      list.push(item);
+      bySource.set(item.source, list);
+    }
+    return SOURCE_ORDER
+      .filter((s) => bySource.has(s))
+      .map((source) => ({ source, items: bySource.get(source)! }));
+  }, [shown, group]);
   const keyOf = (i: Item) => `${i.kind}:${i.name}`;
   const current = items.find((i) => keyOf(i) === selected) ?? null;
 
@@ -89,6 +117,7 @@ export function LibraryManager({ onClose, onAdd, onCreate, onChanged, version: o
           <div className="new-ai">
             <span className="muted">New with AI:</span>
             <button onClick={() => onCreate('icon')}>Icon</button>
+            <button onClick={() => onCreate('logo')}>Logo</button>
             <button onClick={() => onCreate('clipart')}>Clipart</button>
             <button onClick={() => onCreate('3d')}>3D model</button>
           </div>
@@ -104,20 +133,30 @@ export function LibraryManager({ onClose, onAdd, onCreate, onChanged, version: o
           ))}
           <p className="muted small">Things you make with AI are saved in <code>library/</code> next to your presentations, and models writing presentations can use them.</p>
         </nav>
-        <div className="libman-grid">
-          {shown.length === 0 && <p className="muted">{group === 'mine' && !query ? 'Nothing made yet. Use “New with AI” above.' : 'Nothing matches.'}</p>}
-          {shown.map((i) => (
-            <button
-              key={`${i.kind}:${i.name}`}
-              className={`lib-tile k-${i.kind} ${selected === keyOf(i) ? 'on' : ''}`}
-              onClick={() => setSelected(keyOf(i))}
-              onDoubleClick={() => onAdd && (onAdd({ kind: i.kind === '3d' ? 'iso' : 'icon', name: i.name }), onClose())}
-              title={i.description}
-            >
-              <span className="art"><Thumb item={i} /></span>
-              <span className="name">{i.name}</span>
-              {i.mine && <span className="badge">mine</span>}
-            </button>
+        <div className="libman-main">
+          {shown.length === 0 && <p className="muted">Nothing matches.</p>}
+          {sections.map(({ source, items: list }) => (
+            <section key={source ?? 'all'} className="libman-section">
+              {source && <h3 className="libman-section-head">{SOURCE_LABEL[source]} <span className="count">{list.length}</span></h3>}
+              <div className="libman-grid">
+                {list.map((i) => (
+                  <div
+                    key={`${i.kind}:${i.name}`}
+                    className={`lib-tile k-${i.kind} ${selected === keyOf(i) ? 'on' : ''}`}
+                    onClick={() => setSelected(keyOf(i))}
+                    onDoubleClick={() => onAdd && (onAdd({ kind: i.kind === '3d' ? 'iso' : 'icon', name: i.name }), onClose())}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelected(keyOf(i)); } }}
+                    title={i.description}
+                    role="button"
+                    tabIndex={0}
+                  >
+                    <span className="art"><Thumb item={i} /></span>
+                    <span className="name">{i.name}</span>
+                    <TileDelete item={i} onDone={() => { if (selected === keyOf(i)) setSelected(null); changed(); }} />
+                  </div>
+                ))}
+              </div>
+            </section>
           ))}
         </div>
         <aside className="libman-detail">
@@ -133,7 +172,25 @@ export function LibraryManager({ onClose, onAdd, onCreate, onChanged, version: o
 }
 
 function inGroup(i: Item, g: LibraryGroup) {
-  return g === 'all' || (g === 'mine' ? i.mine : i.kind === g);
+  return g === 'all' || i.kind === g;
+}
+
+/** Hover-revealed × that deletes a library item after confirmation. */
+function TileDelete({ item, onDone }: { item: Item; onDone: () => void }) {
+  if (!(item.name in userItems)) return null;
+  const onClick = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const ok = await confirmDialog({
+      title: `Delete “${item.name}” from your library?`,
+      message: `Presentations that use it will show an error where it was. This can't be undone.`,
+      confirm: 'Delete', danger: true,
+    });
+    if (!ok) return;
+    try { await deleteFromLibrary(item.name); onDone(); } catch (err) { alert((err as Error).message); }
+  };
+  return (
+    <button type="button" className="tile-delete" onClick={onClick} title="Delete this from the library" aria-label={`Delete ${item.name}`}>✕</button>
+  );
 }
 
 /** Small static picture for the grid. */
@@ -163,7 +220,10 @@ function Detail({ item, onAdd, onRefine, onChanged, onGone, onRenamed }: {
   onGone: () => void;
   onRenamed: (to: string) => void;
 }) {
-  const [color, setColor] = useState<ColorName>('cyan');
+  // Cliparts default to white so the multi-colour illustration reads as it does on a presentation
+  // whose default element colour is white; swatches still let you flip through markers to see it
+  // in another dominant. Single-colour items keep the cyan default they always had.
+  const [color, setColor] = useState<ColorName>(() => (item.kind === 'clipart' ? 'white' : 'cyan'));
   const [name, setName] = useState(item.name);
   const [description, setDescription] = useState(item.description);
   const [tags, setTags] = useState(item.tags.join(', '));
@@ -211,17 +271,12 @@ function Detail({ item, onAdd, onRefine, onChanged, onGone, onRenamed }: {
   return (
     <div className="detail">
       <DrawPreview element={element} color={color} />
-      {item.kind !== 'clipart' && (
-        <div className="swatch-row" title="Preview colour (on the board, it takes the element's colour)">
-          {(Object.keys(palette) as ColorName[]).map((c) => (
-            <button key={c} className={c === color ? 'on' : ''} style={{ background: palette[c] }} onClick={() => setColor(c)} aria-label={c} />
-          ))}
-        </div>
-      )}
+      <MarkerTray value={color} onChange={setColor} />
+      {/* 'palette' import kept lint-happy via Detail — swatch row replaced by marker tray above. */}
       <div className="detail-head">
         <h3>{item.name}</h3>
         <span className="kind">{KIND_LABEL[item.kind]}</span>
-        <span className="kind">{item.mine ? 'made in this app' : 'built in'}</span>
+        <span className="kind">{SOURCE_LABEL[item.source].toLowerCase()}</span>
       </div>
       {item.mine ? (
         <div className="detail-form">
@@ -245,16 +300,19 @@ function Detail({ item, onAdd, onRefine, onChanged, onGone, onRenamed }: {
         {onAdd && <button className="primary" onClick={() => onAdd({ kind: item.kind === '3d' ? 'iso' : 'icon', name: item.name })}>Put on the board</button>}
         {onRefine && (
           <button
-            title={item.mine ? 'Talk it over with a model and save the result over this one' : 'Start from this one and save the result as a new item'}
+            title="Talk it over with a model and save the result over this one"
             onClick={() => onRefine({
-              kind: item.kind === '3d' ? '3d' : item.kind === 'clipart' ? 'clipart' : 'icon',
+              kind: item.kind === '3d' ? '3d' : item.kind === 'clipart' ? 'clipart' : item.kind === 'logo' ? 'logo' : 'icon',
               from: item.name,
-              name: item.mine ? item.name : undefined,
+              // Always refine in place: the whole library is the user's, including the built-ins
+              // that shipped with the app. If no library/ file exists yet, saving creates one that
+              // shadows the built-in — deleting it later restores the original.
+              name: item.name,
               description: item.description,
               value: item.kind === '3d' ? { kind: 'iso', description: item.description, tags: item.tags, parts: item.model!.parts } : { ...item.icon },
             })}
           >
-            {item.mine ? 'Refine with AI' : 'Make a variation with AI'}
+            Refine with AI
           </button>
         )}
         {item.mine && <button disabled={!dirty || busy} onClick={() => void save()}>Save changes</button>}

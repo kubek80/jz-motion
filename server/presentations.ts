@@ -30,14 +30,33 @@ export async function listPresentations(): Promise<PresentationInfo[]> {
   return infos.sort((a, b) => b.updated.localeCompare(a.updated));
 }
 
-export async function readPresentation(id: string): Promise<string> {
-  return readFile(file(id), 'utf8');
+export async function readPresentation(id: string): Promise<{ text: string; modifiedAt: string }> {
+  const [text, info] = await Promise.all([readFile(file(id), 'utf8'), stat(file(id))]);
+  return { text, modifiedAt: info.mtime.toISOString() };
 }
 
-/** Saves the text as given (it may be mid-edit and not valid yet). */
-export async function writePresentation(id: string, text: string) {
+/**
+ * Saves the text as given (it may be mid-edit and not valid yet). If `expectedModifiedAt` is
+ * given and the file on disk is newer than that, throws a Conflict error — the editor's copy is
+ * stale (the file was changed outside the app, e.g. by a code agent or git checkout) and the
+ * user should reload before overwriting.
+ *
+ * Returns the new mtime so the editor can update its tracked value for the next save, otherwise
+ * every save after the first would look stale.
+ */
+export async function writePresentation(id: string, text: string, expectedModifiedAt?: string): Promise<{ modifiedAt: string }> {
   await mkdir(PRESENTATIONS_DIR, { recursive: true });
+  if (expectedModifiedAt) {
+    const info = await stat(file(id)).catch(() => null);
+    if (info && info.mtime.toISOString() > expectedModifiedAt) {
+      const err = new Error(`the presentation was changed on disk at ${info.mtime.toISOString()} — reload the page before saving`);
+      (err as Error & { code?: string }).code = 'STALE';
+      throw err;
+    }
+  }
   await writeFile(file(id), text);
+  const info = await stat(file(id));
+  return { modifiedAt: info.mtime.toISOString() };
 }
 
 export async function createPresentation(text: string): Promise<string> {

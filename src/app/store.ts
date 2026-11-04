@@ -18,11 +18,43 @@ const api = async (url: string, init?: RequestInit) => {
   return res;
 };
 
+// Per-id mtime we loaded, sent back on save so the server can refuse a stale write
+// (if the file changed on disk — e.g. a code agent, git checkout — the editor's copy is stale).
+const loadedMtime = new Map<string, string>();
+
 const files: Store = {
   kind: 'files',
   list: async () => (await api('/api/presentations')).json(),
-  load: async (id) => (await api(`/api/presentations/${id}`)).text(),
-  save: async (id, text) => void (await api(`/api/presentations/${id}`, { method: 'PUT', body: text })),
+  load: async (id) => {
+    const res = await api(`/api/presentations/${id}`);
+    const m = res.headers.get('x-modified-at');
+    if (m) loadedMtime.set(id, m); else loadedMtime.delete(id);
+    return res.text();
+  },
+  save: async (id, text) => {
+    const headers: Record<string, string> = {};
+    const m = loadedMtime.get(id);
+    if (m) headers['x-modified-at'] = m;
+    const res = await fetch(`/api/presentations/${id}`, { method: 'PUT', headers, body: text });
+    if (res.status === 409) {
+      const msg = await res.text().catch(() => '');
+      // The file was changed on disk; the editor's copy is stale.
+      const err = new Error('STALE: ' + msg);
+      (err as Error & { stale?: boolean }).stale = true;
+      throw err;
+    }
+    if (!res.ok) throw new Error(`${res.status} ${await res.text()}`);
+    // The server returns the new mtime (header + body). Track it so the next save doesn't look
+    // stale against the file this save just wrote.
+    const nm = res.headers.get('x-modified-at');
+    if (nm) {
+      loadedMtime.set(id, nm);
+    } else {
+      // Fallback: body may carry it.
+      const body = await res.json().catch(() => null);
+      if (body?.modifiedAt) loadedMtime.set(id, body.modifiedAt);
+    }
+  },
   create: async (text) => (await (await api('/api/presentations', { method: 'POST', body: text })).json()).id,
   remove: async (id) => void (await api(`/api/presentations/${id}`, { method: 'DELETE' })),
 };

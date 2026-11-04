@@ -1,10 +1,10 @@
 {
   "version": 1,
-  "title": "jz-motion: explainers, fast (about this app)",
+  "title": "JZ-motion: explainers, fast (about this app)",
   "scenes": [
     {
       "id": "title",
-      "title": "jz-motion",
+      "title": "JZ-motion",
       "elements": [
         {
           "id": "logo",
@@ -38,18 +38,17 @@
       "beats": [
         {
           "title": "Logo",
-          "notes": "Hi, I'm Jakub. This is jz-motion: the little studio I built to make explainer videos like this one.",
           "actions": [
             {
               "do": "draw",
               "target": "logo",
               "duration": 2.4
             }
-          ]
+          ],
+          "notes": "Short bullet one\nShort bullet two\n\nA paragraph with. Multiple sentences inside! A third one?"
         },
         {
           "title": "What it is",
-          "notes": "Everything you'll see here was drawn by it: a glowing marker board, animated beat by beat, with an LLM doing most of the work.",
           "actions": [
             {
               "do": "draw",
@@ -59,7 +58,8 @@
               ],
               "stagger": 0.8
             }
-          ]
+          ],
+          "notes": "Everything you'll see here was drawn by it: a glowing marker board, animated beat by beat, with an LLM doing most of the work."
         }
       ]
     },

@@ -935,17 +935,53 @@ export class Stage {
         const g = svgEl('g', { transform: `scale(${scale}) translate(${-bw / 2} ${-bh / 2})` }, fx);
         if (def.parts) {
           // Clipart: each part in its own colour; outlines draw first, then their fills fade in.
-          const colour = (c: PartColor) => (c === 'board' ? board.background : palette[c]);
+          // "ink" = currentColor so the element's own marker colour drives the part — a clipart
+          // of ink-only parts recolours uniformly when you change the element's `color`.
+          const colour = (c: PartColor) => (c === 'board' ? board.background : c === 'ink' ? 'currentColor' : palette[c]);
+          // Imported external cliparts (tagged "undraw") get a subtle idle loop — a vertical bob
+          // and slight rotation on an inner group, so a scene with a character tile doesn't feel
+          // frozen. Driven by GSAP (CSS transforms on <g> have SVG-coord-space quirks); respects
+          // prefers-reduced-motion by skipping the tween. Amplitude scales with the clipart's own
+          // box so the motion reads similarly whether the tile is tall or wide.
+          let inner: SVGElement = g;
+          if (def.tags.includes('undraw')) {
+            inner = svgEl('g', {}, g);
+            const reduced = typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if (!reduced) {
+              // Per-instance variation in duration + phase so several tiles don't pulse in lockstep.
+              gsap.to(inner, {
+                y: -bh * 0.03,
+                rotation: 1.4,
+                duration: 3.2 + Math.random() * 1.2,
+                delay: Math.random() * 1.5,
+                yoyo: true,
+                repeat: -1,
+                ease: 'sine.inOut',
+                transformOrigin: `${bw / 2}px ${bh / 2}px`,
+              });
+            }
+          }
           for (const part of def.parts) {
-            const holder = part.transform ? svgEl('g', { transform: part.transform }, g) : g;
+            const holder = part.transform ? svgEl('g', { transform: part.transform }, inner) : inner;
             const path = stroke(part.d, part.width ?? 2, holder, 'solid', scale);
             // Strokes are drawn in currentColor, so setting `color` colours every piece of the part.
             if (part.color) path.style.color = colour(part.color);
             if (part.opacity !== undefined) path.setAttribute('opacity', String(part.opacity));
             if (part.fill) {
-              const f = svgEl('path', { d: part.d, fill: colour(part.fill), stroke: 'none', 'fill-rule': 'evenodd' });
+              // "Dim" fills come out as a pre-mixed solid colour (same trick as iso faces at
+              // line ~1211), not a see-through overlay — that way a clipart layered on top of
+              // other elements doesn't bleed its background through. Works for ink (currentColor)
+              // and for any palette colour (pink skin highlights, orange skin tones), so multi-
+              // colour cliparts stay solid against whatever's behind. "board" fills opt out: they
+              // intentionally punch through to the board background.
+              const opacity = part.fillOpacity ?? 1;
+              const useMix = opacity < 1 && part.fill !== 'board';
+              const fill = useMix
+                ? `color-mix(in srgb, ${colour(part.fill)} ${Math.round(opacity * 100)}%, ${board.background})`
+                : colour(part.fill);
+              const f = svgEl('path', { d: part.d, fill, stroke: 'none', 'fill-rule': 'evenodd' });
               holder.insertBefore(f, path);
-              parts.push({ kind: 'fill', node: f, opacity: part.fillOpacity ?? 1 });
+              parts.push({ kind: 'fill', node: f, opacity: useMix ? 1 : opacity });
             }
           }
         } else if (def.style === 'logo') {

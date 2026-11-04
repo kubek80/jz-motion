@@ -1,0 +1,147 @@
+{
+ "description": "A stick figure smacking head-first into a brick wall, reordered so the stroke-by-stroke drawing plays out the hit in sequence: the wall goes up first, then speed lines and a faded motion-trail figure, then the runner arrives at the wall, the impact burst flashes, the wall cracks, and the dizzy stars appear last. Note: the board plays the drawing animation once and cannot loop, so this sequence is the closest available way to animate the impact. It stands for 'hitting the wall'.",
+ "tags": [
+  "clipart",
+  "made-with-ai",
+  "clipart",
+  "made-with-ai",
+  "hitting the wall",
+  "brick wall",
+  "impact",
+  "burnout",
+  "exhaustion",
+  "obstacle",
+  "stuck",
+  "stick figure",
+  "dizzy",
+  "frustration",
+  "motion",
+  "sequence"
+ ],
+ "paths": [],
+ "box": [
+  240,
+  160
+ ],
+ "parts": [
+  {
+   "d": "M10 150 H230",
+   "color": "ink",
+   "width": 3
+  },
+  {
+   "d": "M160 18 H212 V150 H160 Z",
+   "color": "ink",
+   "width": 4,
+   "fill": "ink",
+   "fillOpacity": 0.2
+  },
+  {
+   "d": "M160 38 H212 M160 58 H212 M160 78 H212 M160 98 H212 M160 118 H212 M160 138 H212",
+   "color": "ink",
+   "width": 2.5
+  },
+  {
+   "d": "M186 18 V38 M173 38 V58 M199 38 V58 M186 58 V78 M173 78 V98 M199 78 V98 M186 98 V118 M173 118 V138 M199 118 V138 M186 138 V150",
+   "color": "ink",
+   "width": 2.5
+  },
+  {
+   "d": "M58 55 H95 M46 75 H90 M62 95 H102 M70 115 H100",
+   "color": "ink",
+   "width": 2.5,
+   "opacity": 0.6
+  },
+  {
+   "d": "M100 47 A13 13 0 1 0 100 73 A13 13 0 1 0 100 47 Z",
+   "color": "ink",
+   "width": 3,
+   "opacity": 0.25
+  },
+  {
+   "d": "M95 73 L80 105 L95 125 L105 148 M80 105 L63 120 L49 134",
+   "color": "ink",
+   "width": 3,
+   "opacity": 0.25
+  },
+  {
+   "d": "M145 47 A13 13 0 1 0 145 73 A13 13 0 1 0 145 47 Z",
+   "color": "ink",
+   "width": 3.5,
+   "fill": "board"
+  },
+  {
+   "d": "M140 73 L125 105",
+   "color": "ink",
+   "width": 4
+  },
+  {
+   "d": "M137 80 L118 72 L104 78",
+   "color": "ink",
+   "width": 3.5
+  },
+  {
+   "d": "M136 84 L122 94 L110 90",
+   "color": "ink",
+   "width": 3.5
+  },
+  {
+   "d": "M125 105 L140 125 L150 148",
+   "color": "ink",
+   "width": 4
+  },
+  {
+   "d": "M125 105 L108 120 L94 134",
+   "color": "ink",
+   "width": 4
+  },
+  {
+   "d": "M146 54 L152 60 M152 54 L146 60",
+   "color": "ink",
+   "width": 2.5
+  },
+  {
+   "d": "M139 67 Q143 63 147 67",
+   "color": "ink",
+   "width": 2
+  },
+  {
+   "d": "M176 58 L167.5 60.3 L171.9 67.9 L164.3 63.5 L162 72 L159.7 63.5 L152.1 67.9 L156.5 60.3 L148 58 L156.5 55.7 L152.1 48.1 L159.7 52.5 L162 44 L164.3 52.5 L171.9 48.1 L167.5 55.7 Z",
+   "color": "yellow",
+   "width": 3,
+   "fill": "yellow",
+   "fillOpacity": 0.35
+  },
+  {
+   "d": "M170 56 L182 49 L190 53 L206 44 M168 64 L180 74 L177 88 M176 70 L192 72",
+   "color": "white",
+   "width": 2,
+   "opacity": 0.9
+  },
+  {
+   "d": "M118 36 A28 9 0 0 1 172 36",
+   "color": "orange",
+   "width": 2,
+   "opacity": 0.8
+  },
+  {
+   "d": "M126 24 L128 29 L133 31 L128 33 L126 38 L124 33 L119 31 L124 29 Z",
+   "color": "yellow",
+   "width": 2,
+   "fill": "yellow",
+   "fillOpacity": 0.4
+  },
+  {
+   "d": "M150 14 L151.5 18 L155.5 19.5 L151.5 21 L150 25 L148.5 21 L144.5 19.5 L148.5 18 Z",
+   "color": "orange",
+   "width": 2,
+   "fill": "orange",
+   "fillOpacity": 0.4
+  },
+  {
+   "d": "M170 26 L171.2 29 L174 30 L171.2 31 L170 34 L168.8 31 L166 30 L168.8 29 Z",
+   "color": "yellow",
+   "width": 1.8
+  }
+ ]
+}

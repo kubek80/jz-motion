@@ -1,0 +1,3732 @@
+{
+  "version": 1,
+  "title": "JZ-motion: explainers, fast (about this app, with edit demo)",
+  "scenes": [
+    {
+      "id": "title",
+      "title": "JZ-motion",
+      "elements": [
+        {
+          "id": "logo",
+          "type": "icon",
+          "icon": "jz-logo",
+          "x": 960,
+          "y": 360,
+          "size": 760,
+          "color": "pink"
+        },
+        {
+          "id": "headline",
+          "type": "text",
+          "text": "EXPLAINERS, FAST",
+          "x": 960,
+          "y": 720,
+          "size": 96,
+          "color": "cyan",
+          "style": "bold"
+        },
+        {
+          "id": "tagline",
+          "type": "text",
+          "text": "an LLM-first studio for explainer videos",
+          "x": 960,
+          "y": 850,
+          "size": 56,
+          "color": "yellow"
+        }
+      ],
+      "beats": [
+        {
+          "title": "Logo",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "logo",
+              "duration": 2.4
+            }
+          ],
+          "notes": "Hi, it's Jakub here\nThis is a showcase of application built by me in last couple of weeks. It is LLM first - explainer video creator."
+        },
+        {
+          "title": "What it is",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "headline",
+                "tagline"
+              ],
+              "stagger": 0.8
+            }
+          ],
+          "notes": "Everything you'll see here was drawn by it: a glowing marker board, animated text & graphics beat by beat, with an LLM doing most of the work."
+        }
+      ]
+    },
+    {
+      "id": "why",
+      "title": "Why I built it",
+      "elements": [
+        {
+          "id": "h",
+          "type": "text",
+          "text": "WHY I BUILT IT",
+          "x": 960,
+          "y": 90,
+          "size": 68,
+          "color": "yellow",
+          "style": "bold"
+        },
+        {
+          "id": "ideas",
+          "type": "icon",
+          "icon": "brain",
+          "x": 280,
+          "y": 410,
+          "size": 170,
+          "color": "yellow",
+          "label": "ideas"
+        },
+        {
+          "id": "notes",
+          "type": "icon",
+          "icon": "file",
+          "x": 672,
+          "y": 410,
+          "size": 150,
+          "color": "cyan",
+          "label": "a script"
+        },
+        {
+          "id": "a-notes",
+          "type": "arrow",
+          "from": "ideas",
+          "to": "notes",
+          "color": "white"
+        },
+        {
+          "id": "video",
+          "type": "icon",
+          "icon": "play",
+          "x": 1085,
+          "y": 411,
+          "size": 180,
+          "label": "a video, planned"
+        },
+        {
+          "id": "a-video",
+          "type": "arrow",
+          "from": "notes",
+          "to": "video",
+          "line": "dashed"
+        },
+        {
+          "id": "me",
+          "type": "icon",
+          "icon": "mood",
+          "x": 1608,
+          "y": 709,
+          "size": 180,
+          "color": "orange",
+          "label": "no time"
+        },
+        {
+          "id": "what-if",
+          "type": "text",
+          "text": "what if the board\ndrew itself?",
+          "x": 960,
+          "y": 920,
+          "size": 60,
+          "color": "cyan"
+        },
+        {
+          "id": "i-would-like",
+          "type": "icon",
+          "icon": "i-would-like",
+          "x": 1587,
+          "y": 411,
+          "size": 384,
+          "color": "pink"
+        },
+        {
+          "id": "video-i-would-like",
+          "type": "arrow",
+          "from": "video",
+          "to": "i-would-like",
+          "color": "pink"
+        },
+        {
+          "id": "lightbulb",
+          "type": "icon",
+          "icon": "lightbulb",
+          "x": 644,
+          "y": 898,
+          "size": 520,
+          "color": "cyan"
+        }
+      ],
+      "beats": [
+        {
+          "title": "Ideas, more than time",
+          "notes": "I have far more ideas than videos. I write notes, sometimes a full script…",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "h"
+            },
+            {
+              "do": "draw",
+              "target": [
+                "ideas",
+                "a-notes",
+                "notes"
+              ],
+              "stagger": 0.6
+            }
+          ]
+        },
+        {
+          "title": "A video, planned",
+          "notes": "…then I'd plan a video to go with the script. Action, lights, the whole thing.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "a-video",
+                "video"
+              ],
+              "stagger": 0.4
+            },
+            {
+              "do": "pulse",
+              "target": "video"
+            }
+          ]
+        },
+        {
+          "title": "Beat 5",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "video-i-would-like"
+            },
+            {
+              "do": "draw",
+              "target": "i-would-like"
+            },
+            {
+              "do": "pulse",
+              "target": "i-would-like"
+            }
+          ]
+        },
+        {
+          "title": "No time",
+          "notes": "And then it stops. Recording, drawing, editing, publishing — I never have the time. Another month gone, and nothing shipped.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "me"
+            }
+          ]
+        },
+        {
+          "title": "What if the board drew itself?",
+          "notes": "So the question became: what if the board could draw itself, and a model could help me write it?",
+          "actions": [
+            {
+              "do": "pulse",
+              "target": "ideas"
+            },
+            {
+              "do": "draw",
+              "target": "what-if"
+            },
+            {
+              "do": "pop",
+              "target": "lightbulb"
+            },
+            {
+              "do": "pulse",
+              "target": "lightbulb"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "inspiration",
+      "title": "Inspiration",
+      "elements": [
+        {
+          "id": "h",
+          "type": "text",
+          "text": "ONE STYLE, EVERY TIME",
+          "x": 960,
+          "y": 90,
+          "size": 60,
+          "color": "cyan",
+          "style": "bold"
+        },
+        {
+          "id": "lead",
+          "type": "text",
+          "text": "when you publish often,\nkeeping a consistent style matters",
+          "x": 960,
+          "y": 290,
+          "size": 48,
+          "color": "white"
+        },
+        {
+          "id": "ibm",
+          "type": "image",
+          "src": "/examples/about/inspiration-ibm.jpg",
+          "x": 960,
+          "y": 700,
+          "width": 1500,
+          "height": 248,
+          "color": "white"
+        },
+        {
+          "id": "ibm-label",
+          "type": "text",
+          "text": "inspiration: IBM Technology lightboard explainers",
+          "x": 960,
+          "y": 880,
+          "size": 36,
+          "color": "white"
+        },
+        {
+          "id": "qualities",
+          "type": "text",
+          "text": "clear · calm · fast to follow",
+          "x": 960,
+          "y": 970,
+          "size": 40,
+          "color": "yellow"
+        }
+      ],
+      "beats": [
+        {
+          "title": "Consistency matters",
+          "notes": "When you publish often, keeping a single style matters: viewers recognise it, you spend time on the idea, not the look.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "h"
+            },
+            {
+              "do": "draw",
+              "target": "lead"
+            }
+          ]
+        },
+        {
+          "title": "The reference",
+          "notes": "When I picked a style, I took inspiration from IBM Technology's lightboard explainers: one person, a glass board, neon diagrams.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "ibm"
+            },
+            {
+              "do": "draw",
+              "target": "ibm-label",
+              "start": "with",
+              "delay": 0.6
+            }
+          ]
+        },
+        {
+          "title": "Clear, calm, fast to follow",
+          "notes": "Three qualities to copy: clear, calm, fast to follow.",
+          "actions": [
+            {
+              "do": "spotlight",
+              "target": "ibm",
+              "style": "fade",
+              "amount": 0.6
+            },
+            {
+              "do": "draw",
+              "target": "qualities"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "start",
+      "title": "Start with a sentence",
+      "elements": [
+        {
+          "id": "h",
+          "type": "text",
+          "text": "START WITH A SENTENCE",
+          "x": 960,
+          "y": 70,
+          "size": 56,
+          "color": "cyan",
+          "style": "bold",
+          "pinned": true
+        },
+        {
+          "id": "home",
+          "type": "image",
+          "src": "/examples/about/home.jpg",
+          "x": 960,
+          "y": 580,
+          "width": 1300,
+          "height": 812,
+          "frame": "browser",
+          "url": "localhost:5173",
+          "color": "cyan"
+        },
+        {
+          "id": "prompt",
+          "type": "area",
+          "x": 960,
+          "y": 490,
+          "width": 635,
+          "height": 120,
+          "shape": "rect",
+          "color": "yellow"
+        },
+        {
+          "id": "modes",
+          "type": "area",
+          "x": 751,
+          "y": 528,
+          "width": 198,
+          "height": 26,
+          "shape": "rect",
+          "color": "pink"
+        },
+        {
+          "id": "model",
+          "type": "area",
+          "x": 1174,
+          "y": 528,
+          "width": 219,
+          "height": 29,
+          "shape": "rect",
+          "color": "green"
+        },
+        {
+          "id": "cap-prompt",
+          "type": "text",
+          "text": "say what\nyou want\nto explain",
+          "x": 180,
+          "y": 460,
+          "size": 42,
+          "color": "yellow",
+          "align": "start",
+          "pinned": true
+        },
+        {
+          "id": "cap-modes",
+          "type": "text",
+          "text": "topic, script,\nor a recording\nof you talking",
+          "x": 180,
+          "y": 460,
+          "size": 40,
+          "color": "pink",
+          "align": "start",
+          "pinned": true
+        },
+        {
+          "id": "cap-model",
+          "type": "text",
+          "text": "a different model\nfor each way,\nif you like",
+          "x": 180,
+          "y": 460,
+          "size": 40,
+          "color": "green",
+          "align": "start",
+          "pinned": true
+        }
+      ],
+      "beats": [
+        {
+          "title": "Home",
+          "notes": "It starts like a chat. One box in the middle of the screen.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "h"
+            },
+            {
+              "do": "draw",
+              "target": "home"
+            }
+          ]
+        },
+        {
+          "title": "Just a sentence",
+          "notes": "I type what I want to explain, one sentence is enough, and a model drafts the whole presentation: scenes, drawings, beats and speaker notes.",
+          "actions": [
+            {
+              "do": "camera",
+              "focus": "prompt",
+              "padding": 200
+            },
+            {
+              "do": "circle",
+              "target": "prompt",
+              "color": "yellow",
+              "start": "with",
+              "delay": 0.6
+            },
+            {
+              "do": "draw",
+              "target": "cap-prompt",
+              "start": "with"
+            }
+          ]
+        },
+        {
+          "title": "Three ways in",
+          "notes": "I can start from a topic, from a script I already wrote, or from a recording: then it transcribes me and cues every beat to the moment I say it.",
+          "actions": [
+            {
+              "do": "camera",
+              "focus": "modes",
+              "padding": 220
+            },
+            {
+              "do": "fade-out",
+              "target": "cap-prompt",
+              "start": "with"
+            },
+            {
+              "do": "circle",
+              "target": "modes",
+              "color": "pink",
+              "start": "with",
+              "delay": 0.5
+            },
+            {
+              "do": "draw",
+              "target": "cap-modes",
+              "start": "with"
+            }
+          ]
+        },
+        {
+          "title": "A model per job",
+          "notes": "And each way of starting can use a different model. More on why that matters in a minute.",
+          "actions": [
+            {
+              "do": "camera",
+              "focus": "model",
+              "padding": 220
+            },
+            {
+              "do": "fade-out",
+              "target": "cap-modes",
+              "start": "with"
+            },
+            {
+              "do": "circle",
+              "target": "model",
+              "color": "green",
+              "start": "with",
+              "delay": 0.5
+            },
+            {
+              "do": "draw",
+              "target": "cap-model",
+              "start": "with"
+            }
+          ]
+        },
+        {
+          "title": "Back out",
+          "notes": "",
+          "actions": [
+            {
+              "do": "camera",
+              "x": 960,
+              "y": 540,
+              "zoom": 1
+            },
+            {
+              "do": "fade-out",
+              "target": "cap-model",
+              "start": "with"
+            }
+          ],
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "editor",
+      "title": "Edit like a whiteboard",
+      "elements": [
+        {
+          "id": "h",
+          "type": "text",
+          "text": "EDIT LIKE A WHITEBOARD",
+          "x": 960,
+          "y": 70,
+          "size": 60,
+          "color": "yellow",
+          "style": "bold",
+          "pinned": true
+        },
+        {
+          "id": "editor",
+          "type": "image",
+          "src": "/images/jzm-editor.png",
+          "x": 960,
+          "y": 540,
+          "width": 1280,
+          "height": 800,
+          "frame": "browser",
+          "url": "localhost:5173",
+          "color": "cyan"
+        },
+        {
+          "id": "a-board",
+          "type": "area",
+          "x": 885,
+          "y": 420,
+          "width": 791,
+          "height": 471,
+          "shape": "rect",
+          "color": "cyan"
+        },
+        {
+          "id": "a-storyboard",
+          "type": "area",
+          "x": 885,
+          "y": 753,
+          "width": 791,
+          "height": 196,
+          "shape": "rect",
+          "color": "green"
+        },
+        {
+          "id": "a-props",
+          "type": "area",
+          "x": 1451,
+          "y": 518,
+          "width": 298,
+          "height": 667,
+          "shape": "rect",
+          "color": "pink"
+        },
+        {
+          "id": "a-library",
+          "type": "area",
+          "x": 396,
+          "y": 518,
+          "width": 151,
+          "height": 667,
+          "shape": "rect",
+          "color": "orange"
+        },
+        {
+          "id": "cap-board",
+          "type": "text",
+          "text": "the board\nin the middle",
+          "x": 180,
+          "y": 180,
+          "size": 36,
+          "color": "cyan",
+          "align": "start",
+          "pinned": true
+        },
+        {
+          "id": "cap-storyboard",
+          "type": "text",
+          "text": "beats = clicks\none card each",
+          "x": 180,
+          "y": 180,
+          "size": 36,
+          "color": "green",
+          "align": "start",
+          "pinned": true
+        },
+        {
+          "id": "cap-props",
+          "type": "text",
+          "text": "properties:\ncolour, size, style —\nlike a drawing app",
+          "x": 180,
+          "y": 180,
+          "size": 32,
+          "color": "pink",
+          "align": "start",
+          "pinned": true
+        },
+        {
+          "id": "cap-library",
+          "type": "text",
+          "text": "scenes and the library\non the left",
+          "x": 180,
+          "y": 180,
+          "size": 32,
+          "color": "orange",
+          "align": "start",
+          "pinned": true
+        }
+      ],
+      "beats": [
+        {
+          "title": "The editor",
+          "notes": "The draft opens in the editor. One window: the board in the middle, scenes and the library on the left, properties on the right.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "h"
+            },
+            {
+              "do": "draw",
+              "target": "editor"
+            }
+          ]
+        },
+        {
+          "title": "The board",
+          "notes": "The board itself is the drawing surface. Everything on it is written, drawn, or placed by me or by the AI.",
+          "actions": [
+            {
+              "do": "camera",
+              "focus": "a-board",
+              "padding": 120
+            },
+            {
+              "do": "draw",
+              "target": "cap-board",
+              "start": "with",
+              "delay": 0.4
+            }
+          ]
+        },
+        {
+          "title": "Beats under it",
+          "notes": "Under the board is the storyboard. Each card is a beat: one click while I present, with its actions laid out on a small timeline.",
+          "actions": [
+            {
+              "do": "camera",
+              "focus": "a-storyboard",
+              "padding": 100
+            },
+            {
+              "do": "fade-out",
+              "target": "cap-board",
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap-storyboard",
+              "start": "with",
+              "delay": 0.4
+            }
+          ]
+        },
+        {
+          "title": "Properties on the right",
+          "notes": "Everything has properties — positions and sizes like a drawing program, colours as marker tips, styles as little pictures.",
+          "actions": [
+            {
+              "do": "camera",
+              "focus": "a-props",
+              "padding": 100
+            },
+            {
+              "do": "fade-out",
+              "target": "cap-storyboard",
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap-props",
+              "start": "with",
+              "delay": 0.4
+            }
+          ]
+        },
+        {
+          "title": "Scenes and library on the left",
+          "notes": "On the left: the list of scenes, and under it the library — icons, clipart, 3D models I can drop onto the board.",
+          "actions": [
+            {
+              "do": "camera",
+              "focus": "a-library",
+              "padding": 120
+            },
+            {
+              "do": "fade-out",
+              "target": "cap-props",
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap-library",
+              "start": "with",
+              "delay": 0.4
+            }
+          ]
+        },
+        {
+          "title": "Back out",
+          "notes": "",
+          "actions": [
+            {
+              "do": "camera",
+              "x": 960,
+              "y": 540,
+              "zoom": 1
+            },
+            {
+              "do": "fade-out",
+              "target": "cap-library",
+              "start": "with"
+            }
+          ],
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "edit-colour",
+      "title": "Edit text, change colour",
+      "elements": [
+        {
+          "id": "h",
+          "type": "text",
+          "text": "EDIT AND RECOLOUR, LIVE",
+          "x": 960,
+          "y": 70,
+          "size": 60,
+          "color": "cyan",
+          "style": "bold",
+          "pinned": true
+        },
+        {
+          "id": "clip",
+          "type": "image",
+          "src": "/images/jzm-edit-colour.apng",
+          "x": 1080,
+          "y": 580,
+          "width": 1200,
+          "height": 750,
+          "frame": "browser",
+          "url": "localhost:5173/#/p/sandbox",
+          "color": "cyan"
+        },
+        {
+          "id": "a-headline",
+          "type": "area",
+          "x": 970,
+          "y": 500,
+          "width": 580,
+          "height": 150,
+          "shape": "ellipse",
+          "color": "yellow"
+        },
+        {
+          "id": "a-markers",
+          "type": "area",
+          "x": 1540,
+          "y": 345,
+          "width": 150,
+          "height": 90,
+          "shape": "ellipse",
+          "color": "pink"
+        },
+        {
+          "id": "cap-select",
+          "type": "text",
+          "text": "click an element\non the board",
+          "x": 220,
+          "y": 460,
+          "size": 40,
+          "color": "yellow",
+          "align": "start",
+          "pinned": true
+        },
+        {
+          "id": "cap-colour",
+          "type": "text",
+          "text": "pick a marker:\nit recolours\nin place",
+          "x": 220,
+          "y": 460,
+          "size": 40,
+          "color": "pink",
+          "align": "start",
+          "pinned": true
+        },
+        {
+          "id": "cap-edit",
+          "type": "text",
+          "text": "double-click text\nto rewrite it",
+          "x": 220,
+          "y": 460,
+          "size": 40,
+          "color": "green",
+          "align": "start",
+          "pinned": true
+        },
+        {
+          "id": "cap-meta",
+          "type": "text",
+          "text": "and yes — this clip\nis jz-motion itself",
+          "x": 220,
+          "y": 460,
+          "size": 36,
+          "color": "orange",
+          "align": "start",
+          "pinned": true
+        }
+      ],
+      "beats": [
+        {
+          "title": "A real editor",
+          "notes": "This is the editor you just saw, running on my laptop. Nothing drawn by hand here — it's a recording of a scratch board.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "h"
+            },
+            {
+              "do": "draw",
+              "target": "clip"
+            },
+            {
+              "do": "draw",
+              "target": "cap-select",
+              "start": "with",
+              "delay": 1.2
+            }
+          ]
+        },
+        {
+          "title": "Watch the headline",
+          "notes": "Watch the headline — I'll click on it and the properties panel on the right will pick up a marker.",
+          "actions": [
+            {
+              "do": "circle",
+              "target": "a-headline",
+              "color": "yellow"
+            },
+            {
+              "do": "wait",
+              "duration": 1
+            }
+          ]
+        },
+        {
+          "title": "Click, pick a marker",
+          "notes": "A click selects it. Hover a colour in the marker tray and the text redraws itself in that ink.",
+          "actions": [
+            {
+              "do": "play",
+              "target": "clip",
+              "on": true,
+              "from": 0
+            },
+            {
+              "do": "fade-out",
+              "target": "cap-select",
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap-colour",
+              "start": "with",
+              "delay": 0.6
+            },
+            {
+              "do": "wait",
+              "duration": 2.5
+            },
+            {
+              "do": "circle",
+              "target": "a-markers",
+              "color": "pink"
+            },
+            {
+              "do": "wait",
+              "duration": 3
+            }
+          ]
+        },
+        {
+          "title": "Then double-click to edit",
+          "notes": "The same element: a double-click opens it for editing, same handwriting, same position. Type what you want and press Enter.",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "cap-colour"
+            },
+            {
+              "do": "circle",
+              "target": "a-headline",
+              "color": "green",
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap-edit",
+              "start": "with",
+              "delay": 0.4
+            },
+            {
+              "do": "wait",
+              "duration": 5
+            }
+          ]
+        },
+        {
+          "title": "Hold the frame",
+          "notes": "Set play to off and the clip holds its last frame. That's how I keep talking without the UI moving behind me.",
+          "actions": [
+            {
+              "do": "play",
+              "target": "clip",
+              "on": false
+            },
+            {
+              "do": "fade-out",
+              "target": "cap-edit"
+            },
+            {
+              "do": "draw",
+              "target": "cap-meta",
+              "start": "with",
+              "delay": 0.4
+            },
+            {
+              "do": "pulse",
+              "target": "clip"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "recordings",
+      "title": "Record the app, play on cue",
+      "elements": [
+        {
+          "id": "h",
+          "type": "text",
+          "text": "RECORDED, THEN PLAYED BACK",
+          "x": 960,
+          "y": 70,
+          "size": 56,
+          "color": "cyan",
+          "style": "bold",
+          "pinned": true
+        },
+        {
+          "id": "clip",
+          "type": "image",
+          "src": "/images/jzm-script-edit.apng",
+          "x": 960,
+          "y": 580,
+          "width": 1280,
+          "height": 800,
+          "frame": "browser",
+          "url": "localhost:5173/#/p/sandbox",
+          "color": "cyan"
+        },
+        {
+          "id": "a-script-btn",
+          "type": "area",
+          "x": 1250,
+          "y": 215,
+          "width": 110,
+          "height": 50,
+          "shape": "ellipse",
+          "color": "yellow"
+        },
+        {
+          "id": "a-sentence",
+          "type": "area",
+          "x": 960,
+          "y": 540,
+          "width": 900,
+          "height": 90,
+          "shape": "ellipse",
+          "color": "green"
+        },
+        {
+          "id": "note-static",
+          "type": "text",
+          "text": "an APNG pasted\non the board sits\non its first frame",
+          "x": 160,
+          "y": 460,
+          "size": 36,
+          "color": "white",
+          "align": "start",
+          "pinned": true
+        },
+        {
+          "id": "note-play",
+          "type": "text",
+          "text": "the play action\nruns it on cue —\nslow pacing is key",
+          "x": 160,
+          "y": 460,
+          "size": 36,
+          "color": "green",
+          "align": "start",
+          "pinned": true
+        },
+        {
+          "id": "note-pause",
+          "type": "text",
+          "text": "on: false\nholds a frame,\nso you can\ntalk over it",
+          "x": 160,
+          "y": 460,
+          "size": 36,
+          "color": "orange",
+          "align": "start",
+          "pinned": true
+        },
+        {
+          "id": "note-meta",
+          "type": "text",
+          "text": "yes, this clip\nis jz-motion\nediting itself —\nagainst the sandbox",
+          "x": 160,
+          "y": 460,
+          "size": 32,
+          "color": "pink",
+          "align": "start",
+          "pinned": true
+        }
+      ],
+      "beats": [
+        {
+          "title": "A still frame to start",
+          "notes": "Any screen recorder gives you an APNG, GIF or animated WebP. On the board it sits like a screenshot: on its first frame, waiting.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "h"
+            },
+            {
+              "do": "draw",
+              "target": "clip"
+            },
+            {
+              "do": "draw",
+              "target": "note-static",
+              "start": "with",
+              "delay": 1.2
+            }
+          ]
+        },
+        {
+          "title": "Watch the Script button",
+          "notes": "Watch the Script button — this clip starts in the editor and the first click lands there.",
+          "actions": [
+            {
+              "do": "circle",
+              "target": "a-script-btn",
+              "color": "yellow"
+            },
+            {
+              "do": "wait",
+              "duration": 1
+            }
+          ]
+        },
+        {
+          "title": "Play on cue",
+          "notes": "A play action starts it from the beginning, in sync with my narration. Slow enough that the viewer actually sees each step.",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "note-static"
+            },
+            {
+              "do": "draw",
+              "target": "note-play",
+              "start": "with"
+            },
+            {
+              "do": "play",
+              "target": "clip",
+              "on": true,
+              "from": 0,
+              "start": "with"
+            },
+            {
+              "do": "wait",
+              "duration": 3.5
+            },
+            {
+              "do": "circle",
+              "target": "a-sentence",
+              "color": "green"
+            },
+            {
+              "do": "wait",
+              "duration": 2
+            }
+          ]
+        },
+        {
+          "title": "Pause to explain",
+          "notes": "Set on to false and the clip holds a frame, so you can talk over the result before moving on.",
+          "actions": [
+            {
+              "do": "play",
+              "target": "clip",
+              "on": false
+            },
+            {
+              "do": "fade-out",
+              "target": "note-play"
+            },
+            {
+              "do": "draw",
+              "target": "note-pause",
+              "start": "with"
+            }
+          ]
+        },
+        {
+          "title": "This clip is jz-motion",
+          "notes": "In case it wasn't obvious: this is a recording of jz-motion itself, played back inside a jz-motion presentation. Both made from the same tools.",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "note-pause"
+            },
+            {
+              "do": "draw",
+              "target": "note-meta",
+              "start": "with"
+            },
+            {
+              "do": "pulse",
+              "target": "clip"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "llm-first",
+      "title": "LLM first",
+      "elements": [
+        {
+          "id": "h",
+          "type": "text",
+          "text": "LLM FIRST",
+          "x": 960,
+          "y": 110,
+          "size": 80,
+          "color": "yellow",
+          "style": "bold"
+        },
+        {
+          "id": "docs",
+          "type": "icon",
+          "icon": "file",
+          "x": 230,
+          "y": 330,
+          "size": 130,
+          "color": "cyan",
+          "label": "format + rules"
+        },
+        {
+          "id": "lib",
+          "type": "icon",
+          "icon": "database",
+          "x": 230,
+          "y": 640,
+          "size": 130,
+          "color": "green",
+          "label": "library"
+        },
+        {
+          "id": "model",
+          "type": "icon",
+          "icon": "sparkles",
+          "x": 760,
+          "y": 480,
+          "size": 180,
+          "color": "pink",
+          "label": "any model"
+        },
+        {
+          "id": "a-docs",
+          "type": "arrow",
+          "from": "docs",
+          "to": "model",
+          "color": "cyan"
+        },
+        {
+          "id": "a-lib",
+          "type": "arrow",
+          "from": "lib",
+          "to": "model",
+          "color": "green"
+        },
+        {
+          "id": "glass",
+          "type": "icon",
+          "icon": "magnifier",
+          "x": 1163,
+          "y": 464,
+          "size": 46,
+          "color": "cyan"
+        },
+        {
+          "id": "a-check",
+          "type": "arrow",
+          "from": "model",
+          "to": "robot",
+          "color": "white",
+          "label": "JSON"
+        },
+        {
+          "id": "repair",
+          "type": "arrow",
+          "from": "robot.top",
+          "to": "model.top",
+          "color": "orange",
+          "curve": -0.3,
+          "line": "dashed",
+          "label": "repair"
+        },
+        {
+          "id": "a-board",
+          "type": "arrow",
+          "from": "robot",
+          "to": "web-search",
+          "color": "yellow",
+          "weight": "bold"
+        },
+        {
+          "id": "code",
+          "type": "text",
+          "text": "{ \"type\": \"icon\", \"icon\": \"gpu\",\n  \"color\": \"cyan\", \"label\": \"GPU\" }",
+          "x": 960,
+          "y": 900,
+          "size": 40,
+          "color": "green",
+          "style": "code"
+        },
+        {
+          "id": "web-search",
+          "type": "icon",
+          "icon": "web-search",
+          "x": 1684,
+          "y": 471,
+          "size": 215,
+          "label": "the board",
+          "color": "yellow"
+        },
+        {
+          "id": "robot",
+          "type": "icon",
+          "icon": "robot",
+          "x": 1240,
+          "y": 514,
+          "size": 140,
+          "color": "cyan",
+          "label": "schema check"
+        },
+        {
+          "id": "repair-2",
+          "type": "arrow",
+          "from": "web-search.top",
+          "to": "model.top",
+          "color": "orange",
+          "curve": -0.3,
+          "line": "dashed",
+          "label": "feedback"
+        }
+      ],
+      "beats": [
+        {
+          "title": "LLM first",
+          "notes": "Under the hood, jz-motion is LLM first. A presentation is not pixels: it's one JSON document.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "h"
+            }
+          ]
+        },
+        {
+          "title": "Context",
+          "notes": "Every request sends the model the format reference, the drawing rules and the whole library: every icon, logo, clipart and 3D model it may use.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "docs",
+                "lib"
+              ],
+              "stagger": 0.4
+            },
+            {
+              "do": "draw",
+              "target": [
+                "a-docs",
+                "a-lib",
+                "model"
+              ],
+              "stagger": 0.3
+            }
+          ]
+        },
+        {
+          "title": "Schema check",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "robot",
+                "a-check",
+                "glass"
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Repair",
+          "notes": "…and if anything is wrong, the exact errors go back to the model to fix. That loop is why even small, cheap models produce something that loads.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "repair"
+            },
+            {
+              "do": "flow",
+              "target": "repair"
+            }
+          ]
+        },
+        {
+          "title": "Board",
+          "notes": "Only valid JSON reaches the board, and from there it's all deterministic drawing.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "a-board"
+              ],
+              "stagger": 0.4
+            },
+            {
+              "do": "draw",
+              "target": "web-search"
+            }
+          ]
+        },
+        {
+          "title": "The JSON",
+          "notes": "And because it's plain JSON, I can read it, diff it, keep it in git, or edit it by hand.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "code"
+            },
+            {
+              "do": "camera",
+              "focus": [
+                "code"
+              ],
+              "padding": 260
+            }
+          ]
+        },
+        {
+          "title": "Beat 7",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "repair-2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "style",
+      "title": "One style for everything",
+      "elements": [
+        {
+          "id": "h",
+          "type": "text",
+          "text": "SAME MARKERS",
+          "x": 960,
+          "y": 120,
+          "size": 80,
+          "color": "pink",
+          "style": "bold"
+        },
+        {
+          "id": "i-icon",
+          "type": "icon",
+          "icon": "gpu",
+          "x": 280,
+          "y": 470,
+          "size": 200,
+          "color": "cyan",
+          "label": "icons"
+        },
+        {
+          "id": "i-clip",
+          "type": "icon",
+          "icon": "jz-logo",
+          "x": 760,
+          "y": 470,
+          "size": 360,
+          "color": "cyan"
+        },
+        {
+          "id": "l-clip",
+          "type": "text",
+          "text": "clipart",
+          "x": 760,
+          "y": 680,
+          "size": 44,
+          "color": "white"
+        },
+        {
+          "id": "i-iso",
+          "type": "iso",
+          "model": "datacenter",
+          "x": 1200,
+          "y": 470,
+          "scale": 60,
+          "color": "green",
+          "label": "3D"
+        },
+        {
+          "id": "i-chart",
+          "type": "chart",
+          "kind": "bar",
+          "x": 1640,
+          "y": 470,
+          "width": 360,
+          "height": 300,
+          "color": "yellow",
+          "data": [
+            {
+              "label": "A",
+              "value": 3
+            },
+            {
+              "label": "B",
+              "value": 5
+            },
+            {
+              "label": "C",
+              "value": 4,
+              "color": "pink"
+            }
+          ],
+          "title": "charts"
+        },
+        {
+          "id": "rule",
+          "type": "text",
+          "text": "six marker colours · one stroke · drawn in order",
+          "x": 960,
+          "y": 820,
+          "size": 46,
+          "color": "yellow"
+        },
+        {
+          "id": "m-green",
+          "type": "box",
+          "x": 510,
+          "y": 960,
+          "width": 90,
+          "height": 90,
+          "radius": 45,
+          "color": "green",
+          "weight": "bold"
+        },
+        {
+          "id": "m-pink",
+          "type": "box",
+          "x": 690,
+          "y": 960,
+          "width": 90,
+          "height": 90,
+          "radius": 45,
+          "color": "pink",
+          "weight": "bold"
+        },
+        {
+          "id": "m-yellow",
+          "type": "box",
+          "x": 870,
+          "y": 960,
+          "width": 90,
+          "height": 90,
+          "radius": 45,
+          "color": "yellow",
+          "weight": "bold"
+        },
+        {
+          "id": "m-cyan",
+          "type": "box",
+          "x": 1050,
+          "y": 960,
+          "width": 90,
+          "height": 90,
+          "radius": 45,
+          "color": "cyan",
+          "weight": "bold"
+        },
+        {
+          "id": "m-orange",
+          "type": "box",
+          "x": 1230,
+          "y": 960,
+          "width": 90,
+          "height": 90,
+          "radius": 45,
+          "color": "orange",
+          "weight": "bold"
+        },
+        {
+          "id": "m-white",
+          "type": "box",
+          "x": 1410,
+          "y": 960,
+          "width": 90,
+          "height": 90,
+          "radius": 45,
+          "color": "white",
+          "weight": "bold"
+        },
+        {
+          "id": "creator",
+          "type": "image",
+          "src": "/images/jzm-creator-lightbulb.png",
+          "x": 960,
+          "y": 1720,
+          "width": 1150,
+          "height": 719,
+          "frame": "browser",
+          "url": "localhost:5173 · new clipart with AI",
+          "color": "pink"
+        },
+        {
+          "id": "versions",
+          "type": "area",
+          "x": 665,
+          "y": 1597,
+          "width": 279,
+          "height": 200,
+          "shape": "rect",
+          "color": "yellow"
+        },
+        {
+          "id": "preview",
+          "type": "area",
+          "x": 1240,
+          "y": 1614,
+          "width": 308,
+          "height": 310,
+          "shape": "rect",
+          "color": "yellow"
+        }
+      ],
+      "beats": [
+        {
+          "title": "Same markers",
+          "notes": "The other promise is consistency. Whatever a model makes has to look like it came from the same set of markers.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "h"
+            }
+          ]
+        },
+        {
+          "title": "Everything",
+          "notes": "Icons, clipart, isometric 3D, charts, text: the same six colours, the same stroke, drawn in the order a person would draw them.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "i-icon",
+                "i-clip",
+                "l-clip",
+                "i-iso",
+                "i-chart"
+              ],
+              "stagger": 0.5
+            },
+            {
+              "do": "draw",
+              "target": "rule"
+            }
+          ]
+        },
+        {
+          "title": "Six marker colours",
+          "notes": "Green, pink, yellow, cyan, orange, white. Two to four per scene, each with a consistent meaning.",
+          "actions": [
+            {
+              "do": "pop",
+              "target": [
+                "m-green",
+                "m-pink",
+                "m-yellow",
+                "m-cyan",
+                "m-orange",
+                "m-white"
+              ],
+              "stagger": 0.15
+            }
+          ]
+        },
+        {
+          "title": "Make your own",
+          "notes": "When the library doesn't have something, I describe it, and the model draws it under the same rules. The rules are shown, and every reply is checked.",
+          "actions": [
+            {
+              "do": "camera",
+              "focus": "creator",
+              "padding": 80
+            },
+            {
+              "do": "draw",
+              "target": "creator",
+              "start": "with",
+              "delay": 0.6
+            }
+          ]
+        },
+        {
+          "title": "Versions",
+          "notes": "It's a conversation: every reply is a version. 'Make it pink', 'add a fan on top'… until I like one.",
+          "actions": [
+            {
+              "do": "spotlight",
+              "target": "versions",
+              "padding": 10
+            }
+          ]
+        },
+        {
+          "title": "Keep it",
+          "notes": "Then I save it, and from then on it's part of the library, for me and for every model that writes a presentation.",
+          "actions": [
+            {
+              "do": "spotlight",
+              "target": "preview",
+              "padding": 10
+            },
+            {
+              "do": "circle",
+              "target": "preview",
+              "start": "with"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "skills-guide",
+      "title": "Skills guide the app",
+      "elements": [
+        {
+          "id": "h",
+          "type": "text",
+          "text": "SKILLS KEEP IT CONSISTENT",
+          "x": 960,
+          "y": 90,
+          "size": 56,
+          "color": "yellow",
+          "style": "bold"
+        },
+        {
+          "id": "folder",
+          "type": "icon",
+          "icon": "database",
+          "x": 320,
+          "y": 500,
+          "size": 160,
+          "color": "cyan",
+          "label": ".claude/skills"
+        },
+        {
+          "id": "s1",
+          "type": "text",
+          "text": "new-presentation",
+          "x": 841,
+          "y": 320,
+          "size": 36,
+          "color": "cyan",
+          "style": "code"
+        },
+        {
+          "id": "s2",
+          "type": "text",
+          "text": "edit-presentation",
+          "x": 841,
+          "y": 390,
+          "size": 36,
+          "color": "cyan",
+          "style": "code"
+        },
+        {
+          "id": "s3",
+          "type": "text",
+          "text": "library-item",
+          "x": 841,
+          "y": 460,
+          "size": 36,
+          "color": "cyan",
+          "style": "code"
+        },
+        {
+          "id": "s4",
+          "type": "text",
+          "text": "demo-interactions",
+          "x": 841,
+          "y": 530,
+          "size": 36,
+          "color": "cyan",
+          "style": "code"
+        },
+        {
+          "id": "s5",
+          "type": "text",
+          "text": "voiceover-and-video",
+          "x": 841,
+          "y": 600,
+          "size": 36,
+          "color": "cyan",
+          "style": "code"
+        },
+        {
+          "id": "a-skills",
+          "type": "arrow",
+          "from": "folder",
+          "to": "box",
+          "color": "white"
+        },
+        {
+          "id": "app-ai",
+          "type": "icon",
+          "icon": "sparkles",
+          "x": 1360,
+          "y": 400,
+          "size": 150,
+          "color": "pink",
+          "label": "the app's AI"
+        },
+        {
+          "id": "cc",
+          "type": "icon",
+          "icon": "robot",
+          "x": 1360,
+          "y": 700,
+          "size": 150,
+          "color": "orange",
+          "label": "Claude Code"
+        },
+        {
+          "id": "a-app",
+          "type": "arrow",
+          "from": "box",
+          "to": "app-ai",
+          "color": "pink"
+        },
+        {
+          "id": "a-cc",
+          "type": "arrow",
+          "from": "box",
+          "to": "cc",
+          "color": "orange"
+        },
+        {
+          "id": "note",
+          "type": "text",
+          "text": "one source of truth —\nso the house style stays the same",
+          "x": 960,
+          "y": 900,
+          "size": 40,
+          "color": "white"
+        },
+        {
+          "id": "box",
+          "type": "box",
+          "x": 841,
+          "y": 501,
+          "width": 485,
+          "height": 548,
+          "color": "cyan",
+          "line": "dashed"
+        },
+        {
+          "id": "s5-2",
+          "type": "text",
+          "text": "... and more",
+          "x": 824,
+          "y": 674,
+          "size": 36,
+          "color": "cyan",
+          "style": "code"
+        }
+      ],
+      "beats": [
+        {
+          "title": "One folder of skills",
+          "notes": "The skills folder is where I keep the rules: how to make a presentation, how to change one, how to draw a library item, how to demo an interface, how to turn it into a video.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "h"
+            },
+            {
+              "do": "draw",
+              "target": "folder"
+            },
+            {
+              "do": "draw",
+              "target": [
+                "s1",
+                "s2",
+                "s3",
+                "s4",
+                "s5",
+                "box"
+              ],
+              "stagger": 0.25
+            },
+            {
+              "do": "draw",
+              "target": [
+                "a-skills",
+                "s5-2"
+              ],
+              "start": "with"
+            }
+          ]
+        },
+        {
+          "title": "Both AIs follow them",
+          "notes": "The AI inside the app reads these files; Claude Code outside the app reads them too. So whichever one writes a scene, the style stays the same.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "a-app",
+                "app-ai"
+              ],
+              "stagger": 0.4
+            },
+            {
+              "do": "draw",
+              "target": [
+                "a-cc",
+                "cc"
+              ],
+              "stagger": 0.4
+            }
+          ]
+        },
+        {
+          "title": "One source of truth",
+          "notes": "Change the skill, change the output — on either side. That's how consistency survives.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "note"
+            },
+            {
+              "do": "pulse",
+              "target": "folder"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "library",
+      "title": "A library that lowers the cost",
+      "elements": [
+        {
+          "id": "h",
+          "type": "text",
+          "text": "A GROWING LIBRARY",
+          "x": 960,
+          "y": 90,
+          "size": 60,
+          "color": "green",
+          "style": "bold"
+        },
+        {
+          "id": "shelf",
+          "type": "box",
+          "x": 508,
+          "y": 586,
+          "width": 820,
+          "height": 460,
+          "radius": 16,
+          "color": "white",
+          "line": "dashed",
+          "label": "persistent library"
+        },
+        {
+          "id": "it-gpu",
+          "type": "icon",
+          "icon": "gpu",
+          "x": 180,
+          "y": 451,
+          "size": 100,
+          "color": "cyan"
+        },
+        {
+          "id": "it-cpu",
+          "type": "icon",
+          "icon": "cpu",
+          "x": 330,
+          "y": 414,
+          "size": 100,
+          "color": "pink"
+        },
+        {
+          "id": "it-db",
+          "type": "icon",
+          "icon": "database",
+          "x": 428,
+          "y": 453,
+          "size": 100,
+          "color": "green"
+        },
+        {
+          "id": "it-server",
+          "type": "icon",
+          "icon": "server",
+          "x": 783,
+          "y": 471,
+          "size": 217,
+          "color": "yellow"
+        },
+        {
+          "id": "it-brain",
+          "type": "icon",
+          "icon": "brain",
+          "x": 174,
+          "y": 587,
+          "size": 100,
+          "color": "pink"
+        },
+        {
+          "id": "it-robot",
+          "type": "icon",
+          "icon": "robot",
+          "x": 298,
+          "y": 536,
+          "size": 100,
+          "color": "orange"
+        },
+        {
+          "id": "it-flask",
+          "type": "icon",
+          "icon": "flask",
+          "x": 595,
+          "y": 438,
+          "size": 100,
+          "color": "cyan"
+        },
+        {
+          "id": "it-glass",
+          "type": "icon",
+          "icon": "magnifier",
+          "x": 320,
+          "y": 694,
+          "size": 100,
+          "color": "yellow"
+        },
+        {
+          "id": "it-chat",
+          "type": "icon",
+          "icon": "chatbot",
+          "x": 200,
+          "y": 738,
+          "size": 100,
+          "color": "white"
+        },
+        {
+          "id": "it-user",
+          "type": "icon",
+          "icon": "user",
+          "x": 430,
+          "y": 746,
+          "size": 100,
+          "color": "cyan"
+        },
+        {
+          "id": "it-new",
+          "type": "icon",
+          "icon": "sparkles",
+          "x": 802,
+          "y": 676,
+          "size": 100,
+          "color": "pink",
+          "label": "+1 you made"
+        },
+        {
+          "id": "cost",
+          "type": "chart",
+          "kind": "line",
+          "x": 1480,
+          "y": 580,
+          "width": 640,
+          "height": 500,
+          "color": "yellow",
+          "unit": "%",
+          "title": "cost per explainer",
+          "data": [
+            {
+              "label": "1st",
+              "value": 100
+            },
+            {
+              "label": "5th",
+              "value": 100
+            },
+            {
+              "label": "10th",
+              "value": 100
+            },
+            {
+              "label": "20th",
+              "value": 100
+            }
+          ]
+        },
+        {
+          "id": "server-stack",
+          "type": "iso",
+          "model": "server-stack",
+          "x": 598,
+          "y": 717,
+          "scale": 53.1,
+          "color": "cyan"
+        }
+      ],
+      "beats": [
+        {
+          "title": "A shelf of pieces",
+          "notes": "The library is the shelf of pieces every explainer draws from: icons, logos, hand-drawn clipart, 3D models — every one checked against the house style.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "h"
+            },
+            {
+              "do": "draw",
+              "target": "shelf"
+            },
+            {
+              "do": "pop",
+              "target": [
+                "it-gpu",
+                "it-cpu",
+                "it-db",
+                "it-server",
+                "it-brain",
+                "it-robot",
+                "it-flask",
+                "it-glass",
+                "it-chat",
+                "it-user"
+              ],
+              "stagger": 0.12
+            }
+          ]
+        },
+        {
+          "title": "Each explainer adds one",
+          "notes": "When a presentation needs something new, I describe it, the model draws it under the same rules, and it joins the shelf.",
+          "actions": [
+            {
+              "do": "pop",
+              "target": "it-new"
+            },
+            {
+              "do": "pulse",
+              "target": "it-new"
+            }
+          ]
+        },
+        {
+          "title": "So each one costs less",
+          "notes": "Reusing is free; generating costs tokens. More in the library means fewer new items each time — and every explainer costs less than the one before.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "cost"
+            },
+            {
+              "do": "set-values",
+              "target": "cost",
+              "values": [
+                100,
+                62,
+                38,
+                22
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "architecture",
+      "title": "Architecture",
+      "elements": [
+        {
+          "id": "h",
+          "type": "text",
+          "text": "HOW IT FITS TOGETHER",
+          "x": 960,
+          "y": 90,
+          "size": 60,
+          "color": "cyan",
+          "style": "bold"
+        },
+        {
+          "id": "browser-ico",
+          "type": "icon",
+          "icon": "browser",
+          "x": 300,
+          "y": 320,
+          "size": 150,
+          "color": "cyan",
+          "label": "in the browser"
+        },
+        {
+          "id": "editor-b",
+          "type": "box",
+          "x": 300,
+          "y": 530,
+          "width": 400,
+          "height": 90,
+          "color": "yellow",
+          "label": "editor · React"
+        },
+        {
+          "id": "stage",
+          "type": "box",
+          "x": 300,
+          "y": 650,
+          "width": 400,
+          "height": 90,
+          "color": "pink",
+          "label": "board · SVG + GSAP"
+        },
+        {
+          "id": "ai",
+          "type": "box",
+          "x": 300,
+          "y": 770,
+          "width": 400,
+          "height": 90,
+          "color": "green",
+          "label": "chat · creators"
+        },
+        {
+          "id": "fn-files",
+          "type": "icon",
+          "icon": "file",
+          "x": 796,
+          "y": 543,
+          "size": 90,
+          "color": "white",
+          "label": "files"
+        },
+        {
+          "id": "fn-proxy",
+          "type": "icon",
+          "icon": "sparkles",
+          "x": 930,
+          "y": 539,
+          "size": 90,
+          "color": "pink",
+          "label": "LLM proxy"
+        },
+        {
+          "id": "fn-tts",
+          "type": "icon",
+          "icon": "chatbot",
+          "x": 1083,
+          "y": 541,
+          "size": 90,
+          "color": "orange",
+          "label": "voice (TTS)"
+        },
+        {
+          "id": "fn-stt",
+          "type": "icon",
+          "icon": "magnifier",
+          "x": 1017,
+          "y": 709,
+          "size": 90,
+          "color": "yellow",
+          "label": "transcribe"
+        },
+        {
+          "id": "fn-export",
+          "type": "icon",
+          "icon": "trophy",
+          "x": 857,
+          "y": 702,
+          "size": 100,
+          "color": "cyan",
+          "label": "MP4 export"
+        },
+        {
+          "id": "fn-note",
+          "type": "text",
+          "text": "Playwright + FFmpeg · frame by frame",
+          "x": 960,
+          "y": 860,
+          "size": 24,
+          "color": "white"
+        },
+        {
+          "id": "mod-claude",
+          "type": "icon",
+          "icon": "anthropic",
+          "x": 1680,
+          "y": 300,
+          "size": 110,
+          "color": "orange",
+          "label": "Claude · LLM"
+        },
+        {
+          "id": "mod-openai",
+          "type": "icon",
+          "icon": "openai",
+          "x": 1680,
+          "y": 500,
+          "size": 110,
+          "color": "white",
+          "label": "any OpenAI-compat · LLM"
+        },
+        {
+          "id": "mod-tts",
+          "type": "icon",
+          "icon": "openai",
+          "x": 1680,
+          "y": 700,
+          "size": 100,
+          "color": "pink",
+          "label": "OpenAI · voice"
+        },
+        {
+          "id": "mod-stt",
+          "type": "icon",
+          "icon": "openai",
+          "x": 1680,
+          "y": 880,
+          "size": 100,
+          "color": "yellow",
+          "label": "OpenAI · transcription"
+        },
+        {
+          "id": "a1",
+          "type": "arrow",
+          "from": "browser-ico",
+          "to": "server-stack",
+          "color": "white"
+        },
+        {
+          "id": "a2",
+          "type": "arrow",
+          "from": "server-stack",
+          "to": "mod-claude",
+          "color": "orange"
+        },
+        {
+          "id": "a3",
+          "type": "arrow",
+          "from": "server-stack",
+          "to": "mod-openai",
+          "color": "white"
+        },
+        {
+          "id": "a4",
+          "type": "arrow",
+          "from": "server-stack",
+          "to": "mod-tts",
+          "color": "pink",
+          "line": "dashed"
+        },
+        {
+          "id": "a5",
+          "type": "arrow",
+          "from": "server-stack",
+          "to": "mod-stt",
+          "color": "yellow",
+          "line": "dashed"
+        },
+        {
+          "id": "server-stack",
+          "type": "iso",
+          "model": "server-stack",
+          "x": 925,
+          "y": 283,
+          "scale": 88.2,
+          "color": "cyan",
+          "label": "local server"
+        }
+      ],
+      "beats": [
+        {
+          "title": "Overview",
+          "notes": "Here's how it fits together.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "h"
+            }
+          ]
+        },
+        {
+          "title": "In the browser",
+          "notes": "In the browser: a React editor, the board itself as SVG animated with GSAP, and the AI chat panels. Same code renders every export frame.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "browser-ico"
+            },
+            {
+              "do": "draw",
+              "target": [
+                "editor-b",
+                "stage",
+                "ai"
+              ],
+              "stagger": 0.3
+            }
+          ]
+        },
+        {
+          "title": "A small local server",
+          "notes": "Next to it, a small local server with a few focused jobs: keep the files, proxy LLM calls, generate voice, transcribe recordings, export MP4s.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "a1"
+            },
+            {
+              "do": "flow",
+              "target": "a1",
+              "start": "with"
+            },
+            {
+              "do": "pop",
+              "target": [
+                "fn-files",
+                "fn-proxy",
+                "fn-tts",
+                "fn-stt",
+                "fn-export"
+              ],
+              "stagger": 0.2
+            },
+            {
+              "do": "draw",
+              "target": "fn-note",
+              "start": "with"
+            }
+          ]
+        },
+        {
+          "title": "Swappable models",
+          "notes": "The LLM is swappable: Claude, or anything OpenAI-compatible through OpenRouter, my own GPUs, or Ollama locally.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "a2",
+                "mod-claude",
+                "a3",
+                "mod-openai"
+              ],
+              "stagger": 0.3
+            },
+            {
+              "do": "flow",
+              "target": [
+                "a2",
+                "a3"
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Voice both ways",
+          "notes": "Voice goes both ways: an OpenAI TTS model generates narration from the script; an OpenAI transcription model turns a recorded script back into timed text.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "a4",
+                "mod-tts",
+                "a5",
+                "mod-stt"
+              ],
+              "stagger": 0.3
+            },
+            {
+              "do": "flow",
+              "target": [
+                "a4",
+                "a5"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "models",
+      "title": "The right model for each job",
+      "elements": [
+        {
+          "id": "h",
+          "type": "text",
+          "text": "RIGHT MODEL, RIGHT JOB",
+          "x": 960,
+          "y": 90,
+          "size": 56,
+          "color": "yellow",
+          "style": "bold"
+        },
+        {
+          "id": "task0",
+          "type": "text",
+          "text": "write the story",
+          "x": 150,
+          "y": 290,
+          "size": 42,
+          "color": "white",
+          "align": "start"
+        },
+        {
+          "id": "logo0",
+          "type": "icon",
+          "icon": "anthropic",
+          "x": 1050,
+          "y": 290,
+          "size": 70,
+          "color": "pink"
+        },
+        {
+          "id": "model0",
+          "type": "text",
+          "text": "Claude Sonnet / Opus",
+          "x": 1150,
+          "y": 290,
+          "size": 42,
+          "color": "pink",
+          "align": "start"
+        },
+        {
+          "id": "ar0",
+          "type": "arrow",
+          "from": {
+            "x": 700,
+            "y": 290
+          },
+          "to": {
+            "x": 1000,
+            "y": 290
+          },
+          "color": "pink"
+        },
+        {
+          "id": "task1",
+          "type": "text",
+          "text": "change a beat",
+          "x": 150,
+          "y": 440,
+          "size": 42,
+          "color": "white",
+          "align": "start"
+        },
+        {
+          "id": "logo1",
+          "type": "icon",
+          "icon": "anthropic",
+          "x": 1050,
+          "y": 440,
+          "size": 70,
+          "color": "cyan"
+        },
+        {
+          "id": "model1",
+          "type": "text",
+          "text": "Claude Haiku",
+          "x": 1150,
+          "y": 440,
+          "size": 42,
+          "color": "cyan",
+          "align": "start"
+        },
+        {
+          "id": "ar1",
+          "type": "arrow",
+          "from": {
+            "x": 700,
+            "y": 440
+          },
+          "to": {
+            "x": 1000,
+            "y": 440
+          },
+          "color": "cyan"
+        },
+        {
+          "id": "task2",
+          "type": "text",
+          "text": "icons, charts, 3D",
+          "x": 150,
+          "y": 590,
+          "size": 42,
+          "color": "white",
+          "align": "start"
+        },
+        {
+          "id": "logo2",
+          "type": "icon",
+          "icon": "anthropic",
+          "x": 1050,
+          "y": 590,
+          "size": 70,
+          "color": "green"
+        },
+        {
+          "id": "model2",
+          "type": "text",
+          "text": "Claude Haiku + the rules",
+          "x": 1150,
+          "y": 590,
+          "size": 42,
+          "color": "green",
+          "align": "start"
+        },
+        {
+          "id": "ar2",
+          "type": "arrow",
+          "from": {
+            "x": 700,
+            "y": 590
+          },
+          "to": {
+            "x": 1000,
+            "y": 590
+          },
+          "color": "green"
+        },
+        {
+          "id": "task3",
+          "type": "text",
+          "text": "voice-over (TTS)",
+          "x": 150,
+          "y": 740,
+          "size": 42,
+          "color": "white",
+          "align": "start"
+        },
+        {
+          "id": "logo3",
+          "type": "icon",
+          "icon": "openai",
+          "x": 1050,
+          "y": 740,
+          "size": 70,
+          "color": "orange"
+        },
+        {
+          "id": "model3",
+          "type": "text",
+          "text": "OpenAI gpt-4o-mini-tts",
+          "x": 1150,
+          "y": 740,
+          "size": 42,
+          "color": "orange",
+          "align": "start"
+        },
+        {
+          "id": "ar3",
+          "type": "arrow",
+          "from": {
+            "x": 700,
+            "y": 740
+          },
+          "to": {
+            "x": 1000,
+            "y": 740
+          },
+          "color": "orange"
+        },
+        {
+          "id": "task4",
+          "type": "text",
+          "text": "transcription (STT)",
+          "x": 150,
+          "y": 890,
+          "size": 42,
+          "color": "white",
+          "align": "start"
+        },
+        {
+          "id": "logo4",
+          "type": "icon",
+          "icon": "openai",
+          "x": 1050,
+          "y": 890,
+          "size": 70,
+          "color": "yellow"
+        },
+        {
+          "id": "model4",
+          "type": "text",
+          "text": "OpenAI Whisper",
+          "x": 1150,
+          "y": 890,
+          "size": 42,
+          "color": "yellow",
+          "align": "start"
+        },
+        {
+          "id": "ar4",
+          "type": "arrow",
+          "from": {
+            "x": 700,
+            "y": 890
+          },
+          "to": {
+            "x": 1000,
+            "y": 890
+          },
+          "color": "yellow"
+        }
+      ],
+      "beats": [
+        {
+          "title": "Right job",
+          "notes": "Because every request is checked and repaired, I don't need the biggest model for everything.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "h"
+            }
+          ]
+        },
+        {
+          "title": "Story",
+          "notes": "A strong model writes the story: the structure, the scenes, the words.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "task0",
+                "ar0",
+                "logo0",
+                "model0"
+              ],
+              "stagger": 0.25
+            }
+          ]
+        },
+        {
+          "title": "Small edits",
+          "notes": "Small edits, like changing a beat, work fine with a fast, cheap model like Haiku.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "task1",
+                "ar1",
+                "logo1",
+                "model1"
+              ],
+              "stagger": 0.25
+            }
+          ]
+        },
+        {
+          "title": "Drawings",
+          "notes": "Icons, charts and 3D models are small, strict JSON. Haiku plus the rules is enough, and the library means most are never generated twice.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "task2",
+                "ar2",
+                "logo2",
+                "model2"
+              ],
+              "stagger": 0.25
+            }
+          ]
+        },
+        {
+          "title": "Voice",
+          "notes": "A tiny OpenAI text-to-speech model generates narration from the script — fast, cheap, good enough to iterate on timing.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "task3",
+                "ar3",
+                "logo3",
+                "model3"
+              ],
+              "stagger": 0.25
+            }
+          ]
+        },
+        {
+          "title": "Transcription",
+          "notes": "And when I record myself talking, Whisper transcribes it, so I can start a whole presentation from a recording — scenes cued to the moments I spoke.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "task4",
+                "ar4",
+                "logo4",
+                "model4"
+              ],
+              "stagger": 0.25
+            }
+          ],
+          "auto": true
+        }
+      ]
+    },
+    {
+      "id": "script",
+      "title": "Script at the centre",
+      "elements": [
+        {
+          "id": "h",
+          "type": "text",
+          "text": "THE SCRIPT IS THE CENTRE",
+          "x": 960,
+          "y": 90,
+          "size": 56,
+          "color": "cyan",
+          "style": "bold"
+        },
+        {
+          "id": "script-ico",
+          "type": "icon",
+          "icon": "file",
+          "x": 960,
+          "y": 540,
+          "size": 200,
+          "color": "cyan",
+          "label": "script"
+        },
+        {
+          "id": "view1",
+          "type": "box",
+          "x": 320,
+          "y": 350,
+          "width": 320,
+          "height": 110,
+          "radius": 14,
+          "color": "yellow",
+          "label": "Script view\n(whole file)"
+        },
+        {
+          "id": "view2",
+          "type": "box",
+          "x": 320,
+          "y": 540,
+          "width": 320,
+          "height": 110,
+          "radius": 14,
+          "color": "pink",
+          "label": "Timing +\nprompter"
+        },
+        {
+          "id": "view3",
+          "type": "box",
+          "x": 320,
+          "y": 730,
+          "width": 320,
+          "height": 110,
+          "radius": 14,
+          "color": "green",
+          "label": "raw JSON tab"
+        },
+        {
+          "id": "a1",
+          "type": "arrow",
+          "from": "view1",
+          "to": "script-ico",
+          "color": "yellow",
+          "head": "both"
+        },
+        {
+          "id": "a2",
+          "type": "arrow",
+          "from": "view2",
+          "to": "script-ico",
+          "color": "pink",
+          "head": "both"
+        },
+        {
+          "id": "a3",
+          "type": "arrow",
+          "from": "view3",
+          "to": "script-ico",
+          "color": "green",
+          "head": "both"
+        },
+        {
+          "id": "same",
+          "type": "text",
+          "text": "same text,\nthree lenses",
+          "x": 1480,
+          "y": 440,
+          "size": 44,
+          "color": "white"
+        },
+        {
+          "id": "why",
+          "type": "text",
+          "text": "I work on the words\nindependently from the board —\nthe board follows what I write.",
+          "x": 1480,
+          "y": 700,
+          "size": 30,
+          "color": "yellow"
+        }
+      ],
+      "beats": [
+        {
+          "title": "Script at the centre",
+          "notes": "The script is the centre of this app. Every scene, every beat, every spoken sentence lives in one place.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "h"
+            },
+            {
+              "do": "draw",
+              "target": "script-ico"
+            }
+          ]
+        },
+        {
+          "title": "Three ways to touch it",
+          "notes": "I can read and edit the whole thing in the Script view, or inline in the Timing prompter, or in the raw JSON tab if I want to see the shape.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "view1",
+                "a1",
+                "view2",
+                "a2",
+                "view3",
+                "a3"
+              ],
+              "stagger": 0.3
+            }
+          ]
+        },
+        {
+          "title": "Same text, three lenses",
+          "notes": "It's one file; three views on the same text. I pick whichever one fits what I'm doing right now.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "same"
+            },
+            {
+              "do": "draw",
+              "target": "why"
+            },
+            {
+              "do": "pulse",
+              "target": "script-ico"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "timing",
+      "title": "Timing, prompter and voice-over",
+      "elements": [
+        {
+          "id": "h",
+          "type": "text",
+          "text": "RECORDING, MADE EASY",
+          "x": 960,
+          "y": 70,
+          "size": 56,
+          "color": "yellow",
+          "style": "bold",
+          "pinned": true
+        },
+        {
+          "id": "prompter",
+          "type": "image",
+          "src": "/images/jzm-prompter-llm-first-231.png",
+          "x": 960,
+          "y": 580,
+          "width": 1440,
+          "height": 900,
+          "frame": "browser",
+          "url": "localhost:5173 · Timing + Prompter",
+          "color": "cyan"
+        },
+        {
+          "id": "a-sentences",
+          "type": "area",
+          "x": 580,
+          "y": 440,
+          "width": 617,
+          "height": 350,
+          "shape": "rect",
+          "color": "yellow"
+        },
+        {
+          "id": "a-durations",
+          "type": "area",
+          "x": 1303,
+          "y": 400,
+          "width": 300,
+          "height": 267,
+          "shape": "rect",
+          "color": "pink"
+        },
+        {
+          "id": "a-timeline",
+          "type": "area",
+          "x": 960,
+          "y": 860,
+          "width": 1400,
+          "height": 160,
+          "shape": "rect",
+          "color": "green"
+        },
+        {
+          "id": "cap-sentences",
+          "type": "text",
+          "text": "each sentence on its own line, huge and readable",
+          "x": 960,
+          "y": 955,
+          "size": 34,
+          "color": "yellow",
+          "pinned": true
+        },
+        {
+          "id": "cap-durations",
+          "type": "text",
+          "text": "its target time, from the voice clip",
+          "x": 960,
+          "y": 955,
+          "size": 34,
+          "color": "pink",
+          "pinned": true
+        },
+        {
+          "id": "cap-timeline",
+          "type": "text",
+          "text": "timeline + playhead keep you honest as you read",
+          "x": 960,
+          "y": 955,
+          "size": 34,
+          "color": "green",
+          "pinned": true
+        },
+        {
+          "id": "cap-payoff",
+          "type": "text",
+          "text": "no guessing the pace — I just read",
+          "x": 960,
+          "y": 955,
+          "size": 36,
+          "color": "white",
+          "pinned": true
+        }
+      ],
+      "beats": [
+        {
+          "title": "The prompter",
+          "notes": "This is the Timing window in prompter mode. The script lives here, blown up large, with every tool for keeping the pace right.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "h"
+            },
+            {
+              "do": "draw",
+              "target": "prompter"
+            }
+          ]
+        },
+        {
+          "title": "Each sentence, its own line",
+          "notes": "Every sentence of the beat shows on its own line, big and readable from a distance. I don't lose my place when I look up at the camera.",
+          "actions": [
+            {
+              "do": "camera",
+              "focus": "a-sentences",
+              "padding": 160
+            },
+            {
+              "do": "circle",
+              "target": "a-sentences",
+              "color": "yellow",
+              "id": "ring-sentences",
+              "start": "with",
+              "delay": 0.6
+            },
+            {
+              "do": "draw",
+              "target": "cap-sentences",
+              "start": "with"
+            }
+          ]
+        },
+        {
+          "title": "A target time per line",
+          "notes": "Next to each sentence, its target duration — pulled from a short voice clip the text-to-speech model generates. I know exactly how long each line should take.",
+          "actions": [
+            {
+              "do": "erase",
+              "target": "ring-sentences"
+            },
+            {
+              "do": "fade-out",
+              "target": "cap-sentences",
+              "start": "with"
+            },
+            {
+              "do": "camera",
+              "focus": "a-durations",
+              "padding": 220,
+              "start": "with"
+            },
+            {
+              "do": "circle",
+              "target": "a-durations",
+              "color": "pink",
+              "id": "ring-durations",
+              "start": "with",
+              "delay": 0.6
+            },
+            {
+              "do": "draw",
+              "target": "cap-durations",
+              "start": "with"
+            }
+          ]
+        },
+        {
+          "title": "A clock that keeps me honest",
+          "notes": "At the bottom, a timeline shows where I am in the whole thing. The playhead moves as I read; a glance tells me if I'm fast, slow, or on it.",
+          "actions": [
+            {
+              "do": "erase",
+              "target": "ring-durations"
+            },
+            {
+              "do": "fade-out",
+              "target": "cap-durations",
+              "start": "with"
+            },
+            {
+              "do": "camera",
+              "focus": "a-timeline",
+              "padding": 120,
+              "start": "with"
+            },
+            {
+              "do": "circle",
+              "target": "a-timeline",
+              "color": "green",
+              "id": "ring-timeline",
+              "start": "with",
+              "delay": 0.6
+            },
+            {
+              "do": "draw",
+              "target": "cap-timeline",
+              "start": "with"
+            }
+          ]
+        },
+        {
+          "title": "Just read",
+          "notes": "Pull back and press record. No guessing the pace, no re-doing takes because I rushed one beat — I just read.",
+          "actions": [
+            {
+              "do": "erase",
+              "target": "ring-timeline"
+            },
+            {
+              "do": "fade-out",
+              "target": "cap-timeline",
+              "start": "with"
+            },
+            {
+              "do": "camera",
+              "x": 960,
+              "y": 540,
+              "zoom": 1,
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap-payoff",
+              "start": "with",
+              "delay": 0.4
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ai-helpers",
+      "title": "AI helpers across the app",
+      "elements": [
+        {
+          "id": "h",
+          "type": "text",
+          "text": "AI, WHEREVER I AM",
+          "x": 960,
+          "y": 70,
+          "size": 56,
+          "color": "pink",
+          "style": "bold",
+          "pinned": true
+        },
+        {
+          "id": "home-full",
+          "type": "image",
+          "src": "/images/jzm-home-full.png",
+          "x": 500,
+          "y": 540,
+          "width": 900,
+          "height": 562,
+          "frame": "browser",
+          "url": "localhost:5173 · home",
+          "color": "cyan"
+        },
+        {
+          "id": "editor-full",
+          "type": "image",
+          "src": "/images/jzm-editor-ai-full.png",
+          "x": 1420,
+          "y": 540,
+          "width": 900,
+          "height": 562,
+          "frame": "browser",
+          "url": "localhost:5173 · editor · AI tab",
+          "color": "pink"
+        },
+        {
+          "id": "a-home-chat",
+          "type": "area",
+          "x": 504,
+          "y": 468,
+          "width": 450,
+          "height": 85,
+          "shape": "rect",
+          "color": "cyan"
+        },
+        {
+          "id": "a-ask-bar",
+          "type": "area",
+          "x": 1332,
+          "y": 653,
+          "width": 450,
+          "height": 50,
+          "shape": "rect",
+          "color": "yellow"
+        },
+        {
+          "id": "a-ai-panel",
+          "type": "area",
+          "x": 1750,
+          "y": 502,
+          "width": 170,
+          "height": 400,
+          "shape": "rect",
+          "color": "pink"
+        },
+        {
+          "id": "cap-home",
+          "type": "text",
+          "text": "home chat: a sentence to a whole first draft",
+          "x": 960,
+          "y": 955,
+          "size": 34,
+          "color": "cyan",
+          "pinned": true
+        },
+        {
+          "id": "cap-ask",
+          "type": "text",
+          "text": "scene-ask bar: 'change THIS scene', keep the rest",
+          "x": 960,
+          "y": 955,
+          "size": 34,
+          "color": "yellow",
+          "pinned": true
+        },
+        {
+          "id": "cap-panel",
+          "type": "text",
+          "text": "AI tab: chat about the whole presentation",
+          "x": 960,
+          "y": 955,
+          "size": 34,
+          "color": "pink",
+          "pinned": true
+        },
+        {
+          "id": "payoff-tile",
+          "type": "icon",
+          "x": 963,
+          "y": 323,
+          "color": "cyan",
+          "icon": "designer",
+          "size": 640
+        },
+        {
+          "id": "cap-same",
+          "type": "text",
+          "text": "same skills everywhere — the style stays the same",
+          "x": 960,
+          "y": 955,
+          "size": 36,
+          "color": "white",
+          "pinned": true
+        }
+      ],
+      "beats": [
+        {
+          "title": "AI, wherever I am",
+          "notes": "The AI isn't one feature — it's everywhere in the app. On the home screen to start, and inside the editor in two places.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "h"
+            },
+            {
+              "do": "draw",
+              "target": [
+                "home-full",
+                "editor-full"
+              ],
+              "stagger": 0.6
+            }
+          ]
+        },
+        {
+          "title": "A sentence to a draft",
+          "notes": "From the home screen I pick a mode — topic, script, or recording — and a model, and go from one sentence to a whole first draft.",
+          "actions": [
+            {
+              "do": "camera",
+              "focus": "a-home-chat",
+              "padding": 160
+            },
+            {
+              "do": "circle",
+              "target": "a-home-chat",
+              "color": "cyan",
+              "id": "ring-home",
+              "start": "with",
+              "delay": 0.6
+            },
+            {
+              "do": "draw",
+              "target": "cap-home",
+              "start": "with"
+            }
+          ]
+        },
+        {
+          "title": "Change THIS scene",
+          "notes": "Inside the editor, every scene has an ask bar above the storyboard. Describe one change — 'split this beat', 'add a database' — and only that scene changes.",
+          "actions": [
+            {
+              "do": "erase",
+              "target": "ring-home"
+            },
+            {
+              "do": "fade-out",
+              "target": "cap-home",
+              "start": "with"
+            },
+            {
+              "do": "camera",
+              "focus": "a-ask-bar",
+              "padding": 160,
+              "start": "with"
+            },
+            {
+              "do": "circle",
+              "target": "a-ask-bar",
+              "color": "yellow",
+              "id": "ring-ask",
+              "start": "with",
+              "delay": 0.6
+            },
+            {
+              "do": "draw",
+              "target": "cap-ask",
+              "start": "with"
+            }
+          ]
+        },
+        {
+          "title": "Chat about the whole thing",
+          "notes": "And on the AI tab in the right panel, a chat for bigger changes — picking models, running agent mode, watching every step land in the file.",
+          "actions": [
+            {
+              "do": "erase",
+              "target": "ring-ask"
+            },
+            {
+              "do": "fade-out",
+              "target": "cap-ask",
+              "start": "with"
+            },
+            {
+              "do": "camera",
+              "focus": "a-ai-panel",
+              "padding": 180,
+              "start": "with"
+            },
+            {
+              "do": "circle",
+              "target": "a-ai-panel",
+              "color": "pink",
+              "id": "ring-panel",
+              "start": "with",
+              "delay": 0.6
+            },
+            {
+              "do": "draw",
+              "target": "cap-panel",
+              "start": "with"
+            }
+          ]
+        },
+        {
+          "title": "Same skills everywhere",
+          "notes": "All three read the same skills in dot-claude slash skills. Pick the place that fits the move — the house style follows.",
+          "actions": [
+            {
+              "do": "erase",
+              "target": "ring-panel"
+            },
+            {
+              "do": "fade-out",
+              "target": [
+                "cap-panel",
+                "home-full",
+                "editor-full"
+              ],
+              "start": "with"
+            },
+            {
+              "do": "camera",
+              "x": 960,
+              "y": 540,
+              "zoom": 1,
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "payoff-tile",
+              "start": "with",
+              "delay": 0.6,
+              "duration": 1.6
+            },
+            {
+              "do": "draw",
+              "target": "cap-same",
+              "start": "with",
+              "delay": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cost",
+      "title": "Under $5 per 10 minutes",
+      "elements": [
+        {
+          "id": "h",
+          "type": "text",
+          "text": "UNDER $5 PER 10 MINUTES",
+          "x": 960,
+          "y": 110,
+          "size": 68,
+          "color": "yellow",
+          "style": "bold"
+        },
+        {
+          "id": "big",
+          "type": "text",
+          "text": "< $5",
+          "x": 960,
+          "y": 470,
+          "size": 300,
+          "color": "green",
+          "style": "bold"
+        },
+        {
+          "id": "big-sub",
+          "type": "text",
+          "text": "for a 10-minute video, start to finish",
+          "x": 960,
+          "y": 670,
+          "size": 44,
+          "color": "white"
+        },
+        {
+          "id": "coin",
+          "type": "icon",
+          "icon": "coin",
+          "x": 350,
+          "y": 870,
+          "size": 110,
+          "color": "yellow",
+          "label": "pure JSON\n= cheap tokens"
+        },
+        {
+          "id": "lib",
+          "type": "icon",
+          "icon": "database",
+          "x": 960,
+          "y": 870,
+          "size": 110,
+          "color": "cyan",
+          "label": "library reuse\n= nothing redrawn"
+        },
+        {
+          "id": "mini",
+          "type": "icon",
+          "icon": "sparkles",
+          "x": 1570,
+          "y": 870,
+          "size": 110,
+          "color": "pink",
+          "label": "small models\n+ repair loop"
+        }
+      ],
+      "beats": [
+        {
+          "title": "The number",
+          "notes": "The whole point of this stack is: a ten-minute explainer under five dollars, start to finish.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "h"
+            },
+            {
+              "do": "pop",
+              "target": "big"
+            },
+            {
+              "do": "draw",
+              "target": "big-sub",
+              "start": "with",
+              "delay": 0.6
+            }
+          ]
+        },
+        {
+          "title": "Why it works",
+          "notes": "Three reasons: a presentation is pure JSON, so the tokens are cheap; the library grows, so most drawings are reused; and the repair loop lets me use small, fast models.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "coin",
+                "lib",
+                "mini"
+              ],
+              "stagger": 0.4
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "publish",
+      "title": "Publish more",
+      "elements": [
+        {
+          "id": "h",
+          "type": "text",
+          "text": "PUBLISH MORE",
+          "x": 960,
+          "y": 120,
+          "size": 84,
+          "color": "green",
+          "style": "bold"
+        },
+        {
+          "id": "you",
+          "type": "icon",
+          "icon": "user",
+          "x": 240,
+          "y": 380,
+          "size": 150,
+          "color": "pink",
+          "label": "you talk"
+        },
+        {
+          "id": "txt",
+          "type": "icon",
+          "icon": "chatbot",
+          "x": 720,
+          "y": 380,
+          "size": 150,
+          "color": "cyan",
+          "label": "transcript"
+        },
+        {
+          "id": "cue",
+          "type": "icon",
+          "icon": "brain",
+          "x": 1200,
+          "y": 380,
+          "size": 150,
+          "color": "yellow",
+          "label": "beats on cue"
+        },
+        {
+          "id": "mp4",
+          "type": "icon",
+          "icon": "file",
+          "x": 1680,
+          "y": 380,
+          "size": 150,
+          "color": "green",
+          "label": "MP4"
+        },
+        {
+          "id": "f0",
+          "type": "arrow",
+          "from": "you",
+          "to": "txt",
+          "color": "white"
+        },
+        {
+          "id": "f1",
+          "type": "arrow",
+          "from": "txt",
+          "to": "cue",
+          "color": "white"
+        },
+        {
+          "id": "f2",
+          "type": "arrow",
+          "from": "cue",
+          "to": "mp4",
+          "color": "white"
+        },
+        {
+          "id": "logo",
+          "type": "icon",
+          "icon": "jz-logo",
+          "x": 960,
+          "y": 800,
+          "size": 520,
+          "color": "cyan"
+        },
+        {
+          "id": "bye",
+          "type": "text",
+          "text": "thanks for watching",
+          "x": 960,
+          "y": 1000,
+          "size": 52,
+          "color": "yellow"
+        }
+      ],
+      "beats": [
+        {
+          "title": "Record",
+          "notes": "And the last mile: I click Record and present, like I'm doing now. My voice, my camera and every click are saved as a take.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "h"
+            },
+            {
+              "do": "draw",
+              "target": [
+                "you",
+                "f0",
+                "txt"
+              ],
+              "stagger": 0.4
+            }
+          ]
+        },
+        {
+          "title": "Export",
+          "notes": "It exports straight to an MP4, with my camera in the corner or side by side with a friend. Or I record first, and it builds the presentation from the transcript.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "cue",
+                "f1",
+                "mp4",
+                "f2"
+              ],
+              "stagger": 0.4
+            },
+            {
+              "do": "flow",
+              "target": [
+                "f0",
+                "f1",
+                "f2"
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Thanks",
+          "notes": "That's jz-motion: explainers in minutes, in one consistent style, a little cheaper every time. Thanks for watching.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "logo",
+                "bye"
+              ],
+              "stagger": 1.2
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

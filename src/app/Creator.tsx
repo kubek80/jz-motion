@@ -1,18 +1,20 @@
 import { useEffect, useRef, useState } from 'react';
 import { insertScene, checkScene, sceneMessages, SCENE_TASK } from '../ai/assistant';
 import { askJson, type AskResult, type ChatMessage, type Check } from '../ai/client';
-import { checkDrawing, checkIso, CLIPART_RULES, drawingMessages, ICON_RULES, ISO_RULES, isoMessages, refineMessages, type Refinement } from '../ai/iconPrompt';
+import { checkDrawing, checkIso, CLIPART_RULES, drawingMessages, ICON_RULES, ISO_RULES, LOGO_RULES, isoMessages, refineMessages, type Refinement } from '../ai/iconPrompt';
 import { loadProfiles, type ModelProfile } from '../ai/profiles';
 import { isoModels, projectIso, type IsoPart } from '../engine/iso';
 import { icons, type IconDef } from '../engine/library';
 import { IconPreview } from './editor/IconPreview';
 import { ModelsEditor } from './ModelsEditor';
 import { ModelSelect } from './ModelSelect';
+import { MarkerTray } from './MarkerTray';
+import { palette, type ColorName } from '../engine/palette';
 import { advice, pickFor, rememberedFor, rememberFor, type Task } from '../ai/recommend';
 import { Preview } from './Preview';
 import { saveToLibrary } from './userLibrary';
 
-export type CreateKind = 'scene' | 'icon' | 'clipart' | '3d';
+export type CreateKind = 'scene' | 'icon' | 'logo' | 'clipart' | '3d';
 
 /** An existing item to continue from ("Refine with AI" in the library). */
 export interface CreatorStart {
@@ -38,6 +40,7 @@ const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(
 const KINDS: { kind: CreateKind; label: string; hint: string; example: string }[] = [
   { kind: 'scene', label: 'Scene', hint: 'A new scene for this presentation, added after the current one', example: 'e.g. how a request flows through an API gateway to three microservices, then zoom into the auth service' },
   { kind: 'icon', label: 'Icon', hint: 'Single-colour line icon on a 24×24 grid; takes the element\'s colour', example: 'e.g. a vector database: a cylinder with three small dots connected by lines on its front' },
+  { kind: 'logo', label: 'Logo', hint: 'Brand mark drawn as thin outlines of filled shapes; takes the element\'s colour', example: 'e.g. Slack: four rounded ribbons forming the # mark' },
   { kind: 'clipart', label: 'Clipart', hint: 'Multi-colour drawing in the marker colours', example: 'e.g. a friendly robot holding a glowing GPU card, cyan body, pink GPU' },
   { kind: '3d', label: '3D model', hint: 'Isometric model from boxes and cylinders; can turn, spin and explode', example: 'e.g. a GPU server: a flat base, four tall cards standing on it, a fan cylinder on top' },
 ];
@@ -45,6 +48,7 @@ const KINDS: { kind: CreateKind; label: string; hint: string; example: string }[
 const RULES: Record<CreateKind, string> = {
   scene: `${SCENE_TASK}\n\n(Plus the presentation itself and the full format reference and library, as for every presentation request.)`,
   icon: ICON_RULES,
+  logo: LOGO_RULES,
   clipart: CLIPART_RULES,
   '3d': ISO_RULES,
 };
@@ -72,6 +76,10 @@ export function Creator({ initialKind, start, presentation, scene = 0, onClose, 
   ] : []));
   const [input, setInput] = useState('');
   const [name, setName] = useState(start ? start.name ?? `my-${start.from}` : '');
+  // Dominant marker colour for the live preview — doesn't change the stored JSON, just paints
+  // currentColor-driven strokes/fills in the viewer. Cliparts default to white (what the element
+  // colour tends to be on a scene); single-colour icons/logos default to cyan for max contrast.
+  const [previewColor, setPreviewColor] = useState<ColorName>(() => (initialKind === 'clipart' ? 'white' : 'cyan'));
   const [profiles, setProfiles] = useState<ModelProfile[]>(loadProfiles);
   const [picked, setPicked] = useState<Partial<Record<CreateKind, string>>>({});
   const [managing, setManaging] = useState(false);
@@ -102,7 +110,7 @@ export function Creator({ initialKind, start, presentation, scene = 0, onClose, 
     switch (kind) {
       case 'scene': return [sceneMessages(text, presentation!, scene), checkScene(presentation!, scene)];
       case '3d': return [isoMessages(text), checkIso];
-      default: return [drawingMessages(kind, text), checkDrawing(kind)];
+      case 'icon': case 'logo': case 'clipart': return [drawingMessages(kind, text), checkDrawing(kind)];
     }
   };
 
@@ -146,7 +154,7 @@ export function Creator({ initialKind, start, presentation, scene = 0, onClose, 
       return <Preview json={JSON.stringify(doc)} scene={index} className="preview" />;
     }
     if (kind === '3d') return <Preview json={isoPreview(value.parts)} className="preview" />;
-    return <IconPreview def={value as IconDef} size={big ? (kind === 'icon' ? 220 : 380) : kind === 'icon' ? 56 : 110} color="#3ef0ff" />;
+    return <IconPreview def={value as IconDef} size={big ? (kind === 'icon' ? 220 : 380) : kind === 'icon' ? 56 : 110} color={palette[previewColor]} />;
   };
 
   const started = turns.length > 0;
@@ -227,6 +235,9 @@ export function Creator({ initialKind, start, presentation, scene = 0, onClose, 
             <div className={`creator-preview ${kind === 'scene' || kind === '3d' ? 'board' : ''}`}>
               {currentValue !== null ? preview(currentValue, true) : <span className="muted">The current version shows here</span>}
             </div>
+            {(kind === 'icon' || kind === 'clipart') && (
+              <MarkerTray value={previewColor} onChange={setPreviewColor} />
+            )}
             {current !== null && <span className="muted">Version {versionOf(current)} of {versions.length}{shown !== null && current !== versions.at(-1) ? ' (an earlier one)' : ''}</span>}
             {kind !== 'scene' && (
               <label className="field"><span>name</span><input value={name} placeholder={finalName || 'name'} onChange={(e) => setName(e.target.value)} /></label>

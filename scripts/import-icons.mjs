@@ -27,6 +27,11 @@ const TABLER = {
   lock: ['lock', 'Padlock: auth, security, secrets', ['security']],
   file: ['file-text', 'Document: file, prompt, config, JSON', ['data']],
   world: ['world', 'Globe: internet, public web, global', ['infra']],
+  play: ['player-play', 'Play button: start, press play, a video to run, media playback', ['media']],
+  clock: ['clock', 'Clock face: time, deadline, time passing, time running out', ['time']],
+  video: ['video', 'Video camera outline: filming, planned video, recording, production', ['media']],
+  calendar: ['calendar', 'Calendar page: a date, a deadline, scheduled', ['time']],
+  mood: ['mood-confused', 'A confused face: shrug, uncertainty, nothing I can do, out of options', ['people']],
 };
 
 // name in jz-motion -> Simple Icons slug, description

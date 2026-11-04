@@ -1,0 +1,183 @@
+{
+ "description": "landing page (imported from UnDraw, recolours with the element's marker)",
+ "tags": [
+  "clipart",
+  "undraw",
+  "external",
+  "landing-page"
+ ],
+ "box": [
+  800,
+  612.657
+ ],
+ "parts": [
+  {
+   "d": "M353.105,370.945a27.562,27.562,0,0,1-54.387,0H229.146V521.719H422.68V370.945Z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.1,
+   "transform": "translate(-560 -230.568) translate(634.088 321.506)"
+  },
+  {
+   "d": "M0 0 h193.53 v5.248 h-193.53 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.22,
+   "transform": "translate(-560 -230.568) translate(863.798 831.281)"
+  },
+  {
+   "d": "M789.211,487.734H10.789A10.8,10.8,0,0,1,0,476.945V32.7A10.8,10.8,0,0,1,10.789,21.91H789.211A10.8,10.8,0,0,1,800,32.7V476.945a10.8,10.8,0,0,1-10.789,10.789Z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.22,
+   "transform": "translate(-560 -230.568) translate(560 208.658)"
+  },
+  {
+   "d": "M0 0 h761.745 v429.818 h-761.745 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.1,
+   "transform": "translate(-560 -230.568) translate(576.123 247.557)"
+  },
+  {
+   "d": "M0 0 h721 v32 h-721 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.55,
+   "transform": "translate(-560 -230.568) translate(600 262.319)"
+  },
+  {
+   "d": "M0 0 h184 v24 h-184 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.1,
+   "transform": "translate(-560 -230.568) translate(600 381.319)"
+  },
+  {
+   "d": "M0 0 h321 v16 h-321 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.1,
+   "transform": "translate(-560 -230.568) translate(600 421.319)"
+  },
+  {
+   "d": "M0 0 h321 v16 h-321 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.1,
+   "transform": "translate(-560 -230.568) translate(600 453.319)"
+  },
+  {
+   "d": "M0 0 h88 v24 h-88 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.55,
+   "transform": "translate(-560 -230.568) translate(600 485.319)"
+  },
+  {
+   "d": "M20,0A20,20,0,1,1,0,20,20,20,0,0,1,20,0Z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.1,
+   "transform": "translate(-560 -230.568) translate(780 565)"
+  },
+  {
+   "d": "M20,0A20,20,0,1,1,0,20,20,20,0,0,1,20,0Z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.1,
+   "transform": "translate(-560 -230.568) translate(940 565)"
+  },
+  {
+   "d": "M20,0A20,20,0,1,1,0,20,20,20,0,0,1,20,0Z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.1,
+   "transform": "translate(-560 -230.568) translate(1100 565)"
+  },
+  {
+   "d": "M8,0H85a8,8,0,0,1,0,16H8A8,8,0,0,1,8,0Z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.1,
+   "transform": "translate(-560 -230.568) translate(754 615.681)"
+  },
+  {
+   "d": "M8,0H85a8,8,0,0,1,0,16H8A8,8,0,0,1,8,0Z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.1,
+   "transform": "translate(-560 -230.568) translate(914 615.681)"
+  },
+  {
+   "d": "M8,0H85a8,8,0,0,1,0,16H8A8,8,0,0,1,8,0Z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.1,
+   "transform": "translate(-560 -230.568) translate(1074 615.681)"
+  },
+  {
+   "d": "M8,0H58.5a8,8,0,0,1,0,16H8A8,8,0,0,1,8,0Z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.1,
+   "transform": "translate(-560 -230.568) translate(1087 642.361)"
+  },
+  {
+   "d": "M8,0H58.5a8,8,0,0,1,0,16H8A8,8,0,0,1,8,0Z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.1,
+   "transform": "translate(-560 -230.568) translate(927 642.361)"
+  },
+  {
+   "d": "M8,0H58.5a8,8,0,0,1,0,16H8A8,8,0,0,1,8,0Z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.1,
+   "transform": "translate(-560 -230.568) translate(767 642.361)"
+  },
+  {
+   "d": "M16.019,0h288.35c8.847,0,16.019,6.8,16.019,15.184V185.058c0,8.386-7.172,15.184-16.019,15.184H16.019C7.172,200.243,0,193.444,0,185.058V15.184C0,6.8,7.172,0,16.019,0Z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.1,
+   "transform": "translate(-560 -230.568) translate(1001 329)"
+  },
+  {
+   "d": "M0 16.694 a16.694 16.694 0 1 0 33.388 0 a16.694 16.694 0 1 0 -33.388 0 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.22,
+   "transform": "translate(-560 -230.568) translate(1105.961 397.857)"
+  },
+  {
+   "d": "M772.615,401.6v.849H629.184v-.888l.772-1.092,45.472-64.2a2.272,2.272,0,0,1,3.685,0L709.6,379.323l21.706-30.374a2.272,2.272,0,0,1,3.678,0l36.855,51.569Z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.55,
+   "transform": "translate(-560 -230.568) translate(459.816 59.667)"
+  }
+ ]
+}

@@ -1,8 +1,15 @@
 import { generatedIcons } from './icons.generated';
 import type { ColorName } from './palette';
 
-/** A colour for clipart parts: a marker colour, or the board itself (for dark fills that hide what's behind). */
-export type PartColor = ColorName | 'board';
+/**
+ * A colour for clipart parts:
+ *  - a marker colour name (e.g. "cyan"),
+ *  - "board" — the board background (for opaque dark fills that hide what's behind),
+ *  - "ink" — resolves to the element's own `color` at render time, so a clipart tinted by changing
+ *     the element's colour can keep its internal colour hierarchy. Imported external SVGs
+ *     (UnDraw etc.) use "ink" for every part so swapping the element's marker also recolours them.
+ */
+export type PartColor = ColorName | 'board' | 'ink';
 
 /** One stroke of a clipart drawing, in its own colour. */
 export interface ClipartPart {

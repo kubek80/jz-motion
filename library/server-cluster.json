@@ -1,0 +1,452 @@
+{
+ "description": "server cluster (imported from UnDraw, recolours with the element's marker)",
+ "tags": [
+  "clipart",
+  "undraw",
+  "external",
+  "server-cluster"
+ ],
+ "box": [
+  888,
+  710.80704
+ ],
+ "parts": [
+  {
+   "d": "M600.93555,699.40352a260.06372,260.06372,0,1,1,183.89355-76.1709A258.36518,258.36518,0,0,1,600.93555,699.40352Zm0-518.12891c-142.29688,0-258.06446,115.76758-258.06446,258.06494s115.76758,258.064,258.06446,258.064S859,581.63692,859,439.33955,743.23242,181.27461,600.93555,181.27461Z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.1,
+   "transform": "translate(-156 -94.59648)"
+  },
+  {
+   "d": "M469 509.90391 h262 v195 h-262 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.22,
+   "transform": "translate(1051.40391 -87.19257) rotate(90)"
+  },
+  {
+   "d": "M313 373.80743 h262 v104 h-262 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.22
+  },
+  {
+   "d": "M313 489.80743 h262 v104 h-262 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.22
+  },
+  {
+   "d": "M313 605.80743 h262 v104 h-262 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.22
+  },
+  {
+   "d": "M313 417.90372 h262 v16 h-262 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.55
+  },
+  {
+   "d": "M313 533.90372 h262 v16 h-262 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.55
+  },
+  {
+   "d": "M313 649.90372 h262 v16 h-262 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.55
+  },
+  {
+   "d": "M518 388.80743 a6 6 0 1 0 12 0 a6 6 0 1 0 -12 0 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.55
+  },
+  {
+   "d": "M539 388.80743 a6 6 0 1 0 12 0 a6 6 0 1 0 -12 0 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.55
+  },
+  {
+   "d": "M560 388.80743 a6 6 0 1 0 12 0 a6 6 0 1 0 -12 0 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.55
+  },
+  {
+   "d": "M518 502.80743 a6 6 0 1 0 12 0 a6 6 0 1 0 -12 0 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.55
+  },
+  {
+   "d": "M539 502.80743 a6 6 0 1 0 12 0 a6 6 0 1 0 -12 0 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.55
+  },
+  {
+   "d": "M560 502.80743 a6 6 0 1 0 12 0 a6 6 0 1 0 -12 0 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.55
+  },
+  {
+   "d": "M518 616.80743 a6 6 0 1 0 12 0 a6 6 0 1 0 -12 0 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.55
+  },
+  {
+   "d": "M539 616.80743 a6 6 0 1 0 12 0 a6 6 0 1 0 -12 0 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.55
+  },
+  {
+   "d": "M560 616.80743 a6 6 0 1 0 12 0 a6 6 0 1 0 -12 0 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.55
+  },
+  {
+   "d": "M0 708.80704 h888 v2 h-888 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.22
+  },
+  {
+   "d": "M397.8787,365.66116v185.9917a14.67525,14.67525,0,0,1-14.67227,14.67231H310.928a14.67656,14.67656,0,0,1-14.6784-14.67231V365.66116a14.67655,14.67655,0,0,1,14.6784-14.67228h8.76786a6.9778,6.9778,0,0,0,6.4551,9.60614h41.20843a6.97774,6.97774,0,0,0,6.45506-9.60614h9.392A14.67524,14.67524,0,0,1,397.8787,365.66116Z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.1,
+   "transform": "translate(-156 -94.59648)"
+  },
+  {
+   "d": "M145.06414 291.91002 h92 v128 h-92 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.1
+  },
+  {
+   "d": "M171.18557 379.92719 h36.71978 v2.09827 h-36.71978 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.1
+  },
+  {
+   "d": "M171.14869 387.63152 h56.81724 v2.09827 h-56.81724 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.55
+  },
+  {
+   "d": "M171.14869 394.89011 h44.5883 v2.09827 h-44.5883 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.1
+  },
+  {
+   "d": "M171.14869 402.1487 h26.22841 v2.09827 h-26.22841 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.1
+  },
+  {
+   "d": "M171.14869 409.40729 h39.34262 v2.09827 h-39.34262 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.1
+  },
+  {
+   "d": "M154.53324 379.32379 h4.19655 v4.19655 h-4.19655 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.1
+  },
+  {
+   "d": "M154.53324 386.58238 h4.19655 v4.19655 h-4.19655 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.55
+  },
+  {
+   "d": "M154.53324 393.84097 h4.19655 v4.19655 h-4.19655 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.1
+  },
+  {
+   "d": "M154.53324 401.09956 h4.19655 v4.19655 h-4.19655 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.1
+  },
+  {
+   "d": "M154.53324 408.35815 h4.19655 v4.19655 h-4.19655 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.1
+  },
+  {
+   "d": "M172.75082 307.91002 h36.99753 v36.99753 h-36.99753 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.1
+  },
+  {
+   "d": "M321.11058 0.13939 h245.88383 v157.47494 h-245.88383 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.1
+  },
+  {
+   "d": "M339.64671 44.19534 h203.86136 v77.03517 h-203.86136 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.1
+  },
+  {
+   "d": "M376.78939 57.54179 h48.92684 v2.79582 h-48.92684 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.1
+  },
+  {
+   "d": "M376.74025 67.80733 h75.70547 v2.79582 h-75.70547 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.55
+  },
+  {
+   "d": "M376.74025 77.47895 h59.41117 v2.79582 h-59.41117 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.1
+  },
+  {
+   "d": "M376.74025 87.15058 h34.94775 v2.79582 h-34.94775 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.1
+  },
+  {
+   "d": "M376.74025 96.8222 h52.42162 v2.79582 h-52.42162 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.1
+  },
+  {
+   "d": "M354.60119 56.7378 h5.59164 v5.59164 h-5.59164 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.1
+  },
+  {
+   "d": "M354.60119 66.40942 h5.59164 v5.59164 h-5.59164 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.55
+  },
+  {
+   "d": "M354.60119 76.08104 h5.59164 v5.59164 h-5.59164 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.1
+  },
+  {
+   "d": "M354.60119 85.75267 h5.59164 v5.59164 h-5.59164 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.1
+  },
+  {
+   "d": "M354.60119 95.42429 h5.59164 v5.59164 h-5.59164 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.1
+  },
+  {
+   "d": "M483.44507 53.8475 h50.05873 v50.05873 h-50.05873 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.1
+  },
+  {
+   "d": "M321.00559 0 h245.88383 v10.44604 h-245.88383 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.55
+  },
+  {
+   "d": "M326.67139000000003 5.34057 a2.09686 2.09686 0 1 0 4.19372 0 a2.09686 2.09686 0 1 0 -4.19372 0 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.1
+  },
+  {
+   "d": "M334.02032 5.34057 a2.09686 2.09686 0 1 0 4.19372 0 a2.09686 2.09686 0 1 0 -4.19372 0 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.1
+  },
+  {
+   "d": "M341.36925 5.34057 a2.09686 2.09686 0 1 0 4.19372 0 a2.09686 2.09686 0 1 0 -4.19372 0 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.1
+  },
+  {
+   "d": "M671.64772 294.80743 h60 v31 h-60 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.1
+  },
+  {
+   "d": "M671.64772 405.80743 h60 v31 h-60 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.1
+  },
+  {
+   "d": "M651.64772 365.80743 a50 50 0 1 0 100 0 a50 50 0 1 0 -100 0 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.1
+  },
+  {
+   "d": "M662.64772 365.80743 a39 39 0 1 0 78 0 a39 39 0 1 0 -78 0 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.1
+  },
+  {
+   "d": "M688.87659 355.12175 h30.24683 v1.72839 h-30.24683 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.22
+  },
+  {
+   "d": "M688.84621 361.46796 h46.80151 v1.72839 h-46.80151 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.55
+  },
+  {
+   "d": "M688.84621 367.44701 h36.72829 v1.72839 h-36.72829 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.22
+  },
+  {
+   "d": "M688.84621 373.42605 h21.60488 v1.72839 h-21.60488 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.22
+  },
+  {
+   "d": "M688.84621 379.4051 h32.40732 v1.72839 h-32.40732 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.22
+  },
+  {
+   "d": "M675.15972 354.62472 h3.45678 v3.45678 h-3.45678 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.22
+  },
+  {
+   "d": "M675.15972 360.60376 h3.45678 v3.45678 h-3.45678 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.55
+  },
+  {
+   "d": "M675.15972 366.58281 h3.45678 v3.45678 h-3.45678 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.22
+  },
+  {
+   "d": "M675.15972 372.56186 h3.45678 v3.45678 h-3.45678 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.22
+  },
+  {
+   "d": "M675.15972 378.54091 h3.45678 v3.45678 h-3.45678 z",
+   "color": "ink",
+   "width": 1.5,
+   "fill": "ink",
+   "fillOpacity": 0.22
+  }
+ ]
+}

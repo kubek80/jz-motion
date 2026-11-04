@@ -1,0 +1,192 @@
+{
+  "version": 1,
+  "title": "Sandbox (for recording scenarios)",
+  "scenes": [
+    {
+      "id": "sandbox",
+      "title": "Sandbox",
+      "elements": [
+        {
+          "id": "headline",
+          "type": "text",
+          "text": "EXPLAINERS, FAST",
+          "x": 1184,
+          "y": 344,
+          "size": 110,
+          "color": "cyan",
+          "style": "bold",
+          "visible": true
+        },
+        {
+          "id": "tagline",
+          "type": "text",
+          "text": "a scratch board for recording demos",
+          "x": 960,
+          "y": 620,
+          "size": 48,
+          "color": "yellow",
+          "visible": true
+        },
+        {
+          "id": "note",
+          "type": "text",
+          "text": "the record scripts open this file and modify it — nothing here is precious",
+          "x": 528,
+          "y": 331,
+          "size": 32,
+          "color": "white",
+          "visible": true
+        },
+        {
+          "id": "screenshot",
+          "type": "image",
+          "src": "/images/undraw-mobile-apps-palette-cyan.svg",
+          "x": 58,
+          "y": 767,
+          "width": 675,
+          "height": 593,
+          "color": "cyan"
+        },
+        {
+          "id": "screenshot-2",
+          "type": "image",
+          "src": "/images/undraw-pie-chart-palette-cyan.svg",
+          "x": 1089,
+          "y": 429,
+          "width": 610,
+          "height": 593,
+          "color": "cyan"
+        },
+        {
+          "id": "screenshot-3",
+          "type": "image",
+          "src": "/images/undraw-programmer-palette-cyan.svg",
+          "x": -275,
+          "y": 46,
+          "width": 593,
+          "height": 593,
+          "color": "cyan"
+        },
+        {
+          "id": "screenshot-4",
+          "type": "image",
+          "src": "/images/undraw-server-palette-cyan.svg",
+          "x": 960,
+          "y": 602,
+          "width": 697,
+          "height": 461,
+          "color": "cyan"
+        },
+        {
+          "id": "artificial-intelligence",
+          "type": "icon",
+          "icon": "artificial-intelligence",
+          "x": 1589,
+          "y": 526,
+          "size": 520,
+          "color": "pink"
+        },
+        {
+          "id": "online-shopping",
+          "type": "icon",
+          "icon": "online-shopping",
+          "x": 918,
+          "y": 982,
+          "size": 520
+        }
+      ],
+      "beats": [
+        {
+          "title": "Idle",
+          "actions": [
+            {
+              "do": "wait"
+            }
+          ],
+          "notes": "A scratch board for recording interaction clips. Scenarios click, type and recolour against this file. Reset it  Hello!by rewriting from the skill's template."
+        },
+        {
+          "title": "Second beat",
+          "notes": "Two beats so the Script view has something to walk through. Edit any sentence and the file changes.",
+          "actions": [
+            {
+              "do": "pulse",
+              "target": "headline"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scene-2",
+      "title": "Scene 2",
+      "elements": [
+        {
+          "id": "chat-2",
+          "type": "icon",
+          "icon": "chat",
+          "x": 348,
+          "y": 851,
+          "size": 520,
+          "color": "pink"
+        },
+        {
+          "id": "launching",
+          "type": "icon",
+          "icon": "launching",
+          "x": 1044,
+          "y": 421,
+          "size": 520,
+          "color": "yellow"
+        },
+        {
+          "id": "programmer",
+          "type": "icon",
+          "icon": "programmer",
+          "x": 294,
+          "y": 312,
+          "size": 520,
+          "color": "cyan"
+        },
+        {
+          "id": "interview",
+          "type": "icon",
+          "icon": "interview",
+          "x": 1257,
+          "y": 871,
+          "size": 520,
+          "color": "pink"
+        }
+      ],
+      "beats": [
+        {
+          "title": "Beat 3",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "programmer"
+            }
+          ]
+        },
+        {
+          "title": "Beat 1",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "chat-2"
+            }
+          ]
+        },
+        {
+          "title": "Beat 2",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "launching"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -3,7 +3,7 @@ import { loadProfiles, type ModelProfile } from '../ai/profiles';
 import { rate } from '../ai/recommend';
 import { ModelSelect } from './ModelSelect';
 import { ModelsEditor } from './ModelsEditor';
-import { loadModeModels, loadTranscriber, saveModeModel, saveTranscriber, TRANSCRIBERS, type StartMode, type Transcriber } from './settingsStore';
+import { loadModeModels, loadTranscriber, loadVoicer, saveModeModel, saveTranscriber, saveVoicer, TRANSCRIBERS, VOICERS, VOICES, type StartMode, type Transcriber, type Voicer } from './settingsStore';
 
 /** Speech-to-text service settings (for presentations made from a recording). */
 export function TranscriberFields({ value, onChange }: { value: Transcriber; onChange: (t: Transcriber) => void }) {
@@ -23,12 +23,36 @@ export function TranscriberFields({ value, onChange }: { value: Transcriber; onC
   );
 }
 
+/** Text-to-speech settings (for turning speaker notes into a voice-over). */
+export function VoicerFields({ value, onChange }: { value: Voicer; onChange: (v: Voicer) => void }) {
+  const preset = VOICERS.find((v) => v.baseURL === value.baseURL && v.model === value.model)?.label ?? 'Custom';
+  return (
+    <>
+      <label className="field">
+        <span>service</span>
+        <select value={preset} onChange={(e) => { const v = VOICERS.find((x) => x.label === e.target.value)!; onChange({ ...value, baseURL: v.baseURL, model: v.model || value.model }); }}>
+          {VOICERS.map((v) => <option key={v.label}>{v.label}</option>)}
+        </select>
+      </label>
+      <label className="field"><span>base URL</span><input value={value.baseURL} onChange={(e) => onChange({ ...value, baseURL: e.target.value })} /></label>
+      <label className="field"><span>model</span><input value={value.model} onChange={(e) => onChange({ ...value, model: e.target.value })} /></label>
+      <label className="field">
+        <span>voice</span>
+        <input list="jzm-voice-list" value={value.voice} onChange={(e) => onChange({ ...value, voice: e.target.value })} />
+        <datalist id="jzm-voice-list">{VOICES.map((n) => <option key={n} value={n} />)}</datalist>
+      </label>
+      <label className="field"><span>API key</span><input type="password" autoComplete="off" value={value.apiKey} onChange={(e) => onChange({ ...value, apiKey: e.target.value })} /></label>
+    </>
+  );
+}
+
 const MODES: [StartMode, string][] = [['topic', 'From a topic'], ['script', 'From a script'], ['recording', 'From a recording']];
 
 /** API keys and models, the transcription service, and which model each kind of start uses. */
 export function Settings({ onClose }: { onClose: () => void }) {
   const [profiles, setProfiles] = useState<ModelProfile[]>(loadProfiles);
   const [transcriber, setTranscriber] = useState(loadTranscriber);
+  const [voicer, setVoicer] = useState(loadVoicer);
   const [modeModels, setModeModels] = useState(loadModeModels);
 
   return (
@@ -60,6 +84,11 @@ export function Settings({ onClose }: { onClose: () => void }) {
           <h3>Transcription (for recordings)</h3>
           <p className="muted hint">Speech to text for making presentations from recordings: any OpenAI-compatible /audio/transcriptions service, such as OpenAI Whisper or Groq.</p>
           <TranscriberFields value={transcriber} onChange={(t) => { setTranscriber(t); saveTranscriber(t); }} />
+        </section>
+        <section className="settings-section">
+          <h3>Voice generation (for the prompter and takes)</h3>
+          <p className="muted hint">Turns each sentence of a beat's speaker notes into a short clip, so the prompter can show how long each line should take. Any OpenAI-compatible /audio/speech endpoint; <code>gpt-4o-mini-tts</code> is the cheapest.</p>
+          <VoicerFields value={voicer} onChange={(v) => { setVoicer(v); saveVoicer(v); }} />
         </section>
       </div>
     </div>

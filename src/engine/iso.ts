@@ -6,10 +6,12 @@ import type { ColorName } from './palette';
 // so 3D objects glow, draw on and zoom exactly like the rest of the board. DOM-free.
 
 export interface IsoPart {
-  shape: 'box' | 'cylinder';
-  /** Width (x), height (y), depth (z) in world units. For a cylinder, x is the diameter. */
+  shape: 'box' | 'cylinder' | 'sphere';
+  /** Width (x), height (y), depth (z) in world units. For a cylinder, x is the diameter. For a
+   * sphere, size[0] is the diameter; size[1] and size[2] are ignored (clamped to size[0]). */
   size: [number, number, number];
-  /** Center of the part's bottom face. y points up. */
+  /** Center of the part's bottom face. y points up. For a sphere, this is the bottom of its
+   * bounding box, so the sphere's centre sits at at[1] + size[0]/2. */
   at: [number, number, number];
   color?: ColorName;
 }
@@ -113,6 +115,18 @@ export function projectIso(parts: IsoPart[], view: IsoView, scale: number): { fa
   };
 
   for (const { p, i, offset } of ordered) {
+    if (p.shape === 'sphere') {
+      // Under any isometric rotation an orthographic projection of a sphere is a circle in the
+      // view plane; no face math, just centre + radius × scale. "at" is the bottom of the
+      // bounding box, so the sphere's centre is at[1] + radius.
+      const r0 = p.size[0] / 2;
+      const centre = new Vector3(p.at[0], p.at[1] + r0, p.at[2]).add(offset);
+      const c = toScreen(centre);
+      const r = r0 * scale;
+      grow([{ x: c.x - r, y: c.y - r }, { x: c.x + r, y: c.y + r }]);
+      faces.push({ part: i, d: `M${(c.x - r).toFixed(1)} ${c.y.toFixed(1)}a${r.toFixed(1)} ${r.toFixed(1)} 0 1 0 ${(r * 2).toFixed(1)} 0a${r.toFixed(1)} ${r.toFixed(1)} 0 1 0 ${(-r * 2).toFixed(1)} 0Z` });
+      continue;
+    }
     const all = partFaces(p, offset);
     const side = all.find((f) => f.side);
     const caps = all.filter((f) => !f.side);

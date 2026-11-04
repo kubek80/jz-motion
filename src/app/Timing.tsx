@@ -3,6 +3,8 @@ import { Stage } from '../engine';
 import type { CompiledPresentation } from '../engine/compile';
 import { palette } from '../engine/palette';
 import { cueClicks, cuePerformance, stateAt, type Click } from '../video/performance';
+import { loadVoicer } from './settingsStore';
+import { entryFor, loadSidecar, requestTts, sentencesOf, splitSentences, type SentenceInfo, type TtsSidecar } from './tts';
 
 export interface Voiceover { upload: string; duration: number; name?: string }
 
@@ -15,6 +17,8 @@ interface Props {
   onVoiceover: (v: Voiceover | undefined) => void;
   /** Sets (or with undefined, clears) cues of beats that start clicks; `clearOthers` forgets every other cue first. */
   onCues: (changes: { scene: number; beat: number; cue: number | undefined }[], clearOthers?: boolean) => void;
+  /** Replace the speaker notes of a beat; an empty string removes the field. */
+  onNotes: (scene: number, beat: number, notes: string) => void;
   /** A take was made from this timing and voice-over, ready to export. */
   onTake: (id: string) => void;
   onClose: () => void;
@@ -27,7 +31,7 @@ const fmt = (s: number) => `${Math.floor(s / 60)}:${(s % 60).toFixed(1).padStart
  * Timing a presentation to a voice-over: the narration's waveform with every click placed on it. Drag a click
  * to move it, or play and tap T as each line starts. The board plays along, with the script line beside it.
  */
-export function Timing({ presentation, text, presentationId, voiceover, onVoiceover, onCues, onTake, onClose }: Props) {
+export function Timing({ presentation, text, presentationId, voiceover, onVoiceover, onCues, onNotes, onTake, onClose }: Props) {
   const onCue = (scene: number, beat: number, cue: number | undefined) => onCues([{ scene, beat, cue }]);
   const clicks = useMemo(() => cueClicks(presentation), [presentation]);
   const perf = useMemo(() => cuePerformance(presentation, voiceover?.duration ?? 0), [presentation, voiceover?.duration]);
@@ -183,6 +187,57 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
     setTapIndex(tapIndex + 1);
   };
 
+  // ---------------------------------------------------------------- editing a beat's notes right from the prompter
+  const [editingBeat, setEditingBeat] = useState<{ scene: number; beat: number } | null>(null);
+  const [draftNotes, setDraftNotes] = useState('');
+  const startEditing = (scene: number, beat: number, notes: string | undefined) => {
+    pause();
+    setDraftNotes(notes ?? '');
+    setEditingBeat({ scene, beat });
+  };
+  const saveEditing = () => {
+    if (editingBeat) onNotes(editingBeat.scene, editingBeat.beat, draftNotes);
+    setEditingBeat(null);
+  };
+  const editingThis = (c?: Click) => !!editingBeat && !!c && editingBeat.scene === c.scene && editingBeat.beat === c.beat;
+
+  // ---------------------------------------------------------------- generated voice: a clip per sentence of each beat's notes
+  const voicer = useMemo(() => loadVoicer(), []);
+  const [tts, setTts] = useState<TtsSidecar>({});
+  const [generating, setGenerating] = useState<{ done: number; total: number } | null>(null);
+  useEffect(() => {
+    void loadSidecar(presentationId).then(setTts).catch(() => undefined);
+  }, [presentationId]);
+  /** Every sentence that has no clip yet in the current voice/model, deduplicated. */
+  const missingSentences = useMemo(() => {
+    const out: string[] = [];
+    const seen = new Set<string>();
+    for (const scene of presentation.scenes) for (const beat of scene.beats) for (const text of splitSentences(beat.notes)) {
+      if (seen.has(text)) continue;
+      seen.add(text);
+      if (!entryFor(tts, voicer, text)) out.push(text);
+    }
+    return out;
+  }, [presentation, tts, voicer]);
+  const generateVoice = async () => {
+    if (!missingSentences.length) return;
+    setError(null);
+    setGenerating({ done: 0, total: missingSentences.length });
+    let current = { ...tts };
+    try {
+      for (let i = 0; i < missingSentences.length; i++) {
+        const r = await requestTts(presentationId, missingSentences[i], voicer);
+        current = { ...current, [r.hash]: { text: r.text, audio: r.audio, duration: r.duration, voice: r.voice, model: r.model } };
+        setTts(current);
+        setGenerating({ done: i + 1, total: missingSentences.length });
+      }
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setGenerating(null);
+    }
+  };
+
   // ---------------------------------------------------------------- recording narration, with the script as a prompter
   const [recording, setRecording] = useState(false);
   const [recIndex, setRecIndex] = useState(0);
@@ -330,6 +385,42 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
   const sceneTitle = (c?: Click) => (c ? presentation.scenes[c.scene].title ?? presentation.scenes[c.scene].id : '');
   const cuedCount = clicks.filter((c) => c.cued).length;
 
+  // Sentences of the current and next beat, each with a duration from its generated clip or an estimate.
+  const nowLines = sentencesOf(beatOf(current)?.notes, tts, voicer);
+  const nextLines = sentencesOf(beatOf(next)?.notes, tts, voicer);
+  const durOf = (l: SentenceInfo) => l.entry?.duration ?? l.estimated;
+  const budget = nowLines.reduce((s, l) => s + durOf(l), 0);
+  const anyClip = nowLines.some((l) => l.entry);
+  const beatElapsed = Math.max(0, time - (current?.t ?? 0));
+  // The beat's actual play length: the gap to the next click (or to the end). Click `t` values come
+  // from cues or auto-even gaps and don't know anything about voice-clip lengths, so the raw sum of
+  // sentence durations (`budget`) usually doesn't equal `beatDuration`. If we drove the per-sentence
+  // countdown off raw durations, the Now beat would flip to Next while the current line's countdown
+  // still showed seconds left — that reads as the prompter "skipping". Scale each line's start and
+  // duration so they sum to the actual beat length; the countdown then hits zero right at the flip.
+  const beatDuration = current ? Math.max(0.1, (next?.t ?? total) - current.t) : 0;
+  const lineScale = budget > 0 && beatDuration > 0 ? beatDuration / budget : 1;
+  const playDur = (l: SentenceInfo) => durOf(l) * lineScale;
+  /** Index of the sentence we think is being read now, from the running durations. */
+  const activeLine = (() => {
+    if (!nowLines.length) return -1;
+    let t = 0;
+    for (let i = 0; i < nowLines.length; i++) {
+      const d = playDur(nowLines[i]);
+      if (beatElapsed < t + d) return i;
+      t += d;
+    }
+    return nowLines.length - 1;
+  })();
+
+  // Stable getter the active ScriptLine's own rAF loop reads from, so the bar and countdown move
+  // every frame regardless of React re-render timing (CSS transitions fought with React updates).
+  const nowRef = useRef(now);
+  nowRef.current = now;
+  const currentTRef = useRef(current?.t ?? 0);
+  currentTRef.current = current?.t ?? 0;
+  const getBeatElapsed = useRef(() => Math.max(0, nowRef.current() - currentTRef.current)).current;
+
   return (
     <div className="timing">
       <header className="timing-head">
@@ -341,6 +432,13 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
           <input type="file" accept="audio/*,video/*" onChange={(e) => { const f = e.target.files?.[0]; e.target.value = ''; if (f) void loadVoiceover(f); }} />
         </label>
         {voiceover && <button onClick={() => onVoiceover(undefined)} title="Stop using this voice-over (the cues stay)">Remove</button>}
+        <button
+          onClick={() => void generateVoice()}
+          disabled={!missingSentences.length || !!generating || !voicer.apiKey}
+          title={voicer.apiKey ? `Generate a short voice clip for each sentence in Speaker notes, so the prompter can show how long each line should take (${voicer.model}, voice: ${voicer.voice}). Settings → Voice generation to change the model or key.` : 'Set an API key in Settings → Voice generation first'}
+        >
+          {generating ? `Generating voice ${generating.done}/${generating.total}…` : missingSentences.length ? `Generate voice (${missingSentences.length})` : 'Voice up to date'}
+        </button>
         <button onClick={() => onCues([], true)} disabled={!cuedCount || recording} title="Forget every cue: clicks go back to even pauses">Clear cues</button>
         <button className="primary" disabled={!voiceover || !!busy} onClick={() => void makeTake()} title="A take with this timing and the voice-over as its sound, ready to export in the Video tab">
           Make a take for export
@@ -353,15 +451,78 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
         <aside className="timing-script">
           {recording && <div className="rec-banner"><span className="dot" /> Recording {fmt(time)} · <b>→ / Space</b> next line · <b>←</b> back · <b>Esc</b> stop</div>}
           <div className="now">
-            <span className="muted">Now · {sceneTitle(current)}</span>
+            <div className="now-head">
+              <span className="muted">Now · {sceneTitle(current)}</span>
+              {budget > 0 && !editingThis(current) && (
+                <span className={['beat-budget', beatElapsed > budget + 0.2 ? 'over' : '', anyClip ? '' : 'estimated'].join(' ')} title={anyClip ? 'Seconds into this beat vs. the total length of its generated voice clips' : 'Seconds into this beat vs. an estimate from word count at ~150 wpm (generate voice for the real pace)'}>
+                  {beatElapsed.toFixed(1)}s / {anyClip ? '' : '~'}{budget.toFixed(1)}s
+                </span>
+              )}
+              {current && (editingThis(current) ? (
+                <span className="line-tools">
+                  <button className="small" onClick={saveEditing} title="Save (Ctrl+Enter)">Save</button>
+                  <button className="small" onClick={() => setEditingBeat(null)} title="Discard (Esc)">Cancel</button>
+                </span>
+              ) : (
+                <button className="small edit-notes" onClick={() => startEditing(current.scene, current.beat, beatOf(current)?.notes)} title="Edit this beat's speaker notes">✎ Edit</button>
+              ))}
+            </div>
             <b>{beatOf(current)?.title ?? `Beat ${(current?.beat ?? 0) + 1}`}</b>
-            <p>{beatOf(current)?.notes || <span className="muted">No speaker notes</span>}</p>
+            {editingThis(current) ? (
+              <textarea
+                className="notes-edit"
+                autoFocus
+                value={draftNotes}
+                onChange={(e) => setDraftNotes(e.target.value)}
+                onBlur={saveEditing}
+                onKeyDown={(e) => {
+                  if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); setEditingBeat(null); }
+                  if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); saveEditing(); }
+                }}
+                placeholder="What you say over this beat. End sentences with a period so the prompter can show one line each."
+              />
+            ) : nowLines.length ? (
+              <ul
+                className="lines clickable"
+                onClick={() => current && startEditing(current.scene, current.beat, beatOf(current)?.notes)}
+                title="Click to edit"
+              >
+                {nowLines.map((line, i) => <ScriptLine key={i} line={line} active={i === activeLine} playDur={playDur(line)} startAt={nowLines.slice(0, i).reduce((s, l) => s + playDur(l), 0)} getBeatElapsed={getBeatElapsed} />)}
+              </ul>
+            ) : (
+              <p className="clickable" onClick={() => current && startEditing(current.scene, current.beat, '')}><span className="muted">Click to add speaker notes</span></p>
+            )}
           </div>
           {next && (
             <div className="next">
-              <span className="muted">Next at {fmt(next.t)} · {sceneTitle(next)}</span>
+              <div className="now-head">
+                <span className="muted">Next at {fmt(next.t)} · {sceneTitle(next)}</span>
+                {!editingThis(next) && <button className="small edit-notes" onClick={() => startEditing(next.scene, next.beat, beatOf(next)?.notes)} title="Edit this beat's speaker notes">✎ Edit</button>}
+              </div>
               <b>{beatOf(next)?.title ?? `Beat ${next.beat + 1}`}</b>
-              <p>{beatOf(next)?.notes}</p>
+              {editingThis(next) ? (
+                <textarea
+                  className="notes-edit"
+                  autoFocus
+                  value={draftNotes}
+                  onChange={(e) => setDraftNotes(e.target.value)}
+                  onBlur={saveEditing}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); setEditingBeat(null); }
+                    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); saveEditing(); }
+                  }}
+                />
+              ) : nextLines.length ? (
+                <ul
+                  className="lines clickable"
+                  onClick={() => startEditing(next.scene, next.beat, beatOf(next)?.notes)}
+                  title="Click to edit"
+                >
+                  {nextLines.map((line, i) => <ScriptLine key={i} line={line} />)}
+                </ul>
+              ) : (
+                <p className="clickable" onClick={() => startEditing(next.scene, next.beat, '')}><span className="muted">Click to add speaker notes</span></p>
+              )}
             </div>
           )}
         </aside>
@@ -441,4 +602,48 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
 function rulerStep(pps: number) {
   for (const s of [0.5, 1, 2, 5, 10, 15, 30, 60, 120]) if (s * (pps || 20) >= 80) return s;
   return 300;
+}
+
+/**
+ * One sentence of a beat's notes. The clip's duration (or an estimate) drives the countdown and bar.
+ * The active line's bar and remaining-time number are driven by its own requestAnimationFrame against
+ * DOM refs: setState every frame fought a CSS transition and the bar only settled on pause.
+ */
+function ScriptLine({ line, active, playDur, startAt = 0, getBeatElapsed }: { line: SentenceInfo; active?: boolean; playDur?: number; startAt?: number; getBeatElapsed?: () => number }) {
+  const dur = line.entry?.duration ?? line.estimated;
+  // `dur` is the voice clip's own length (what the badge shows); `liveDur` is scaled to the actual
+  // beat duration so the countdown and bar line up with when Now flips to Next.
+  const liveDur = playDur ?? dur;
+  const estimated = !line.entry;
+  const liRef = useRef<HTMLLIElement>(null);
+  const barRef = useRef<HTMLSpanElement>(null);
+  const countRef = useRef<HTMLSpanElement>(null);
+  useEffect(() => {
+    if (!active || !getBeatElapsed) return;
+    let raf = 0;
+    const tick = () => {
+      const into = Math.max(0, getBeatElapsed() - startAt);
+      const left = liveDur - into;
+      const pct = Math.min(100, (into / Math.max(0.1, liveDur)) * 100);
+      const over = left < -0.2;
+      if (barRef.current) barRef.current.style.width = `${pct.toFixed(2)}%`;
+      if (countRef.current) countRef.current.textContent = left >= 0 ? `${left.toFixed(1)}s left` : `+${(-left).toFixed(1)}s`;
+      if (liRef.current) liRef.current.classList.toggle('over', over);
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [active, liveDur, startAt, getBeatElapsed]);
+  return (
+    <li ref={liRef} className={['line', active ? 'active' : '', estimated ? 'estimated' : ''].join(' ')}>
+      <span className="line-text">{line.text}</span>
+      <span className="line-meta">
+        <span className="line-dur" title={estimated ? 'Estimated from word count — generate voice for the real length' : 'Length of the generated voice clip'}>{estimated ? '~' : ''}{dur.toFixed(1)}s</span>
+        {active && <span className="line-count" ref={countRef}>{liveDur.toFixed(1)}s left</span>}
+      </span>
+      {active && (
+        <span className="line-bar"><span ref={barRef} style={{ width: '0%' }} /></span>
+      )}
+    </li>
+  );
 }

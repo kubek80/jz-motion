@@ -27,6 +27,11 @@ From [Tabler Icons](https://tabler.io/icons), MIT.
 | `lock` | Padlock: auth, security, secrets | security |
 | `file` | Document: file, prompt, config, JSON | data |
 | `world` | Globe: internet, public web, global | infra |
+| `play` | Play button: start, press play, a video to run, media playback | media |
+| `clock` | Clock face: time, deadline, time passing, time running out | time |
+| `video` | Video camera outline: filming, planned video, recording, production | media |
+| `calendar` | Calendar page: a date, a deadline, scheduled | time |
+| `mood` | A confused face: shrug, uncertainty, nothing I can do, out of options | people |
 
 ## Hardware and hand-drawn icons
 

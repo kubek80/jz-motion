@@ -227,6 +227,61 @@ export const generatedIcons: Record<string, IconDef> = {
       "M12.5 3a17 17 0 0 1 0 18"
     ]
   },
+  "play": {
+    "description": "Play button: start, press play, a video to run, media playback",
+    "tags": [
+      "media"
+    ],
+    "paths": [
+      "M7 4v16l13 -8l-13 -8"
+    ]
+  },
+  "clock": {
+    "description": "Clock face: time, deadline, time passing, time running out",
+    "tags": [
+      "time"
+    ],
+    "paths": [
+      "M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0",
+      "M12 7v5l3 3"
+    ]
+  },
+  "video": {
+    "description": "Video camera outline: filming, planned video, recording, production",
+    "tags": [
+      "media"
+    ],
+    "paths": [
+      "M15 10l4.553 -2.276a1 1 0 0 1 1.447 .894v6.764a1 1 0 0 1 -1.447 .894l-4.553 -2.276v-4",
+      "M3 8a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2l0 -8"
+    ]
+  },
+  "calendar": {
+    "description": "Calendar page: a date, a deadline, scheduled",
+    "tags": [
+      "time"
+    ],
+    "paths": [
+      "M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12",
+      "M16 3v4",
+      "M8 3v4",
+      "M4 11h16",
+      "M11 15h1",
+      "M12 15v3"
+    ]
+  },
+  "mood": {
+    "description": "A confused face: shrug, uncertainty, nothing I can do, out of options",
+    "tags": [
+      "people"
+    ],
+    "paths": [
+      "M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0",
+      "M9 10l.01 0",
+      "M15 10l.01 0",
+      "M9.5 16a10 10 0 0 1 6 -1.5"
+    ]
+  },
   "gpu": {
     "description": "Graphics card with two fans: GPU, CUDA, training/inference hardware",
     "tags": [
