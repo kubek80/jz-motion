@@ -47,3 +47,25 @@
 .media-used h4 { margin: 0 0 4px; color: var(--muted); font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
 .media-used ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 2px; }
 .media-used a { color: var(--accent); }
+
+/* Record screen: picker, countdown, recording, trim and keep. */
+.recorder-back { align-items: center; z-index: 80; }
+.modal.recorder { width: min(720px, 100%); }
+.recorder-head { display: flex; align-items: center; }
+.recorder-head h3 { margin: 0; }
+.recorder-ready { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+.recorder-ready p { margin: 0; line-height: 1.5; }
+.recorder-countdown { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 18px 0; }
+.recorder-countdown .count { font-size: 72px; line-height: 1; color: var(--accent); text-shadow: 0 0 18px #3ef0ff88; font-variant-numeric: tabular-nums; }
+.recorder-live { display: flex; align-items: center; gap: 10px; padding: 14px 0; font-size: 20px; }
+.recorder-live .dot { width: 12px; height: 12px; border-radius: 50%; background: var(--error); box-shadow: 0 0 10px var(--error); animation: pulse-dot 0.8s infinite alternate; }
+.recorder-live .elapsed { font-variant-numeric: tabular-nums; color: var(--muted); }
+.recorder-review { display: flex; flex-direction: column; gap: 10px; }
+.recorder-review video { width: 100%; max-height: 52vh; background: #000; border-radius: 8px; border: 1px solid var(--line); }
+.recorder-trim { display: grid; gap: 4px; }
+.recorder-trim label { display: grid; grid-template-columns: 44px 1fr 56px; align-items: center; gap: 8px; font-size: 13px; }
+.recorder-trim label span { text-align: right; font-variant-numeric: tabular-nums; color: var(--muted); }
+.recorder-trim p { margin: 0; font-size: 12px; }
+.recorder-name { display: grid; grid-template-columns: 44px 1fr; align-items: center; gap: 8px; font-size: 13px; }
+.recorder-actions { display: flex; gap: 8px; align-items: center; }
+.recorder .busy-text { color: var(--accent); margin: 18px 0; }

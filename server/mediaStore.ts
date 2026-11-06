@@ -69,8 +69,13 @@ async function probeFile(path: string): Promise<Probe> {
 
 const scaleFilter = (width?: number) => (width && width > MAX_WIDTH ? `scale=${MAX_WIDTH}:-2` : 'scale=trunc(iw/2)*2:trunc(ih/2)*2');
 
+/** Keep only part of a recording or sound, in seconds from its start. */
+export interface Trim { start?: number; end?: number }
+
+const trimArgs = (t: Trim) => [...(t.start ? ['-ss', String(t.start)] : []), ...(t.end ? ['-to', String(t.end)] : [])];
+
 /** Converts an incoming file into what the library keeps. Returns the new file's path and extension. */
-async function convert(input: string, ext: string, work: string): Promise<{ path: string; ext: string; kind: MediaKind; probe: Probe }> {
+async function convert(input: string, ext: string, work: string, trim: Trim = {}): Promise<{ path: string; ext: string; kind: MediaKind; probe: Probe }> {
   const e = ext.toLowerCase();
   if (e === 'svg') return { path: input, ext: 'svg', kind: 'drawing', probe: { hasVideo: false, hasAudio: false } };
   const probe = await probeFile(input);
@@ -78,7 +83,9 @@ async function convert(input: string, ext: string, work: string): Promise<{ path
   if (probe.hasVideo && animated) {
     const out = join(work, 'out.webm');
     // Screen recordings: VP9 at a quality that keeps text crisp; sound (if any) as Opus.
-    await run(FFMPEG, ['-y', '-v', 'error', '-i', input, '-vf', scaleFilter(probe.width), '-c:v', 'libvpx-vp9', '-crf', '32', '-b:v', '0', '-row-mt', '1', '-deadline', 'good', '-cpu-used', '4',
+    // Recordings made in the browser have no steady frame rate (only timestamps): keep their frames as they are
+    // rather than letting FFmpeg fill in duplicates up to a guessed rate.
+    await run(FFMPEG, ['-y', '-v', 'error', '-i', input, ...trimArgs(trim), '-fps_mode', 'vfr', '-vf', scaleFilter(probe.width), '-c:v', 'libvpx-vp9', '-crf', '32', '-b:v', '0', '-row-mt', '1', '-deadline', 'good', '-cpu-used', '4',
       ...(probe.hasAudio ? ['-c:a', 'libopus', '-b:a', '96k'] : ['-an']), out]);
     return { path: out, ext: 'webm', kind: 'recording', probe: { ...probe, ...(await probeFile(out)) } };
   }
@@ -91,20 +98,20 @@ async function convert(input: string, ext: string, work: string): Promise<{ path
   }
   if (probe.hasAudio) {
     const out = join(work, 'out.webm');
-    await run(FFMPEG, ['-y', '-v', 'error', '-i', input, '-vn', '-c:a', 'libopus', '-b:a', '64k', out]);
+    await run(FFMPEG, ['-y', '-v', 'error', '-i', input, ...trimArgs(trim), '-vn', '-c:a', 'libopus', '-b:a', '64k', out]);
     return { path: out, ext: 'webm', kind: 'sound', probe: { ...probe, ...(await probeFile(out)) } };
   }
   throw new Error('not a picture, recording or sound');
 }
 
 /** Adds a file to the library (converting it), and returns its entry. The same content added twice is stored once. */
-export async function addMedia(data: Buffer, originalName: string, name?: string): Promise<MediaEntry> {
+export async function addMedia(data: Buffer, originalName: string, name?: string, trim: Trim = {}): Promise<MediaEntry> {
   const ext = extname(originalName).slice(1).toLowerCase() || 'bin';
   const work = await mkdtemp(join(tmpdir(), 'jzm-media-'));
   try {
     const input = join(work, `in.${ext}`);
     await writeFile(input, data);
-    const done = await convert(input, ext, work);
+    const done = await convert(input, ext, work, trim);
     const bytes = await readFile(done.path);
     const file = `${createHash('sha256').update(bytes).digest('hex').slice(0, 16)}.${done.ext}`;
     await mkdir(MEDIA_DIR, { recursive: true });
