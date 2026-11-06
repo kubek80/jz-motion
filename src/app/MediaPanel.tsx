@@ -173,7 +173,7 @@ export function MediaPanel({ items, available, reload, query, onPlace, onClose }
           />
         ) : (
           <p className="muted">
-            Select something to see it, where it is used, and to rename or delete it.{onPlace ? ' Double-click a picture to put it on the board.' : ''}
+            Select something to see it, where it is used, and to rename or delete it.{onPlace ? ' Double-click a picture or recording to put it on the board.' : ''}
           </p>
         )}
       </aside>
@@ -182,5 +182,5 @@ export function MediaPanel({ items, available, reload, query, onPlace, onClose }
 }
 
 /** Only still pictures and drawings go on the board as images for now. */
-const placeable = (i: MediaEntry) => i.kind === 'picture' || i.kind === 'drawing';
+const placeable = (i: MediaEntry) => i.kind !== 'sound';
 const placed = (i: MediaEntry): PlacedImage => ({ src: i.src, width: i.width ?? 800, height: i.height ?? 600 });

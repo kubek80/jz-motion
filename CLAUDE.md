@@ -12,7 +12,7 @@ Skills in `.claude/skills/` cover the work you'll be asked for. Use them:
 | `edit-presentation` | Change an existing one |
 | `library-item` | Draw a new icon, clipart or 3D model |
 | `voiceover-and-video` | Narration, timing, takes, MP4 export |
-| `demo-interactions` | Explainers about an app or UI: real screenshots and APNG recordings, camera zooms, pinned explanations |
+| `demo-interactions` | Explainers about an app or UI: real screenshots and screen recordings (WebM video), camera zooms, pinned explanations |
 | `external-clipart` | Import SVG illustrations from external libraries (UnDraw today), restyled to our palette, as scene `image` elements |
 
 The rules every generator follows (the app's own models too) are in `docs/style.md`, `docs/format.md` and `docs/library.md`. Four commands keep you honest:
@@ -35,7 +35,7 @@ Explainers about *any* app (including jz-motion itself) use `snap` and `record` 
 | `presentations/` | One JSON file per presentation, `<id>.json` | yes (user data) |
 | `library/` | Icons, clipart, 3D models made in the app | yes |
 | `media/` | The media library: pictures (WebP), screen recordings (WebM video + poster), sounds, with `index.json` (names, sizes) | yes |
-| `images/` | Older pictures, from before the media library (`npm run media -- migrate` moves them in) | yes |
+| `images/` | Older pictures, from before the media library (migrated; `npm run media -- migrate` moves any new ones in) | yes |
 | `scratch/` | Raw captures and files moved out of the way (`migrate` puts unused pictures here); safe to delete | no |
 | `uploads/`, `takes/`, `exports/`, `snapshots/` | Recordings, voice-overs, takes, videos, previews | no |
 | `src/examples/` | Example presentations shipped with the app (`public/examples/` holds their pictures) | yes |

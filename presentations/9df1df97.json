@@ -589,7 +589,7 @@
         {
           "id": "editor",
           "type": "image",
-          "src": "/images/jzm-editor.png",
+          "src": "/media/663ada056a14651d.webp",
           "x": 960,
           "y": 540,
           "width": 1280,
@@ -824,7 +824,7 @@
         {
           "id": "clip",
           "type": "image",
-          "src": "/images/jzm-edit-colour.apng",
+          "src": "/media/1d393ff1793636be.webm",
           "x": 1080,
           "y": 580,
           "width": 1200,
@@ -1030,7 +1030,7 @@
         {
           "id": "clip",
           "type": "image",
-          "src": "/images/jzm-script-edit.apng",
+          "src": "/media/2dbae8c9aecb58d5.webm",
           "x": 960,
           "y": 580,
           "width": 1280,
@@ -1613,7 +1613,7 @@
         {
           "id": "creator",
           "type": "image",
-          "src": "/images/jzm-creator-lightbulb.png",
+          "src": "/media/d646c507ff654c09.webp",
           "x": 960,
           "y": 1720,
           "width": 1150,
@@ -2990,7 +2990,7 @@
         {
           "id": "prompter",
           "type": "image",
-          "src": "/images/jzm-prompter-llm-first-231.png",
+          "src": "/media/82bbdbbedef4ff3a.webp",
           "x": 960,
           "y": 580,
           "width": 1440,
@@ -3225,7 +3225,7 @@
         {
           "id": "home-full",
           "type": "image",
-          "src": "/images/jzm-home-full.png",
+          "src": "/media/8813533b5b0410e4.webp",
           "x": 500,
           "y": 540,
           "width": 900,
@@ -3237,7 +3237,7 @@
         {
           "id": "editor-full",
           "type": "image",
-          "src": "/images/jzm-editor-ai-full.png",
+          "src": "/media/4b9030113ac6f590.webp",
           "x": 1420,
           "y": 540,
           "width": 900,
