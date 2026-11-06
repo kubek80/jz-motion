@@ -143,7 +143,7 @@ export const ImageElement = z.object({
   frame: z.enum(['none', 'browser']).default('none'),
   /** Text in the browser frame's address bar. */
   url: z.string().optional(),
-  /** Animated pictures (APNG, GIF, animated WebP): start again at the end instead of stopping on the last frame. */
+  /** Animated pictures and videos (APNG, GIF, animated WebP, WebM, MP4): start again at the end instead of stopping on the last frame. */
   loop: z.boolean().default(false),
   label: z.string().optional(),
 });
@@ -231,7 +231,7 @@ export const Action = z.discriminatedUnion('do', [
     padding: z.number().min(0).default(24),
   }),
   /**
-   * Plays an animated picture (APNG, GIF, animated WebP); it keeps playing between beats until it ends
+   * Plays an animated picture (APNG, GIF, animated WebP) or a video (WebM, MP4, MOV; muted); it keeps playing between beats until it ends
    * (or loops), or another `play` with "on": false pauses it. Without `play` it shows its first frame.
    */
   z.object({

@@ -55,6 +55,7 @@ Presentation
 | `src/engine/buildElement.ts`, `drawing.ts` | One element's SVG per type; the `stroke` and `write` primitives that record what a draw-on animates. |
 | `src/engine/timelineOps.ts`, `sceneState.ts`, `stageNodes.ts` | Ops turned into tweens; a scene's start state and computed redraw; the per-element node types and small pure helpers. |
 | `src/engine/animatedPictures.ts`, `spotlight.ts`, `boardBackground.ts` | Animated pictures (decoded frame by frame, synced to the timeline); the spotlight's dimming; the glow, grain and board texture. |
+| `src/engine/videoPictures.ts`, `videoClock.ts` | Videos on pictures (`play` like animated pictures, muted): live they play natively and stay in step with the clock; in export each frame is seeked exactly and `settled()` waits until it is shown. |
 | `src/engine/library.ts`, `icons.generated.ts`, `icons.custom.json` | Icon library. `npm run icons` merges Tabler, Simple Icons and the hand-drawn JSON into `icons.generated.ts` and `docs/library.md`. |
 | `src/engine/voiceover.ts` | Voice-over clips: reading the older single-recording shape as clips, total length, the clip under a time. |
 | `src/app/Root.tsx`, `Home.tsx`, `StartBox.tsx`, `CreateWithAi.tsx`, `store.ts` | Home screen and its prompt box, making a presentation with a model, where presentations are kept (local server files, or browser storage), with stale-write protection. |

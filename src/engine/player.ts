@@ -14,6 +14,7 @@ import { applyState, redrawComputed } from './sceneState';
 import type { Camera } from './schema';
 import { SpotlightLayer } from './spotlight';
 import { nextUid, preloadImage, type ElementNodes, type FlowState } from './stageNodes';
+import { stillOf } from './videoClock';
 import { addOp } from './timelineOps';
 
 /** Scene `scene` plays from timeline position `from` until `until` (equal when standing still). */
@@ -160,7 +161,7 @@ export class StagePlayer {
       document.fonts.load(`500 40px 'JetBrains Mono'`),
       this.backgroundReady,
       // Pictures load before the first frame, so exports never catch one half-loaded.
-      ...[...new Set(p.scenes.flatMap((sc) => sc.elements.flatMap((e) => (e.type === 'image' ? [e.src] : []))))].map(preloadImage),
+      ...[...new Set(p.scenes.flatMap((sc) => sc.elements.flatMap((e) => (e.type === 'image' ? [stillOf(e.src) ?? ''] : []))))].filter(Boolean).map(preloadImage),
     ]).catch(() => undefined);
     const scene = Math.min(at.scene, p.scenes.length - 1);
     this.showScene(scene, Math.min(at.beat, p.scenes[scene].beats.length));
@@ -312,7 +313,7 @@ export class StagePlayer {
   private frame(dt: number) {
     this.applyCamera();
     this.spotlight.render();
-    this.animations.render(dt);
+    this.animations.render(dt, this.manual);
     redrawComputed(this.nodes, this.flows, dt, this.ambient);
   }
 

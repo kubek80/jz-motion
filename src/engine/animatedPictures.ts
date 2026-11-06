@@ -1,8 +1,11 @@
 // Animated pictures (APNG, GIF, animated WebP) on the board: decoding them, hooking their plays to the
 // timeline, advancing them with the board's clock, and telling export when every frame asked for is drawn.
+// Videos (WebM, MP4, MOV) take the same plays; videoPictures.ts shows them.
 import type { CompiledScene, Op } from './compile';
 import { svgEl } from './dom';
-import type { AnimNodes, ImageNodes } from './stageNodes';
+import type { AnimNodes, ImageNodes, Playable } from './stageNodes';
+import { isVideoSrc } from './videoClock';
+import { VideoPictures } from './videoPictures';
 
 type PlayOp = Extract<Op, { kind: 'play' }>;
 
@@ -10,6 +13,7 @@ export class AnimatedPictures {
   private animations = new Set<AnimNodes>();
   private loading = new Set<Promise<unknown>>();
   private pendingPlays: { image: ImageNodes; op: PlayOp }[] = [];
+  private videos = new VideoPictures();
 
   /** `timeline` is the current scene's timeline; `builtFor` the scene currently on the board. */
   constructor(private timeline: () => gsap.core.Timeline, private builtFor: () => CompiledScene | undefined) {}
@@ -18,11 +22,17 @@ export class AnimatedPictures {
   reset() {
     for (const a of this.animations) a.decoder.close();
     this.animations.clear();
+    this.videos.reset();
     this.pendingPlays = [];
   }
 
-  /** If the picture is animated, swaps in a canvas that shows whichever frame the timeline asks for. */
+  /** If the picture is animated (or a video), swaps in a canvas (or video) that shows whichever frame the timeline asks for. */
   watch(image: ImageNodes, src: string, o: { x: number; y: number; width: number; height: number; clipId: string; loop: boolean; state?: number | null }) {
+    if (isVideoSrc(src)) {
+      const built = this.builtFor();
+      this.track(this.videos.watch(image, src, o, () => this.builtFor() === built).then((v) => v && this.hookPending(image, v)));
+      return;
+    }
     if (!/\.(png|apng|gif|webp)(\?|$)/i.test(src) && !/^data:image\/(png|gif|webp)/.test(src)) return;
     if (typeof ImageDecoder === 'undefined') return;
     const built = this.builtFor();
@@ -52,22 +62,32 @@ export class AnimatedPictures {
       };
       image.anim = anim;
       this.animations.add(anim);
-      // Plays scheduled before the decoder was ready: hook them up now.
-      for (const play of this.pendingPlays.filter((p) => p.image === image)) this.schedulePlay(anim, play.op);
-    })().catch(() => undefined);
-    this.loading.add(job);
-    void job.finally(() => this.loading.delete(job));
+      this.hookPending(image, anim);
+    })();
+    this.track(job);
+  }
+
+  private track(job: Promise<unknown>) {
+    const safe = job.catch(() => undefined);
+    this.loading.add(safe);
+    void safe.finally(() => this.loading.delete(safe));
+  }
+
+  /** Plays scheduled before the picture was ready: hook them up now. */
+  private hookPending(image: ImageNodes, target: Playable) {
+    for (const play of this.pendingPlays.filter((p) => p.image === image)) this.schedulePlay(target, play.op);
   }
 
   /** A play op from the timeline. */
   play(image: ImageNodes, op: PlayOp) {
     // The picture may still be loading; the play is hooked up when it is ready.
-    if (image.anim) this.schedulePlay(image.anim, op);
+    const target = image.anim ?? image.video;
+    if (target) this.schedulePlay(target, op);
     else this.pendingPlays.push({ image, op });
   }
 
   /** Plays are scheduled in order; only one with `from` counts as a jump (a new epoch). */
-  private schedulePlay(anim: AnimNodes, op: PlayOp) {
+  private schedulePlay(anim: Playable, op: PlayOp) {
     const tl = this.timeline();
     const before = { speed: op.from ?? 0, ...anim.planned };
     if (op.seek !== undefined) anim.planned = { epoch: anim.planned.epoch + 1, seekTo: op.seek };
@@ -77,7 +97,9 @@ export class AnimatedPictures {
     tl.time(tl.time(), true);
   }
 
-  render(dt: number) {
+  /** Advances every picture's clip by `dt` seconds; `manual` when drawing export frames. */
+  render(dt: number, manual = false) {
+    this.videos.render(dt, manual);
     for (const a of this.animations) {
       if (a.state.epoch !== a.epoch) {
         a.epoch = a.state.epoch;
@@ -109,5 +131,6 @@ export class AnimatedPictures {
   async settled() {
     while (this.loading.size) await Promise.all([...this.loading]);
     for (const a of this.animations) while (a.busy) await a.busy;
+    await this.videos.settled();
   }
 }
