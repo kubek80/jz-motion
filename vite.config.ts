@@ -4,5 +4,5 @@ import { jzmServer } from './server/api';
 
 export default defineConfig({
   plugins: [react(), jzmServer()],
-  test: { environment: 'node' },
+  test: { environment: 'node', exclude: ['**/node_modules/**', '.claude/**', 'dist/**'] },
 });

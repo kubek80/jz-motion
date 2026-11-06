@@ -1,0 +1,47 @@
+/* Scrollbars, dragging, the position grid, pictures and areas, the coloured tools. */
+/* Thin, quiet scrollbars everywhere */
+* { scrollbar-width: thin; scrollbar-color: #ffffff22 transparent; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #ffffff1f; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #ffffff40; }
+::-webkit-scrollbar-corner { background: transparent; }
+
+/* Dragging on the board never selects text */
+.frame, .frame * { user-select: none; -webkit-user-select: none; }
+.frame .inline-edit { user-select: text; -webkit-user-select: text; }
+body.dragging { user-select: none; -webkit-user-select: none; }
+
+/* Position and size, like a drawing program */
+.geo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding-bottom: 8px; margin-bottom: 2px; border-bottom: 1px solid var(--line); }
+.geo { display: flex; align-items: center; background: var(--bg); border: 1px solid var(--line); border-radius: 6px; height: 28px; overflow: hidden; }
+.geo:focus-within { border-color: var(--accent); }
+.geo-mark { flex-shrink: 0; width: 26px; height: 100%; display: grid; place-items: center; color: var(--muted); font-size: 11px; font-weight: 600; cursor: ew-resize; user-select: none; }
+.geo-mark:hover, .geo.scrubbing .geo-mark { color: var(--accent); }
+.geo input { flex: 1; min-width: 0; border: 0; background: transparent; padding: 0 6px 0 0; height: 100%; font-variant-numeric: tabular-nums; }
+.geo input:focus { outline: none; }
+.geo input::-webkit-inner-spin-button, .geo input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+.geo input[type=number] { -moz-appearance: textfield; }
+
+/* Pictures and areas */
+.basics .file-button { display: flex; align-items: center; justify-content: center; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 4px 10px; cursor: pointer; font-size: 13px; }
+.basics .file-button:hover { border-color: var(--accent); }
+.basics .file-button input { display: none; }
+.quick-beats { display: flex; flex-direction: column; gap: 6px; padding: 8px 0; border-top: 1px solid var(--line); font-size: 12px; }
+.row.wrap { flex-wrap: wrap; }
+.quick-beats button { font-size: 12px; }
+.code-input { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12px; line-height: 1.45; resize: vertical; white-space: pre; tab-size: 2; }
+.inline-edit.multiline { white-space: pre; resize: none; line-height: 1.25; text-align: left !important; overflow: hidden; height: auto; padding: 0.2em 0.4em; }
+.view-tools { position: absolute; right: 10px; bottom: 10px; z-index: 4; display: flex; gap: 4px; opacity: .55; transition: opacity .15s; }
+.frame:hover .view-tools { opacity: 1; }
+.view-tools button { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; padding: 4px 8px; background: #0d1114d9; backdrop-filter: blur(4px); }
+
+/* Tools in the left panel, each with its own marker colour */
+.basics .tool { --ink: var(--accent); display: flex; align-items: center; gap: 8px; justify-content: flex-start; padding: 6px 10px; font-size: 13px; color: var(--text); background: linear-gradient(135deg, color-mix(in srgb, var(--ink) 9%, var(--panel)), var(--panel) 70%); border: 1px solid color-mix(in srgb, var(--ink) 22%, var(--line)); border-radius: 8px; cursor: pointer; }
+.basics .tool svg { color: var(--ink); filter: drop-shadow(0 0 3px color-mix(in srgb, var(--ink) 60%, transparent)); flex-shrink: 0; }
+.basics .tool:hover { border-color: var(--ink); box-shadow: 0 0 10px color-mix(in srgb, var(--ink) 25%, transparent); }
+.basics .tool.on { border-color: var(--ink); color: var(--ink); box-shadow: 0 0 12px color-mix(in srgb, var(--ink) 35%, transparent); }
+.ai-add { display: flex; align-items: center; justify-content: center; gap: 6px; }
+.ai-add svg { width: 15px; height: 15px; color: #ff4fd8; filter: drop-shadow(0 0 3px #ff4fd899); }
+.scene-adds .ai-add { justify-content: flex-start; }
+.add-scene .plus { color: #3dff8b; font-weight: 700; margin-right: 2px; }

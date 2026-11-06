@@ -16,7 +16,8 @@
     "check": "tsx server/cli-check.ts",
     "snapshot": "tsx server/cli-snapshot.ts",
     "snap": "node scripts/snap.mjs",
-    "record": "node scripts/record.mjs"
+    "record": "node scripts/record.mjs",
+    "assets": "tsx server/cli-assets.ts"
   },
   "dependencies": {
     "@codemirror/lang-json": "^6.0.2",

@@ -50,17 +50,40 @@ Presentation
 | `src/engine/geometry.ts` | Bounds, anchors, arrow paths, camera framing. |
 | `src/engine/chart.ts` | Bar, line and pie charts, redrawn from animated values. |
 | `src/engine/iso.ts`, `iso-models.json` | Isometric 3D: projection, hidden faces, paint order; preset models. |
-| `src/engine/render.ts` | `Stage`: builds SVG, the glow and board texture, and a GSAP timeline per scene; pictures in their own layer under the glow; the spotlight; presenter navigation; frame-exact rendering for export. |
+| `src/engine/render.ts` | `Stage`: the board. Adds the editing view (`showLayout`, camera) to `StagePlayer` and hands the editor's helpers (selection, handles, hit-testing, in-place text) to `editing.ts`. |
+| `src/engine/player.ts` | `StagePlayer`: the SVG layers and a GSAP timeline per scene; presenter navigation; frame-exact rendering for export; the per-frame redraw. |
+| `src/engine/buildElement.ts`, `drawing.ts` | One element's SVG per type; the `stroke` and `write` primitives that record what a draw-on animates. |
+| `src/engine/timelineOps.ts`, `sceneState.ts`, `stageNodes.ts` | Ops turned into tweens; a scene's start state and computed redraw; the per-element node types and small pure helpers. |
+| `src/engine/animatedPictures.ts`, `spotlight.ts`, `boardBackground.ts` | Animated pictures (decoded frame by frame, synced to the timeline); the spotlight's dimming; the glow, grain and board texture. |
 | `src/engine/library.ts`, `icons.generated.ts`, `icons.custom.json` | Icon library. `npm run icons` merges Tabler, Simple Icons and the hand-drawn JSON into `icons.generated.ts` and `docs/library.md`. |
-| `src/app/` | `Root` (home or an open presentation), `Home` (prompt box `StartBox`), `Timing` (voice-over timeline, narration recording, teleprompter), `images.ts` (paste, drop, upload), `Settings` + `settingsStore.ts` (models, model per start mode, transcription), `Creator` (scene / icon / clipart / 3D with AI), `LibraryManager` (full-screen library), `confirm.tsx` (in-app confirmations), `Editor` (Edit and Play modes, JSON tab, undo/redo, present mode), `store.ts` (files or browser storage). |
-| `src/ai/` | LLM work: `client.ts` (ask for JSON with repair loop), `prompt.ts` (docs as context), `assistant.ts` (chat, script, transcript, one new scene, change one scene), `iconPrompt.ts` (rules and checks for icons, clipart and 3D models), model profiles. |
-| `src/app/editor/` | Editor: document edit operations (`doc.ts`), schema-generated property forms, library palette, beats editor. |
+| `src/engine/voiceover.ts` | Voice-over clips: reading the older single-recording shape as clips, total length, the clip under a time. |
+| `src/app/Root.tsx`, `Home.tsx`, `StartBox.tsx`, `CreateWithAi.tsx`, `store.ts` | Home screen and its prompt box, making a presentation with a model, where presentations are kept (local server files, or browser storage), with stale-write protection. |
+| `src/app/App.tsx` | `Editor`: the shell that holds an open presentation's state (undo history, saving, compile, the board) and lays out the parts in `editor/`. |
+| `src/app/editor/` | The editor's parts: board mouse handling (`useBoardPointer`), shortcuts (`useEditorKeys`), editing actions (`useEditActions`), paste and drop (`usePictureInput`), in-place text (`InlineTextEditor`), element helpers (`elements.ts`), document operations (`doc.ts`), `SceneList`, `TopBar`, `PlayControls`, `RightPanel`, `EditorWindows`, the library palette, beats storyboard, scene ask bar and properties (`Inspector`, `Fields` + `fields/`: inputs, pickers, the position grid). |
+| `src/app/timing/` | The Timing window: `Timing.tsx` lays it out; hooks for the clock (`useClock`, `useClipMixer`), the board following it, waveforms and zoom, editing clips, dragging and tapping cues, notes, generated voice, recording narration, loading a voice-over and making a take, and keys; components for the header, script panel, controls and timeline. |
+| `src/app/Script.tsx`, `tts.ts` | The Script page (all notes, sentence lengths); generated voice per sentence. |
+| `src/app/LibraryManager.tsx`, `Creator.tsx`, `Chat.tsx`, `AiPanel.tsx`, `Activity.tsx`, `ModelSelect.tsx`, `ModelsEditor.tsx`, `Settings.tsx`, `settingsStore.ts` | Library window; making things with AI in a conversation; the AI tab; the live list of what a model did; model menus with recommendations; settings. |
+| `src/app/styles.css`, `styles/` | Styles, split by area into numbered files imported in order (order matters). |
+| `src/ai/` | LLM work: `client.ts` (ask for JSON with repair loop and a trace), `agent.ts` (Claude Code agent mode), `prompt.ts` (docs as context), `assistant.ts` (chat, script, transcript, one new scene, change one scene), `iconPrompt.ts` (rules and checks for icons, clipart and 3D models), `recommend.ts` (which model for which job), `profiles.ts`. |
 | `src/video/` | Performances (timing), layout over time, FFmpeg command builder (pure, tested). |
 | `src/render/` | The page export drives: board only, frame by frame. |
-| `server/` | Local server API (Vite plugin, `api.ts`): presentations, library, images, uploads (voice-overs, served with range requests), LLM proxy (`claudeCode.ts` for the subscription provider), transcription, takes, audio auto-sync, export jobs. Command-line tools: `cli-export.ts`, `cli-check.ts`, `cli-snapshot.ts`. |
+| `server/` | Local server API (Vite plugin, `api.ts`): presentations, library, images, uploads (voice-overs, served with range requests), LLM proxy (`claudeCode.ts`), agent mode (`claudeAgent.ts`), transcription, generated voice (`tts.ts`), takes, audio auto-sync, export jobs. Command-line tools: `cli-export.ts`, `cli-check.ts`, `cli-snapshot.ts`, `cli-assets.ts`. |
+| `scripts/` | `snap.mjs` and `record.mjs` (capture screenshots and scripted interactions of a web app; scenarios in `scenarios/`), `svg-to-clipart.mjs` and the UnDraw helpers, `import-icons.mjs`, `build-logo.mjs`, `mock-llm.mjs`. |
 | `src/examples/*.json`, `public/examples/` | Example presentations loadable from the app, and their pictures. |
 | `docs/style.md`, `docs/format.md`, `docs/library.md` | What models read: style, format, library. Keep them true. |
 | `.claude/skills/`, `CLAUDE.md` | Instructions for Claude Code working in this repository. |
+
+## Where to change what
+
+| To change… | Look in |
+|---|---|
+| The format (a new element, action or field) | `src/engine/schema.ts`, then `compile.ts`, `buildElement.ts` / `timelineOps.ts`, and `docs/format.md` |
+| How something is drawn or animated | `src/engine/buildElement.ts`, `drawing.ts`, `timelineOps.ts` |
+| What models are told | `docs/style.md`, `docs/format.md`, `src/ai/prompt.ts`, `assistant.ts`; for agent mode, `.claude/skills/` |
+| Mouse and keyboard on the board | `src/app/editor/useBoardPointer.ts`, `useEditorKeys.ts` |
+| The properties panel | `src/app/editor/Inspector.tsx`, `Fields.tsx`, `fields/` |
+| The Timing window | `src/app/timing/` (start at `Timing.tsx`) |
+| Export | `server/export.ts`, `src/render/page.ts`, `src/video/` |
 
 ## Phases
 
@@ -73,7 +96,8 @@ Presentation
 | 4 | Charts and data | Done (bar, line, pie, set-values) |
 | 5 | LLM first: generation from topic, script or recording; chat, scene ask, repair loop; Claude Code subscription; skills | Done |
 | 6 | Video: takes, narration with teleprompter, timing to a voice-over, camera layouts, MP4 export | Done |
-| Next | Screen-recording clips on the board, generated narration (text to speech), image models (e.g. via fal.ai), scene transitions | |
+| 7 | Narration tools: voice clips on two lanes (trim, split, move), generated voice for pacing, Script page | First version |
+| Next | The media library ([media-plan.md](media-plan.md)): video recordings on the board, conversion on import, a Media tab, recording the screen from the app; image models (e.g. via fal.ai); scene transitions | |
 
 ## Known limits
 

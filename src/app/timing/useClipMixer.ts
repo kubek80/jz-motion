@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import type { Clip } from '../engine/schema';
+import type { Clip } from '../../engine/schema';
 
 /**
  * Plays an array of clips on a shared AudioContext. Each clip becomes an AudioBufferSourceNode

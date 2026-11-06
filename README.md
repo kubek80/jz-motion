@@ -57,12 +57,16 @@ Every model reply is checked against the format and the drawing rules, and sent 
 
 ## Narration, timing and video
 
-**Timing** (top bar) times the presentation to your voice:
+**Script** (top bar) shows the whole narration on one page: every scene's beats with their speaker notes, editable in place, and how long each sentence takes to say (estimated, or measured once a voice has been generated).
 
-- **● Record narration**: the script (each beat's speaker notes) shows large, as a teleprompter. Read, and press → or Space as you start each next line: that places the beat at that moment. ← takes back an early press, Esc stops. You get the voice-over and the timing in one go.
-- **Load a voice-over…**: use a narration recorded elsewhere. Then drag the beats onto the waveform, or **Tap to place**: play and press T as each line starts.
-- The board plays in sync, with the current and next line beside it. **Prompter** shows the script large at any time.
-- **Make a take for export** turns it into a take with your voice as its sound.
+**Timing** (top bar) times the presentation to your voice. Its timeline has two lanes of voice clips above the beats:
+
+- **● Record narration**: records from the playhead onward as a new clip, with the script large as a teleprompter. Read, and press → as you start each next line: that places the beat at that moment. Space holds the prompter, ← takes back an early press, Esc stops. Record again later to redo part of it: the new clip goes on a free lane.
+- **Load a voice-over…**: use a narration recorded elsewhere (any audio or video file). Then drag the beats onto the waveform, or **Tap to place**: play and press T as each line starts.
+- **Clips** can be dragged along the timeline or to the other lane, trimmed from either end, split at the playhead (**✂ Split** or S) and removed. Trimming and splitting never change the recorded file.
+- **Generate voice** (needs a text-to-speech key in Settings → Voice generation) makes a short clip for every sentence of the notes, so the prompter can show how long each line should take; regenerated only when a sentence changes.
+- The board plays in sync, with the current and next line beside it, and the notes can be edited right there (**✎ Edit**). **Prompter** shows the script large at any time. Space plays and pauses, ←/→ move two seconds.
+- **Make a take for export** turns it into a take with all clips mixed as its sound.
 
 Or present live: **Play** mode → **● Record** (tick *camera* to film yourself); your voice, camera and clicks become a take.
 
@@ -77,6 +81,9 @@ Then the **Video** tab: pick the take, add a friend's recording (with **Auto-syn
 | `npm run dev` | The app, with its local server (files, model calls, transcription, export) |
 | `npm run check -- <file.json>` | Checks a presentation or library item against the app's rules; `--library` lists everything that can be drawn |
 | `npm run snapshot -- <file.json>` | PNG of each scene fully drawn (`--beats`: after every beat) in `snapshots/` |
+| `npm run snap -- <url> <name>` | Saves a screenshot of a web page (or one element, `--selector`) into `images/<name>.png` |
+| `npm run record -- <url> <name> <scenario.mjs>` | Records an interaction scripted in `scripts/scenarios/` as an animated picture in `images/<name>.apng` |
+| `npm run assets` | Lists pictures, recordings and voice-overs with their size and the presentations that use them; `--unused` lists what nothing uses (deletes nothing) |
 | `npm run export -- <file.json>` | Renders to MP4 (`--take <id>`, `--4k`, `--fps 60`, `--gap 1.5`, `--out file.mp4`) |
 | `npm test` · `npm run typecheck` · `npm run build` | Unit tests · TypeScript · production build |
 | `npm run mock-llm` | A fake model on port 5199, for trying AI flows without a key |
@@ -91,6 +98,7 @@ Then the **Video** tab: pick the take, add a friend's recording (with **Auto-syn
 - [Library](docs/library.md): built-in icons, logos, clipart and 3D models
 - [Models](docs/models.md): providers, your Claude subscription, which model for what
 - [Design](docs/design.md): architecture, decisions and code map
+- [Media plan](docs/media-plan.md): where pictures, recordings and voice live today, and the proposed media library
 - [How we built it](docs/journey.md): the project, step by step, with screenshots
 
 Clipart from [Tabler Icons](https://tabler.io/icons) (MIT), logos from [Simple Icons](https://simpleicons.org) (CC0). Logos are trademarks of their owners.
