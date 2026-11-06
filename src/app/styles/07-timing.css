@@ -14,6 +14,12 @@
 .timing-script .now { border-color: color-mix(in srgb, var(--accent) 50%, var(--line)); }
 .timing-script .now p { font-size: 17px; line-height: 1.45; margin: 4px 0 0; }
 .timing-script .next { opacity: .7; }
+.timing-script .prev { opacity: .5; cursor: text; padding: 8px 12px; border-style: dashed; }
+.timing-script .prev:hover { opacity: .75; }
+.timing-script .prev.editing { opacity: 1; cursor: auto; }
+.timing-script .prev p { font-size: 13px; line-height: 1.4; margin: 2px 0 0; }
+.timing-body.prompter .timing-script .prev p { font-size: clamp(14px, 1.3vw, 20px); }
+.timing-script .line.said { opacity: .5; }
 .timing-script .next p { font-size: 14px; line-height: 1.4; margin: 4px 0 0; }
 .timing-script .muted { font-size: 12px; }
 .timing-controls { display: flex; align-items: center; gap: 10px; padding: 6px 16px; }
@@ -112,11 +118,14 @@
 .timing-script .line-tools .small { font-size: 11px; padding: 2px 8px; }
 .timing-script .line-tools .small:first-child { border-color: var(--accent); color: var(--accent); }
 .timing-script .notes-edit {
-  width: 100%; min-height: 100px; margin-top: 6px; padding: 10px 12px;
-  background: var(--bg); color: var(--text); border: 1px solid color-mix(in srgb, var(--accent) 55%, var(--line));
-  border-radius: 8px; resize: vertical; font: inherit; line-height: 1.45;
+  width: 100%; min-height: 100px; margin-top: 4px; padding: 6px 10px;
+  background: var(--bg); color: #f3f6fa; border: 1px solid color-mix(in srgb, var(--accent) 55%, var(--line));
+  border-radius: 8px; resize: vertical; font: inherit;
+  /* The same size as the lines it replaces, so the words don't jump when you start editing. */
+  font-size: 15px; line-height: 1.45;
 }
-.timing-body.prompter .timing-script .notes-edit { min-height: 180px; font-size: clamp(18px, 1.8vw, 24px); line-height: 1.5; }
+.timing-body.prompter .timing-script .notes-edit { min-height: 180px; font-size: clamp(22px, 2.2vw, 32px); line-height: 1.4; }
+.timing-body.prompter .timing-script .next .notes-edit { font-size: clamp(15px, 1.4vw, 22px); }
 
 /* Clips whose recording isn't on this computer. */
 .clip-block.missing { background: repeating-linear-gradient(135deg, #ff4f6a22 0 6px, #0b0e11 6px 12px); border: 1px dashed #ff4f6a; color: #ffc9d2; }
@@ -136,3 +145,19 @@
 .minimap .mm-click.cued { opacity: 1; }
 .minimap .mm-view { position: absolute; top: 0; bottom: 0; border: 1px solid var(--accent); background: #3ef0ff14; border-radius: 4px; box-shadow: 0 0 8px #3ef0ff44; pointer-events: none; }
 .minimap .mm-playhead { position: absolute; top: 0; bottom: 0; width: 2px; margin-left: -1px; background: #fff; pointer-events: none; }
+
+/* The transcript of narration clips. */
+.transcript-back { align-items: center; z-index: 75; }
+.modal.transcript-window { width: min(760px, 100%); max-height: 86vh; overflow: hidden; }
+.transcript-head { display: flex; align-items: center; gap: 8px; }
+.transcript-head h3 { margin: 0; }
+.transcript-setup { display: flex; flex-direction: column; gap: 8px; align-items: stretch; }
+.transcript-setup > button { align-self: flex-start; }
+.transcript-window .busy-text { color: var(--accent); margin: 10px 0; }
+.transcript-groups { list-style: none; margin: 0; padding: 0 4px 0 0; overflow: auto; display: flex; flex-direction: column; gap: 10px; }
+.transcript-groups li { border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; background: var(--bg); }
+.transcript-groups .group-head { display: flex; align-items: center; gap: 6px; font-size: 13px; }
+.transcript-groups .group-head .small { font-size: 11px; padding: 2px 8px; }
+.transcript-groups p { margin: 6px 0 0; font-size: 15px; line-height: 1.5; color: #f3f6fa; user-select: text; }
+.transcript-groups .said { cursor: pointer; border-radius: 3px; }
+.transcript-groups .said:hover { background: #3ef0ff1a; }

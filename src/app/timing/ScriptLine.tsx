@@ -7,7 +7,7 @@ import type { SentenceInfo } from '../tts';
  * The active line's bar and remaining-time number are driven by its own requestAnimationFrame against
  * DOM refs: setState every frame fought a CSS transition and the bar only settled on pause.
  */
-export function ScriptLine({ line, active, playDur, startAt = 0, getBeatElapsed }: { line: SentenceInfo; active?: boolean; playDur?: number; startAt?: number; getBeatElapsed?: () => number }) {
+export function ScriptLine({ line, active, said, playDur, startAt = 0, getBeatElapsed }: { line: SentenceInfo; active?: boolean; /** Already read: dimmed. */ said?: boolean; playDur?: number; startAt?: number; getBeatElapsed?: () => number }) {
   const dur = line.entry?.duration ?? line.estimated;
   // `dur` is the voice clip's own length (what the badge shows); `liveDur` is scaled to the actual
   // beat duration so the countdown and bar line up with when Now flips to Next.
@@ -33,7 +33,7 @@ export function ScriptLine({ line, active, playDur, startAt = 0, getBeatElapsed 
     return () => cancelAnimationFrame(raf);
   }, [active, liveDur, startAt, getBeatElapsed]);
   return (
-    <li ref={liRef} className={['line', active ? 'active' : '', estimated ? 'estimated' : ''].join(' ')}>
+    <li ref={liRef} className={['line', active ? 'active' : '', said ? 'said' : '', estimated ? 'estimated' : ''].join(' ')}>
       <span className="line-text">{line.text}</span>
       <span className="line-meta">
         <span className="line-dur" title={estimated ? 'Estimated from word count — generate voice for the real length' : 'Length of the generated voice clip'}>{estimated ? '~' : ''}{dur.toFixed(1)}s</span>

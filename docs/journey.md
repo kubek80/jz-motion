@@ -545,3 +545,18 @@ Jakub wanted to fold away parts of the library in the sidebar, a right-click men
 
 ![The sidebar library with Icons and Logos folded](journey/79-library-folding.jpg)
 ![Right-click a clip, right-click a beat](journey/80-timing-menus.jpg)
+
+## Step 39: Transcripts of recorded narration, the line before in the prompter, and editing without the text jumping
+
+Jakub wanted to transcribe recorded voice easily and copy the transcript to paste back into the prompter, to see the previous text in the prompter, and noticed text changes size a little when editing it, in the prompter and on the board.
+
+- **Transcript** in the Timing header (all clips whose recording is here) or right-click a clip → *Transcribe…*. The recording goes to the speech-to-text service from Settings (the setup appears in the window if none is ready), and the words come back laid out under the beats they were said over, using where each clip sits and how it is trimmed. **Copy all** (with beat names), **Copy** per beat, **Use as speaker notes** (asks before replacing notes that are there), or click a sentence to jump to it. Transcripts are kept next to the recording (`uploads/<file>.transcript.json`), so the next time it opens instantly; **Transcribe again** asks the service again. The server gained a way to transcribe a recording that is already in `uploads/`.
+- **The prompter** shows the end of the previous beat above Now, dimmed (click it to edit), and lines of the current beat already read fade, so after a pause you can see where you were.
+- **No jump when editing:** the prompter's edit box used the page's font size (and a smaller size in prompter mode) instead of the lines' own; it now matches them exactly (32 px in the prompter test, before and while editing). On the board, bold text is an outline around a dark fill, but its edit box showed solid letters, which looked like a size change; the edit box now copies the text's fill and outline.
+- **Bug found:** two transcriptions of the same recording at once (React starts effects twice in development, or a double click) shared a temporary file and one removed it under the other; each now has its own, and the window won't start twice.
+
+**Checked by:** in the browser with the mock speech-to-text service and a 40-second test recording on a copy of "about this app, with edit demo": the transcript grouped under five beats, Copy all put it on the clipboard with beat names, *Use as speaker notes* replaced beat 1.2's notes after confirming, Esc closed only the transcript, the prompter showed 1.2's new words as "Before", and the prompter text stayed 32 px while editing; screenshots of the bold headline before and while editing match.
+
+![The transcript, by beat](journey/81-transcript.jpg)
+![The prompter with the beat before](journey/82-prompter-before.jpg)
+![Bold text keeps its outline while editing](journey/83-inline-edit-outline.jpg)

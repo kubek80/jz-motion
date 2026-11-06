@@ -32,6 +32,8 @@ interface Props {
   setClipLane: (index: number, lane: 0 | 1) => void;
   /** Plays from a moment on the timeline. */
   playFrom: (t: number) => void;
+  /** Opens the transcript of one clip. */
+  onTranscribe: (index: number) => void;
   /** Closes Timing and edits a beat in the editor. */
   onEditBeat: (scene: number, beat: number) => void;
   drawClipPeaks: (canvasEl: HTMLCanvasElement | null, c: Clip) => void;
@@ -42,7 +44,7 @@ interface Props {
   onCue: (scene: number, beat: number, cue: number | undefined) => void;
 }
 
-export function Timeline({ laneRef, missing, height, rec, seek, time, total, pps, width, clips, primary, clipDrag, startDragClip, startTrimClip, deleteClip, splitClipAt, canSplitAt, setClipLane, playFrom, onEditBeat, drawClipPeaks, np, tapping, tapIndex, startDrag, onCue }: Props) {
+export function Timeline({ laneRef, missing, height, rec, seek, time, total, pps, width, clips, primary, clipDrag, startDragClip, startTrimClip, deleteClip, splitClipAt, canSplitAt, setClipLane, playFrom, onTranscribe, onEditBeat, drawClipPeaks, np, tapping, tapIndex, startDrag, onCue }: Props) {
   const { shown, currentIndex, beatOf, sceneTitle } = np;
   const [menu, setMenu] = useState<(MenuAt & ({ kind: 'clip'; index: number; t: number } | { kind: 'beat'; index: number })) | null>(null);
   /** The timeline moment under the pointer. */
@@ -141,6 +143,7 @@ export function Timeline({ laneRef, missing, height, rec, seek, time, total, pps
             title={`${c.name ?? `clip ${menu.index + 1}`} · ${fmt(c.trimEnd - c.trimStart)}${missing.has(c.upload) ? ' · recording missing' : ''}`}
             items={[
               { label: '▶ Play from here', onClick: () => playFrom(menu.t), disabled: missing.has(c.upload) },
+              { label: '✎ Transcribe…', onClick: () => onTranscribe(menu.index), disabled: missing.has(c.upload), hint: 'What you said in this clip, as text: copy it or put it into the speaker notes' },
               { label: '✂ Split here', onClick: () => splitClipAt(menu.index, menu.t), disabled: !canSplitAt(menu.index, menu.t), hint: 'Cut this clip in two where you right-clicked' },
               { label: c.lane === 0 ? '↓ Move to the lower lane' : '↑ Move to the upper lane', onClick: () => setClipLane(menu.index, c.lane === 0 ? 1 : 0) },
               'separator',

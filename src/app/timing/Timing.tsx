@@ -1,5 +1,6 @@
 // The Timing window: wires the clock, board, timeline editing, prompter, narration recording and
 // voice-over hooks together and lays out the header, board, script panel, controls and timeline.
+import { TranscriptWindow } from './TranscriptWindow';
 import { TimelineMinimap } from './TimelineMinimap';
 import { useMissingUploads } from './useMissingUploads';
 import { useMemo, useState } from 'react';
@@ -84,6 +85,8 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
   const host = useBoardFollowsClock(presentation, perf, clips, total, clock);
   const { lane, pps, setPps, zoomTo, width, drawClipPeaks, view, centerOn, fit } = useWaveformZoom(primary, total, clock);
   const missing = useMissingUploads(clips);
+  /** Clips being transcribed in the Transcript window. */
+  const [transcribing, setTranscribing] = useState<Clip[] | null>(null);
   const { clipDrag, startDragClip, deleteClip, startTrimClip, splitAtPlayhead, splitClipAt, canSplitAt, setClipLane } = useClipEditing(clips, setClips, rec, pps, now);
   const { drag, startDrag, tapping, setTapping, tapIndex, setTapIndex, nextAfter, tap } = useCueDragging(clicks, rec, pps, onCue, seek, now);
 
@@ -121,6 +124,7 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
         makeTake={makeTake}
         missingCount={clips.filter((c) => missing.has(c.upload)).length}
         removeMissing={() => setClips(clips.filter((c) => !missing.has(c.upload)))}
+        onTranscript={() => setTranscribing(clips.filter((c) => !missing.has(c.upload)))}
         onClose={onClose}
       />
       <div className={prompter ? 'timing-body prompter' : 'timing-body'}>
@@ -203,6 +207,7 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
         setClipLane={setClipLane}
         playFrom={(t) => { seek(t); play(); }}
         onEditBeat={onEditBeat}
+        onTranscribe={(i) => setTranscribing([clips[i]])}
         drawClipPeaks={drawClipPeaks}
         np={np}
         tapping={tapping}
@@ -210,6 +215,17 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
         startDrag={startDrag}
         onCue={onCue}
       />
+      {transcribing && (
+        <TranscriptWindow
+          clips={transcribing}
+          clicks={clicks}
+          beatName={(c) => `${c.scene + 1}.${c.beat + 1} ${np.beatOf(c)?.title ?? ''}`.trim()}
+          notesOf={(c) => np.beatOf(c)?.notes}
+          onNotes={onNotes}
+          seek={seek}
+          onClose={() => setTranscribing(null)}
+        />
+      )}
     </div>
   );
 }
