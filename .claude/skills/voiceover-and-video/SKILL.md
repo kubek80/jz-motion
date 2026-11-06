@@ -9,15 +9,16 @@ description: Time a jz-motion presentation to a narration and export it as an MP
 
 - A presentation is played as **clicks**: each beat (plus the `auto` beats after it) starts on a click.
 - A **take** (`takes/<id>/`) is one performance: when each click happened, plus recorded tracks (voice, camera). Export renders the board frame by frame to that timing and mixes the tracks.
-- A beat's `cue` is seconds into the presentation's `voiceover` (a file in `uploads/`). A cue earlier than the previous animation's end cuts that animation short, like an early click.
+- A beat's `cue` is seconds into the presentation's voice-over timeline: `voiceover.clips`, recordings in `uploads/` placed on two lanes, each with an offset and a trimmed part of its file (see docs/format.md). A cue earlier than the previous animation's end cuts that animation short, like an early click. The Timing window owns `voiceover` and the cues: don't edit them by hand; when you add or split beats, leave the new ones without a cue.
 
 ## Ways to get the timing (all in the app, `npm run dev`)
 
-1. **Record narration with the teleprompter:** open the presentation → **Timing** → **● Record narration**. Read the current line (the beat's `notes`), press → (or Space) when you start each next line, Esc to stop. This saves the voice-over and places every beat.
-2. **An existing narration file:** **Timing** → **Load a voice-over…**, then drag beats onto the waveform, or **Tap to place** and press T as each line starts.
-3. **Present live:** Play mode → **● Record** (optionally with camera); your clicks are the timing.
+1. **Record narration with the teleprompter:** open the presentation → **Timing** → **● Record narration**. Read the current line (the beat's `notes`), press → when you start each next line (Space holds the prompter, Esc stops). This adds a voice clip from the playhead and places every beat; recording again later adds another clip, which can be trimmed, split (S) or moved.
+2. **Pacing first (optional):** **Generate voice** makes a text-to-speech clip per sentence of the notes (Settings → Voice generation), so the prompter and the **Script** page show how long each line takes.
+3. **An existing narration file:** **Timing** → **Load a voice-over…**, then drag beats onto the waveform, or **Tap to place** and press T as each line starts.
+4. **Present live:** Play mode → **● Record** (optionally with camera); your clicks are the timing.
 
-From 1 or 2: **Make a take for export** in the Timing window. Then the **Video** tab → choose the take, layouts per beat or scene (`layout`: board, pip, pip-left, camera, side), **Export MP4** (files in `exports/`).
+From 1 or 3: **Make a take for export** in the Timing window. Then the **Video** tab → choose the take, layouts per beat or scene (`layout`: board, pip, pip-left, camera, side), **Export MP4** (files in `exports/`).
 
 ## Your part as the assistant
 

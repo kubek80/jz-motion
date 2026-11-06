@@ -73,7 +73,8 @@ Presentation
 | 4 | Charts and data | Done (bar, line, pie, set-values) |
 | 5 | LLM first: generation from topic, script or recording; chat, scene ask, repair loop; Claude Code subscription; skills | Done |
 | 6 | Video: takes, narration with teleprompter, timing to a voice-over, camera layouts, MP4 export | Done |
-| Next | Screen-recording clips on the board, generated narration (text to speech), image models (e.g. via fal.ai), scene transitions | |
+| 7 | Narration tools: voice clips on two lanes (trim, split, move), generated voice for pacing, Script page | First version |
+| Next | The media library ([media-plan.md](media-plan.md)): video recordings on the board, conversion on import, a Media tab, recording the screen from the app; image models (e.g. via fal.ai); scene transitions | |
 
 ## Known limits
 

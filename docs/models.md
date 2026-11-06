@@ -44,6 +44,10 @@ Reusing the library costs nothing, so every item you keep makes later presentati
 
 Making a presentation from a recording needs transcription with timestamps: **Settings → Transcription**, any OpenAI-compatible `/audio/transcriptions` service (OpenAI Whisper, Groq, a local Whisper server). Claude Code can't transcribe audio. Recording narration in the **Timing** window doesn't need transcription: you place the beats yourself while reading.
 
+## Generated voice (text to speech)
+
+**Settings → Voice generation** sets an OpenAI-compatible `/audio/speech` service, a model and a voice. The Timing window uses it to make a short clip for each sentence of the speaker notes (kept in `tts/<presentation>/`, regenerated only when a sentence changes), so the teleprompter and the Script page can show how long each line takes. Claude Code can't make audio.
+
 ## Working without the app
 
 In this repository, Claude Code itself can write presentations and library items directly as files, using the skills in `.claude/skills/` (see [CLAUDE.md](../CLAUDE.md)). That uses your subscription through Claude Code's normal interface, with `npm run check` and `npm run snapshot` to verify the result.
