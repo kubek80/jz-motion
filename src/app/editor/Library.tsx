@@ -14,6 +14,9 @@ export type AddRequest =
 /** Palette of things to put on the board. Clicking adds the item in the middle of the view. */
 export function Library({ onAdd, arrowActive, onCreate, onBrowse, version }: { onAdd: (r: AddRequest) => void; arrowActive: boolean; onCreate?: () => void; onBrowse?: () => void; version?: number }) {
   const [query, setQuery] = useState('');
+  const [folded, toggle] = useFolded();
+  /** While searching, every section is open so all matches show. */
+  const isOpen = (title: string) => !!query.trim() || !folded.has(title);
   const shown = useMemo(() => {
     const q = query.trim().toLowerCase();
     return Object.entries(icons).filter(([name, d]) => !q || name.includes(q) || d.tags.some((t) => t.includes(q)) || d.description.toLowerCase().includes(q));
@@ -24,6 +27,9 @@ export function Library({ onAdd, arrowActive, onCreate, onBrowse, version }: { o
     ['Logos', shown.filter(([, d]) => !d.parts && d.tags.includes('logo'))],
     ['Clipart', shown.filter(([, d]) => !!d.parts)],
   ];
+
+  const q = query.trim().toLowerCase();
+  const models = Object.entries(isoModels).filter(([name, m]) => !q || name.includes(q) || m.description.toLowerCase().includes(q));
 
   return (
     <div className="library">
@@ -56,25 +62,54 @@ export function Library({ onAdd, arrowActive, onCreate, onBrowse, version }: { o
       {onCreate && <button className="add ai-add" onClick={onCreate} title="Describe an icon, clipart or 3D model and let a model make it">{TOOL_ICONS.sparkle} New with AI</button>}
       {groups.map(([title, list]) => list.length > 0 && (
         <div key={title}>
-          <div className="subhead">{title}</div>
-          <div className={title === 'Clipart' ? 'icon-grid wide' : 'icon-grid'}>
-            {list.map(([name, d]) => (
-              <button key={name} className="icon-tile" title={d.description} onClick={() => onAdd({ kind: 'icon', name })}>
-                <IconPreview def={d} size={title === 'Clipart' ? 64 : 30} />
-                <span>{name}</span>
-              </button>
-            ))}
-          </div>
+          <Subhead title={title} count={list.length} open={isOpen(title)} searching={!!query.trim()} onToggle={() => toggle(title)} />
+          {isOpen(title) && (
+            <div className={title === 'Clipart' ? 'icon-grid wide' : 'icon-grid'}>
+              {list.map(([name, d]) => (
+                <button key={name} className="icon-tile" title={d.description} onClick={() => onAdd({ kind: 'icon', name })}>
+                  <IconPreview def={d} size={title === 'Clipart' ? 64 : 30} />
+                  <span>{name}</span>
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       ))}
-      <div className="subhead">3D models</div>
-      <div className="model-list">
-        {Object.entries(isoModels).filter(([name, m]) => !query.trim() || name.includes(query.trim().toLowerCase()) || m.description.toLowerCase().includes(query.trim().toLowerCase())).map(([name, m]) => (
-          <button key={name} title={m.description} onClick={() => onAdd({ kind: 'iso', name })}>{name}</button>
-        ))}
-      </div>
+      {models.length > 0 && <Subhead title="3D models" count={models.length} open={isOpen('3D models')} searching={!!query.trim()} onToggle={() => toggle('3D models')} />}
+      {isOpen('3D models') && (
+        <div className="model-list">
+          {models.map(([name, m]) => (
+            <button key={name} title={m.description} onClick={() => onAdd({ kind: 'iso', name })}>{name}</button>
+          ))}
+        </div>
+      )}
     </div>
   );
+}
+
+/** A section heading that folds its section away (remembered between visits). */
+function Subhead({ title, count, open, searching, onToggle }: { title: string; count: number; open: boolean; searching: boolean; onToggle: () => void }) {
+  return (
+    <button className={`subhead fold ${open ? 'open' : ''}`} onClick={onToggle} disabled={searching} aria-expanded={open}
+      title={searching ? 'Showing every match while searching' : open ? `Fold ${title.toLowerCase()} away` : `Show ${title.toLowerCase()}`}>
+      <span className="chev">▸</span>{title}<span className="count">{count}</span>
+    </button>
+  );
+}
+
+const FOLDED_KEY = 'jzm.library.folded';
+/** Which sidebar library sections are folded, kept in this browser. */
+function useFolded(): [Set<string>, (title: string) => void] {
+  const [folded, setFolded] = useState<Set<string>>(() => {
+    try { return new Set(JSON.parse(localStorage.getItem(FOLDED_KEY) ?? '[]') as string[]); } catch { return new Set(); }
+  });
+  const toggle = (title: string) => setFolded((f) => {
+    const next = new Set(f);
+    if (next.has(title)) next.delete(title); else next.add(title);
+    try { localStorage.setItem(FOLDED_KEY, JSON.stringify([...next])); } catch { /* private window */ }
+    return next;
+  });
+  return [folded, toggle];
 }
 
 /** Each tool in its own marker colour. */

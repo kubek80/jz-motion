@@ -65,6 +65,12 @@ input, textarea, select { font: inherit; color: var(--text); background: var(--b
 .icon-tile svg { color: var(--accent); }
 .icon-tile span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
 .subhead { color: var(--muted); font-size: 12px; margin: 8px 0 6px; }
+.subhead.fold { margin: 3px 0; display: flex; align-items: center; gap: 6px; width: 100%; padding: 3px 4px; border: none; border-radius: 5px; background: transparent; text-align: left; cursor: pointer; }
+.subhead.fold:hover:not(:disabled) { background: #ffffff0a; color: var(--text, #dfe6ec); }
+.subhead.fold:disabled { cursor: default; opacity: 1; }
+.subhead.fold .chev { display: inline-block; width: 10px; font-size: 10px; transition: transform .15s; }
+.subhead.fold.open .chev { transform: rotate(90deg); }
+.subhead.fold .count { margin-left: auto; font-size: 11px; opacity: .7; }
 .model-list { display: flex; flex-wrap: wrap; gap: 4px; }
 .model-list button { font-size: 12px; padding: 3px 7px; }
 

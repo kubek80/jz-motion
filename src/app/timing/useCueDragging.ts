@@ -16,7 +16,7 @@ export function useCueDragging(
   const [drag, setDrag] = useState<{ index: number; t: number } | null>(null);
   const startDrag = (e: React.PointerEvent, index: number) => {
     e.stopPropagation();
-    if (rec.current) return;
+    if (rec.current || e.button !== 0) return;
     const x0 = e.clientX;
     const t0 = clicks[index].t;
     const target = e.currentTarget as HTMLElement;
