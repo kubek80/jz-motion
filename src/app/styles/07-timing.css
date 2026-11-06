@@ -117,3 +117,22 @@
   border-radius: 8px; resize: vertical; font: inherit; line-height: 1.45;
 }
 .timing-body.prompter .timing-script .notes-edit { min-height: 180px; font-size: clamp(18px, 1.8vw, 24px); line-height: 1.5; }
+
+/* Clips whose recording isn't on this computer. */
+.clip-block.missing { background: repeating-linear-gradient(135deg, #ff4f6a22 0 6px, #0b0e11 6px 12px); border: 1px dashed #ff4f6a; color: #ffc9d2; }
+.clip-block.missing .clip-delete { opacity: 1; }
+.timing-head .missing-clips { border-color: #ff4f6a; color: #ff8fa0; }
+
+/* The minimap over the timeline. */
+.minimap-row { display: flex; align-items: center; gap: 8px; padding: 4px 8px 2px; }
+.minimap-row .mm-range { font-size: 11px; font-variant-numeric: tabular-nums; min-width: 92px; text-align: right; }
+.minimap-row button { font-size: 11px; padding: 2px 8px; }
+.minimap { position: relative; flex: 1; height: 26px; border-radius: 5px; background: #ffffff08; border: 1px solid var(--line); cursor: pointer; touch-action: none; overflow: hidden; }
+.minimap .mm-clip { position: absolute; height: 6px; border-radius: 2px; }
+.minimap .mm-clip.lane-0 { top: 3px; background: #3ef0ff99; }
+.minimap .mm-clip.lane-1 { top: 11px; background: #ff4fd899; }
+.minimap .mm-clip.missing { background: #ff4f6a; }
+.minimap .mm-click { position: absolute; bottom: 2px; width: 2px; height: 6px; margin-left: -1px; opacity: .55; }
+.minimap .mm-click.cued { opacity: 1; }
+.minimap .mm-view { position: absolute; top: 0; bottom: 0; border: 1px solid var(--accent); background: #3ef0ff14; border-radius: 4px; box-shadow: 0 0 8px #3ef0ff44; pointer-events: none; }
+.minimap .mm-playhead { position: absolute; top: 0; bottom: 0; width: 2px; margin-left: -1px; background: #fff; pointer-events: none; }

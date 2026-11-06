@@ -1,5 +1,7 @@
 // The Timing window: wires the clock, board, timeline editing, prompter, narration recording and
 // voice-over hooks together and lays out the header, board, script panel, controls and timeline.
+import { TimelineMinimap } from './TimelineMinimap';
+import { useMissingUploads } from './useMissingUploads';
 import { useMemo, useState } from 'react';
 import type { CompiledPresentation } from '../../engine/compile';
 import type { Clip, Voiceover } from '../../engine/schema';
@@ -78,7 +80,8 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
   const scriptWPrompter = useResizable('prompter-script-w', 820, 320, 1600);
 
   const host = useBoardFollowsClock(presentation, perf, clips, total, clock);
-  const { lane, pps, setPps, width, drawClipPeaks } = useWaveformZoom(primary, total, clock);
+  const { lane, pps, setPps, zoomTo, width, drawClipPeaks, view, centerOn, fit } = useWaveformZoom(primary, total, clock);
+  const missing = useMissingUploads(clips);
   const { clipDrag, startDragClip, deleteClip, startTrimClip, splitAtPlayhead } = useClipEditing(clips, setClips, rec, pps, now);
   const { drag, startDrag, tapping, setTapping, tapIndex, setTapIndex, nextAfter, tap } = useCueDragging(clicks, rec, pps, onCue, seek, now);
 
@@ -114,6 +117,8 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
         recording={recording}
         busy={busy}
         makeTake={makeTake}
+        missingCount={clips.filter((c) => missing.has(c.upload)).length}
+        removeMissing={() => setClips(clips.filter((c) => !missing.has(c.upload)))}
         onClose={onClose}
       />
       <div className={prompter ? 'timing-body prompter' : 'timing-body'}>
@@ -161,7 +166,7 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
         splitAtPlayhead={splitAtPlayhead}
         hasClips={!!clips.length}
         pps={pps}
-        setPps={setPps}
+        setPps={zoomTo}
       />
       {error && <p className="error-text">{error}</p>}
       {busy && <p className="muted">{busy}</p>}
@@ -174,8 +179,10 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
         min={120}
         max={600}
       />
+      <TimelineMinimap total={total} clips={clips} missing={missing} np={np} time={time} view={view} centerOn={centerOn} onFit={fit} />
       <Timeline
         laneRef={lane}
+        missing={missing}
         height={laneH.value}
         rec={rec}
         seek={seek}

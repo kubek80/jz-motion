@@ -124,13 +124,32 @@ export function updateScene(doc: RawDoc, si: number, patch: Partial<RawScene>): 
   return d;
 }
 
-export function addScene(doc: RawDoc, after: number): RawDoc {
+/**
+ * Where a new scene goes, as the scene it follows (-1: the very start), for "before" or "after" scene `i`.
+ * Scenes that continue from the one before them stay attached: "after" goes past the end of such a chain
+ * (see insertScene), "before" goes before its start.
+ */
+export function sceneSlot(doc: RawDoc, i: number, where: 'before' | 'after'): number {
+  if (where === 'after') return i;
+  let at = i;
+  while (at > 0 && doc.scenes[at]?.inherit) at--;
+  return at - 1;
+}
+
+/** An empty scene after scene `after` (past a chain of continuing scenes); returns where it went. */
+export function addSceneAt(doc: RawDoc, after: number): { doc: RawDoc; index: number } {
   const d = clone(doc);
   const ids = new Set(d.scenes.map((s) => s.id));
   let n = d.scenes.length + 1;
   while (ids.has(`scene-${n}`)) n++;
-  d.scenes.splice(after + 1, 0, { id: `scene-${n}`, title: `Scene ${n}`, elements: [], beats: [] });
-  return d;
+  let at = after + 1;
+  while (d.scenes[at]?.inherit) at++;
+  d.scenes.splice(at, 0, { id: `scene-${n}`, title: `Scene ${n}`, elements: [], beats: [] });
+  return { doc: d, index: at };
+}
+
+export function addScene(doc: RawDoc, after: number): RawDoc {
+  return addSceneAt(doc, after).doc;
 }
 
 export function deleteScene(doc: RawDoc, si: number): RawDoc {

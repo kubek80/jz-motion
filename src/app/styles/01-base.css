@@ -67,3 +67,15 @@ input, textarea, select { font: inherit; color: var(--text); background: var(--b
 .subhead { color: var(--muted); font-size: 12px; margin: 8px 0 6px; }
 .model-list { display: flex; flex-wrap: wrap; gap: 4px; }
 .model-list button { font-size: 12px; padding: 3px 7px; }
+
+/* Right-click menu (scene list). */
+.context-menu { position: fixed; z-index: 80; min-width: 230px; padding: 5px; display: flex; flex-direction: column; gap: 1px; background: var(--panel); border: 1px solid var(--line); border-radius: 9px; box-shadow: 0 12px 30px #000b; }
+.context-menu .menu-head { font-size: 11px; padding: 3px 8px 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 260px; }
+.context-menu button { display: flex; align-items: center; gap: 8px; text-align: left; border-color: transparent; background: transparent; padding: 5px 8px; font-size: 13px; }
+.context-menu button:hover:not(:disabled) { background: #ffffff0f; border-color: var(--line); }
+.context-menu button.ai { color: #ff8be6; }
+.context-menu button.danger:hover:not(:disabled) { color: var(--error); }
+.context-menu button:disabled { opacity: .4; }
+.context-menu .plus { color: var(--accent); width: 14px; text-align: center; }
+.context-menu hr { border: none; border-top: 1px solid var(--line); margin: 3px 4px; }
+.scene.menu-open { border-color: color-mix(in srgb, var(--accent) 60%, transparent); }

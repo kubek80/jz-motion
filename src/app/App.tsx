@@ -10,7 +10,7 @@ import { Resizer, useResizable } from './Resizer';
 import { useRecorder } from './useRecorder';
 import { cuedBeatCount, log, voiceoverSummary } from './debug';
 import { Beats } from './editor/Beats';
-import { idsInScope, updateBeats, type RawDoc } from './editor/doc';
+import { idsInScope, sceneSlot, updateBeats, type RawDoc } from './editor/doc';
 import { pinPatch, RESIZABLE } from './editor/elements';
 import { EditorWindows } from './editor/EditorWindows';
 import { InlineTextEditor, useInlineText } from './editor/InlineTextEditor';
@@ -200,7 +200,7 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
 
   // ---------------------------------------------------------------- editing actions
 
-  const { removeScene, deletePicked, add, duplicate, rename } = useEditActions({
+  const { newScene, removeScene, deletePicked, add, duplicate, rename } = useEditActions({
     doc, docRef, sceneIndex, picked, pickedEl, stage, editCams, openScene, update, setPicked, setSelection, setArrowFrom,
   });
 
@@ -271,7 +271,7 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
 
       <div className="main">
         <aside className="left" style={{ width: leftW.value }}>
-          <SceneList doc={doc} sceneIndex={sceneIndex} mode={mode} onGo={goToScene} onRemove={(i) => void removeScene(i)} onNewWithAi={() => setCreating({ kind: 'scene' })} update={update} />
+          <SceneList doc={doc} sceneIndex={sceneIndex} mode={mode} onGo={goToScene} onRemove={(i) => void removeScene(i)} onAdd={(i, where, ai) => (ai && doc ? setCreating({ kind: 'scene', after: sceneSlot(doc, i, where) }) : newScene(i, where))} update={update} />
           {mode === 'edit' && doc && <Library onAdd={add} arrowActive={arrowTool} onCreate={() => setCreating({ kind: 'icon' })} onBrowse={() => setLibraryOpen(true)} version={libraryVersion} />}
         </aside>
         <Resizer orientation="vertical" value={leftW.value} onChange={leftW.setValue} onReset={leftW.reset} min={180} max={520} />

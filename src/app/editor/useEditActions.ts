@@ -3,7 +3,7 @@
 import type { Stage } from '../../engine';
 import type { Camera } from '../../engine/schema';
 import { confirmDialog } from '../confirm';
-import { addElement, deleteElement, deleteScene, renameElement, uniqueId, type Raw, type RawDoc } from './doc';
+import { addElement, addSceneAt, deleteElement, deleteScene, renameElement, sceneSlot, uniqueId, type Raw, type RawDoc } from './doc';
 import { newElement } from './elements';
 import type { AddRequest } from './Library';
 import type { Selection } from './types';
@@ -27,6 +27,16 @@ interface EditActionsOptions {
 
 /** The actions are made fresh each render, so each sees the current document and selection. */
 export function useEditActions({ doc, docRef, sceneIndex, picked, pickedEl, stage, editCams, openScene, update, setPicked, setSelection, setArrowFrom }: EditActionsOptions) {
+  /** An empty scene before or after scene `i`, opened straight away. */
+  const newScene = (i: number, where: 'before' | 'after') => {
+    if (!doc) return;
+    const added = addSceneAt(doc, sceneSlot(doc, i, where));
+    openScene.current = added.index;
+    setPicked([]);
+    setSelection(null);
+    update(added.doc);
+  };
+
   const removeScene = async (i: number) => {
     if (!doc) return;
     const s = doc.scenes[i];
@@ -83,5 +93,5 @@ export function useEditActions({ doc, docRef, sceneIndex, picked, pickedEl, stag
     return null;
   };
 
-  return { removeScene, deletePicked, add, duplicate, rename };
+  return { newScene, removeScene, deletePicked, add, duplicate, rename };
 }
