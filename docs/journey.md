@@ -566,3 +566,9 @@ Jakub wanted to transcribe recorded voice easily and copy the transcript to past
 Jakub asked what transcription costs (cents per narration: about $0.006 a minute for OpenAI's whisper-1, less on Groq) and whether his ChatGPT subscription covers it (no: the API is billed separately). He chose OpenRouter, which has an OpenAI-compatible transcription endpoint, so it is now a ready-made choice in **Settings → Transcription** (`https://openrouter.ai/api/v1`, model `openai/whisper-1`). `docs/models.md` explains the choices and costs.
 
 **Checked by:** typecheck, tests and build. Not tried against OpenRouter itself (no key here); whether it returns per-sentence timings decides if a transcript is split across beats or comes back as one block per clip.
+
+## Step 41: A clearer message when FFmpeg is missing
+
+On Jakub's Windows computer transcription failed with "ffprobe could not start … Install FFmpeg or set FFMPEG_PATH", but setting `FFMPEG_PATH` didn't help `ffprobe`. Now `ffprobe` is taken from the same folder as `FFMPEG_PATH` when only that is set, and the message names the program, how to install FFmpeg on Windows and on a Mac, and to open a new terminal afterwards. The README's setup says FFmpeg is needed for the media library and transcription too, not only export.
+
+**Checked by:** typecheck, tests, build; the message with a missing `ffprobe`, and `FFMPEG_PATH=…/ffmpeg.exe` giving `…/ffprobe.exe`.

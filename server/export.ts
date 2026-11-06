@@ -5,7 +5,7 @@ import { dirname } from 'node:path';
 import { compile } from '../src/engine/compile';
 import { buildFfmpegArgs } from '../src/video/ffmpeg';
 import { autoPerformance, layoutSegments, type AutoTiming, type Performance } from '../src/video/performance';
-import { FFMPEG } from './media';
+import { FFMPEG, ffmpegMissing } from './media';
 import { trackPath, type Take } from './takes';
 
 export interface ExportOptions {
@@ -50,7 +50,7 @@ export async function exportVideo(opts: ExportOptions): Promise<{ file: string; 
   let ffmpegError = '';
   ffmpeg.stderr.on('data', (d: Buffer) => (ffmpegError += d.toString()));
   const finished = new Promise<void>((resolve, reject) => {
-    ffmpeg.on('error', (e) => reject(new Error(`FFmpeg could not start (${e.message}). Install FFmpeg or set FFMPEG_PATH.`)));
+    ffmpeg.on('error', (e) => reject(new Error(ffmpegMissing(FFMPEG, e.message))));
     ffmpeg.on('close', (code) => (code === 0 ? resolve() : reject(new Error(`FFmpeg failed: ${ffmpegError.slice(-1500)}`))));
   });
   finished.catch(() => undefined);

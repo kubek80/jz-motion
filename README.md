@@ -16,7 +16,7 @@ npx playwright install chromium   # once: video export and snapshots use it
 npm run dev                       # then open http://localhost:5173
 ```
 
-Video export also needs [FFmpeg](https://ffmpeg.org) (`brew install ffmpeg`), or set `FFMPEG_PATH` / `FFPROBE_PATH`.
+The app needs [FFmpeg](https://ffmpeg.org) (with its `ffprobe`) for the media library, transcription and video export: `brew install ffmpeg` on a Mac, `winget install Gyan.FFmpeg` on Windows, then open a new terminal. Or set `FFMPEG_PATH` to `ffmpeg` (`ffprobe` is taken from the same folder; `FFPROBE_PATH` overrides it).
 
 **Models.** If Claude Code is installed and logged in on your computer, **⚙ Settings** offers **Add Opus, Sonnet and Haiku**: the app then uses your Claude subscription, with no API key. Every model menu recommends the model that is enough for its job (Haiku for an icon, Opus for a whole presentation from a script). Otherwise add an OpenRouter key or any OpenAI-compatible endpoint. Details, and which model to use for what: [docs/models.md](docs/models.md).
 
