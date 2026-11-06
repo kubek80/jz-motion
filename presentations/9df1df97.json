@@ -836,20 +836,20 @@
         {
           "id": "a-headline",
           "type": "area",
-          "x": 970,
-          "y": 500,
-          "width": 580,
-          "height": 150,
+          "x": 1007,
+          "y": 490,
+          "width": 663,
+          "height": 184,
           "shape": "ellipse",
           "color": "yellow"
         },
         {
           "id": "a-markers",
           "type": "area",
-          "x": 1540,
-          "y": 345,
-          "width": 150,
-          "height": 90,
+          "x": 1530,
+          "y": 454,
+          "width": 248,
+          "height": 98,
           "shape": "ellipse",
           "color": "pink"
         },
@@ -916,9 +916,13 @@
               "target": "cap-select",
               "start": "with",
               "delay": 1.2
+            },
+            {
+              "do": "play",
+              "target": "clip"
             }
           ],
-          "cue": 113.2
+          "cue": 107.9
         },
         {
           "title": "Watch the headline",
@@ -928,23 +932,25 @@
               "do": "circle",
               "target": "a-headline",
               "color": "yellow"
+            },
+            {
+              "do": "play",
+              "target": "clip"
             }
           ],
-          "cue": 116.8
+          "cue": 112.9
         },
         {
           "title": "Click, pick a marker",
           "notes": "A click selects it. Hover a colour in the marker tray and the text redraws itself in that ink.",
           "actions": [
             {
-              "do": "play",
-              "target": "clip",
-              "on": true,
-              "from": 0
+              "do": "fade-out",
+              "target": "cap-select"
             },
             {
               "do": "fade-out",
-              "target": "cap-select",
+              "target": "a-headline",
               "start": "with"
             },
             {
@@ -959,7 +965,7 @@
               "color": "pink"
             }
           ],
-          "cue": 118.6
+          "cue": 113.5
         },
         {
           "title": "Then double-click to edit",
@@ -970,28 +976,29 @@
               "target": "cap-colour"
             },
             {
-              "do": "circle",
-              "target": "a-headline",
-              "color": "green",
-              "start": "with"
-            },
-            {
               "do": "draw",
               "target": "cap-edit",
               "start": "with",
               "delay": 0.4
+            },
+            {
+              "do": "camera",
+              "focus": "a-markers",
+              "zoom": 2,
+              "duration": 3
             }
           ],
-          "cue": 120.65
+          "cue": 117.35
         },
         {
           "title": "Hold the frame",
           "notes": "Set play to off and the clip holds its last frame. That's how I keep talking without the UI moving behind me.",
           "actions": [
             {
-              "do": "play",
-              "target": "clip",
-              "on": false
+              "do": "camera",
+              "focus": "all",
+              "start": "with",
+              "zoom": 1
             },
             {
               "do": "fade-out",
@@ -1005,10 +1012,11 @@
             },
             {
               "do": "pulse",
-              "target": "clip"
+              "target": "clip",
+              "start": "after"
             }
           ],
-          "cue": 129.65
+          "cue": 123.7
         }
       ]
     },
@@ -1124,7 +1132,7 @@
               "delay": 1.2
             }
           ],
-          "cue": 132.35
+          "cue": 129.9
         },
         {
           "title": "Watch the Script button",
@@ -3891,31 +3899,21 @@
         "id": "rec-mw3ebrey",
         "upload": "ec9008bb.webm",
         "sourceDuration": 5.56,
-        "offset": 112,
+        "offset": 113.4,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 5.56,
         "name": "narration 05/11/2026, 21:21:46"
       },
       {
-        "id": "rec-mw3edao7",
-        "upload": "b3a5f48b.webm",
-        "sourceDuration": 7.92,
-        "offset": 117.1,
+        "id": "rec-mw4obr1q",
+        "upload": "ac465a84.webm",
+        "sourceDuration": 9.46,
+        "offset": 118.75,
         "lane": 1,
         "trimStart": 0,
-        "trimEnd": 3.15,
-        "name": "narration 05/11/2026, 21:22:58"
-      },
-      {
-        "id": "rec-mw3ey8ic",
-        "upload": "ae13722a.webm",
-        "sourceDuration": 7.15,
-        "offset": 120.75,
-        "lane": 0,
-        "trimStart": 0,
-        "trimEnd": 7.15,
-        "name": "narration 05/11/2026, 21:39:15"
+        "trimEnd": 9.46,
+        "name": "narration 06/11/2026, 18:49:28"
       }
     ]
   }
