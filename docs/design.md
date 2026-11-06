@@ -86,7 +86,6 @@ Presentation
 | The Timing window | `src/app/timing/` (start at `Timing.tsx`) |
 | The media library (pictures, recordings, sounds) | `server/mediaStore.ts` (conversion, index, where used), `src/app/MediaPanel.tsx`, `MediaDetail.tsx`, `media.ts` |
 | Export | `server/export.ts`, `src/render/page.ts`, `src/video/` |
-| Pictures, recordings, sounds | `server/mediaStore.ts` (conversion and index), `src/app/images.ts` (paste, drop, upload) |
 
 ## Phases
 
