@@ -439,3 +439,21 @@ After making a template with Claude Desktop (the whole repository as context), J
 ![Agent mode: Claude Code working in the project, step by step](journey/66-agent-mode.jpg)
 ![Fixed on screen: the camera zooms into the storyboard, the title and note stay](journey/67-fixed-on-screen.jpg)
 ![An animated screenshot: before playing, playing, paused, and after jumping](journey/68-animated-screenshot.jpg)
+
+## Step 32: A pause to tidy up: smaller files, current docs, and a plan for media
+
+With the app grown a lot (including Jakub's own work on voice clips, generated voice, the Script page and capture scripts), he asked for a review: some UI files had become too big to work with cheaply, the documentation needed to be current, and managing APNGs, GIFs and recordings was hard and heavy on disk.
+
+- **Files split by responsibility**, with no change in behaviour, each new file starting with a comment on what it does:
+  - `render.ts` 1,303 → 74 lines plus ten engine modules (`player.ts`, `buildElement.ts`, `drawing.ts`, `timelineOps.ts`, `sceneState.ts`, `stageNodes.ts`, `animatedPictures.ts`, `spotlight.ts`, `boardBackground.ts`, `editing.ts`), the largest 352 lines.
+  - `Timing.tsx` 995 → `src/app/timing/`: a 201-line shell, hooks (clock, board following it, waveforms, clip editing, cue dragging, notes, generated voice, narration recording, voice-over file and take, keys) and components, none over 151 lines.
+  - `App.tsx` 959 → 350 lines plus `src/app/editor/` parts (board pointer, shortcuts, edit actions, paste and drop, in-place text, element helpers, scene list, top bar, play controls, right panel, windows).
+  - `compile.ts` 560 → 217, with the per-action rules in `compileAction.ts` and the plan's types in `compileTypes.ts`.
+  - `Fields.tsx` 466 → 185, with inputs, pickers and the position grid in `editor/fields/`.
+  - `styles.css` 627 lines → eight files by area in `src/app/styles/`, imported in the same order.
+  The three biggest splits ran in parallel, each in its own copy of the repository, and were merged back.
+- **Checked the same, not just compiling**: snapshots of four examples (every beat, 69 pictures) identical before and after the renderer split; the compiled plan of every example and presentation identical before and after the compiler split; the built CSS byte-identical; browser runs of the editor (21 steps: select, drag, resize, delete and undo, in-place text, add, scenes, windows, Play) and of the Timing window (loading a voice-over, playing, cues, tapping, splitting and moving clips, notes, recording narration) before and after; and a run on the merged result through paste, the Script page, Settings, New with AI and Timing. 63 unit tests throughout.
+- **Docs**: the code map in `docs/design.md` rewritten area by area, with a new **where to change what** table so a fresh conversation goes straight to the right file; `CLAUDE.md` points to it and adds the rule to keep files under about 350 lines. README, format, models and the voice-over skill now cover voice clips on two lanes, generated voice, the Script page, and the snap, record and assets commands.
+- **Media**: a new read-only `npm run assets` lists every picture, recording and voice-over with its size and the presentations that use it, and what is referenced but missing. It found 39 of 46 files in `images/` (11 MB) unused, 18 voice clips that only exist on one computer (`uploads/` is not in git), and 4 UnDraw pictures never added. Measured: the APNG screen recordings are 3.5–6× smaller as WebM video, screenshots 3–6× smaller as WebP. `docs/media-plan.md` proposes one media library with conversion on import, video on the board, a Media tab with "used in" and clean-up, recording the screen from the app, and Git LFS; it ends with the decisions needed.
+- **Housekeeping**: the TypeScript build cache is no longer tracked, and tests no longer pick up the parallel working copies.
+- **Found on the way** (not fixed yet): `npm run snapshot` can render the first picture slightly differently between runs; a narration recording can be placed over a clip already on the second lane.

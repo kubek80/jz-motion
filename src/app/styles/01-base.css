@@ -1,0 +1,69 @@
+/* Colours, buttons, the app frame, panel dividers, the scene list and library tiles. */
+:root {
+  --bg: #0a0c0e;
+  --panel: #13171b;
+  --line: #242a30;
+  --text: #dfe6ee;
+  --muted: #7d8994;
+  --accent: #3ef0ff;
+  --error: #ff6b7d;
+  color-scheme: dark;
+  font: 14px/1.4 system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); }
+button, .file, select {
+  background: var(--panel); color: var(--text); border: 1px solid var(--line);
+  border-radius: 6px; padding: 5px 10px; cursor: pointer; font: inherit;
+}
+button:hover, .file:hover, select:hover { border-color: var(--accent); }
+.file input { display: none; }
+.muted { color: var(--muted); }
+
+.app { display: flex; flex-direction: column; height: 100vh; }
+.bar { display: flex; gap: 10px; align-items: center; padding: 8px 14px; border-bottom: 1px solid var(--line); }
+.logo { height: 58px; margin: -10px 6px -10px -4px; display: block; }
+.spacer { flex: 1; }
+
+.main { flex: 1; display: flex; min-height: 0; }
+
+/* Draggable panel dividers. Thin line that lights up on hover; wider hit-target centred on it. */
+.resizer { position: relative; flex-shrink: 0; background: transparent; z-index: 1; }
+.resizer::before { content: ''; position: absolute; background: var(--line); transition: background 120ms; }
+.resizer:hover::before, .resizer.dragging::before { background: var(--accent); box-shadow: 0 0 8px color-mix(in srgb, var(--accent) 60%, transparent); }
+.resizer-h { width: 100%; height: 10px; cursor: row-resize; touch-action: none; }
+.resizer-h::before { left: 0; right: 0; top: 4px; height: 2px; border-radius: 1px; }
+.resizer-v { width: 10px; cursor: col-resize; touch-action: none; align-self: stretch; }
+.resizer-v::before { top: 0; bottom: 0; left: 4px; width: 2px; border-radius: 1px; }
+button:disabled { opacity: 0.4; cursor: default; border-color: var(--line); }
+input, textarea, select { font: inherit; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 5px; padding: 4px 6px; }
+.toggle { display: flex; }
+.toggle button { border-radius: 0; }
+.toggle button:first-child { border-radius: 6px 0 0 6px; }
+.toggle button:last-child { border-radius: 0 6px 6px 0; }
+.toggle button.on, .tabs button.on { border-color: var(--accent); color: var(--accent); }
+
+.left { width: var(--left-w, 230px); min-width: 180px; max-width: 520px; display: flex; flex-direction: column; border-right: 1px solid var(--line); min-height: 0; flex-shrink: 0; }
+.scenes { padding: 10px; display: flex; flex-direction: column; gap: 6px; overflow: auto; max-height: 40%; }
+.scene { display: flex; gap: 8px; align-items: center; padding: 5px 8px; border: 1px solid var(--line); border-radius: 6px; cursor: pointer; background: var(--panel); }
+.scene.active { border-color: var(--accent); }
+.scene .num { color: var(--muted); }
+.scene-title { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tools { display: none; gap: 2px; }
+.tools button { padding: 0 5px; font-size: 12px; }
+.scene:hover .tools, .beat-head:hover .tools, .actions li:hover .tools, .actions li.selected .tools { display: flex; }
+.beat-head .tools button, .action-line .tools button { padding: 0 4px; font-size: 11px; }
+.add-scene, .add-beat, .add { border-style: dashed; color: var(--muted); }
+
+.library { flex: 1; display: flex; flex-direction: column; gap: 8px; padding: 10px; border-top: 1px solid var(--line); min-height: 0; overflow: auto; }
+.basics { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+
+.icon-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
+.icon-grid.wide { grid-template-columns: 1fr 1fr; }
+.library .add { width: 100%; }
+.icon-tile { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 2px; font-size: 10px; color: var(--muted); }
+.icon-tile svg { color: var(--accent); }
+.icon-tile span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+.subhead { color: var(--muted); font-size: 12px; margin: 8px 0 6px; }
+.model-list { display: flex; flex-wrap: wrap; gap: 4px; }
+.model-list button { font-size: 12px; padding: 3px 7px; }
