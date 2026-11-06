@@ -21,6 +21,8 @@ interface Props {
   add: (r: AddRequest) => void;
   /** A new scene from the Creator was inserted at this index: open it and clear the selection. */
   onSceneAdded: (index: number) => void;
+  /** From Timing: close it and edit this beat. */
+  onEditBeat: (scene: number, beat: number) => void;
   settingsOpen: boolean;
   setSettingsOpen: (open: boolean) => void;
   timingOpen: boolean;
@@ -38,7 +40,7 @@ interface Props {
 }
 
 export function EditorWindows({
-  id, text, doc, result, sceneIndex, update, add, onSceneAdded,
+  id, text, doc, result, sceneIndex, update, add, onSceneAdded, onEditBeat,
   settingsOpen, setSettingsOpen, timingOpen, setTimingOpen, scriptOpen, setScriptOpen, libraryOpen, setLibraryOpen,
   creating, setCreating, libraryVersion, setLibraryVersion, onTake,
 }: Props) {
@@ -84,6 +86,7 @@ export function EditorWindows({
             })),
           })}
           onTake={onTake}
+          onEditBeat={onEditBeat}
           onClose={() => setTimingOpen(false)}
         />
       )}

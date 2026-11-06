@@ -530,3 +530,18 @@ Jakub wanted to add a scene before or after any scene (empty or with AI) from th
 ![Right-click a scene](journey/76-scene-menu.jpg)
 ![Clips whose recording is missing, and the minimap](journey/77-timing-missing-clips.jpg)
 ![Zoomed in: the minimap shows where you are](journey/78-timing-minimap.jpg)
+
+## Step 38: Folding the sidebar library, right-click in Timing, and jumping from a beat to the editor
+
+Jakub wanted to fold away parts of the library in the sidebar, a right-click menu for voice clips (to delete them and more), and double-clicking a beat in Timing to go and edit it.
+
+- **Sidebar library:** Icons, Logos, Clipart and 3D models each fold away by clicking their heading (with a count); the choice is kept in this browser. While searching every section opens, so no match is hidden.
+- **Right-click in Timing:** on a clip: play from here, split here (just that clip, where you clicked), move to the other lane, remove clip; on a beat: edit this beat, play from here, let it follow the one before. Right-clicking no longer starts a drag or moves the playhead.
+- **Double-click a beat** closes Timing and opens its scene in the editor with that beat selected in Properties. Double-click used to mean "let it follow the one before"; that is in the beat's right-click menu now.
+- The scene list's menu became a shared `ContextMenu`, used by all three.
+- **Bug found:** Esc on an open menu also closed the Timing window (its key handler runs first); Timing's keys now wait while a menu is open.
+
+**Checked by:** in the browser, on a copy of "about this app, with edit demo": folding Icons and Logos (still folded after a reload, all open while searching "cloud"), splitting a clip from its menu (17 → 18 clips) and removing one, the beat menu, Esc closing only the menu, and double-clicking beat 2.4, which opened "Why I built it" with Beat 4 selected.
+
+![The sidebar library with Icons and Logos folded](journey/79-library-folding.jpg)
+![Right-click a clip, right-click a beat](journey/80-timing-menus.jpg)

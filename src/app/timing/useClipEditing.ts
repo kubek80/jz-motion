@@ -1,5 +1,5 @@
 // Editing voice-over clips on the two timeline lanes: dragging a clip (move, swap lane), trimming
-// its edges, deleting it, and splitting clips at the playhead. Holds the live drag preview.
+// its edges, deleting it, splitting clips at the playhead (or one clip anywhere), moving one to the other lane. Holds the live drag preview.
 import { useRef, useState, type RefObject } from 'react';
 import type { Clip } from '../../engine/schema';
 import { log } from '../debug';
@@ -30,7 +30,7 @@ export function useClipEditing(clips: Clip[], setClips: (next: Clip[]) => void, 
   };
   const startDragClip = (e: React.PointerEvent, index: number) => {
     e.stopPropagation();
-    if (rec.current) return;
+    if (rec.current || e.button !== 0) return;
     const x0 = e.clientX, y0 = e.clientY;
     const c = clips[index];
     const pointerId = e.pointerId;
@@ -71,7 +71,7 @@ export function useClipEditing(clips: Clip[], setClips: (next: Clip[]) => void, 
   const MIN_CLIP_SEC = 0.1;
   const startTrimClip = (e: React.PointerEvent, index: number, side: 'start' | 'end') => {
     e.stopPropagation();
-    if (rec.current) return;
+    if (rec.current || e.button !== 0) return;
     const x0 = e.clientX;
     const c = clips[index];
     const pointerId = e.pointerId;
@@ -108,25 +108,36 @@ export function useClipEditing(clips: Clip[], setClips: (next: Clip[]) => void, 
    * piece keeps the left half (trimEnd = cut), the second piece keeps the right half (trimStart =
    * cut, offset = clip.offset + (cut - clip.trimStart) so it sits where it was).
    */
+  /** The two halves of clip `c` cut at timeline time `t`, or null when `t` is too near an edge (or outside it). */
+  const cut = (c: Clip, t: number): [Clip, Clip] | null => {
+    const end = c.offset + (c.trimEnd - c.trimStart);
+    if (!(t > c.offset + MIN_CLIP_SEC && t < end - MIN_CLIP_SEC)) return null;
+    const cutInSource = c.trimStart + (t - c.offset);
+    const stamp = Date.now().toString(36);
+    return [
+      { ...c, id: `${c.id}-L${stamp}`, trimEnd: cutInSource },
+      { ...c, id: `${c.id}-R${stamp}`, trimStart: cutInSource, offset: c.offset + (cutInSource - c.trimStart) },
+    ];
+  };
   const splitAtPlayhead = () => {
     if (!clips.length) return;
     const t = now();
-    const next: Clip[] = [];
     let changed = false;
-    for (const c of clips) {
-      const end = c.offset + (c.trimEnd - c.trimStart);
-      if (t > c.offset + MIN_CLIP_SEC && t < end - MIN_CLIP_SEC) {
-        const cutInSource = c.trimStart + (t - c.offset);
-        const left: Clip = { ...c, id: `${c.id}-L${Date.now().toString(36)}`, trimEnd: cutInSource };
-        const right: Clip = { ...c, id: `${c.id}-R${Date.now().toString(36)}`, trimStart: cutInSource, offset: c.offset + (cutInSource - c.trimStart) };
-        next.push(left, right);
-        changed = true;
-      } else {
-        next.push(c);
-      }
-    }
+    const next = clips.flatMap((c) => {
+      const halves = cut(c, t);
+      if (halves) changed = true;
+      return halves ?? [c];
+    });
     if (changed) setClips(next);
   };
+  /** Splits one clip at timeline time `t` (from its right-click menu). */
+  const splitClipAt = (index: number, t: number) => {
+    const c = clips[index];
+    const halves = c && cut(c, t);
+    if (halves) setClips(clips.flatMap((x) => (x.id === c.id ? halves : [x])));
+  };
+  const canSplitAt = (index: number, t: number) => !!clips[index] && !!cut(clips[index], t);
+  const setClipLane = (index: number, lane: 0 | 1) => { const c = clips[index]; if (c) commitClipUpdate(c.id, { lane }); };
 
-  return { clipDrag, startDragClip, deleteClip, startTrimClip, splitAtPlayhead };
+  return { clipDrag, startDragClip, deleteClip, startTrimClip, splitAtPlayhead, splitClipAt, canSplitAt, setClipLane };
 }

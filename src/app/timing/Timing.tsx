@@ -40,6 +40,8 @@ interface Props {
   onNotes: (scene: number, beat: number, notes: string) => void;
   /** A take was made from this timing and voice-over, ready to export. */
   onTake: (id: string) => void;
+  /** Close Timing and edit this beat in the editor. */
+  onEditBeat: (scene: number, beat: number) => void;
   onClose: () => void;
 }
 
@@ -47,7 +49,7 @@ interface Props {
  * Timing a presentation to a voice-over: the narration's waveform with every click placed on it. Drag a click
  * to move it, or play and tap T as each line starts. The board plays along, with the script line beside it.
  */
-export function Timing({ presentation, text, presentationId, voiceover, onVoiceover, onCues, onNotes, onTake, onClose }: Props) {
+export function Timing({ presentation, text, presentationId, voiceover, onVoiceover, onCues, onNotes, onTake, onEditBeat, onClose }: Props) {
   const onCue = (scene: number, beat: number, cue: number | undefined) => onCues([{ scene, beat, cue }]);
   const clicks = useMemo(() => cueClicks(presentation), [presentation]);
   // Voiceover is held either as a legacy single clip or as a multi-clip arrangement; `clipsOf()`
@@ -82,7 +84,7 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
   const host = useBoardFollowsClock(presentation, perf, clips, total, clock);
   const { lane, pps, setPps, zoomTo, width, drawClipPeaks, view, centerOn, fit } = useWaveformZoom(primary, total, clock);
   const missing = useMissingUploads(clips);
-  const { clipDrag, startDragClip, deleteClip, startTrimClip, splitAtPlayhead } = useClipEditing(clips, setClips, rec, pps, now);
+  const { clipDrag, startDragClip, deleteClip, startTrimClip, splitAtPlayhead, splitClipAt, canSplitAt, setClipLane } = useClipEditing(clips, setClips, rec, pps, now);
   const { drag, startDrag, tapping, setTapping, tapIndex, setTapIndex, nextAfter, tap } = useCueDragging(clicks, rec, pps, onCue, seek, now);
 
   const [busy, setBusy] = useState<string | null>(null);
@@ -196,6 +198,11 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
         startDragClip={startDragClip}
         startTrimClip={startTrimClip}
         deleteClip={deleteClip}
+        splitClipAt={splitClipAt}
+        canSplitAt={canSplitAt}
+        setClipLane={setClipLane}
+        playFrom={(t) => { seek(t); play(); }}
+        onEditBeat={onEditBeat}
         drawClipPeaks={drawClipPeaks}
         np={np}
         tapping={tapping}

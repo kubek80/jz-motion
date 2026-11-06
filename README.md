@@ -34,7 +34,7 @@ Presentations, your library and your pictures, recordings and sounds are plain f
 
 | Do | How |
 |---|---|
-| Add | Left panel: **Text**, **Box**, **Chart**, **Arrow** (click it, then the start element, then the end), **Image**, **Area**, and any icon, logo, clipart or 3D model. **⤢** opens the whole library, including **Media**: your pictures, recordings and sounds, ready to put on the board. |
+| Add | Left panel: **Text**, **Box**, **Chart**, **Arrow** (click it, then the start element, then the end), **Image**, **Area**, and any icon, logo, clipart or 3D model (fold a section away by clicking its heading; searching shows every match). **⤢** opens the whole library, including **Media**: your pictures, recordings and sounds, ready to put on the board. |
 | Select, move, resize | Click and drag; corner handles resize. Shift+click selects several. |
 | Edit text in place | Double-click a text, label or chart title (or select it and press Enter). Enter keeps it, Esc cancels. Code text takes several lines: Ctrl+Enter keeps it. |
 | Properties | Right panel: position and size like a drawing program (drag a label such as **W** sideways to change it), colours as marker tips, styles as pictures (text: marker, bold, code; lines: solid, dashed, dotted; thickness; arrowheads; chart types). Hover **?** for help. Ids and rarely needed fields are under *Advanced*. |
@@ -68,6 +68,7 @@ Every model reply is checked against the format and the drawing rules, and sent 
 - **● Record narration**: records from the playhead onward as a new clip, with the script large as a teleprompter. Read, and press → as you start each next line: that places the beat at that moment. Space holds the prompter, ← takes back an early press, Esc stops. Record again later to redo part of it: the new clip goes on a free lane.
 - **Load a voice-over…**: use a narration recorded elsewhere (any audio or video file). Then drag the beats onto the waveform, or **Tap to place**: play and press T as each line starts.
 - **Clips** can be dragged along the timeline or to the other lane, trimmed from either end, split at the playhead (**✂ Split** or S) and removed. Trimming and splitting never change the recorded file. A clip whose recording isn't on this computer (recordings stay where they were made) is striped red and marked *missing*; **Remove N missing clips** in the header clears them all.
+- **Right-click** a clip to play from there, split it there, move it to the other lane or remove it; right-click a beat to edit it, play from it, or let it follow the one before (forget where it was placed). **Double-click a beat** to close Timing and edit it in the editor.
 - **Getting around:** the mouse wheel scrolls the timeline, Ctrl/⌘ + wheel zooms around the pointer, and the **minimap** above it shows the whole timeline (clips, beats, playhead and the part in view): click or drag it to go there, **Fit** to see everything.
 - **Generate voice** (needs a text-to-speech key in Settings → Voice generation) makes a short clip for every sentence of the notes, so the prompter can show how long each line should take; regenerated only when a sentence changes.
 - The board plays in sync, with the current and next line beside it, and the notes can be edited right there (**✎ Edit**). **Prompter** shows the script large at any time. Space plays and pauses, ←/→ move two seconds.

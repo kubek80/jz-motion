@@ -1,6 +1,7 @@
 // The list of scenes on the left: switch scene, move one up, delete one, add a new one (empty or made by AI).
 // Right-click a scene for more: a new scene before or after it (empty or with AI), move it up or down, delete.
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { ContextMenu, menuAt, type MenuAt } from '../ContextMenu';
 import { moveItem, type RawDoc } from './doc';
 import { TOOL_ICONS } from './Library';
 
@@ -16,20 +17,10 @@ interface Props {
 }
 
 export function SceneList({ doc, sceneIndex, mode, onGo, onRemove, onAdd, update }: Props) {
-  const [menu, setMenu] = useState<{ i: number; x: number; y: number } | null>(null);
-  useEffect(() => {
-    if (!menu) return;
-    const close = () => setMenu(null);
-    const esc = (e: KeyboardEvent) => e.key === 'Escape' && close();
-    window.addEventListener('pointerdown', close);
-    window.addEventListener('keydown', esc);
-    window.addEventListener('blur', close);
-    return () => { window.removeEventListener('pointerdown', close); window.removeEventListener('keydown', esc); window.removeEventListener('blur', close); };
-  }, [menu]);
+  const [menu, setMenu] = useState<(MenuAt & { i: number }) | null>(null);
 
   const editing = mode === 'edit' && !!doc;
   const count = doc?.scenes.length ?? 0;
-  const run = (fn: () => void) => () => { setMenu(null); fn(); };
 
   return (
     <div className="scenes">
@@ -41,7 +32,7 @@ export function SceneList({ doc, sceneIndex, mode, onGo, onRemove, onAdd, update
           onContextMenu={(e) => {
             if (!editing) return;
             e.preventDefault();
-            setMenu({ i, x: Math.min(e.clientX, window.innerWidth - 250), y: Math.min(e.clientY, window.innerHeight - 290) });
+            setMenu({ i, ...menuAt(e) });
           }}
           title={editing ? 'Right-click for more: add a scene before or after, move, delete' : undefined}
         >
@@ -62,18 +53,22 @@ export function SceneList({ doc, sceneIndex, mode, onGo, onRemove, onAdd, update
         </div>
       )}
       {menu && editing && (
-        <div className="context-menu" style={{ left: menu.x, top: menu.y }} role="menu" onPointerDown={(e) => e.stopPropagation()}>
-          <div className="menu-head muted">Scene {menu.i + 1}: {doc!.scenes[menu.i]?.title ?? doc!.scenes[menu.i]?.id}</div>
-          <button role="menuitem" onClick={run(() => onAdd(menu.i, 'before', false))}><span className="plus">+</span> New scene before</button>
-          <button role="menuitem" onClick={run(() => onAdd(menu.i, 'after', false))}><span className="plus">+</span> New scene after</button>
-          <button role="menuitem" className="ai" onClick={run(() => onAdd(menu.i, 'before', true))}>{TOOL_ICONS.sparkle} New scene before, with AI…</button>
-          <button role="menuitem" className="ai" onClick={run(() => onAdd(menu.i, 'after', true))}>{TOOL_ICONS.sparkle} New scene after, with AI…</button>
-          <hr />
-          <button role="menuitem" disabled={menu.i === 0} onClick={run(() => update({ ...doc!, scenes: moveItem(doc!.scenes, menu.i, menu.i - 1) }))}>↑ Move up</button>
-          <button role="menuitem" disabled={menu.i === count - 1} onClick={run(() => update({ ...doc!, scenes: moveItem(doc!.scenes, menu.i, menu.i + 1) }))}>↓ Move down</button>
-          <hr />
-          <button role="menuitem" className="danger" disabled={count < 2} onClick={run(() => void onRemove(menu.i))}>✕ Delete scene</button>
-        </div>
+        <ContextMenu
+          at={menu}
+          onClose={() => setMenu(null)}
+          title={`Scene ${menu.i + 1}: ${doc!.scenes[menu.i]?.title ?? doc!.scenes[menu.i]?.id}`}
+          items={[
+            { label: <><span className="plus">+</span> New scene before</>, onClick: () => onAdd(menu.i, 'before', false) },
+            { label: <><span className="plus">+</span> New scene after</>, onClick: () => onAdd(menu.i, 'after', false) },
+            { label: <>{TOOL_ICONS.sparkle} New scene before, with AI…</>, tone: 'ai', onClick: () => onAdd(menu.i, 'before', true) },
+            { label: <>{TOOL_ICONS.sparkle} New scene after, with AI…</>, tone: 'ai', onClick: () => onAdd(menu.i, 'after', true) },
+            'separator',
+            { label: '↑ Move up', disabled: menu.i === 0, onClick: () => update({ ...doc!, scenes: moveItem(doc!.scenes, menu.i, menu.i - 1) }) },
+            { label: '↓ Move down', disabled: menu.i === count - 1, onClick: () => update({ ...doc!, scenes: moveItem(doc!.scenes, menu.i, menu.i + 1) }) },
+            'separator',
+            { label: '✕ Delete scene', tone: 'danger', disabled: count < 2, onClick: () => void onRemove(menu.i) },
+          ]}
+        />
       )}
     </div>
   );
