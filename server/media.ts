@@ -1,9 +1,18 @@
 import { spawn } from 'node:child_process';
+import { basename, dirname, extname, join } from 'node:path';
 
-// FFmpeg helpers. Uses FFMPEG_PATH / FFPROBE_PATH if set, else ffmpeg / ffprobe on the PATH.
+// FFmpeg helpers. Uses FFMPEG_PATH / FFPROBE_PATH if set, else ffmpeg / ffprobe on the PATH. With only
+// FFMPEG_PATH set, ffprobe is taken from the same folder (FFmpeg ships them together).
 
-export const FFMPEG = process.env.FFMPEG_PATH ?? 'ffmpeg';
-export const FFPROBE = process.env.FFPROBE_PATH ?? 'ffprobe';
+export const FFMPEG = process.env.FFMPEG_PATH || 'ffmpeg';
+export const FFPROBE = process.env.FFPROBE_PATH
+  || (process.env.FFMPEG_PATH ? join(dirname(process.env.FFMPEG_PATH), `ffprobe${extname(process.env.FFMPEG_PATH)}`) : 'ffprobe');
+
+/** What to do when FFmpeg (or ffprobe) can't be started. */
+export const ffmpegMissing = (cmd: string, why: string) => {
+  const probe = basename(cmd).toLowerCase().startsWith('ffprobe');
+  return `${probe ? 'ffprobe' : 'FFmpeg'} could not start (${why}). Install FFmpeg (it includes ffprobe): on Windows \`winget install Gyan.FFmpeg\`, on a Mac \`brew install ffmpeg\`, then open a new terminal and run npm run dev again. Or set ${probe ? 'FFPROBE_PATH (or FFMPEG_PATH, with ffprobe in the same folder)' : 'FFMPEG_PATH'} to where it is.`;
+};
 
 /** Runs a command and collects stdout; rejects with stderr on failure. */
 export function run(cmd: string, args: string[]): Promise<Buffer> {
@@ -13,7 +22,7 @@ export function run(cmd: string, args: string[]): Promise<Buffer> {
     let err = '';
     p.stdout.on('data', (d: Buffer) => out.push(d));
     p.stderr.on('data', (d: Buffer) => (err += d.toString()));
-    p.on('error', (e) => reject(new Error(`${cmd} could not start (${e.message}). Install FFmpeg or set FFMPEG_PATH.`)));
+    p.on('error', (e) => reject(new Error(ffmpegMissing(cmd, e.message))));
     p.on('close', (code) => (code === 0 ? resolve(Buffer.concat(out)) : reject(new Error(`${cmd} failed: ${err.slice(-800)}`))));
   });
 }
