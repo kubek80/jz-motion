@@ -1,0 +1,201 @@
+// The Timing window: wires the clock, board, timeline editing, prompter, narration recording and
+// voice-over hooks together and lays out the header, board, script panel, controls and timeline.
+import { useMemo, useState } from 'react';
+import type { CompiledPresentation } from '../../engine/compile';
+import type { Clip, Voiceover } from '../../engine/schema';
+import { clipsDuration, clipsOf } from '../../engine/voiceover';
+import { cueClicks, cuePerformance } from '../../video/performance';
+import { Resizer, useResizable } from '../Resizer';
+import { log, voiceoverSummary } from '../debug';
+import { ScriptPanel } from './ScriptPanel';
+import { Timeline } from './Timeline';
+import { TimingControls } from './TimingControls';
+import { TimingHeader } from './TimingHeader';
+import { useBoardFollowsClock } from './useBoardFollowsClock';
+import { useClipEditing } from './useClipEditing';
+import { useClock } from './useClock';
+import { useCueDragging } from './useCueDragging';
+import { useNarrationRecording } from './useNarrationRecording';
+import { useNotesEditing } from './useNotesEditing';
+import { useNowPlaying } from './useNowPlaying';
+import { useTimingKeys } from './useTimingKeys';
+import { useVoiceGeneration } from './useVoiceGeneration';
+import { useVoiceoverFile } from './useVoiceoverFile';
+import { useWaveformZoom } from './useWaveformZoom';
+
+export type { Voiceover } from '../../engine/schema';
+
+interface Props {
+  presentation: CompiledPresentation;
+  /** The presentation as saved (for the take). */
+  text: string;
+  presentationId: string;
+  voiceover?: Voiceover;
+  onVoiceover: (v: Voiceover | undefined) => void;
+  /** Sets (or with undefined, clears) cues of beats that start clicks; `clearOthers` forgets every other cue first. */
+  onCues: (changes: { scene: number; beat: number; cue: number | undefined }[], clearOthers?: boolean) => void;
+  /** Replace the speaker notes of a beat; an empty string removes the field. */
+  onNotes: (scene: number, beat: number, notes: string) => void;
+  /** A take was made from this timing and voice-over, ready to export. */
+  onTake: (id: string) => void;
+  onClose: () => void;
+}
+
+/**
+ * Timing a presentation to a voice-over: the narration's waveform with every click placed on it. Drag a click
+ * to move it, or play and tap T as each line starts. The board plays along, with the script line beside it.
+ */
+export function Timing({ presentation, text, presentationId, voiceover, onVoiceover, onCues, onNotes, onTake, onClose }: Props) {
+  const onCue = (scene: number, beat: number, cue: number | undefined) => onCues([{ scene, beat, cue }]);
+  const clicks = useMemo(() => cueClicks(presentation), [presentation]);
+  // Voiceover is held either as a legacy single clip or as a multi-clip arrangement; `clipsOf()`
+  // gives a flat array either way. `primary` is the clip that drives this phase's playback (the
+  // first one in the list); mixing of all clips comes in a later phase.
+  const clips = useMemo(() => clipsOf(voiceover), [voiceover]);
+  const primary: Clip | undefined = clips[0];
+  const voiceDuration = useMemo(() => clipsDuration(clips), [clips]);
+  const perf = useMemo(() => cuePerformance(presentation, voiceDuration), [presentation, voiceDuration]);
+  const total = Math.max(perf.duration, voiceDuration, 1);
+
+  const clock = useClock(clips, total);
+  const { mixer, rec, time, playing, now, seek, play, pause } = clock;
+  /**
+   * Replace the voiceover with a new set of clips (or clear it if empty). Mutations from the UI
+   * (drag, delete, trim, split) all go through this — once anything is edited the voiceover is
+   * persisted in the new multi-clip shape, so legacy `{upload, duration}` fields drop away.
+   * Playback is paused if active so the new arrangement takes effect from the next Play.
+   */
+  const setClips = (next: Clip[]) => {
+    log('Timing.setClips', { recording: !!rec.current, before: voiceoverSummary(voiceover), after: voiceoverSummary(next.length ? { clips: next } : undefined) });
+    if (mixer.isActive()) mixer.hardStop();
+    onVoiceover(next.length ? { clips: next } : undefined);
+  };
+
+  // Panel sizes the user can drag; separate stores for the Timing vs. Prompter script width so each
+  // remembers its own comfortable width. Double-click any divider to reset.
+  const laneH = useResizable('timing-lane-h', 200, 120, 600);
+  const scriptWTiming = useResizable('timing-script-w', 360, 220, 900);
+  const scriptWPrompter = useResizable('prompter-script-w', 820, 320, 1600);
+
+  const host = useBoardFollowsClock(presentation, perf, clips, total, clock);
+  const { lane, pps, setPps, width, drawClipPeaks } = useWaveformZoom(primary, total, clock);
+  const { clipDrag, startDragClip, deleteClip, startTrimClip, splitAtPlayhead } = useClipEditing(clips, setClips, rec, pps, now);
+  const { drag, startDrag, tapping, setTapping, tapIndex, setTapIndex, nextAfter, tap } = useCueDragging(clicks, rec, pps, onCue, seek, now);
+
+  const [busy, setBusy] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const notes = useNotesEditing(pause, onNotes);
+  const { voicer, tts, generating, missingSentences, generateVoice } = useVoiceGeneration(presentation, presentationId, setError);
+  const { recording, recPaused, prompter, setPrompter, startRecording, nextLine, previousLine, togglePauseRecording, stopRecording } =
+    useNarrationRecording({ clock, clips, clicks, setClips, onCue, onCues, setBusy, setError });
+
+  useTimingKeys({ playing, tapping, tap, play, pause, seek, now, onClose, recording, nextLine, previousLine, stopRecording, togglePauseRecording, splitAtPlayhead });
+
+  const { loadVoiceover, makeTake } = useVoiceoverFile({ clips, perf, text, presentationId, onVoiceover, onTake, seek, setPps, setBusy, setError });
+
+  const np = useNowPlaying({ presentation, clicks, drag, time, total, now, tts, voicer });
+
+  return (
+    <div className="timing">
+      <TimingHeader
+        clickCount={clicks.length}
+        cuedCount={np.cuedCount}
+        primary={primary}
+        clips={clips}
+        voiceDuration={voiceDuration}
+        loadVoiceover={loadVoiceover}
+        onVoiceover={onVoiceover}
+        voicer={voicer}
+        missingSentences={missingSentences}
+        generating={generating}
+        generateVoice={generateVoice}
+        onCues={onCues}
+        recording={recording}
+        busy={busy}
+        makeTake={makeTake}
+        onClose={onClose}
+      />
+      <div className={prompter ? 'timing-body prompter' : 'timing-body'}>
+        <div className="timing-board" ref={host} />
+        <Resizer
+          orientation="vertical"
+          value={prompter ? scriptWPrompter.value : scriptWTiming.value}
+          onChange={prompter ? scriptWPrompter.setValue : scriptWTiming.setValue}
+          onReset={prompter ? scriptWPrompter.reset : scriptWTiming.reset}
+          reverse={!prompter}
+          min={prompter ? 320 : 220}
+          max={prompter ? 1600 : 900}
+          style={prompter ? { order: -1 } : undefined}
+        />
+        <ScriptPanel
+          width={prompter ? scriptWPrompter.value : scriptWTiming.value}
+          recording={recording}
+          recPaused={recPaused}
+          time={time}
+          np={np}
+          notes={notes}
+        />
+      </div>
+      <TimingControls
+        recording={recording}
+        busy={busy}
+        startRecording={startRecording}
+        stopRecording={stopRecording}
+        prompter={prompter}
+        setPrompter={setPrompter}
+        playing={playing}
+        play={play}
+        pause={pause}
+        time={time}
+        total={total}
+        clicks={clicks}
+        tapping={tapping}
+        setTapping={setTapping}
+        tapIndex={tapIndex}
+        setTapIndex={setTapIndex}
+        nextAfter={nextAfter}
+        now={now}
+        tap={tap}
+        beatTitle={(c) => np.beatOf(c)?.title}
+        splitAtPlayhead={splitAtPlayhead}
+        hasClips={!!clips.length}
+        pps={pps}
+        setPps={setPps}
+      />
+      {error && <p className="error-text">{error}</p>}
+      {busy && <p className="muted">{busy}</p>}
+      <Resizer
+        orientation="horizontal"
+        value={laneH.value}
+        onChange={laneH.setValue}
+        onReset={laneH.reset}
+        reverse
+        min={120}
+        max={600}
+      />
+      <Timeline
+        laneRef={lane}
+        height={laneH.value}
+        rec={rec}
+        seek={seek}
+        time={time}
+        total={total}
+        pps={pps}
+        width={width}
+        clips={clips}
+        primary={primary}
+        clipDrag={clipDrag}
+        startDragClip={startDragClip}
+        startTrimClip={startTrimClip}
+        deleteClip={deleteClip}
+        drawClipPeaks={drawClipPeaks}
+        np={np}
+        tapping={tapping}
+        tapIndex={tapIndex}
+        startDrag={startDrag}
+        onCue={onCue}
+      />
+    </div>
+  );
+}
