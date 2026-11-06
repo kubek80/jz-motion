@@ -26,13 +26,13 @@ New here? Open the example **jz-motion: explainers, fast (about this app)** from
 - **With Claude Code.** In this folder, ask Claude Code to "make a presentation about …". The skills in `.claude/skills/` tell it the format, the style and how to check and preview its work (see [CLAUDE.md](CLAUDE.md)). The file appears on the home screen.
 - **By hand.** A presentation is one JSON file in `presentations/`; the format is in [docs/format.md](docs/format.md). The editor's **JSON** tab shows the open scene or the whole file.
 
-Presentations, your library and your pictures are plain files (`presentations/`, `library/`, `images/`), so you can keep them in git.
+Presentations, your library and your pictures, recordings and sounds are plain files (`presentations/`, `library/`, `media/`, and the older `images/`), so you can keep them in git.
 
 ## The editor
 
 | Do | How |
 |---|---|
-| Add | Left panel: **Text**, **Box**, **Chart**, **Arrow** (click it, then the start element, then the end), **Image**, **Area**, and any icon, logo, clipart or 3D model. **⤢** opens the whole library. |
+| Add | Left panel: **Text**, **Box**, **Chart**, **Arrow** (click it, then the start element, then the end), **Image**, **Area**, and any icon, logo, clipart or 3D model. **⤢** opens the whole library, including **Media**: your pictures, recordings and sounds, ready to put on the board. |
 | Select, move, resize | Click and drag; corner handles resize. Shift+click selects several. |
 | Edit text in place | Double-click a text, label or chart title (or select it and press Enter). Enter keeps it, Esc cancels. Code text takes several lines: Ctrl+Enter keeps it. |
 | Properties | Right panel: position and size like a drawing program (drag a label such as **W** sideways to change it), colours as marker tips, styles as pictures (text: marker, bold, code; lines: solid, dashed, dotted; thickness; arrowheads; chart types). Hover **?** for help. Ids and rarely needed fields are under *Advanced*. |
@@ -43,7 +43,9 @@ Presentations, your library and your pictures are plain files (`presentations/`,
 
 **Fixed on screen.** Tick **fixed on screen** on any element (a title, an explanation) and it stays in place and size while the camera moves, above spotlights too; it stays exactly where it looks when you tick it.
 
-**Screenshots.** Paste one (Ctrl+V), drop it on the board, or click **Image**. Animated ones (APNG, GIF, animated WebP: a short screen recording, for example) show their first frame until a **Play** action starts them; another **Play** with *on* off pauses, *from* jumps, *speed* changes the pace, and the picture's **loop** repeats it. Its properties offer a **frame**: a browser window drawn in marker, with your own address. Pictures sit under the drawing, so you can draw on them. To point at a part, select the picture and click **Area**, fit the dashed area over the part, and use the area's one-click beats: spotlight and circle it, spotlight it, circle it, zoom to it. A **spotlight** darkens or fades everything else until it is turned off; anything drawn meanwhile stays bright.
+**Screenshots.** Paste one (Ctrl+V), drop it on the board, or click **Image**. It goes into the media library, made smaller on the way in (a pasted PNG becomes WebP, an APNG or GIF recording becomes WebM video). Animated ones (APNG, GIF, animated WebP: a short screen recording, for example) show their first frame until a **Play** action starts them; another **Play** with *on* off pauses, *from* jumps, *speed* changes the pace, and the picture's **loop** repeats it. Its properties offer a **frame**: a browser window drawn in marker, with your own address. Pictures sit under the drawing, so you can draw on them. To point at a part, select the picture and click **Area**, fit the dashed area over the part, and use the area's one-click beats: spotlight and circle it, spotlight it, circle it, zoom to it. A **spotlight** darkens or fades everything else until it is turned off; anything drawn meanwhile stays bright.
+
+**Media.** The library window's **Media** section shows every picture, screen recording and sound in `media/`: a preview (recordings play while you hover), the size, length or dimensions, and an *unused* badge when no presentation refers to it. Filter by kind or *Unused*, search by name. Select one to rename it, see what it was converted from and which presentations use it (click one to open it), copy its reference (`/media/…`), put a picture on the board, or delete it (if presentations use it, you are told which first). **Import…** (or dropping files there) adds pictures, recordings (APNG, GIF, MP4, MOV, WebM) and sounds, each converted and shown with its new size next to the old one. **Clean up** removes everything nothing uses, after one confirmation that says how much it frees.
 
 ## AI while editing
 
