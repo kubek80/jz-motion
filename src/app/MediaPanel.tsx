@@ -3,6 +3,7 @@ import { confirmDialog } from './confirm';
 import type { PlacedImage } from './images';
 import { MediaDetail } from './MediaDetail';
 import { MediaThumb } from './MediaThumb';
+import { ScreenRecorder } from './ScreenRecorder';
 import { addMedia, deleteMedia, formatBytes, KIND_LABEL, measure, type MediaEntry, type MediaItem } from './media';
 
 // The Library window's "Media" view: every picture, recording and sound in media/, with import (converted on
@@ -40,6 +41,7 @@ export function MediaPanel({ items, available, reload, query, onPlace, onClose }
   const [uploads, setUploads] = useState<Upload[]>([]);
   const [dragging, setDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [recording, setRecording] = useState(false);
   const nextKey = useRef(0);
 
   const shown = useMemo(() => {
@@ -113,6 +115,7 @@ export function MediaPanel({ items, available, reload, query, onPlace, onClose }
           </div>
           <span className="spacer" />
           <button disabled={unused.length === 0} onClick={() => void cleanUp()} title="Remove everything no presentation uses">Clean up</button>
+          {canRecord && <button onClick={() => setRecording(true)} title="Record a window, a browser tab or the whole screen into the media library">● Record screen</button>}
           <label className="file-button primary-like" title="Pictures, screen recordings (APNG, GIF, MP4, MOV, WebM) and sounds; you can also drop files here">
             Import…
             <input type="file" multiple accept="image/*,video/*,audio/*,.apng" onChange={(e) => {
@@ -160,6 +163,7 @@ export function MediaPanel({ items, available, reload, query, onPlace, onClose }
           ))}
         </div>
         {dragging && <div className="media-drop">Drop to add to the media library</div>}
+        {recording && <ScreenRecorder onClose={() => setRecording(false)} onSaved={(entry) => { setRecording(false); setFilter('all'); setSelected(entry.file); reload(); }} />}
       </div>
       <aside className="libman-detail">
         {current ? (
@@ -181,6 +185,8 @@ export function MediaPanel({ items, available, reload, query, onPlace, onClose }
   );
 }
 
-/** Only still pictures and drawings go on the board as images for now. */
+/** Pictures, drawings and recordings go on the board; sounds belong to the narration. */
 const placeable = (i: MediaEntry) => i.kind !== 'sound';
 const placed = (i: MediaEntry): PlacedImage => ({ src: i.src, width: i.width ?? 800, height: i.height ?? 600 });
+/** Screen recording needs a browser that can share the screen (not available over plain http from another computer). */
+const canRecord = typeof navigator !== 'undefined' && !!navigator.mediaDevices?.getDisplayMedia && typeof MediaRecorder !== 'undefined';

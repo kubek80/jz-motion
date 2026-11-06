@@ -229,7 +229,9 @@ export function jzmServer(): Plugin {
         if (parts[0] === 'api' && parts[1] === 'media') {
           const q = url.searchParams;
           if (!parts[2] && req.method === 'GET') return send(res, 200, await listMedia());
-          if (!parts[2] && req.method === 'POST') return send(res, 200, await addMedia(await readUpload(req), q.get('filename') ?? 'upload.bin', q.get('name') ?? undefined));
+          if (!parts[2] && req.method === 'POST') return send(res, 200, await addMedia(await readUpload(req), q.get('filename') ?? 'upload.bin', q.get('name') ?? undefined, {
+            start: Number(q.get('start')) || undefined, end: Number(q.get('end')) || undefined,
+          }));
           if (parts[2] && req.method === 'PATCH') return send(res, 200, await renameMedia(parts[2], String((await readJson(req)).name ?? '')));
           if (parts[2] && req.method === 'DELETE') {
             const r = await deleteMedia(parts[2], q.get('force') === '1');

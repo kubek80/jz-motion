@@ -64,7 +64,7 @@ Presentation
 | `src/app/timing/` | The Timing window: `Timing.tsx` lays it out; hooks for the clock (`useClock`, `useClipMixer`), the board following it, waveforms and zoom, editing clips, dragging and tapping cues, notes, generated voice, recording narration, loading a voice-over and making a take, and keys; components for the header, script panel, controls and timeline. |
 | `src/app/Script.tsx`, `tts.ts` | The Script page (all notes, sentence lengths); generated voice per sentence. |
 | `src/app/LibraryManager.tsx`, `Creator.tsx`, `Chat.tsx`, `AiPanel.tsx`, `Activity.tsx`, `ModelSelect.tsx`, `ModelsEditor.tsx`, `Settings.tsx`, `settingsStore.ts` | Library window; making things with AI in a conversation; the AI tab; the live list of what a model did; model menus with recommendations; settings. |
-| `src/app/MediaPanel.tsx`, `MediaDetail.tsx`, `MediaThumb.tsx`, `media.ts`, `images.ts` | The Library window's Media section: the grid with filters, import (drop or pick files) and clean-up; the selected item's details, where it is used, rename and delete; tile previews; the client for `/api/media`. `images.ts`: pictures pasted, dropped or picked in the editor go into the media library. |
+| `src/app/MediaPanel.tsx`, `MediaDetail.tsx`, `MediaThumb.tsx`, `ScreenRecorder.tsx`, `media.ts`, `images.ts` | The Library window's Media section: the grid with filters, import (drop or pick files) and clean-up; recording the screen (browser picker, countdown, trim before keeping; the server trims while converting); the selected item's details, where it is used, rename and delete; tile previews; the client for `/api/media`. `images.ts`: pictures pasted, dropped or picked in the editor go into the media library. |
 | `src/app/styles.css`, `styles/` | Styles, split by area into numbered files imported in order (order matters). |
 | `src/ai/` | LLM work: `client.ts` (ask for JSON with repair loop and a trace), `agent.ts` (Claude Code agent mode), `prompt.ts` (docs as context), `assistant.ts` (chat, script, transcript, one new scene, change one scene), `iconPrompt.ts` (rules and checks for icons, clipart and 3D models), `recommend.ts` (which model for which job), `profiles.ts`. |
 | `src/video/` | Performances (timing), layout over time, FFmpeg command builder (pure, tested). |
@@ -85,7 +85,7 @@ Presentation
 | Mouse and keyboard on the board | `src/app/editor/useBoardPointer.ts`, `useEditorKeys.ts` |
 | The properties panel | `src/app/editor/Inspector.tsx`, `Fields.tsx`, `fields/` |
 | The Timing window | `src/app/timing/` (start at `Timing.tsx`) |
-| The media library (pictures, recordings, sounds) | `server/mediaStore.ts` (conversion, index, where used), `src/app/MediaPanel.tsx`, `MediaDetail.tsx`, `media.ts` |
+| The media library (pictures, recordings, sounds) | `server/mediaStore.ts` (conversion, trim, index, where used), `src/app/MediaPanel.tsx`, `MediaDetail.tsx`, `ScreenRecorder.tsx` (Record screen), `media.ts` |
 | Export | `server/export.ts`, `src/render/page.ts`, `src/video/` |
 
 ## Phases
@@ -100,7 +100,7 @@ Presentation
 | 5 | LLM first: generation from topic, script or recording; chat, scene ask, repair loop; Claude Code subscription; skills | Done |
 | 6 | Video: takes, narration with teleprompter, timing to a voice-over, camera layouts, MP4 export | Done |
 | 7 | Narration tools: voice clips on two lanes (trim, split, move), generated voice for pacing, Script page | First version |
-| Next | The media library ([media-plan.md](media-plan.md)): video recordings on the board, conversion on import, a Media tab, recording the screen from the app; image models (e.g. via fal.ai); scene transitions | |
+| Next | The rest of the media plan ([media-plan.md](media-plan.md)): Git LFS, voice clips in the library; image models (e.g. via fal.ai); scene transitions | |
 
 ## Known limits
 

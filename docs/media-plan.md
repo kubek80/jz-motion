@@ -1,6 +1,6 @@
 # Pictures, recordings and voice: a plan
 
-**Status:** built: the media library with conversion (`npm run media`), captures into the library, recordings as video on the board, the Media tab, and the migration of `images/` (done). Still open: Git LFS, moving voice clips into the library, and recording the screen from the app. This started as a proposal from an audit of the repository (`npm run assets` shows the current state at any time).
+**Status:** built: the media library with conversion (`npm run media`), captures into the library, recordings as video on the board, the Media tab, **Record screen** in the app (with a trim before keeping), and the migration of `images/` (done). Still open: Git LFS and moving voice clips into the library. This started as a proposal from an audit of the repository (`npm run assets` shows the current state at any time).
 
 ## Where we are
 

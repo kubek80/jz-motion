@@ -29,8 +29,10 @@ async function json<T>(res: Response): Promise<T> {
 }
 
 /** Adds a file to the library. The server converts it (WebP, WebM, Opus) and returns what it kept. */
-export async function addMedia(file: Blob, filename: string, name?: string): Promise<MediaEntry> {
+export async function addMedia(file: Blob, filename: string, name?: string, trim?: { start?: number; end?: number }): Promise<MediaEntry> {
   const q = new URLSearchParams({ filename, ...(name ? { name } : {}) });
+  if (trim?.start) q.set('start', trim.start.toFixed(2));
+  if (trim?.end) q.set('end', trim.end.toFixed(2));
   return json(await fetch(`/api/media?${q}`, { method: 'POST', body: file }));
 }
 

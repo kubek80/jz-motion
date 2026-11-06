@@ -75,16 +75,16 @@ npm run snap -- http://localhost:5173 home --selector '.start-box'
 # flags: --size 1440x900 (viewport, default 1280×800), --wait 400 (ms before shot), --selector CSS
 ```
 
-Writes `images/<name>.png`. Reference it as `"src": "/images/<name>.png"` in an `image` element with `"frame": "browser"` and the real URL in `url`.
+Keeps the raw PNG in `scratch/captures/` and adds a WebP copy to the media library; it prints the `/media/<hash>.webp` src. Reference it as that `src` in an `image` element with `"frame": "browser"` and the real URL in `url`.
 
-### `npm run record` — a short APNG of an interaction
+### `npm run record` — a short recording of an interaction
 
 ```sh
 npm run record -- 'http://localhost:5173/#/p/sandbox' edit-text scripts/scenarios/edit-text.mjs
 # flags: --size 1280x800, --fps 15 (12 keeps files small)
 ```
 
-Writes `images/<name>.apng`. Recordings in the media library are WebM video (`/media/<hash>.webm`, with a poster picture next to it; anything imported there, APNG and GIF included, is converted to that). The board plays a video exactly like an animated picture, with the `play` action, muted (sound belongs to the narration). APNG, GIF and animated WebP still play too.
+Records the scenario, keeps the raw capture in `scratch/captures/`, adds it to the media library as WebM video and prints its `/media/<hash>.webm` src. Recordings in the media library are WebM video (`/media/<hash>.webm`, with a poster picture next to it; anything imported there, APNG and GIF included, is converted to that). The board plays a video exactly like an animated picture, with the `play` action, muted (sound belongs to the narration). APNG, GIF and animated WebP still play too.
 
 ### **Always record against the sandbox presentation**
 
@@ -153,6 +153,8 @@ For a recording, use the recording's `src` (a `/media/<hash>.webm` video, or an 
 | "Edit text, save it." | `record` — the real sequence of clicks/types |
 | "Drag this to there." | `record` — the motion is the point |
 | "Toggle a setting." | `snap` for before, `snap` for after; two images, same place, fade between them |
+
+For something a scenario can't drive (another desktop app, a long manual walkthrough), Jakub records it himself with **Library → Media → ● Record screen** in the app; it lands in the media library like any other recording, so look for it there (`npm run assets`) before asking for a new one.
 
 If a `snap` would show it clearly, do that first — static files are smaller, more reliable, and easier to re-shoot after a UI change. Record only when motion itself is what you're demonstrating.
 

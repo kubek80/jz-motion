@@ -476,3 +476,16 @@ Following the plan in `docs/media-plan.md`, the first half is built: pictures an
 ![The Media tab: previews, sizes, what each file is used in, clean-up](journey/69-media-library.jpg)
 ![A screen recording put on the board from the Media tab](journey/70-recording-on-board.jpg)
 ![The migrated recordings playing in "about this app, with edit demo"](journey/71-migrated-recordings.jpg)
+
+## Step 34: Record the screen from the app
+
+The usability half of the media plan: recording a demo is now one action in the app instead of a scripted capture.
+
+- **Library → Media → ● Record screen** opens the browser's own picker (a window, a browser tab or the whole screen), counts down 3 seconds so you can switch to it, and records until you press **Stop**, press Esc, or click **Stop sharing** in the browser's bar. While it records, the tab's title shows "● Recording 0:12", since you are usually looking at another window.
+- **Before keeping it:** a preview with **Start** and **End** sliders to cut off the fumbling at either end, a name, and **Keep**, **Record again** or **Discard**. The recording goes to the server as it is; the server cuts it while converting it to WebM like any import, so there is one conversion, not two. It then appears selected in the Media view, ready for **Put on the board**.
+- **Pictures only, no sound**: narration is recorded in the Timing window, and videos on the board are muted anyway.
+- **On the way:** browser recordings have no steady frame rate, and FFmpeg was about to fill one in with duplicated frames; video conversion now keeps the frames as they are (`-fps_mode vfr`). The demo-interactions skill still said `snap` and `record` write into `images/`; it now describes the media library, and tells the app's AI to look for Jakub's own recordings there.
+
+**Checked by:** a browser run in Chromium with a stand-in "screen" showing a running clock (headless Chromium has no screen to pick): the countdown, the title while recording, Stop, trimming 1.5 s off the start, naming and keeping. The kept file starts at exactly the clock time where recording began plus 1.5 s, is 1440×900, and went from 273 KB to 75 KB. The real picker and **Stop sharing** need a desktop browser to try.
+
+![Record screen: choose, countdown, recording, trim and keep](journey/72-record-screen.jpg)
