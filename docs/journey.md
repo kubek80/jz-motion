@@ -489,3 +489,14 @@ The usability half of the media plan: recording a demo is now one action in the 
 **Checked by:** a browser run in Chromium with a stand-in "screen" showing a running clock (headless Chromium has no screen to pick): the countdown, the title while recording, Stop, trimming 1.5 s off the start, naming and keeping. The kept file starts at exactly the clock time where recording began plus 1.5 s, is 1440×900, and went from 273 KB to 75 KB. The real picker and **Stop sharing** need a desktop browser to try.
 
 ![Record screen: choose, countdown, recording, trim and keep](journey/72-record-screen.jpg)
+
+## Step 35: Git LFS for the media library
+
+Git keeps every version of every file in every clone, so each re-captured screenshot or recording would grow the repository for good. Jakub chose Git LFS for `media/`.
+
+- `.gitattributes` sends everything in `media/` through Git LFS, except `media/index.json`, which stays a readable text file that diffs and merges normally.
+- Day to day nothing changes: `git add`, `commit`, `push` and `pull` as before. Each computer needs `git lfs install` once (README "Run it"); a clone made without it has small pointer files instead of pictures until `git lfs pull`.
+- **The 9 files already in `media/` are converted once on Jakub's computer** (`git add --renormalize media`, commit, push): the cloud session can push to GitHub but GitHub's LFS storage refused its uploads, so it set up the rules and docs only. Until then git shows those 9 files as changed on a computer with LFS installed; that is the conversion waiting to be committed.
+- `docs/journey/` and the older history stay in plain git; the old screenshots already in history are not rewritten.
+
+**Checked by:** with the rules in place, `git lfs ls-files` lists the 9 media files and not the index after a renormalize; the push of those LFS files from the cloud session was refused (403), so that step moved to Jakub's computer.

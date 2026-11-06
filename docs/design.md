@@ -100,7 +100,7 @@ Presentation
 | 5 | LLM first: generation from topic, script or recording; chat, scene ask, repair loop; Claude Code subscription; skills | Done |
 | 6 | Video: takes, narration with teleprompter, timing to a voice-over, camera layouts, MP4 export | Done |
 | 7 | Narration tools: voice clips on two lanes (trim, split, move), generated voice for pacing, Script page | First version |
-| Next | The rest of the media plan ([media-plan.md](media-plan.md)): Git LFS, voice clips in the library; image models (e.g. via fal.ai); scene transitions | |
+| Next | The rest of the media plan ([media-plan.md](media-plan.md)): voice clips in the library; image models (e.g. via fal.ai); scene transitions | |
 
 ## Known limits
 

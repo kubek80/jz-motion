@@ -9,6 +9,8 @@ A personal studio for technical explainer videos and presentations. Everything i
 ## Run it
 
 ```sh
+brew install git-lfs && git lfs install   # once per computer: media/ is stored with Git LFS
+git lfs pull                     # if you cloned before installing it: fetches the pictures and recordings
 npm install
 npx playwright install chromium   # once: video export and snapshots use it
 npm run dev                       # then open http://localhost:5173
