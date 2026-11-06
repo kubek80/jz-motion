@@ -50,7 +50,11 @@ Presentation
 | `src/engine/geometry.ts` | Bounds, anchors, arrow paths, camera framing. |
 | `src/engine/chart.ts` | Bar, line and pie charts, redrawn from animated values. |
 | `src/engine/iso.ts`, `iso-models.json` | Isometric 3D: projection, hidden faces, paint order; preset models. |
-| `src/engine/render.ts` | `Stage`: builds SVG, the glow and board texture, and a GSAP timeline per scene; pictures in their own layer under the glow; the spotlight; presenter navigation; frame-exact rendering for export. |
+| `src/engine/render.ts` | `Stage`: the board. Adds the editing view (`showLayout`, camera) to `StagePlayer` and hands the editor's helpers (selection, handles, hit-testing, in-place text) to `editing.ts`. |
+| `src/engine/player.ts` | `StagePlayer`: the SVG layers and a GSAP timeline per scene; presenter navigation; frame-exact rendering for export; the per-frame redraw. |
+| `src/engine/buildElement.ts`, `drawing.ts` | One element's SVG per type; the `stroke` and `write` primitives that record what a draw-on animates. |
+| `src/engine/timelineOps.ts`, `sceneState.ts`, `stageNodes.ts` | Ops turned into tweens; a scene's start state and computed redraw; the per-element node types and small pure helpers. |
+| `src/engine/animatedPictures.ts`, `spotlight.ts`, `boardBackground.ts` | Animated pictures (decoded frame by frame, synced to the timeline); the spotlight's dimming; the glow, grain and board texture. |
 | `src/engine/library.ts`, `icons.generated.ts`, `icons.custom.json` | Icon library. `npm run icons` merges Tabler, Simple Icons and the hand-drawn JSON into `icons.generated.ts` and `docs/library.md`. |
 | `src/app/` | `Root` (home or an open presentation), `Home` (prompt box `StartBox`), `Timing` (voice-over timeline, narration recording, teleprompter), `images.ts` (paste, drop, upload), `Settings` + `settingsStore.ts` (models, model per start mode, transcription), `Creator` (scene / icon / clipart / 3D with AI), `LibraryManager` (full-screen library), `confirm.tsx` (in-app confirmations), `Editor` (Edit and Play modes, JSON tab, undo/redo, present mode), `store.ts` (files or browser storage). |
 | `src/ai/` | LLM work: `client.ts` (ask for JSON with repair loop), `prompt.ts` (docs as context), `assistant.ts` (chat, script, transcript, one new scene, change one scene), `iconPrompt.ts` (rules and checks for icons, clipart and 3D models), model profiles. |
