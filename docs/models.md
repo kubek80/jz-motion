@@ -42,7 +42,7 @@ Reusing the library costs nothing, so every item you keep makes later presentati
 
 ## Speech to text (recordings)
 
-Making a presentation from a recording needs transcription with timestamps: **Settings → Transcription**, any OpenAI-compatible `/audio/transcriptions` service (OpenAI Whisper, Groq, a local Whisper server). Claude Code can't transcribe audio. Recording narration in the **Timing** window doesn't need transcription: you place the beats yourself while reading.
+Making a presentation from a recording, and the **Transcript** of narration clips in the **Timing** window, need transcription: **Settings → Transcription**, any OpenAI-compatible `/audio/transcriptions` service. Ready-made choices: OpenAI Whisper, Groq, OpenRouter (`openai/whisper-1` with an OpenRouter key, billed from OpenRouter credit; a ChatGPT subscription doesn't include the API), or Custom for anything else, such as a Whisper server on your own computer. They cost cents per narration (about $0.006 a minute for whisper-1), and each recording is transcribed once: the result is kept next to it. Claude Code can't transcribe audio. Recording narration in Timing doesn't need transcription: you place the beats yourself while reading.
 
 ## Generated voice (text to speech)
 
