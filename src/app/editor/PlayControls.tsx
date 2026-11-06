@@ -1,6 +1,6 @@
 // Under the board in play mode: step and play controls with the time slider, recording a take
-// (voice and camera), and the scene's beats to jump to.
-import type { CompiledScene, Stage, StagePosition } from '../../engine';
+// (voice and camera). The scene's beats are in the storyboard below, which lights up as they play.
+import type { Stage, StagePosition } from '../../engine';
 import type { useRecorder } from '../useRecorder';
 
 interface Props {
@@ -11,10 +11,9 @@ interface Props {
   setWithCamera: (on: boolean) => void;
   /** Opens the Video tab, where takes are exported. */
   onVideo: () => void;
-  compiledScene: CompiledScene | undefined;
 }
 
-export function PlayControls({ stage, pos, recorder, withCamera, setWithCamera, onVideo, compiledScene }: Props) {
+export function PlayControls({ stage, pos, recorder, withCamera, setWithCamera, onVideo }: Props) {
   const recording = recorder.state.status === 'recording';
   return (
     <>
@@ -39,16 +38,6 @@ export function PlayControls({ stage, pos, recorder, withCamera, setWithCamera, 
         {recorder.state.lastTake && !recording && <span className="muted">Saved “{recorder.state.lastTake.name}”. Export it from the <button className="link" onClick={onVideo}>Video</button> tab.</span>}
         {recorder.state.error && <span className="error-text">{recorder.state.error}</span>}
       </div>
-      {compiledScene && (
-        <ol className="beats">
-          <li className={pos.beat === 0 ? 'current' : ''}><button onClick={() => stage.current?.jumpToBeat(0)}>start</button></li>
-          {compiledScene.beats.map((b, i) => (
-            <li key={i} className={pos.beat === i + 1 ? 'current' : pos.beat > i ? 'done' : ''}>
-              <button onClick={() => stage.current?.jumpToBeat(i + 1)} title={b.notes}>{b.auto ? '↳ ' : ''}{b.title ?? `beat ${i + 1}`}</button>
-            </li>
-          ))}
-        </ol>
-      )}
     </>
   );
 }

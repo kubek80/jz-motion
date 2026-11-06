@@ -40,6 +40,27 @@ describe('animated pictures', () => {
   });
 });
 
+describe('fade-out and erase', () => {
+  const els = [{ id: 'a', type: 'box', x: 0, y: 0, width: 10, height: 10 }, { id: 'area', type: 'area', x: 0, y: 0, width: 50, height: 20 }];
+  it('takes circles around a target with it', () => {
+    const s = ok(deck({ elements: els, beats: [
+      { actions: [{ do: 'draw', target: 'a' }, { do: 'circle', target: 'area' }] },
+      { actions: [{ do: 'fade-out', target: 'area' }] },
+    ] })).scenes[0];
+    const hides = s.ops.filter((o) => o.kind === 'hide').map((o) => o.id);
+    expect(hides).toEqual(['area', 'area-circle']);
+    expect(s.final['area-circle'].visible).toBe(false);
+  });
+  it('leaves something already off the board alone instead of flashing it', () => {
+    const s = ok(deck({ elements: els, beats: [
+      { actions: [{ do: 'draw', target: 'a' }] },
+      { actions: [{ do: 'erase', target: 'a' }] },
+      { actions: [{ do: 'fade-out', target: 'a' }] },
+    ] })).scenes[0];
+    expect(s.ops.filter((o) => o.kind === 'hide')).toHaveLength(1);
+  });
+});
+
 describe('pinned elements', () => {
   const doc = (extra: object[], actions: object[]) => ({
     version: 1, title: 't',

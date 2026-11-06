@@ -5,7 +5,8 @@ import type { Camera, Element, LayoutName, Point, Presentation } from './schema'
 // and its beats. compile.ts produces it; the board renders it.
 
 /** Highlight ellipse created by a "circle" action. */
-export interface RingElement { type: 'ring'; id: string; x: number; y: number; rx: number; ry: number; color: ColorName; pinned?: boolean }
+/** A circle drawn by a `circle` action; `around` are the elements it circles (fading or erasing one removes it too). */
+export interface RingElement { type: 'ring'; id: string; x: number; y: number; rx: number; ry: number; color: ColorName; pinned?: boolean; around: string[] }
 
 /** On the screen rather than the board (see `pinned` in the schema). */
 export const isPinned = (el?: { pinned?: boolean }) => !!el?.pinned;

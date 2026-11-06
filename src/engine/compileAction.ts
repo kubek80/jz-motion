@@ -104,8 +104,14 @@ export function compileAction(c: ActionContext): number | null {
     case 'erase':
       each((id, t, el) => {
         const d = dur(el);
-        ops.push({ kind: 'hide', id, mode: action.do === 'erase' ? 'erase' : 'fade', t, dur: d });
-        state[id].visible = false;
+        // Something already off the board stays off (fading it would flash it in first).
+        if (!state[id].visible) return 0;
+        // Circles drawn around it leave with it.
+        const rings = elements.filter((r) => r.type === 'ring' && r.around.includes(id) && state[r.id]?.visible).map((r) => r.id);
+        for (const hid of [id, ...rings]) {
+          ops.push({ kind: 'hide', id: hid, mode: action.do === 'erase' ? 'erase' : 'fade', t, dur: d });
+          state[hid].visible = false;
+        }
         if (state[id].flow) {
           ops.push({ kind: 'flow', id, from: state[id].flow, to: null, t: t + d });
           state[id].flow = null;
@@ -209,6 +215,7 @@ export function compileAction(c: ActionContext): number | null {
         rx: box.width / 2 + Math.max(24, box.width * 0.12),
         ry: box.height / 2 + Math.max(16, box.height * 0.3),
         color: action.color,
+        around: targets,
         ...(pinnedTargets.length ? { pinned: true } : {}),
       };
       sc.rings++;

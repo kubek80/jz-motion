@@ -60,7 +60,7 @@ Presentation
 | `src/engine/voiceover.ts` | Voice-over clips: reading the older single-recording shape as clips, total length, the clip under a time. |
 | `src/app/Root.tsx`, `Home.tsx`, `StartBox.tsx`, `CreateWithAi.tsx`, `store.ts` | Home screen and its prompt box, making a presentation with a model, where presentations are kept (local server files, or browser storage), with stale-write protection. |
 | `src/app/App.tsx` | `Editor`: the shell that holds an open presentation's state (undo history, saving, compile, the board) and lays out the parts in `editor/`. |
-| `src/app/editor/` | The editor's parts: board mouse handling (`useBoardPointer`), shortcuts (`useEditorKeys`), editing actions (`useEditActions`), paste and drop (`usePictureInput`), in-place text (`InlineTextEditor`), element helpers (`elements.ts`), document operations (`doc.ts`), `SceneList`, `TopBar`, `PlayControls`, `RightPanel`, `EditorWindows`, the library palette, beats storyboard, scene ask bar and properties (`Inspector`, `Fields` + `fields/`: inputs, pickers, the position grid). |
+| `src/app/editor/` | The editor's parts: board mouse handling (`useBoardPointer`), shortcuts (`useEditorKeys`), editing actions (`useEditActions`), paste and drop (`usePictureInput`), in-place text (`InlineTextEditor`), element helpers (`elements.ts`), document operations (`doc.ts`), `SceneList`, `TopBar`, `PlayControls`, `RightPanel`, `EditorWindows`, the library palette, beats storyboard (`Beats`, `AddActionMenu`; every action's name, explanation and defaults in `actionInfo.ts`; in Play mode it follows the playback and `useLiveOutline` outlines what is animating), scene ask bar and properties (`Inspector`, `ActionEditor` for an action, `Fields` + `fields/`: inputs, pickers, the position grid), `useElementInfo` (element colours and types). |
 | `src/app/timing/` | The Timing window: `Timing.tsx` lays it out; hooks for the clock (`useClock`, `useClipMixer`), the board following it, waveforms and zoom, editing clips, dragging and tapping cues, notes, generated voice, recording narration, loading a voice-over and making a take, and keys; components for the header, script panel, controls and timeline. |
 | `src/app/Script.tsx`, `tts.ts` | The Script page (all notes, sentence lengths); generated voice per sentence. |
 | `src/app/LibraryManager.tsx`, `Creator.tsx`, `Chat.tsx`, `AiPanel.tsx`, `Activity.tsx`, `ModelSelect.tsx`, `ModelsEditor.tsx`, `Settings.tsx`, `settingsStore.ts` | Library window; making things with AI in a conversation; the AI tab; the live list of what a model did; model menus with recommendations; settings. |
@@ -83,7 +83,8 @@ Presentation
 | How something is drawn or animated | `src/engine/buildElement.ts`, `drawing.ts`, `timelineOps.ts` |
 | What models are told | `docs/style.md`, `docs/format.md`, `src/ai/prompt.ts`, `assistant.ts`; for agent mode, `.claude/skills/` |
 | Mouse and keyboard on the board | `src/app/editor/useBoardPointer.ts`, `useEditorKeys.ts` |
-| The properties panel | `src/app/editor/Inspector.tsx`, `Fields.tsx`, `fields/` |
+| The properties panel | `src/app/editor/Inspector.tsx`, `ActionEditor.tsx` (an action), `Fields.tsx`, `fields/` |
+| The actions offered and how they are explained | `src/app/editor/actionInfo.ts` (names, explanations, what they work on, defaults), `AddActionMenu.tsx` |
 | The Timing window | `src/app/timing/` (start at `Timing.tsx`) |
 | The media library (pictures, recordings, sounds) | `server/mediaStore.ts` (conversion, trim, index, where used), `src/app/MediaPanel.tsx`, `MediaDetail.tsx`, `ScreenRecorder.tsx` (Record screen), `media.ts` |
 | Export | `server/export.ts`, `src/render/page.ts`, `src/video/` |

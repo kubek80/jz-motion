@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
+import { actionInfo as verb, newAction } from './actionInfo';
+import { AddActionMenu } from './AddActionMenu';
 import { moveItem, type Raw, type RawBeat } from './doc';
 import type { Selection } from './types';
 
@@ -11,74 +13,42 @@ interface Props {
   timing?: { start: number; end: number }[][];
   /** Marker colour of each element in the scene, for the target chips. */
   colors: Record<string, string>;
+  /** Element type of each element in the scene, to offer only the actions that fit. */
+  types: Record<string, string>;
+  /** A chart's current values, to start "New values" from. */
+  chartData?: (id: string) => number[] | undefined;
+  /** In Play mode: where the scene is (seconds) and when each beat starts, to light up what is running. */
+  live?: { time: number; beatStarts: number[]; beatEnds: number[] };
+  /** In Play mode: go to the start of a beat. */
+  onJump?: (beat: number) => void;
   onSelect: (s: Selection) => void;
   onChange: (beats: RawBeat[]) => void;
-}
-
-/** How each kind of action looks in the strip: a symbol, a plain verb and a family (sets its colour). */
-const VERBS: Record<string, { icon: string; label: string; family: 'reveal' | 'hide' | 'attention' | 'motion' | 'camera' | 'data' | 'wait' }> = {
-  draw: { icon: '✎', label: 'Draw', family: 'reveal' },
-  'fade-in': { icon: '◐', label: 'Fade in', family: 'reveal' },
-  pop: { icon: '✦', label: 'Pop in', family: 'reveal' },
-  'fade-out': { icon: '◑', label: 'Fade out', family: 'hide' },
-  erase: { icon: '⌫', label: 'Erase', family: 'hide' },
-  pulse: { icon: '◉', label: 'Pulse', family: 'attention' },
-  circle: { icon: '○', label: 'Circle', family: 'attention' },
-  recolor: { icon: '●', label: 'Recolour', family: 'attention' },
-  move: { icon: '➜', label: 'Move', family: 'motion' },
-  flow: { icon: '⇢', label: 'Flow', family: 'motion' },
-  rotate: { icon: '↻', label: 'Rotate', family: 'motion' },
-  spin: { icon: '⟳', label: 'Spin', family: 'motion' },
-  explode: { icon: '✺', label: 'Explode', family: 'motion' },
-  camera: { icon: '⌖', label: 'Camera', family: 'camera' },
-  spotlight: { icon: '◎', label: 'Spotlight', family: 'attention' },
-  play: { icon: '▶', label: 'Play', family: 'motion' },
-  'set-values': { icon: '▤', label: 'New values', family: 'data' },
-  wait: { icon: '⋯', label: 'Pause', family: 'wait' },
-};
-const verb = (d: string) => VERBS[d] ?? { icon: '•', label: d, family: 'wait' as const };
-
-/** Actions offered by "+ action", most used first. Those needing targets use the elements selected on the board. */
-const QUICK: { do: string; needs: boolean; hint: string }[] = [
-  { do: 'draw', needs: true, hint: 'Draw it stroke by stroke' },
-  { do: 'fade-in', needs: true, hint: 'Fade it in' },
-  { do: 'pop', needs: true, hint: 'Scale it in with a bounce' },
-  { do: 'pulse', needs: true, hint: 'Grow and shrink to draw attention' },
-  { do: 'circle', needs: true, hint: 'Draw a loop around it' },
-  { do: 'camera', needs: false, hint: 'Frame the selected elements (or everything)' },
-  { do: 'spotlight', needs: false, hint: 'Darken everything except the selected elements (nothing selected: turn the spotlight off)' },
-  { do: 'move', needs: true, hint: 'Move it somewhere else' },
-  { do: 'flow', needs: true, hint: 'Dots travel along an arrow' },
-  { do: 'erase', needs: true, hint: 'Wipe it off the board' },
-  { do: 'play', needs: true, hint: 'Play an animated picture or video (APNG, GIF, WebP, WebM, MP4); add another with "on" off to pause it' },
-  { do: 'wait', needs: false, hint: 'Pause before the next action' },
-];
-
-function newAction(kind: string, picked: string[]): Raw {
-  const target = picked.length === 1 ? picked[0] : picked;
-  switch (kind) {
-    case 'camera': return { do: 'camera', focus: picked.length ? target : 'all' };
-    case 'move': return { do: 'move', target, to: { x: 960, y: 540 } };
-    case 'wait': return { do: 'wait', duration: 1 };
-    case 'spotlight': return picked.length ? { do: 'spotlight', target } : { do: 'spotlight', on: false };
-    default: return { do: kind, target };
-  }
 }
 
 const GREY = { '--c': '#9aa4ad' } as React.CSSProperties;
 const secs = (s: number) => (s < 10 ? s.toFixed(1) : Math.round(s).toString()) + 's';
 
 /** The scene's beats as a storyboard: one card per click, each with its actions on a small timeline. */
-export function Beats({ beats, selection, picked, timing, colors, onSelect, onChange }: Props) {
+export function Beats({ beats, selection, picked, timing, colors, types, chartData, live, onJump, onSelect, onChange }: Props) {
   const setBeat = (bi: number, beat: RawBeat) => onChange(beats.map((b, i) => (i === bi ? beat : b)));
   const [menu, setMenu] = useState<number | null>(null);
   /** An action being dragged to another place or beat. */
   const dragging = useRef<{ beat: number; action: number } | null>(null);
   const [dropAt, setDropAt] = useState<string | null>(null);
+  const strip = useRef<HTMLDivElement>(null);
+
+  /** Play mode: which beat is running (or comes next), and how far along it is. */
+  const liveBeat = live ? Math.max(0, live.beatEnds.findIndex((end) => live.time < end - 1e-6)) : -1;
+  const allDone = !!live && live.beatEnds.length > 0 && live.time >= live.beatEnds[live.beatEnds.length - 1] - 1e-6;
+  useEffect(() => {
+    // Keep the running beat in view.
+    if (!live) return;
+    strip.current?.querySelector('.beat-col.live-now')?.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' });
+  }, [liveBeat, !!live]);
 
   const addAction = (bi: number, kind: string) => {
     const beat = beats[bi];
-    setBeat(bi, { ...beat, actions: [...beat.actions, newAction(kind, picked)] });
+    setBeat(bi, { ...beat, actions: [...beat.actions, newAction(kind, picked, chartData)] });
     onSelect({ kind: 'action', beat: bi, action: beat.actions.length });
     setMenu(null);
   };
@@ -113,18 +83,22 @@ export function Beats({ beats, selection, picked, timing, colors, onSelect, onCh
   };
 
   return (
-    <div className="storyboard">
+    <div className={`storyboard ${live ? 'live' : ''}`} ref={strip}>
       {beats.map((beat, bi) => {
         const beatSelected = selection?.kind === 'beat' && selection.beat === bi;
         const times = timing?.[bi] ?? [];
         const total = Math.max(0.001, ...times.map((t) => t.end));
+        // Play mode: seconds into this beat (negative before it starts).
+        const into = live ? live.time - (live.beatStarts[bi] ?? 0) : null;
+        const beatState = !live ? '' : allDone || bi < liveBeat ? 'live-done' : bi === liveBeat ? 'live-now' : 'live-later';
         return (
-          <div key={bi} className="beat-col">
+          <div key={bi} className={`beat-col ${beatState}`}>
             <div className={`beat-trigger ${beat.auto ? 'auto' : ''}`} title={beat.auto ? 'Plays straight after the previous beat' : 'Plays when you click (or press →)'}>
               {beat.auto ? '↳ auto' : '▶ on click'}
             </div>
             <div className={beatSelected ? 'beat-card selected' : 'beat-card'}>
               <div className="beat-head" onClick={() => onSelect({ kind: 'beat', beat: bi })} title="Click to edit this beat (title, notes, auto-play)">
+                {onJump && <button className="jump" title="Play from here: go to just before this beat" onClick={(e) => { e.stopPropagation(); onJump(bi); }}>⏮</button>}
                 <span className="num">{bi + 1}</span>
                 <span className="beat-title">{beat.title ?? `Beat ${bi + 1}`}</span>
                 {times.length > 0 && <span className="beat-len">{secs(total)}</span>}
@@ -145,6 +119,7 @@ export function Beats({ beats, selection, picked, timing, colors, onSelect, onCh
                   const sel = selection?.kind === 'action' && selection.beat === bi && selection.action === ai;
                   const v = verb(a.do);
                   const t = times[ai];
+                  const run = into === null || !t ? '' : into >= t.end - 1e-6 ? 'run-done' : into >= t.start - 1e-6 ? 'running' : '';
                   return (
                     <li
                       key={ai}
@@ -159,7 +134,7 @@ export function Beats({ beats, selection, picked, timing, colors, onSelect, onCh
                         setDropAt(`${bi}:${e.clientY < r.top + r.height / 2 ? ai : ai + 1}`);
                       }}
                       className={[
-                        'action', `fam-${v.family}`, sel ? 'selected' : '', a.start === 'with' ? 'with' : '',
+                        'action', `fam-${v.family}`, sel ? 'selected' : '', run, a.start === 'with' ? 'with' : '',
                         dropAt === `${bi}:${ai}` ? 'drop-before' : '', dropAt === `${bi}:${ai + 1}` && ai === beat.actions.length - 1 ? 'drop-after' : '',
                       ].join(' ')}
                       onClick={() => onSelect({ kind: 'action', beat: bi, action: ai })}
@@ -176,15 +151,17 @@ export function Beats({ beats, selection, picked, timing, colors, onSelect, onCh
                       {t && (
                         <div className="timebar">
                           <span style={{ left: `${(t.start / total) * 100}%`, width: `max(3px, ${((t.end - t.start) / total) * 100}%)` }} />
+                          {beatState === 'live-now' && into !== null && into >= 0 && <b className="playhead" style={{ left: `${Math.min(1, into / total) * 100}%` }} />}
                         </div>
                       )}
                     </li>
                   );
                 })}
               </ol>
-              <AddAction
+              <AddActionMenu
                 open={menu === bi}
                 picked={picked}
+                types={types}
                 onToggle={() => setMenu(menu === bi ? null : bi)}
                 onClose={() => setMenu(null)}
                 onPick={(kind) => addAction(bi, kind)}
@@ -204,40 +181,6 @@ export function Beats({ beats, selection, picked, timing, colors, onSelect, onCh
         <b>+ beat</b>
         <span className="muted">{picked.length ? `draws ${picked.length === 1 ? picked[0] : `${picked.length} elements`}` : 'one more click'}</span>
       </button>
-    </div>
-  );
-}
-
-function AddAction({ open, picked, onToggle, onClose, onPick }: { open: boolean; picked: string[]; onToggle: () => void; onClose: () => void; onPick: (kind: string) => void }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [at, setAt] = useState<{ left: number; bottom: number } | null>(null);
-  useEffect(() => {
-    // The strip scrolls sideways and would clip the menu, so it floats above the button in the page.
-    const r = ref.current?.getBoundingClientRect();
-    setAt(open && r ? { left: Math.min(r.left, window.innerWidth - 230), bottom: window.innerHeight - r.top + 4 } : null);
-  }, [open]);
-  useEffect(() => {
-    if (!open) return;
-    const away = (e: PointerEvent) => !ref.current?.contains(e.target as Node) && onClose();
-    window.addEventListener('pointerdown', away);
-    return () => window.removeEventListener('pointerdown', away);
-  }, [open, onClose]);
-  return (
-    <div className="add-action" ref={ref}>
-      <button className="add" onClick={onToggle}>+ action</button>
-      {open && at && (
-        <div className="action-menu" style={at}>
-          <div className="menu-note muted">{picked.length ? <>For <b>{picked.join(', ')}</b></> : 'Select elements on the board to target them'}</div>
-          {QUICK.map((q) => {
-            const v = verb(q.do);
-            return (
-              <button key={q.do} className={`fam-${v.family}`} disabled={q.needs && !picked.length} title={q.hint} onClick={() => onPick(q.do)}>
-                <i>{v.icon}</i>{v.label}
-              </button>
-            );
-          })}
-        </div>
-      )}
     </div>
   );
 }

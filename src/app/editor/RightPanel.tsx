@@ -19,7 +19,6 @@ interface Props {
   text: string;
   doc: RawDoc | null;
   result: CompileResult | { ok: false; errors: string[] };
-  mode: 'edit' | 'play';
   panel: Panel;
   setPanel: (p: Panel) => void;
   sceneIndex: number;
@@ -48,12 +47,12 @@ interface Props {
 }
 
 export function RightPanel(p: Props) {
-  const { text, doc, result, mode, panel, setPanel, sceneIndex, picked, update, history } = p;
+  const { text, doc, result, panel, setPanel, sceneIndex, picked, update, history } = p;
   return (
     <aside className="right">
       <div className="tabs">
-        <button className={panel === 'props' ? 'on' : ''} onClick={() => setPanel('props')} disabled={mode !== 'edit'}>Properties</button>
-        <button className={panel === 'json' || (mode !== 'edit' && panel === 'props') ? 'on' : ''} onClick={() => setPanel('json')}>JSON</button>
+        <button className={panel === 'props' ? 'on' : ''} onClick={() => setPanel('props')}>Properties</button>
+        <button className={panel === 'json' ? 'on' : ''} onClick={() => setPanel('json')}>JSON</button>
         <button className={panel === 'ai' ? 'on' : ''} onClick={() => setPanel('ai')}>AI</button>
         <button className={panel === 'video' ? 'on' : ''} onClick={() => setPanel('video')}>Video</button>
       </div>
@@ -61,7 +60,7 @@ export function RightPanel(p: Props) {
         <AiPanel current={text} scene={sceneIndex} onUse={(json) => { log('ai:aiPanel', { bytes: json.length }); history.set(json); }} chat={p.chatLog} onChat={p.setChatLog} />
       ) : panel === 'video' ? (
         <VideoPanel presentation={text} presentationId={p.id} refreshKey={p.videoRefreshKey} select={p.madeTake} />
-      ) : mode === 'edit' && panel === 'props' && doc ? (
+      ) : panel === 'props' && doc ? (
         <Inspector
           doc={doc}
           scene={sceneIndex}
@@ -79,6 +78,7 @@ export function RightPanel(p: Props) {
             p.setPicked([]);
             p.setSelection({ kind: 'beat', beat: n });
           }}
+          actionTime={(bi, ai) => (result.ok ? result.presentation.scenes[sceneIndex]?.beats[bi]?.actions[ai] : undefined)}
           onAction={(bi, ai, next) => update(updateBeats(doc, sceneIndex, (beats) => beats.map((b, i) => (i === bi ? { ...b, actions: b.actions.map((a, j) => (j === ai ? next : a)) } : b))))}
           onBeat={(bi, k, v) => update(updateBeats(doc, sceneIndex, (beats) => beats.map((b, i) => {
             if (i !== bi) return b;
