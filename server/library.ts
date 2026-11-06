@@ -1,5 +1,7 @@
 import { mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
+import { addIsoModels, type IsoModel } from '../src/engine/iso';
+import { addIcons, type IconDef } from '../src/engine/library';
 
 // Icons and clipart made in the app: library/<name>.json, one drawing each.
 
@@ -30,4 +32,17 @@ export async function saveIcon(name: string, def: unknown) {
 
 export async function deleteIcon(name: string) {
   await rm(file(name), { force: true });
+}
+
+/**
+ * Makes the engine know the icons, clipart and 3D models in library/, as the app does when it loads them.
+ * Needed before compiling on the server (export, snapshot, check); returns their names.
+ */
+export async function registerLibrary(): Promise<string[]> {
+  const all = await readLibrary();
+  for (const [name, def] of Object.entries(all) as [string, { kind?: string }][]) {
+    if (def.kind === 'iso') addIsoModels({ [name]: def as unknown as IsoModel });
+    else addIcons({ [name]: def as unknown as IconDef });
+  }
+  return Object.keys(all);
 }
