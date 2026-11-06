@@ -119,7 +119,7 @@ export function EditorWindows({
           initialKind={creating.kind}
           start={creating.start}
           presentation={text}
-          scene={sceneIndex}
+          scene={creating.after ?? sceneIndex}
           onClose={() => setCreating(null)}
           onSaved={(kind, name) => {
             setCreating(null);
@@ -129,7 +129,7 @@ export function EditorWindows({
           }}
           onAddScene={(scene) => {
             setCreating(null);
-            const { doc: next, index } = insertScene(doc, scene, sceneIndex);
+            const { doc: next, index } = insertScene(doc, scene, creating.after ?? sceneIndex);
             onSceneAdded(index);
             update(next as RawDoc);
           }}

@@ -515,3 +515,18 @@ Jakub couldn't find **Fade out** under **+ action**, found that fade-outs someti
 ![The + action menu: every action, grouped and explained](journey/73-action-menu.jpg)
 ![An action's properties: what it does, and when](journey/74-action-properties.jpg)
 ![Play mode: the storyboard follows the playback](journey/75-play-storyboard.jpg)
+
+## Step 37: Scenes before and after, getting around a zoomed timeline, and clips with no recording
+
+Jakub wanted to add a scene before or after any scene (empty or with AI) from the scene list, an easy way to move around the Timing timeline once zoomed in, and to be able to delete a voice clip whose recording is missing.
+
+- **Right-click a scene** for a menu: new scene before, new scene after, the same two with AI (the model is told where it goes, including "at the very start"), move up, move down, delete. An empty scene opens straight away. A scene that continues from the one before it (`inherit`) stays attached: "before" goes before the start of the chain, "after" after its end, so nothing loses the board it builds on.
+- **Getting around Timing:** a **minimap** above the timeline shows the whole of it (clips on their lanes, beats in their scene colours, the playhead, and a box for the part in view); click or drag it to go there, **Fit** shows everything. The mouse wheel now scrolls the timeline sideways, Ctrl/⌘ + wheel zooms around the pointer, and the zoom slider keeps the playhead (or the middle) still instead of jumping.
+- **Clips with no recording:** recordings live in `uploads/`, which stays on the computer that made them, so clips can point at files that aren't there. Such clips are now striped red and say *missing*, and **Remove N missing clips** in the header clears them. The clip that couldn't be deleted was a 0.06-second recording drawn 6 pixels wide, with its × out of reach; clips are now always wide enough to grab and delete.
+- **Found on the way:** the timeline first opened showing only part of the presentation (it was sized before its full length was known); it now keeps showing all of it until you zoom.
+
+**Checked by:** in the browser, on copies of "about this app, with edit demo": the scene menu (a new scene before scene 3 landed third and opened; "after, with AI" opened the AI window); in Timing, all 17 clips flagged missing and removed with one click, Ctrl + wheel zooming around the pointer (the moment under it stayed put), the wheel scrolling, a click on the minimap moving the view to 4:02–5:02, and Fit showing 0:00–5:40.
+
+![Right-click a scene](journey/76-scene-menu.jpg)
+![Clips whose recording is missing, and the minimap](journey/77-timing-missing-clips.jpg)
+![Zoomed in: the minimap shows where you are](journey/78-timing-minimap.jpg)

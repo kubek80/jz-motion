@@ -20,10 +20,13 @@ interface Props {
   recording: boolean;
   busy: string | null;
   makeTake: () => Promise<void>;
+  /** Clips whose recording isn't on this computer, and removing them all. */
+  missingCount: number;
+  removeMissing: () => void;
   onClose: () => void;
 }
 
-export function TimingHeader({ clickCount, cuedCount, primary, clips, voiceDuration, loadVoiceover, onVoiceover, voicer, missingSentences, generating, generateVoice, onCues, recording, busy, makeTake, onClose }: Props) {
+export function TimingHeader({ clickCount, cuedCount, primary, clips, voiceDuration, loadVoiceover, onVoiceover, voicer, missingSentences, generating, generateVoice, onCues, recording, busy, makeTake, missingCount, removeMissing, onClose }: Props) {
   return (
     <header className="timing-head">
       <h2>Timing</h2>
@@ -37,6 +40,12 @@ export function TimingHeader({ clickCount, cuedCount, primary, clips, voiceDurat
           : 'Load a voice-over…'}
         <input type="file" accept="audio/*,video/*" onChange={(e) => { const f = e.target.files?.[0]; e.target.value = ''; if (f) void loadVoiceover(f); }} />
       </label>
+      {missingCount > 0 && (
+        <button className="danger missing-clips" disabled={recording} onClick={removeMissing}
+          title="These clips point at recordings that aren't on this computer (uploads/ isn't in git, so they stay on the computer that recorded them). Removes just those clips; the cues stay.">
+          Remove {missingCount} missing {missingCount === 1 ? 'clip' : 'clips'}
+        </button>
+      )}
       {primary && <button onClick={() => onVoiceover(undefined)} title="Stop using this voice-over (the cues stay)">Remove</button>}
       <button
         onClick={() => void generateVoice()}

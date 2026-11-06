@@ -9,6 +9,8 @@ import type { NowPlaying } from './useNowPlaying';
 
 interface Props {
   laneRef: RefObject<HTMLDivElement | null>;
+  /** Recordings not on this computer: their clips are marked and can still be removed. */
+  missing: Set<string>;
   height: number;
   rec: RefObject<LiveRecording | null>;
   seek: (t: number) => void;
@@ -30,7 +32,7 @@ interface Props {
   onCue: (scene: number, beat: number, cue: number | undefined) => void;
 }
 
-export function Timeline({ laneRef, height, rec, seek, time, total, pps, width, clips, primary, clipDrag, startDragClip, startTrimClip, deleteClip, drawClipPeaks, np, tapping, tapIndex, startDrag, onCue }: Props) {
+export function Timeline({ laneRef, missing, height, rec, seek, time, total, pps, width, clips, primary, clipDrag, startDragClip, startTrimClip, deleteClip, drawClipPeaks, np, tapping, tapIndex, startDrag, onCue }: Props) {
   const { shown, currentIndex, beatOf, sceneTitle } = np;
   return (
     <div
@@ -57,17 +59,19 @@ export function Timeline({ laneRef, height, rec, seek, time, total, pps, width, 
             const trimStart = dragging && clipDrag!.trimStart !== undefined ? clipDrag!.trimStart : c.trimStart;
             const trimEnd = dragging && clipDrag!.trimEnd !== undefined ? clipDrag!.trimEnd : c.trimEnd;
             const previewClip: Clip = { ...c, offset, lane, trimStart, trimEnd };
-            const w = Math.max(6, (trimEnd - trimStart) * pps);
+            // Wide enough to grab and to reach its ×, however short it is.
+            const w = Math.max(34, (trimEnd - trimStart) * pps);
+            const gone = missing.has(c.upload);
             return (
               <div
                 key={c.id}
-                className={['clip-block', `lane-${lane}`, dragging ? 'dragging' : ''].join(' ')}
+                className={['clip-block', `lane-${lane}`, dragging ? 'dragging' : '', gone ? 'missing' : ''].join(' ')}
                 style={{ left: 20 + offset * pps, width: w }}
                 onPointerDown={(e) => startDragClip(e, i)}
-                title={`${c.name ?? 'clip'} · drag body to move/swap lane · drag edges to trim · S splits at playhead`}
+                title={`${gone ? `The recording ${c.upload} isn't on this computer; × removes the clip. ` : ''}${c.name ?? 'clip'} (${(trimEnd - trimStart).toFixed(1)} s) · drag body to move/swap lane · drag edges to trim · S splits at playhead`}
               >
                 <canvas className="clip-peaks" ref={(el) => drawClipPeaks(el, previewClip)} />
-                <span className="clip-name">{c.name ?? `clip ${i + 1}`}</span>
+                <span className="clip-name">{gone ? '⚠ missing · ' : ''}{c.name ?? `clip ${i + 1}`}</span>
                 <button
                   className="clip-delete"
                   onPointerDown={(e) => e.stopPropagation()}

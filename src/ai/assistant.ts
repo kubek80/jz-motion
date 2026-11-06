@@ -64,7 +64,7 @@ Reply with ONE JSON object, no Markdown fences: the scene, {"id": "...", "title"
 export function sceneMessages(description: string, current: string, after: number): ChatMessage[] {
   return [
     { role: 'system', content: `${SCENE_TASK}\n\n${referenceDocs()}` },
-    { role: 'user', content: `The presentation:\n${current}\n\nThe new scene goes after scene ${after + 1}.\n\nThe scene: ${description}` },
+    { role: 'user', content: `The presentation:\n${current}\n\nThe new scene goes ${after < 0 ? 'at the very start, before scene 1' : `after scene ${after + 1}`}.\n\nThe scene: ${description}` },
   ];
 }
 

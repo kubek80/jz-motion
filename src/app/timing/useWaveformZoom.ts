@@ -1,6 +1,8 @@
 // The timeline's waveform and zoom: peaks of the primary clip, the pixels-per-second zoom, drawing
-// a clip's slice of the peaks into its canvas, and keeping the playhead in view while playing.
-import { useEffect, useRef, useState } from 'react';
+// a clip's slice of the peaks into its canvas, keeping the playhead in view while playing, and getting
+// around when zoomed in: the wheel scrolls sideways, Ctrl/⌘ + wheel zooms around the pointer, zooming
+// keeps the playhead (or the middle) where it was, and `view` / `centerOn` drive the minimap.
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { Clip } from '../../engine/schema';
 import type { Clock } from './useClock';
 
@@ -33,11 +35,75 @@ export function useWaveformZoom(primary: Clip | undefined, total: number, clock:
   // ---------------------------------------------------------------- zoom
   const lane = useRef<HTMLDivElement>(null);
   const [pps, setPps] = useState(0);
+  /** Until you zoom, the timeline keeps showing all of it (its length is only known once everything has loaded). */
+  const zoomed = useRef(false);
   useEffect(() => {
-    // Start with the whole thing in view.
-    if (!pps && lane.current) setPps(Math.max(8, (lane.current.clientWidth - 40) / total));
+    if (lane.current && (!pps || !zoomed.current)) setPps(Math.max(4, (lane.current.clientWidth - 40) / total));
   }, [pps, total]);
   const width = Math.ceil(total * (pps || 20)) + 40;
+  const ppsRef = useRef(pps);
+  ppsRef.current = pps;
+  /** After a zoom, put this moment back at this x in the lane (applied once the new width is laid out). */
+  const anchor = useRef<{ t: number; x: number } | null>(null);
+  const clampPps = (v: number) => Math.max(4, Math.min(400, v));
+  /** Zoom to `next` pixels per second, keeping the moment at lane x `x` where it is. */
+  const zoomAround = (next: number, x: number) => {
+    zoomed.current = true;
+    const el = lane.current;
+    const cur = ppsRef.current || 20;
+    if (el) anchor.current = { t: (el.scrollLeft + x - 20) / cur, x };
+    setPps(clampPps(next));
+  };
+  /** Zoom keeping the playhead in place when it is in view, else the middle. */
+  const zoomTo = (next: number) => {
+    const el = lane.current;
+    if (!el) return setPps(clampPps(next));
+    const px = time * (ppsRef.current || 20) + 20 - el.scrollLeft;
+    zoomAround(next, px >= 0 && px <= el.clientWidth ? px : el.clientWidth / 2);
+  };
+  useLayoutEffect(() => {
+    const el = lane.current;
+    const a = anchor.current;
+    if (!el || !a) return;
+    anchor.current = null;
+    el.scrollLeft = a.t * pps + 20 - a.x;
+  }, [pps]);
+
+  // What the lane shows, for the minimap; the wheel scrolls sideways, Ctrl/⌘ + wheel zooms.
+  const [scroll, setScroll] = useState({ left: 0, width: 0 });
+  useEffect(() => {
+    const el = lane.current;
+    if (!el) return;
+    const update = () => setScroll({ left: el.scrollLeft, width: el.clientWidth });
+    update();
+    const onWheel = (e: WheelEvent) => {
+      if (e.ctrlKey || e.metaKey) {
+        e.preventDefault();
+        zoomAround((ppsRef.current || 20) * Math.exp(-e.deltaY * 0.002), e.clientX - el.getBoundingClientRect().left);
+      } else if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+        e.preventDefault();
+        el.scrollLeft += e.deltaY;
+      }
+    };
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    el.addEventListener('scroll', update, { passive: true });
+    el.addEventListener('wheel', onWheel, { passive: false });
+    return () => { ro.disconnect(); el.removeEventListener('scroll', update); el.removeEventListener('wheel', onWheel); };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  const k = pps || 20;
+  const view = { from: Math.max(0, (scroll.left - 20) / k), to: (scroll.left + scroll.width - 20) / k };
+  const centerOn = (t: number) => {
+    const el = lane.current;
+    if (el) el.scrollLeft = t * k + 20 - el.clientWidth / 2;
+  };
+  const fit = () => {
+    const el = lane.current;
+    if (!el) return;
+    zoomed.current = false;
+    setPps(clampPps((el.clientWidth - 40) / total));
+    el.scrollLeft = 0;
+  };
   /**
    * Draw the peaks for a clip into its own inline canvas (callback ref). Peaks are sampled over
    * the whole source audio, so a clip whose window is `[trimStart, trimEnd]` renders the slice
@@ -75,5 +141,5 @@ export function useWaveformZoom(primary: Clip | undefined, total: number, clock:
     if (x < el.scrollLeft + 40 || x > el.scrollLeft + el.clientWidth - 80) el.scrollLeft = x - el.clientWidth * 0.3;
   }, [time, playing, pps]);
 
-  return { lane, pps, setPps, width, drawClipPeaks };
+  return { lane, pps, setPps, zoomTo, width, drawClipPeaks, view, centerOn, fit };
 }

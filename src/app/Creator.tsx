@@ -28,7 +28,8 @@ export interface CreatorStart {
 }
 
 /** What opens the creator: a kind, and optionally an item to refine. */
-export interface CreateRequest { kind: CreateKind; start?: CreatorStart }
+/** `after`: for a scene, the scene it goes after (-1: the start); the current scene when missing. */
+export interface CreateRequest { kind: CreateKind; start?: CreatorStart; after?: number }
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type Turn =
@@ -38,7 +39,7 @@ type Turn =
 const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').replace(/^(\d)/, 'x$1');
 
 const KINDS: { kind: CreateKind; label: string; hint: string; example: string }[] = [
-  { kind: 'scene', label: 'Scene', hint: 'A new scene for this presentation, added after the current one', example: 'e.g. how a request flows through an API gateway to three microservices, then zoom into the auth service' },
+  { kind: 'scene', label: 'Scene', hint: 'A new scene for this presentation', example: 'e.g. how a request flows through an API gateway to three microservices, then zoom into the auth service' },
   { kind: 'icon', label: 'Icon', hint: 'Single-colour line icon on a 24×24 grid; takes the element\'s colour', example: 'e.g. a vector database: a cylinder with three small dots connected by lines on its front' },
   { kind: 'logo', label: 'Logo', hint: 'Brand mark drawn as thin outlines of filled shapes; takes the element\'s colour', example: 'e.g. Slack: four rounded ribbons forming the # mark' },
   { kind: 'clipart', label: 'Clipart', hint: 'Multi-colour drawing in the marker colours', example: 'e.g. a friendly robot holding a glowing GPU card, cyan body, pink GPU' },
