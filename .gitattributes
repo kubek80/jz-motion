@@ -1,0 +1,4 @@
+# Pictures, recordings and sounds in the media library are stored with Git LFS (see docs/media-plan.md):
+# the repository keeps small pointers, GitHub keeps the files. The index stays a normal, readable text file.
+media/** filter=lfs diff=lfs merge=lfs -text
+media/index.json !filter !diff !merge text

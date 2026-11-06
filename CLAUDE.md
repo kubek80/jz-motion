@@ -34,7 +34,7 @@ Explainers about *any* app (including jz-motion itself) use `snap` and `record` 
 |---|---|---|
 | `presentations/` | One JSON file per presentation, `<id>.json` | yes (user data) |
 | `library/` | Icons, clipart, 3D models made in the app | yes |
-| `media/` | The media library: pictures (WebP), screen recordings (WebM video + poster), sounds, with `index.json` (names, sizes) | yes |
+| `media/` | The media library: pictures (WebP), screen recordings (WebM video + poster), sounds, with `index.json` (names, sizes) | yes, with Git LFS (`git lfs install` once per computer; `index.json` is plain text) |
 | `images/` | Older pictures, from before the media library (migrated; `npm run media -- migrate` moves any new ones in) | yes |
 | `scratch/` | Raw captures and files moved out of the way (`migrate` puts unused pictures here); safe to delete | no |
 | `uploads/`, `takes/`, `exports/`, `snapshots/` | Recordings, voice-overs, takes, videos, previews | no |

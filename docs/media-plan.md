@@ -1,6 +1,6 @@
 # Pictures, recordings and voice: a plan
 
-**Status:** built: the media library with conversion (`npm run media`), captures into the library, recordings as video on the board, the Media tab, **Record screen** in the app (with a trim before keeping), and the migration of `images/` (done). Still open: Git LFS and moving voice clips into the library. This started as a proposal from an audit of the repository (`npm run assets` shows the current state at any time).
+**Status:** built: the media library with conversion (`npm run media`), captures into the library, recordings as video on the board, the Media tab, **Record screen** in the app (with a trim before keeping), the migration of `images/`, and Git LFS for `media/` (done). Still open: moving voice clips into the library. This started as a proposal from an audit of the repository (`npm run assets` shows the current state at any time).
 
 ## Where we are
 
@@ -50,12 +50,12 @@ Git keeps every version of every binary forever, so the repository is already 24
 
 ### Keeping it in git
 
-- **Git LFS for `media/`** (and `docs/journey/`): the repository stays small, files still travel with `git clone` / `git pull`, and old versions don't bloat every checkout. It needs `git lfs install` once per computer and LFS storage on GitHub (1 GB free).
+- **Git LFS for `media/`** (set up in `.gitattributes`; the existing files are converted once with `git add --renormalize media`; `docs/journey/` stays in plain git for now): the repository stays small, files still travel with `git clone` / `git pull`, and old versions don't bloat every checkout. It needs `git lfs install` once per computer and LFS storage on GitHub (1 GB free).
 - Voice clips move from the ignored `uploads/` into `media/`, so presentations carry their sound. Raw recordings for transcription stay in `uploads/` (temporary).
 
 ## Decisions for you
 
-1. **Git LFS** for media (recommended), or keep media out of git and back it up separately?
+1. ~~**Git LFS** for media~~: decided, set up for `media/`.
 2. **Delete the unused captures** in `images/` (11 MB) and the stray root files, or move them to an ignored `scratch/` folder?
 3. **Screen recording in the app** first (bigger usability win), or the video element and conversion first (bigger size win)? They build on each other; I'd do video + conversion + Media tab first, then Record screen.
 4. **Voice clips into git** (via LFS), yes or no?
