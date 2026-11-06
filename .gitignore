@@ -8,3 +8,4 @@ snapshots
 tts
 presentations/.drafts
 .claude/worktrees
+*.tsbuildinfo
