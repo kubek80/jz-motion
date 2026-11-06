@@ -82,7 +82,7 @@ A 3D object drawn in the same marker style: outlines in its color, faces filled 
 - `width` × `height` is the picture itself; `"frame": "browser"` draws a browser window around it in marker (in the element's colour) with `url` in its address bar, adding a bar above the picture. The picture and its bar together are centered on `x`, `y`.
 - Pictures always sit under the marker drawing, so arrows, text and circles can be drawn on top of them.
 - `draw` draws the frame, then reveals the picture left to right.
-- An animated picture (APNG, GIF, animated WebP, e.g. a short screen recording) shows its first frame until a `play` action; `"loop": true` repeats it.
+- An animated picture (APNG, GIF, animated WebP) or a video (`.webm`, `.mp4`, `.mov`; screen recordings in the media library are WebM video, `/media/<file>.webm`) shows its first frame until a `play` action; `"loop": true` repeats it. A video plays exactly like an animated picture: `play`, `from`, `speed`, `"on": false`, and fades, `draw`, moves, `pinned` and spotlights all work the same. Videos play **muted** on the board: sound belongs to the narration (voice-over), not to the picture.
 - To point at part of a screenshot, put an `area` over it, then `circle`, `spotlight` or `camera` → `focus` on the area.
 
 ### Charts
@@ -139,7 +139,7 @@ Actions with `target` accept one id or a list. With a list, targets start `stagg
 | `spin` | `on` (true), `speed` (30) | instant | Keeps an iso object turning (degrees per second) between beats. `"on": false` stops it. |
 | `explode` | `amount` (0.6) | 1.2 | Pushes an iso object's parts apart from its middle; `0` puts them back together. |
 | `spotlight` | `target`, `on` (true), `style` (`dark`, `fade`), `amount` (0.7), `shape` (`rect`, `ellipse`; default: the area's shape), `padding` (24) | 0.6 | Darkens (or fades into the board) everything outside the target(s) and keeps it that way between beats; another `spotlight` moves the light, `"on": false` turns it off. Things drawn while it is on stay bright. |
-| `play` | `on` (true), `from` (seconds), `speed` (1) | instant | Plays an animated picture (APNG, GIF, animated WebP) and keeps it playing between beats until it ends (or loops, with the image's `"loop": true`); `"on": false` pauses it, `from` jumps first. Without `play` it shows its first frame. Images only. |
+| `play` | `on` (true), `from` (seconds), `speed` (1) | instant | Plays an animated picture (APNG, GIF, animated WebP) or a video (WebM, MP4, MOV; muted) and keeps it playing between beats until it ends (or loops, with the image's `"loop": true`); `"on": false` pauses it, `from` jumps first. Without `play` it shows its first frame. Images only. |
 | `camera` | `focus`, `padding` (120), `x`, `y`, `zoom` | 1.3 | `focus` is an id, a list of ids, or `"all"` (everything visible at that moment); the camera frames them with `padding` screen pixels around. Without `focus`, moves to `x`/`y`/`zoom` (any omitted value stays). `zoom` together with `focus` overrides the fitted zoom. |
 | `wait` | | 1 | Pause inside a beat. |
 

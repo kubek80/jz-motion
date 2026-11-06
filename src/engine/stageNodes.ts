@@ -48,26 +48,45 @@ export interface ElementNodes {
  * A picture lives in its own layer under the marker glow (so it stays crisp), and copies the element's
  * position, scale and opacity every frame. It is revealed left to right while `reveal.v` goes 0 → 1.
  */
-export interface ImageNodes { outer: SVGGElement; fx: SVGGElement; clip: SVGRectElement; img: SVGImageElement; left: number; width: number; reveal: { v: number }; anim?: AnimNodes }
+export interface ImageNodes {
+  outer: SVGGElement; fx: SVGGElement; clip: SVGRectElement; img: SVGImageElement; left: number; width: number; reveal: { v: number };
+  anim?: AnimNodes;
+  video?: VideoNodes;
+}
 
 /**
- * An animated picture (APNG, GIF, animated WebP), decoded frame by frame on demand into a canvas. `state` is set
- * by the timeline (speed; `epoch` changes when a play jumps to `seekTo`); `clip` advances with the board's clock.
+ * Something on a picture that `play` drives (an animated picture or a video). `state` is set by the timeline
+ * (speed; `epoch` changes when a play jumps to `seekTo`); `clip` (seconds) advances with the board's clock.
  */
-export interface AnimNodes {
-  decoder: ImageDecoder;
-  frames: number;
-  frameSeconds: number;
+export interface Playable {
   loop: boolean;
-  canvas: HTMLCanvasElement;
+  /** The foreignObject that holds the canvas or video, clipped like the picture. */
   box: SVGForeignObjectElement;
   state: { speed: number; epoch: number; seekTo: number };
   epoch: number;
   /** While scheduling plays in order: the jump count and position so far. */
   planned: { epoch: number; seekTo: number };
   clip: number;
+}
+
+/** An animated picture (APNG, GIF, animated WebP), decoded frame by frame on demand into a canvas. */
+export interface AnimNodes extends Playable {
+  decoder: ImageDecoder;
+  frames: number;
+  frameSeconds: number;
+  canvas: HTMLCanvasElement;
   shown: number;
   want: number;
+  busy: Promise<void> | null;
+}
+
+/** A video (WebM, MP4, MOV) played muted in a <video>; live it plays natively, in export it is seeked frame by frame. */
+export interface VideoNodes extends Playable {
+  video: HTMLVideoElement;
+  /** Seconds; Infinity when the file doesn't say. */
+  duration: number;
+  /** Export: the time last asked of the video, and the wait until that frame is shown. */
+  target: number;
   busy: Promise<void> | null;
 }
 
@@ -162,7 +181,8 @@ export function renderImage(n: ElementNodes) {
   const v = Math.max(0, Math.min(1, im.reveal.v));
   im.clip.setAttribute('width', String(im.width * v));
   im.img.style.opacity = String(Math.min(1, v * 2.5));
-  if (im.anim) im.anim.box.style.opacity = im.img.style.opacity;
+  const live = im.anim ?? im.video;
+  if (live) live.box.style.opacity = im.img.style.opacity;
 }
 
 export function preloadImage(src: string): Promise<void> {
