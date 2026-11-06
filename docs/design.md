@@ -67,7 +67,7 @@ Presentation
 | `src/ai/` | LLM work: `client.ts` (ask for JSON with repair loop and a trace), `agent.ts` (Claude Code agent mode), `prompt.ts` (docs as context), `assistant.ts` (chat, script, transcript, one new scene, change one scene), `iconPrompt.ts` (rules and checks for icons, clipart and 3D models), `recommend.ts` (which model for which job), `profiles.ts`. |
 | `src/video/` | Performances (timing), layout over time, FFmpeg command builder (pure, tested). |
 | `src/render/` | The page export drives: board only, frame by frame. |
-| `server/` | Local server API (Vite plugin, `api.ts`): presentations, library, images, uploads (voice-overs, served with range requests), LLM proxy (`claudeCode.ts`), agent mode (`claudeAgent.ts`), transcription, generated voice (`tts.ts`), takes, audio auto-sync, export jobs. Command-line tools: `cli-export.ts`, `cli-check.ts`, `cli-snapshot.ts`, `cli-assets.ts`. |
+| `server/` | Local server API (Vite plugin, `api.ts`): presentations, library, images, uploads (voice-overs, served with range requests), LLM proxy (`claudeCode.ts`), agent mode (`claudeAgent.ts`), the media library (`mediaStore.ts`: convert on import, index, where used), transcription, generated voice (`tts.ts`), takes, audio auto-sync, export jobs. Command-line tools: `cli-export.ts`, `cli-check.ts`, `cli-snapshot.ts`, `cli-assets.ts`, `cli-media.ts`. |
 | `scripts/` | `snap.mjs` and `record.mjs` (capture screenshots and scripted interactions of a web app; scenarios in `scenarios/`), `svg-to-clipart.mjs` and the UnDraw helpers, `import-icons.mjs`, `build-logo.mjs`, `mock-llm.mjs`. |
 | `src/examples/*.json`, `public/examples/` | Example presentations loadable from the app, and their pictures. |
 | `docs/style.md`, `docs/format.md`, `docs/library.md` | What models read: style, format, library. Keep them true. |
@@ -84,6 +84,7 @@ Presentation
 | The properties panel | `src/app/editor/Inspector.tsx`, `Fields.tsx`, `fields/` |
 | The Timing window | `src/app/timing/` (start at `Timing.tsx`) |
 | Export | `server/export.ts`, `src/render/page.ts`, `src/video/` |
+| Pictures, recordings, sounds | `server/mediaStore.ts` (conversion and index), `src/app/images.ts` (paste, drop, upload) |
 
 ## Phases
 

@@ -81,8 +81,9 @@ Then the **Video** tab: pick the take, add a friend's recording (with **Auto-syn
 | `npm run dev` | The app, with its local server (files, model calls, transcription, export) |
 | `npm run check -- <file.json>` | Checks a presentation or library item against the app's rules; `--library` lists everything that can be drawn |
 | `npm run snapshot -- <file.json>` | PNG of each scene fully drawn (`--beats`: after every beat) in `snapshots/` |
-| `npm run snap -- <url> <name>` | Saves a screenshot of a web page (or one element, `--selector`) into `images/<name>.png` |
-| `npm run record -- <url> <name> <scenario.mjs>` | Records an interaction scripted in `scripts/scenarios/` as an animated picture in `images/<name>.apng` |
+| `npm run snap -- <url> <name>` | Screenshots a web page (or one element, `--selector`) into the media library |
+| `npm run record -- <url> <name> <scenario.mjs>` | Records an interaction scripted in `scripts/scenarios/` into the media library as video |
+| `npm run media -- import <file…>` | Adds pictures, recordings or sounds to the media library, converted (WebP, WebM, Opus); `migrate` moves older `images/` files in |
 | `npm run assets` | Lists pictures, recordings and voice-overs with their size and the presentations that use them; `--unused` lists what nothing uses (deletes nothing) |
 | `npm run export -- <file.json>` | Renders to MP4 (`--take <id>`, `--4k`, `--fps 60`, `--gap 1.5`, `--out file.mp4`) |
 | `npm test` · `npm run typecheck` · `npm run build` | Unit tests · TypeScript · production build |

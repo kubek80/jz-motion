@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-// Capture a static screenshot of a page into images/<name>.png, so a jz-motion presentation can
-// reference it as "src": "/images/<name>.png" and show the real UI instead of a hand-drawn placeholder.
+// Capture a static screenshot of a page and add it to the media library (as WebP), so a jz-motion presentation can
+// reference it by the "/media/…" src it prints and show the real UI instead of a hand-drawn placeholder.
 //
 // Usage:
 //   node scripts/snap.mjs <url> <name> [--size 1280x800] [--selector ".foo"] [--wait 500]
@@ -15,6 +15,7 @@
 //   npm run snap -- http://localhost:5173 home --selector '.start-box'
 
 import { chromium } from 'playwright';
+import { spawnSync } from 'node:child_process';
 import { mkdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -35,10 +36,12 @@ const [w, h] = (value('size', '1280x800')).split('x').map(Number);
 const waitMs = Number(value('wait', 400));
 const selector = value('selector');
 const scenario = value('scenario');
-const out = resolve('images', `${name}.png`);
+// The raw capture goes to scratch/captures/ (not in git); the media library keeps the converted copy.
+const out = resolve('scratch/captures', `${name}.png`);
 
-await mkdir(resolve('images'), { recursive: true });
-const browser = await chromium.launch({ channel: 'chrome' });
+await mkdir(resolve('scratch/captures'), { recursive: true });
+// Google Chrome when installed (as on a Mac), otherwise Playwright's own Chromium.
+const browser = await chromium.launch({ channel: 'chrome' }).catch(() => chromium.launch());
 try {
   const page = await browser.newPage({ viewport: { width: w, height: h } });
   await page.goto(url, { waitUntil: 'domcontentloaded' });
@@ -52,7 +55,14 @@ try {
   await page.waitForTimeout(waitMs);
   if (selector) await page.locator(selector).screenshot({ path: out });
   else await page.screenshot({ path: out, fullPage: false });
-  console.log(`→ images/${name}.png`);
+  console.log(`captured scratch/captures/${name}.png`);
+  importIntoMedia(out, name);
 } finally {
   await browser.close();
+}
+
+/** Adds the capture to the media library (converted: WebP for pictures, WebM video for recordings) and prints its "/media/…" src. */
+function importIntoMedia(file, name) {
+  const r = spawnSync('npx', ['tsx', 'server/cli-media.ts', 'import', file, '--name', name], { stdio: 'inherit' });
+  if (r.status !== 0) console.error('Could not add it to the media library; the capture is still in scratch/captures/.');
 }

@@ -1,6 +1,6 @@
 # Pictures, recordings and voice: a plan
 
-A proposal, not yet built. It comes from an audit of the repository (`npm run assets` shows the current state at any time).
+**Status:** the media library is being built (store with conversion, `npm run media`, captures into the library, video on the board, the Media tab). Git LFS and moving voice clips are still open. This started as a proposal from an audit of the repository (`npm run assets` shows the current state at any time).
 
 ## Where we are
 

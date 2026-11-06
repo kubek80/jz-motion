@@ -20,11 +20,13 @@ The rules every generator follows (the app's own models too) are in `docs/style.
 ```sh
 npm run check -- presentations/<id>.json          # valid? (also library/<name>.json; --library lists what can be drawn)
 npm run snapshot -- presentations/<id>.json       # PNGs of each scene in snapshots/<id>/ — look at them
-npm run snap -- <url> <name>                      # scripts/snap.mjs: capture a static UI screenshot into images/<name>.png
-npm run record -- <url> <name> <scenario.mjs>     # scripts/record.mjs: capture an interaction as APNG into images/<name>.apng
+npm run snap -- <url> <name>                      # scripts/snap.mjs: screenshot a web page into the media library (WebP); prints its /media/… src
+npm run record -- <url> <name> <scenario.mjs>     # scripts/record.mjs: record a scripted interaction into the media library (WebM video)
+npm run media -- import <file…>                   # add any picture, recording or sound to the media library (converted)
+npm run assets                                    # what's in media/, images/ and uploads/, how big, and which presentations use it
 ```
 
-Explainers about *any* app (including jz-motion itself) use `snap` and `record` to pull real UI into `images/`, rather than hand-drawing boxes. The target app can be anywhere reachable (local dev, staging URL, public site); scenario files live in `scripts/scenarios/`. See the `demo-interactions` skill for the shape of a scenario and when to snap vs. record. No FFmpeg needed — the recorder uses `playwright` + `upng-js` to stitch PNG frames into APNG, both already in `devDependencies`.
+Explainers about *any* app (including jz-motion itself) use `snap` and `record` to pull real UI into the media library, rather than hand-drawing boxes. The target app can be anywhere reachable (local dev, staging URL, public site); scenario files live in `scripts/scenarios/`. See the `demo-interactions` skill for the shape of a scenario and when to snap vs. record. The raw captures stay in `scratch/captures/` (not in git); the media library keeps converted copies.
 
 ## Where things live
 
@@ -32,7 +34,9 @@ Explainers about *any* app (including jz-motion itself) use `snap` and `record` 
 |---|---|---|
 | `presentations/` | One JSON file per presentation, `<id>.json` | yes (user data) |
 | `library/` | Icons, clipart, 3D models made in the app | yes |
-| `images/` | Screenshots and pictures used on boards | yes |
+| `media/` | The media library: pictures (WebP), screen recordings (WebM video + poster), sounds, with `index.json` (names, sizes) | yes |
+| `images/` | Older pictures, from before the media library (`npm run media -- migrate` moves them in) | yes |
+| `scratch/` | Raw captures and files moved out of the way (`migrate` puts unused pictures here); safe to delete | no |
 | `uploads/`, `takes/`, `exports/`, `snapshots/` | Recordings, voice-overs, takes, videos, previews | no |
 | `src/examples/` | Example presentations shipped with the app (`public/examples/` holds their pictures) | yes |
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-// Record a short user-interaction clip of a web app and save it as an APNG into images/<name>.apng,
-// so a jz-motion presentation can reference it as "src": "/images/<name>.apng" and play the actual UI
+// Record a short user-interaction clip of a web app and add it to the media library (as WebM video),
+// so a jz-motion presentation can reference it by the "/media/…" src it prints and play the actual UI
 // motion in sync with the narration ("play" action).
 //
 // Capture is pure-JS (Playwright + upng-js); no FFmpeg needed. jz-motion plays APNGs through the
@@ -20,6 +20,7 @@
 
 import { chromium } from 'playwright';
 import UPNG from 'upng-js';
+import { spawnSync } from 'node:child_process';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
 import { resolve } from 'node:path';
@@ -39,11 +40,13 @@ if (!url || !name || !scenario) {
 }
 const [vw, vh] = (value('size', '1280x800')).split('x').map(Number);
 const fps = Number(value('fps', 15));
-const out = resolve('images', `${name}.apng`);
+// The raw capture goes to scratch/captures/ (not in git); the media library keeps the converted copy.
+const out = resolve('scratch/captures', `${name}.apng`);
 
-await mkdir(resolve('images'), { recursive: true });
+await mkdir(resolve('scratch/captures'), { recursive: true });
 
-const browser = await chromium.launch({ channel: 'chrome' });
+// Google Chrome when installed (as on a Mac), otherwise Playwright's own Chromium.
+const browser = await chromium.launch({ channel: 'chrome' }).catch(() => chromium.launch());
 const frames = []; // { t: ms since start, buf: PNG Buffer }
 try {
   const page = await browser.newPage({ viewport: { width: vw, height: vh } });
@@ -94,4 +97,11 @@ for (let i = 0; i < frames.length; i++) {
 }
 const apng = UPNG.encode(rgbaFrames, W, H, 0, delays);
 await writeFile(out, Buffer.from(apng));
-console.log(`→ images/${name}.apng (${(apng.byteLength / 1024).toFixed(0)} KB, ${(frames.at(-1).t / 1000).toFixed(1)}s)`);
+console.log(`captured scratch/captures/${name}.apng (${(apng.byteLength / 1024).toFixed(0)} KB, ${(frames.at(-1).t / 1000).toFixed(1)}s)`);
+importIntoMedia(out, name);
+
+/** Adds the capture to the media library (converted: WebP for pictures, WebM video for recordings) and prints its "/media/…" src. */
+function importIntoMedia(file, name) {
+  const r = spawnSync('npx', ['tsx', 'server/cli-media.ts', 'import', file, '--name', name], { stdio: 'inherit' });
+  if (r.status !== 0) console.error('Could not add it to the media library; the capture is still in scratch/captures/.');
+}
