@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { createWriteStream } from 'node:fs';
-import { mkdir, readFile, rm } from 'node:fs/promises';
+import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import type { IncomingMessage } from 'node:http';
 import { join, resolve } from 'node:path';
 import { pipeline } from 'node:stream/promises';
@@ -30,7 +30,8 @@ export async function transcribe(upload: string, service: { baseURL: string; mod
   const info = await probe(source);
   if (!info.hasAudio) throw new Error('the recording has no sound');
   // Small mono audio keeps the request under the usual 25 MB limit (about an hour).
-  const audio = join(UPLOADS_DIR, `${upload}.mp3`);
+  // Its own temporary file, so two transcriptions of the same recording can't remove each other's.
+  const audio = join(UPLOADS_DIR, `${upload}.${randomUUID().slice(0, 8)}.mp3`);
   await run(FFMPEG, ['-y', '-v', 'error', '-i', source, '-vn', '-ac', '1', '-ar', '16000', '-b:a', '48k', audio]);
   try {
     const form = new FormData();
@@ -51,4 +52,21 @@ export async function transcribe(upload: string, service: { baseURL: string; mod
   } finally {
     await rm(audio, { force: true });
   }
+}
+
+/**
+ * Transcribes a recording already in uploads/ (a narration clip), keeping the result next to it
+ * (`<upload>.transcript.json`) so asking again is instant. `again` ignores the kept one.
+ */
+export async function transcribeKept(upload: string, service: { baseURL: string; model: string; apiKey?: string }, again = false) {
+  const kept = `${uploadPath(upload)}.transcript.json`;
+  if (!again) {
+    try {
+      const saved = JSON.parse(await readFile(kept, 'utf8'));
+      if (saved.model === service.model) return saved.result as Awaited<ReturnType<typeof transcribe>>;
+    } catch { /* not transcribed yet */ }
+  }
+  const result = await transcribe(upload, service);
+  await writeFile(kept, JSON.stringify({ model: service.model, result }));
+  return result;
 }

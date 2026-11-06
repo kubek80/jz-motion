@@ -21,6 +21,9 @@ export interface InlineEdit {
   align: 'start' | 'middle' | 'end';
   family: string;
   weight: string;
+  /** The text's own fill and outline (bold text is an outline around a dark fill). */
+  fill?: string;
+  outline?: { color: string; px: number };
   /** Code and text with several lines are edited in a box that takes new lines. */
   multiline: boolean;
 }
@@ -54,7 +57,7 @@ export function useInlineText({ stage, stageFrame, doc, sceneIndex, elements, ed
     setInline({
       id, field, value: String(el[field] ?? ''),
       left: spot.left - frame.left, top: spot.top - frame.top, width: spot.width, height: spot.height,
-      fontPx: spot.fontPx, color: spot.color, align: spot.align, family: spot.family, weight: spot.weight,
+      fontPx: spot.fontPx, color: spot.color, align: spot.align, family: spot.family, weight: spot.weight, fill: spot.fill, outline: spot.outline,
       multiline: el.type === 'text' && (el.style === 'code' || String(el.text).includes('\n')),
     });
   };
@@ -87,7 +90,8 @@ export function InlineTextEditor({ inline, setInline, finishInline }: {
     top: inline.top + inline.height / 2,
     left: inline.align === 'start' ? inline.left : inline.align === 'end' ? inline.left + inline.width : inline.left + inline.width / 2,
     transform: `translate(${inline.align === 'start' ? '0' : inline.align === 'end' ? '-100%' : '-50%'}, -50%)`,
-    fontSize: inline.fontPx, color: inline.color, fontFamily: inline.family, fontWeight: inline.weight as React.CSSProperties['fontWeight'],
+    fontSize: inline.fontPx, color: inline.fill ?? inline.color, caretColor: inline.color, fontFamily: inline.family,
+    ...(inline.outline ? { WebkitTextStroke: `${inline.outline.px}px ${inline.outline.color}` } : {}), fontWeight: inline.weight as React.CSSProperties['fontWeight'],
     textAlign: inline.align === 'middle' ? 'center' : inline.align === 'end' ? 'right' : 'left',
   };
   const common = {

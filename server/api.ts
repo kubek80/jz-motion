@@ -8,7 +8,7 @@ import type { Plugin, PreviewServer, ViteDevServer } from 'vite';
 import { exportVideo } from './export';
 import { deleteIcon, readLibrary, saveIcon } from './library';
 import { findOffset } from './media';
-import { saveUpload, transcribe, uploadPath } from './transcribe';
+import { saveUpload, transcribe, transcribeKept, uploadPath } from './transcribe';
 import { saveImage, serveImage } from './images';
 import { addMedia, deleteMedia, listMedia, readUpload, renameMedia, serveMedia } from './mediaStore';
 import { claudeCodeChat, claudeCodeStatus } from './claudeCode';
@@ -20,7 +20,7 @@ import { generateTts, readSidecar as readTtsSidecar, serveTts } from './tts';
 // The local server side of the app, mounted into the Vite dev and preview servers:
 //   /api/presentations  list, create, read, save, delete presentations (presentations/<id>.json)
 //   /api/library  icons and clipart made in the app (library/<name>.json)
-//   /api/transcribe  upload a recording and transcribe it (to make a presentation from it)
+//   /api/transcribe  upload a recording and transcribe it (to make a presentation from it), or transcribe a narration clip already in uploads/ (?upload=)
 //   /api/llm      proxy to OpenAI-compatible model APIs (browsers can't call most of them directly)
 //   /api/takes    recordings: create, upload tracks, set offsets, auto-sync, delete
 //   /api/tts      generate a voice clip for a sentence; the cache (tts/<id>.json) is served from /api/tts/<id>
@@ -221,8 +221,12 @@ export function jzmServer(): Plugin {
         if (url.pathname === '/api/claude-code' && req.method === 'GET') return send(res, 200, await claudeCodeStatus());
         if (url.pathname === '/api/transcribe' && req.method === 'POST') {
           const q = url.searchParams;
+          const service = { baseURL: q.get('baseURL') ?? '', model: q.get('model') ?? 'whisper-1', apiKey: String(req.headers['x-api-key'] ?? '') || undefined };
+          // `upload`: a recording already here (a narration clip); otherwise the body is a new one.
+          const existing = q.get('upload');
+          if (existing) return send(res, 200, await transcribeKept(existing, service, q.get('again') === '1'));
           const upload = await saveUpload(req, q.get('ext') ?? 'webm');
-          return send(res, 200, await transcribe(upload, { baseURL: q.get('baseURL') ?? '', model: q.get('model') ?? 'whisper-1', apiKey: String(req.headers['x-api-key'] ?? '') || undefined }));
+          return send(res, 200, await transcribe(upload, service));
         }
         if (url.pathname === '/api/uploads' && req.method === 'POST') return send(res, 200, { upload: await saveUpload(req, url.searchParams.get('ext') ?? 'mp3') });
         if (parts[0] === 'uploads' && parts[1] && req.method === 'GET') return await serveUpload(req, res, parts[1]);

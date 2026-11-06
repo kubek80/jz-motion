@@ -27,7 +27,7 @@ export function useTimingKeys(handlers: TimingKeys) {
     const onKey = (e: KeyboardEvent) => {
       if ((e.target as HTMLElement).closest('input, textarea, select')) return;
       // A right-click menu is open: Esc closes it, not the Timing window.
-      if (document.querySelector('.context-menu')) return;
+      if (document.querySelector('.context-menu, .transcript-window')) return;
       const k = keys.current;
       if (k.recording) {
         // Space during recording: hold the prompter/board still while the mic keeps capturing,

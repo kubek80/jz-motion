@@ -24,6 +24,8 @@ export function useNowPlaying({ presentation, clicks, drag, time, total, now, tt
   const currentIndex = Math.max(0, shown.reduce((found, c, i) => (c.t <= time + 1e-3 ? i : found), -1));
   const current = shown[currentIndex];
   const next = shown[currentIndex + 1];
+  /** The beat before the current one (what was just said), once the current one has started. */
+  const prev = currentIndex > 0 && current && current.t <= time + 1e-3 ? shown[currentIndex - 1] : undefined;
   const beatOf = (c?: Click) => (c ? presentation.scenes[c.scene].beats[c.beat] : undefined);
   const sceneTitle = (c?: Click) => (c ? presentation.scenes[c.scene].title ?? presentation.scenes[c.scene].id : '');
   const cuedCount = clicks.filter((c) => c.cued).length;
@@ -31,6 +33,7 @@ export function useNowPlaying({ presentation, clicks, drag, time, total, now, tt
   // Sentences of the current and next beat, each with a duration from its generated clip or an estimate.
   const nowLines = sentencesOf(beatOf(current)?.notes, tts, voicer);
   const nextLines = sentencesOf(beatOf(next)?.notes, tts, voicer);
+  const prevLines = sentencesOf(beatOf(prev)?.notes, tts, voicer);
   const durOf = (l: SentenceInfo) => l.entry?.duration ?? l.estimated;
   const budget = nowLines.reduce((s, l) => s + durOf(l), 0);
   const anyClip = nowLines.some((l) => l.entry);
@@ -64,7 +67,7 @@ export function useNowPlaying({ presentation, clicks, drag, time, total, now, tt
   currentTRef.current = current?.t ?? 0;
   const getBeatElapsed = useRef(() => Math.max(0, nowRef.current() - currentTRef.current)).current;
 
-  return { shown, currentIndex, current, next, beatOf, sceneTitle, cuedCount, nowLines, nextLines, budget, anyClip, beatElapsed, playDur, activeLine, getBeatElapsed };
+  return { shown, currentIndex, current, next, prev, prevLines, beatOf, sceneTitle, cuedCount, nowLines, nextLines, budget, anyClip, beatElapsed, playDur, activeLine, getBeatElapsed };
 }
 
 export type NowPlaying = ReturnType<typeof useNowPlaying>;

@@ -120,7 +120,7 @@ export class BoardEditing {
    * Where an element's editable text (`text`, `label` or `title`) is on screen, for editing it in place.
    * Without that text yet (an icon with no label), the spot just below the element.
    */
-  textField(id: string, field: string): { left: number; top: number; width: number; height: number; fontPx: number; color: string; align: 'start' | 'middle' | 'end'; family: string; weight: string } | undefined {
+  textField(id: string, field: string): { left: number; top: number; width: number; height: number; fontPx: number; color: string; align: 'start' | 'middle' | 'end'; family: string; weight: string; fill?: string; outline?: { color: string; px: number } } | undefined {
     const n = this.nodes.get(id);
     if (!n) return undefined;
     const color = getComputedStyle(n.outer).color;
@@ -128,7 +128,15 @@ export class BoardEditing {
     if (node) {
       const r = node.getBoundingClientRect();
       const scale = node.getScreenCTM()?.a ?? 1;
+      // Bold text is drawn as an outline around a dark fill: the edit box copies both, so it looks the same.
+      const cs = getComputedStyle(node);
+      const strokePx = Number(node.getAttribute('stroke-width') ?? 0) * scale;
+      const look = {
+        ...(cs.fill.startsWith('rgb') ? { fill: cs.fill } : {}),
+        ...(strokePx > 0 && cs.stroke.startsWith('rgb') ? { outline: { color: cs.stroke, px: strokePx } } : {}),
+      };
       return {
+        ...look,
         left: r.left, top: r.top, width: r.width, height: r.height, fontPx: Number(node.getAttribute('font-size')) * scale, color,
         align: (node.getAttribute('text-anchor') ?? 'middle') as 'start' | 'middle' | 'end',
         family: node.getAttribute('font-family') ?? board.font, weight: node.getAttribute('font-weight') ?? '700',

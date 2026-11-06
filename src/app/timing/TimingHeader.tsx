@@ -23,10 +23,12 @@ interface Props {
   /** Clips whose recording isn't on this computer, and removing them all. */
   missingCount: number;
   removeMissing: () => void;
+  /** Opens the transcript of every clip whose recording is here. */
+  onTranscript: () => void;
   onClose: () => void;
 }
 
-export function TimingHeader({ clickCount, cuedCount, primary, clips, voiceDuration, loadVoiceover, onVoiceover, voicer, missingSentences, generating, generateVoice, onCues, recording, busy, makeTake, missingCount, removeMissing, onClose }: Props) {
+export function TimingHeader({ clickCount, cuedCount, primary, clips, voiceDuration, loadVoiceover, onVoiceover, voicer, missingSentences, generating, generateVoice, onCues, recording, busy, makeTake, missingCount, removeMissing, onTranscript, onClose }: Props) {
   return (
     <header className="timing-head">
       <h2>Timing</h2>
@@ -45,6 +47,9 @@ export function TimingHeader({ clickCount, cuedCount, primary, clips, voiceDurat
           title="These clips point at recordings that aren't on this computer (uploads/ isn't in git, so they stay on the computer that recorded them). Removes just those clips; the cues stay.">
           Remove {missingCount} missing {missingCount === 1 ? 'clip' : 'clips'}
         </button>
+      )}
+      {clips.length > missingCount && (
+        <button onClick={onTranscript} disabled={recording} title="Turn what you recorded into text, under the beats you said it over: copy it, or put it into the speaker notes">Transcript</button>
       )}
       {primary && <button onClick={() => onVoiceover(undefined)} title="Stop using this voice-over (the cues stay)">Remove</button>}
       <button

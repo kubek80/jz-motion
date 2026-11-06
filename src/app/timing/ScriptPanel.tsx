@@ -1,5 +1,6 @@
 // The script beside the board (large in prompter mode): the recording banner, the Now beat with
-// its sentences, budget and live countdown, the Next beat, and editing either beat's notes.
+// its sentences, budget and live countdown, the Next beat, and editing either beat's notes. Above them,
+// dimmed, the end of the beat before (what you just said), so you can pick up where you left off.
 import { fmt } from './format';
 import { ScriptLine } from './ScriptLine';
 import type { NotesEditing } from './useNotesEditing';
@@ -15,7 +16,7 @@ interface Props {
 }
 
 export function ScriptPanel({ width, recording, recPaused, time, np, notes }: Props) {
-  const { current, next, beatOf, sceneTitle, nowLines, nextLines, budget, anyClip, beatElapsed, playDur, activeLine, getBeatElapsed } = np;
+  const { current, next, prev, prevLines, beatOf, sceneTitle, nowLines, nextLines, budget, anyClip, beatElapsed, playDur, activeLine, getBeatElapsed } = np;
   const { editingThis, startEditing, saveEditing, setEditingBeat, draftNotes, setDraftNotes } = notes;
   return (
     <aside className="timing-script" style={{ flexBasis: width + 'px' }}>
@@ -24,6 +25,22 @@ export function ScriptPanel({ width, recording, recPaused, time, np, notes }: Pr
           <span className="dot" />
           {recPaused ? <>Paused {fmt(time)} · prompter held, mic still on · <b>Space</b> resume · <b>→</b> next · <b>Esc</b> stop</>
             : <>Recording {fmt(time)} · <b>→</b> next line · <b>Space</b> pause prompter · <b>←</b> back · <b>Esc</b> stop</>}
+        </div>
+      )}
+      {prev && prevLines.length > 0 && !editingThis(prev) && (
+        <div className="prev" onClick={() => startEditing(prev.scene, prev.beat, beatOf(prev)?.notes)} title="What you just said (click to edit)">
+          <span className="muted">Before · {beatOf(prev)?.title ?? `Beat ${prev.beat + 1}`}</span>
+          <p>{prevLines.length > 2 && <span className="muted">… </span>}{prevLines.slice(-2).map((l) => l.text).join(' ')}</p>
+        </div>
+      )}
+      {prev && editingThis(prev) && (
+        <div className="prev editing">
+          <span className="muted">Before · {beatOf(prev)?.title ?? `Beat ${prev.beat + 1}`}</span>
+          <textarea className="notes-edit" autoFocus value={draftNotes} onChange={(e) => setDraftNotes(e.target.value)} onBlur={saveEditing}
+            onKeyDown={(e) => {
+              if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); setEditingBeat(null); }
+              if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); saveEditing(); }
+            }} />
         </div>
       )}
       <div className="now">
@@ -63,7 +80,7 @@ export function ScriptPanel({ width, recording, recPaused, time, np, notes }: Pr
             onClick={() => current && startEditing(current.scene, current.beat, beatOf(current)?.notes)}
             title="Click to edit"
           >
-            {nowLines.map((line, i) => <ScriptLine key={i} line={line} active={i === activeLine} playDur={playDur(line)} startAt={nowLines.slice(0, i).reduce((s, l) => s + playDur(l), 0)} getBeatElapsed={getBeatElapsed} />)}
+            {nowLines.map((line, i) => <ScriptLine key={i} line={line} said={activeLine >= 0 && i < activeLine} active={i === activeLine} playDur={playDur(line)} startAt={nowLines.slice(0, i).reduce((s, l) => s + playDur(l), 0)} getBeatElapsed={getBeatElapsed} />)}
           </ul>
         ) : (
           <p className="clickable" onClick={() => current && startEditing(current.scene, current.beat, '')}><span className="muted">Click to add speaker notes</span></p>
