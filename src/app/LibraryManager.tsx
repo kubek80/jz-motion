@@ -6,6 +6,9 @@ import { board, palette, type ColorName } from '../engine/palette';
 import { confirmDialog } from './confirm';
 import type { CreatorStart } from './Creator';
 import { IconPreview } from './editor/IconPreview';
+import type { PlacedImage } from './images';
+import { formatBytes, useMediaList } from './media';
+import { MediaPanel } from './MediaPanel';
 import { MarkerTray } from './MarkerTray';
 import { deleteFromLibrary, renameInLibrary, saveToLibrary, userItems } from './userLibrary';
 
@@ -52,8 +55,8 @@ function allItems(): Item[] {
 
 interface Props {
   onClose: () => void;
-  /** Present when opened from the editor: puts the item on the board. */
-  onAdd?: (item: { kind: 'icon' | 'iso'; name: string }) => void;
+  /** Present when opened from the editor: puts the item (or a picture from Media) on the board. */
+  onAdd?: (item: { kind: 'icon' | 'iso'; name: string } | { kind: 'image'; image: PlacedImage }) => void;
   /** Opens "New with AI" for this kind of item, optionally continuing from an existing one. */
   onCreate?: (kind: 'icon' | 'logo' | 'clipart' | '3d', start?: CreatorStart) => void;
   /** Something in the library changed (renamed, deleted, edited). */
@@ -66,7 +69,8 @@ interface Props {
 export function LibraryManager({ onClose, onAdd, onCreate, onChanged, version: outside = 0 }: Props) {
   const [version, setVersion] = useState(0);
   const items = useMemo(allItems, [version, outside]);
-  const [group, setGroup] = useState<LibraryGroup>('all');
+  const [group, setGroup] = useState<LibraryGroup | 'media'>('all');
+  const media = useMediaList(outside);
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState<string | null>(null);
 
@@ -76,7 +80,7 @@ export function LibraryManager({ onClose, onAdd, onCreate, onChanged, version: o
   const shown = useMemo(() => {
     const q = query.trim().toLowerCase();
     return items
-      .filter((i) => inGroup(i, group))
+      .filter((i) => inGroup(i, group as LibraryGroup))
       .filter((i) => !q || i.name.includes(q) || i.tags.some((t) => t.includes(q)) || i.description.toLowerCase().includes(q))
       .sort((a, b) => a.name.localeCompare(b.name));
   }, [items, group, query]);
@@ -111,7 +115,7 @@ export function LibraryManager({ onClose, onAdd, onCreate, onChanged, version: o
     <div className="libman">
       <header className="libman-head">
         <h2>Library</h2>
-        <input className="search" autoFocus placeholder={`Search ${items.length} icons, logos, clipart and 3D models…`} value={query} onChange={(e) => setQuery(e.target.value)} />
+        <input className="search" autoFocus placeholder={group === 'media' ? `Search ${media.items.length} pictures, recordings and sounds by name…` : `Search ${items.length} icons, logos, clipart and 3D models…`} value={query} onChange={(e) => setQuery(e.target.value)} />
         <span className="spacer" />
         {onCreate && (
           <div className="new-ai">
@@ -131,8 +135,14 @@ export function LibraryManager({ onClose, onAdd, onCreate, onChanged, version: o
               <span>{g.label}</span><span className="count">{counts[g.group]}</span>
             </button>
           ))}
+          <button className={`media-nav ${group === 'media' ? 'on' : ''}`} onClick={() => { setGroup('media'); media.reload(); }} title="Pictures, screen recordings and sounds used on boards">
+            <span>Media</span><span className="count">{media.available ? `${media.items.length} · ${formatBytes(media.totalBytes)}` : ''}</span>
+          </button>
           <p className="muted small">Things you make with AI are saved in <code>library/</code> next to your presentations, and models writing presentations can use them.</p>
         </nav>
+        {group === 'media' ? (
+          <MediaPanel {...media} query={query} onPlace={onAdd && ((image) => onAdd({ kind: 'image', image }))} onClose={onClose} />
+        ) : (<>
         <div className="libman-main">
           {shown.length === 0 && <p className="muted">Nothing matches.</p>}
           {sections.map(({ source, items: list }) => (
@@ -166,6 +176,7 @@ export function LibraryManager({ onClose, onAdd, onCreate, onChanged, version: o
             <p className="muted">Select something to see it drawn and its details.{onAdd ? ' Double-click to put it on the board.' : ''}</p>
           )}
         </aside>
+        </>)}
       </div>
     </div>
   );
@@ -272,7 +283,6 @@ function Detail({ item, onAdd, onRefine, onChanged, onGone, onRenamed }: {
     <div className="detail">
       <DrawPreview element={element} color={color} />
       <MarkerTray value={color} onChange={setColor} />
-      {/* 'palette' import kept lint-happy via Detail — swatch row replaced by marker tray above. */}
       <div className="detail-head">
         <h3>{item.name}</h3>
         <span className="kind">{KIND_LABEL[item.kind]}</span>
