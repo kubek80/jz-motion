@@ -127,12 +127,12 @@ Actions with `target` accept one id or a list. With a list, targets start `stagg
 | `draw` | | icon/box 1.2, arrow 0.8, text ~0.06 per character | Draws strokes in order, then writes labels. Text is written left to right. |
 | `fade-in` | | 0.5 | |
 | `pop` | | 0.45 | Scales in with a bounce. |
-| `fade-out` | | 0.5 | |
-| `erase` | | 0.6 | Fades out with a blur smear. Stops flows on it. |
+| `fade-out` | | 0.5 | Circles drawn around the target fade with it. Something already off the board is left alone. |
+| `erase` | | 0.6 | Fades out with a blur smear. Stops flows on it; circles drawn around it go too. |
 | `pulse` | `times` (1) | 0.5 per pulse | Grows and shrinks to draw attention. |
 | `move` | `to: {x, y}` | 1 | Not for arrows (arrows don't follow moves yet). |
 | `recolor` | `color` | 0.4 | |
-| `circle` | `color` (yellow), `id` | 0.7 | Draws a hand-drawn loop around the target(s). The loop is an element with id `id` or `<target>-circle`, so it can be erased later. |
+| `circle` | `color` (yellow), `id` | 0.7 | Draws a hand-drawn loop around the target(s). The loop is an element with id `id` or `<target>-circle`, so it can be erased later; fading out or erasing what it circles removes it too. |
 | `flow` | `on` (true), `reverse` (false), `speed` (160) | instant | Dots travel along an arrow and keep going between beats. `"on": false` stops them. Arrows only. |
 | `set-values` | `values` (one number per data item) | 1.2 | Animates a chart to new values. |
 | `rotate` | `to` or `by` (90) | 1.2 | Turns an iso object to an angle or by an amount, in degrees. |

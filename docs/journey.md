@@ -500,3 +500,18 @@ Git keeps every version of every file in every clone, so each re-captured screen
 - `docs/journey/` and the older history stay in plain git; the old screenshots already in history are not rewritten.
 
 **Checked by:** with the rules in place, `git lfs ls-files` lists the 9 media files and not the index after a renormalize; the push of those LFS files from the cloud session was refused (403), so that step moved to Jakub's computer.
+
+## Step 36: Every action in the menu, clearer action settings, and beats you can edit while watching
+
+Jakub couldn't find **Fade out** under **+ action**, found that fade-outs sometimes did nothing, wanted the action controls easier to understand, and wanted to change beats in Play mode while seeing each element as its action fires.
+
+- **+ action** offered 12 of the 18 actions (fade out, recolour, rotate, spin, explode and new values were missing). It now lists all of them in groups (bring in, take away, point at, view, move and play, data and timing), each with a line on what it does. Ones that don't fit what is selected are greyed out with the reason ("Only for 3D models", "Select something on the board first"). New ones start with values that work (recolour to yellow, rotate by 90°, a chart's new values from its current ones). Everything about the actions lives in one place, `editor/actionInfo.ts`.
+- **Why fade-out "didn't work":** in "Edit text, change colour", a beat circles the headline area and a later beat fades out that area. The area is invisible on the board and the circle is a separate drawing, so the circle stayed. Fading out or erasing something now takes the circles drawn around it too. Fading out something that is already off the board did briefly flash it at full brightness first; it now does nothing, and the action's properties say so in plain words.
+- **An action's properties** start with what it does ("Fade out: makes it disappear gently"), then **When**: *after the previous* or *with the previous* (*on the click* for a beat's first action), *wait first*, and *takes* (empty shows the length it gets anyway), with when it actually runs after the click. Below: *acts on*, *one after another* and the action's own settings, with friendlier names.
+- **Play mode** keeps the storyboard under the board, and it follows the playback: finished beats dim, the running beat is lit, each action glows while it runs with a playhead moving through it and gets a tick when done, and what it animates is outlined on the board (not in full screen, so presenting stays clean). Click an action or beat to change it in Properties, which now works in Play mode too; ⏮ on a beat goes to just before it. The old list of beat names under the controls is gone; the storyboard does its job.
+
+**Checked by:** 70 unit tests (new: circles leave with what they circle, nothing flashes when it is already gone); the real scene compiled again (the headline's circle now fades with it at 5.0 s); a browser run on a copy of "about this app, with edit demo": picking the screenshot area, the grouped menu, adding a fade-out, its properties, then Play mode caught mid-beat (beat 2 lit, its circle action running with the playhead, beat 1 ticked off, the area outlined on the board), and selecting an action while in Play mode.
+
+![The + action menu: every action, grouped and explained](journey/73-action-menu.jpg)
+![An action's properties: what it does, and when](journey/74-action-properties.jpg)
+![Play mode: the storyboard follows the playback](journey/75-play-storyboard.jpg)

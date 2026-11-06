@@ -38,7 +38,7 @@ Presentations, your library and your pictures, recordings and sounds are plain f
 | Select, move, resize | Click and drag; corner handles resize. Shift+click selects several. |
 | Edit text in place | Double-click a text, label or chart title (or select it and press Enter). Enter keeps it, Esc cancels. Code text takes several lines: Ctrl+Enter keeps it. |
 | Properties | Right panel: position and size like a drawing program (drag a label such as **W** sideways to change it), colours as marker tips, styles as pictures (text: marker, bold, code; lines: solid, dashed, dotted; thickness; arrowheads; chart types). Hover **?** for help. Ids and rarely needed fields are under *Advanced*. |
-| Beats | The strip under the board: one card per click, left to right, each with its actions on a small timeline. **+ beat** draws the selected elements; **+ action** adds draw, fade, pop, pulse, circle, spotlight, camera, move, flow, erase or a pause. Drag actions to reorder them or move them to another beat. |
+| Beats | The strip under the board: one card per click, left to right, each with its actions on a small timeline. **+ beat** draws the selected elements; **+ action** lists every action, grouped (bring in, take away, point at, view, move and play, data and timing) with a line on what each does; ones that don't fit what is selected are greyed out with the reason. Click an action to see what it does and when it runs: after or with the previous one, a wait first, and how long it takes. Drag actions to reorder them or move them to another beat. |
 | Scenes | Left panel: **+ New scene**, **✦ New scene with AI** (describe it, talk it over, add it after the open scene). |
 | Pan, zoom | Drag the empty board, scroll. **Reset view** (0) returns to the scene's start view, **Fit all** (Shift+0) shows everything. |
 | Undo, delete, duplicate | Ctrl+Z / Ctrl+Shift+Z, Delete, Ctrl+D |
@@ -75,6 +75,8 @@ Every model reply is checked against the format and the drawing rules, and sent 
 Or present live: **Play** mode → **● Record** (tick *camera* to film yourself); your voice, camera and clicks become a take.
 
 Then the **Video** tab: pick the take, add a friend's recording (with **Auto-sync**), choose where the camera goes per beat or scene (`layout`: board, pip, pip-left, camera, side), and **Export MP4** (1080p or 4K, 30 or 60 fps) into `exports/`. Without a take, the video uses even pauses between beats.
+
+**In Play mode** the storyboard stays under the board and follows the playback: the running beat is lit, each action glows while it runs (with a playhead) and gets a tick when done, and what it animates is outlined on the board (not in full screen). Click an action or beat to change it in Properties while you watch; ⏮ on a beat goes to just before it.
 
 **Play mode keys:** → / Space / Page Down / click: next beat (finishes a running one first) · ← / Page Up: previous · F: full screen.
 

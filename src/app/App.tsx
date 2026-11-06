@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { compile, Stage, type StagePosition } from '../engine';
 import type { Camera } from '../engine/schema';
-import { palette, type ColorName } from '../engine/palette';
 import type { CreateRequest } from './Creator';
 import type { ChatMessageView } from './Chat';
 import { imageFrom } from './images';
@@ -25,6 +24,8 @@ import type { Selection } from './editor/types';
 import { useBoardPointer } from './editor/useBoardPointer';
 import { useEditActions } from './editor/useEditActions';
 import { useEditorKeys } from './editor/useEditorKeys';
+import { useElementInfo } from './editor/useElementInfo';
+import { useLiveOutline } from './editor/useLiveOutline';
 import { usePictureInput } from './editor/usePictureInput';
 import { useHistory } from './useHistory';
 
@@ -250,10 +251,8 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
   // ---------------------------------------------------------------- render
 
   const compiledScene = result.ok ? result.presentation.scenes[sceneIndex] : undefined;
-  const elementColors = useMemo(
-    () => Object.fromEntries((compiledScene?.elements ?? []).map((e) => [e.id, palette[(compiledScene?.final[e.id]?.color ?? e.color ?? 'white') as ColorName] ?? palette.white])),
-    [compiledScene],
-  );
+  const { colors: elementColors, types: elementTypes } = useElementInfo(compiledScene);
+  useLiveOutline(stage, mode === 'play', compiledScene, scene?.beats, pos);
 
   return (
     <div className={`app mode-${mode}`}>
@@ -316,27 +315,31 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
           <Resizer orientation="horizontal" value={playbackH.value} onChange={playbackH.setValue} onReset={playbackH.reset} min={240} max={2000} />
 
           {mode === 'play' && (
-            <PlayControls stage={stage} pos={pos} recorder={recorder} withCamera={withCamera} setWithCamera={setWithCamera} onVideo={() => setPanel('video')} compiledScene={compiledScene} />
+            <PlayControls stage={stage} pos={pos} recorder={recorder} withCamera={withCamera} setWithCamera={setWithCamera} onVideo={() => setPanel('video')} />
           )}
 
           {mode === 'edit' && doc && scene && (
             <SceneAsk presentation={text} scene={sceneIndex} title={scene.title ?? scene.id} onApply={(json) => { log('ai:sceneAsk', { bytes: json.length }); history.set(json); }} />
           )}
-          {mode === 'edit' && doc && scene && (
+          {doc && scene && (
             <Beats
               beats={scene.beats ?? []}
               selection={selection}
               picked={picked.filter((id) => ids.includes(id))}
               timing={compiledScene?.beats.map((b) => b.actions)}
               colors={elementColors}
-              onSelect={(s) => { setSelection(s); if (s) setPicked([]); }}
+              types={elementTypes}
+              chartData={(cid) => compiledScene?.final[cid]?.chart?.values}
+              live={mode === 'play' && compiledScene ? { time: pos.time, beatStarts: compiledScene.beats.map((b) => b.start), beatEnds: compiledScene.beats.map((b) => b.end) } : undefined}
+              onJump={mode === 'play' ? (b) => stage.current?.jumpToBeat(b) : undefined}
+              onSelect={(s) => { setSelection(s); if (s) setPicked([]); if (s) setPanel('props'); }}
               onChange={(beats) => update(updateBeats(doc, sceneIndex, () => beats))}
             />
           )}
         </section>
 
         <RightPanel
-          id={id} text={text} doc={doc} result={result} mode={mode} panel={panel} setPanel={setPanel} sceneIndex={sceneIndex}
+          id={id} text={text} doc={doc} result={result} panel={panel} setPanel={setPanel} sceneIndex={sceneIndex}
           picked={picked} setPicked={setPicked} editable={editable} ids={ids} selection={selection} setSelection={setSelection}
           beatCount={scene?.beats?.length ?? 0} update={update} history={history} chatLog={chatLog} setChatLog={setChatLog}
           videoRefreshKey={`${recorder.state.lastTake?.id}:${madeTake}`} madeTake={madeTake}

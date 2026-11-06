@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
+import { ActionEditor } from './ActionEditor';
 import { Fields } from './Fields';
 import type { Raw, RawDoc } from './doc';
-import { actionKinds, actionSchemas, beatSchema, elementSchemas, sceneSchema } from './schemas';
+import { beatSchema, elementSchemas, sceneSchema } from './schemas';
 import type { Selection } from './types';
 
 interface Props {
@@ -18,6 +19,8 @@ interface Props {
   /** Adds a beat after the existing ones. */
   onAddBeat: (beat: Raw) => void;
   onAction: (beat: number, action: number, next: Raw) => void;
+  /** When an action runs (seconds from its beat's click), from the compiled scene. */
+  actionTime?: (beat: number, action: number) => { start: number; end: number } | undefined;
   onBeat: (beat: number, key: string, value: unknown) => void;
   onScene: (key: string, value: unknown) => void;
   onTitle: (title: string) => void;
@@ -72,34 +75,7 @@ export function Inspector(p: Props) {
     const { beat, action } = p.selection;
     const a = scene.beats?.[beat]?.actions[action];
     if (!a) return null;
-    return (
-      <div className="inspector">
-        <h3>Action <span className="muted">in beat {beat + 1}</span></h3>
-        <label className="field">
-          <span>do</span>
-          <select
-            value={a.do}
-            onChange={(e) => {
-              // Keep what makes sense across kinds: who it targets and when it runs.
-              const keep = Object.fromEntries(Object.entries(a).filter(([k]) => ['target', 'start', 'delay', 'duration'].includes(k) && k in actionSchemas[e.target.value].properties));
-              p.onAction(beat, action, { do: e.target.value, ...keep });
-            }}
-          >
-            {actionKinds.map((k) => <option key={k} value={k}>{k}</option>)}
-          </select>
-        </label>
-        <Fields
-          schema={actionSchemas[a.do]}
-          value={a}
-          ids={p.ids}
-          onChange={(k, v) => {
-            const next = { ...a, [k]: v };
-            if (v === undefined) delete next[k];
-            p.onAction(beat, action, next);
-          }}
-        />
-      </div>
-    );
+    return <ActionEditor key={`${beat}:${action}`} action={a} beat={beat} index={action} ids={p.ids} time={p.actionTime?.(beat, action)} onChange={(next) => p.onAction(beat, action, next)} />;
   }
   if (p.selection?.kind === 'beat') {
     const { beat } = p.selection;
