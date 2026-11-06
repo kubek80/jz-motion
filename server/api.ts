@@ -129,7 +129,13 @@ async function takes(req: IncomingMessage, res: ServerResponse, parts: string[],
     else if (from) await rename(uploadPath(from), upload);
     else await pipeline(req, createWriteStream(upload));
     const ext = (from ? from.split('.').pop()! : query.get('ext') ?? 'webm').replace(/[^\w]/g, '') || 'webm';
-    return send(res, 200, await addTrack(id, name, upload, ext, Number(query.get('offset') ?? 0)));
+    const trimStartQ = query.get('trimStart');
+    const trimEndQ = query.get('trimEnd');
+    const trim = (trimStartQ !== null || trimEndQ !== null) ? {
+      start: trimStartQ !== null ? Number(trimStartQ) : undefined,
+      end: trimEndQ !== null ? Number(trimEndQ) : undefined,
+    } : undefined;
+    return send(res, 200, await addTrack(id, name, upload, ext, Number(query.get('offset') ?? 0), trim));
   }
   if (sub === 'sync' && name && m === 'POST') {
     const take = await getTake(id);
@@ -165,7 +171,10 @@ function startExport(body: any, appUrl: string): Job { // eslint-disable-line @t
   return job;
 }
 
-const MEDIA_TYPES: Record<string, string> = { mp3: 'audio/mpeg', m4a: 'audio/mp4', wav: 'audio/wav', ogg: 'audio/ogg', webm: 'video/webm', mp4: 'video/mp4', mov: 'video/quicktime', aac: 'audio/aac', flac: 'audio/flac' };
+// `webm` is served as `audio/webm` here: the app records voice as audio-only webm/opus via
+// MediaRecorder; labeling that `video/webm` made Chrome's <audio> refuse to decode the recording.
+// Video uploads use `.mp4`/`.mov`, which keep their video MIME labels.
+const MEDIA_TYPES: Record<string, string> = { mp3: 'audio/mpeg', m4a: 'audio/mp4', wav: 'audio/wav', ogg: 'audio/ogg', webm: 'audio/webm', mp4: 'video/mp4', mov: 'video/quicktime', aac: 'audio/aac', flac: 'audio/flac' };
 
 /** An uploaded recording or voice-over, with range requests so players can seek. */
 async function serveUpload(req: IncomingMessage, res: ServerResponse, file: string) {

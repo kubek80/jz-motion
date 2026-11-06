@@ -13,8 +13,10 @@ import { imageFrom, lastFrame, rememberFrame, uploadImage } from './images';
 import { insertScene } from '../ai/assistant';
 import type { ChatMessageView } from './Chat';
 import { JsonPanel } from './JsonPanel';
+import { Resizer, useResizable } from './Resizer';
 import { VideoPanel } from './VideoPanel';
 import { useRecorder } from './useRecorder';
+import { cuedBeatCount, log, voiceoverSummary } from './debug';
 import { Beats } from './editor/Beats';
 import {
   addElement, addScene, deleteElement, deleteScene, idsInScope, moveItem, renameElement, uniqueId,
@@ -100,6 +102,13 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
   const history = useHistory(initial);
   const text = history.value;
   const [mode, setMode] = useState<Mode>('edit');
+  // Panel sizes the user can drag; persisted per-key in localStorage, double-click resets.
+  const leftW = useResizable('left-w', 230, 180, 520);
+  // Default height = whatever the stylesheet's `calc(100vh - 260px)` evaluates to for this viewport.
+  // Captured at mount so dragging has an absolute starting point; a window resize before any drag
+  // doesn't retroactively change the stored default.
+  const playbackDefault = useMemo(() => Math.max(240, (typeof window !== 'undefined' ? window.innerHeight : 1000) - 260), []);
+  const playbackH = useResizable('playback-h', playbackDefault, 240, 2000);
   const [panel, setPanel] = useState<Panel>('props');
   const [pos, setPos] = useState<StagePosition>({ scene: 0, beat: 0, time: 0, duration: 0, playing: false });
   const [picked, setPicked] = useState<string[]>([]);
@@ -175,7 +184,10 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
   const editable = useMemo(() => new Set((scene?.elements ?? []).map((e) => e.id)), [scene]);
   const ids = useMemo(() => (doc ? [...idsInScope(doc, sceneIndex)] : []), [doc, sceneIndex]);
 
-  const update = useCallback((next: RawDoc) => history.set(JSON.stringify(next, null, 2)), [history]);
+  const update = useCallback((next: RawDoc) => {
+    log('update', { voiceover: voiceoverSummary(next.voiceover), cuedBeats: cuedBeatCount(next), scenes: next.scenes.length });
+    history.set(JSON.stringify(next, null, 2));
+  }, [history]);
 
   // ---------------------------------------------------------------- stage
 
@@ -551,9 +563,10 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
       const typing = (e.target as HTMLElement).closest('textarea, input, select');
       const mod = e.ctrlKey || e.metaKey;
       if (mod && e.key.toLowerCase() === 'z' && !typing) {
-        if (e.shiftKey) k.history.redo();
-        else k.history.undo();
+        if (e.shiftKey) { log('redo:ctrlShiftZ'); k.history.redo(); }
+        else { log('undo:ctrlZ'); k.history.undo(); }
       } else if (mod && e.key.toLowerCase() === 'y' && !typing) {
+        log('redo:ctrlY');
         k.history.redo();
       } else if (typing) {
         return;
@@ -606,6 +619,7 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
   // ---------------------------------------------------------------- files
 
   const replaceAll = (value: string) => {
+    log('replaceAll', { bytes: value.length });
     editCams.current.clear();
     setPicked([]);
     setSelection(null);
@@ -631,11 +645,14 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
           presentationId={id}
           voiceover={doc.voiceover}
           onVoiceover={(v) => {
+            log('onVoiceover', { before: voiceoverSummary(doc.voiceover), after: voiceoverSummary(v) });
             const next = { ...doc };
             if (v) next.voiceover = v; else delete next.voiceover;
             update(next);
           }}
-          onCues={(changes, clearOthers) => update({
+          onCues={(changes, clearOthers) => {
+            log('onCues', { count: changes.length, clearOthers: !!clearOthers, changes, cuedBefore: cuedBeatCount(doc) });
+            return update({
             ...doc,
             scenes: doc.scenes.map((s, si) => ({
               ...s,
@@ -646,7 +663,8 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
                 return next === undefined ? rest : { ...rest, cue: next };
               }),
             })),
-          })}
+          });
+          }}
           onNotes={(scene, beat, notes) => update({
             ...doc,
             scenes: doc.scenes.map((s, si) => si !== scene ? s : ({
@@ -720,8 +738,8 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
           <button className={mode === 'edit' ? 'on' : ''} onClick={() => setMode('edit')}>Edit</button>
           <button className={mode === 'play' ? 'on' : ''} onClick={() => setMode('play')}>Play</button>
         </div>
-        <button onClick={history.undo} disabled={!history.canUndo} title="Undo (Ctrl+Z)">↶</button>
-        <button onClick={history.redo} disabled={!history.canRedo} title="Redo (Ctrl+Shift+Z)">↷</button>
+        <button onClick={() => { log('undo:button'); history.undo(); }} disabled={!history.canUndo} title="Undo (Ctrl+Z)">↶</button>
+        <button onClick={() => { log('redo:button'); history.redo(); }} disabled={!history.canRedo} title="Redo (Ctrl+Shift+Z)">↷</button>
         <button onClick={() => setScriptOpen(true)} disabled={!result.ok} title="Read and edit the whole narration beat by beat, with reading-time estimates">Script</button>
         <button onClick={() => setTimingOpen(true)} disabled={!result.ok} title="Time the beats to a voice-over">Timing</button>
         <button onClick={() => void togglePresent()} title="Full screen (F). Arrows, space or a clicker to step.">Present</button>
@@ -729,7 +747,7 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
       </header>
 
       <div className="main">
-        <aside className="left">
+        <aside className="left" style={{ width: leftW.value }}>
           <div className="scenes">
             {(doc?.scenes ?? []).map((s, i) => (
               <div key={i} className={i === sceneIndex ? 'scene active' : 'scene'} onClick={() => goToScene(i)}>
@@ -752,11 +770,13 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
           </div>
           {mode === 'edit' && doc && <Library onAdd={add} arrowActive={arrowTool} onCreate={() => setCreating({ kind: 'icon' })} onBrowse={() => setLibraryOpen(true)} version={libraryVersion} />}
         </aside>
+        <Resizer orientation="vertical" value={leftW.value} onChange={leftW.setValue} onReset={leftW.reset} min={180} max={520} />
 
         <section className="center">
           <div
             className="frame"
             ref={stageFrame}
+            style={{ maxHeight: playbackH.value }}
             onClick={() => mode === 'play' && stage.current?.next()}
             onPointerDown={onPointerDown}
             onPointerMove={onPointerMove}
@@ -830,6 +850,7 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
             )}
             {!result.ok && mode === 'edit' && <div className="frame-note">The board shows the last valid version. Fix: {result.errors[0]}</div>}
           </div>
+          <Resizer orientation="horizontal" value={playbackH.value} onChange={playbackH.setValue} onReset={playbackH.reset} min={240} max={2000} />
 
           {mode === 'play' && (
             <>
@@ -868,7 +889,7 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
           )}
 
           {mode === 'edit' && doc && scene && (
-            <SceneAsk presentation={text} scene={sceneIndex} title={scene.title ?? scene.id} onApply={(json) => history.set(json)} />
+            <SceneAsk presentation={text} scene={sceneIndex} title={scene.title ?? scene.id} onApply={(json) => { log('ai:sceneAsk', { bytes: json.length }); history.set(json); }} />
           )}
           {mode === 'edit' && doc && scene && (
             <Beats
@@ -891,7 +912,7 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
             <button className={panel === 'video' ? 'on' : ''} onClick={() => setPanel('video')}>Video</button>
           </div>
           {panel === 'ai' ? (
-            <AiPanel current={text} scene={sceneIndex} onUse={(json) => history.set(json)} chat={chatLog} onChat={setChatLog} />
+            <AiPanel current={text} scene={sceneIndex} onUse={(json) => { log('ai:aiPanel', { bytes: json.length }); history.set(json); }} chat={chatLog} onChat={setChatLog} />
           ) : panel === 'video' ? (
             <VideoPanel presentation={text} presentationId={id} refreshKey={`${recorder.state.lastTake?.id}:${madeTake}`} select={madeTake} />
           ) : mode === 'edit' && panel === 'props' && doc ? (
@@ -924,7 +945,7 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
               currentView={() => stage.current?.camera ?? { x: 960, y: 540, zoom: 1 }}
             />
           ) : (
-            <JsonPanel text={text} scene={sceneIndex} errors={result.ok ? [] : result.errors} onText={(v) => history.set(v, { merge: true })} onReplace={replaceAll} />
+            <JsonPanel text={text} scene={sceneIndex} errors={result.ok ? [] : result.errors} onText={(v) => { log('jsonPanel', { bytes: v.length }); history.set(v, { merge: true }); }} onReplace={replaceAll} />
           )}
           {!result.ok && (
             <ul className="errors">

@@ -284,15 +284,41 @@ export const Scene = z.object({
   beats: z.array(Beat).default([]),
 });
 
+/**
+ * One recording placed on the Timing timeline. `upload` is the source file in uploads/; a clip
+ * views the window `[trimStart, trimEnd)` of that source and plays back starting at `offset`
+ * seconds on `lane` (0 = top, 1 = bottom). Trimming or cutting mid-clip is non-destructive — the
+ * underlying file is untouched and the clip can hold several views of the same recording.
+ */
+const Clip = z.object({
+  id: z.string(),
+  upload: z.string(),
+  sourceDuration: z.number().positive(),
+  offset: z.number().min(0).default(0),
+  lane: z.number().int().min(0).max(1).default(0),
+  trimStart: z.number().min(0).default(0),
+  trimEnd: z.number().positive(),
+  name: z.string().optional(),
+});
+
 export const Presentation = z.object({
   version: z.literal(1),
   title: z.string(),
   scenes: z.array(Scene).min(1),
   /**
-   * A narration recorded or made separately, which beats are timed to: each beat's `cue` is seconds into it.
-   * `upload` is the file kept by the local server (uploads/).
+   * The narration beats are timed to: each beat's `cue` is seconds into the whole timeline.
+   * Two shapes are accepted here:
+   *   - Legacy single clip: `{ upload, duration, name? }` — one recording from offset 0 on lane 0.
+   *   - Multi-clip: `{ clips: [...] }` — several recordings on two lanes with their own offsets
+   *     and trims. Takes precedence when present; legacy fields are then ignored.
+   * `clipsOf()` in src/engine/voiceover.ts normalises either shape to a Clip[] everything else uses.
    */
-  voiceover: z.object({ upload: z.string(), duration: z.number().positive(), name: z.string().optional() }).optional(),
+  voiceover: z.object({
+    upload: z.string().optional(),
+    duration: z.number().positive().optional(),
+    name: z.string().optional(),
+    clips: z.array(Clip).optional(),
+  }).optional(),
 });
 
 export type LayoutName = (typeof layoutNames)[number];
@@ -310,3 +336,5 @@ export type Beat = z.infer<typeof Beat>;
 export type Camera = z.infer<typeof Camera>;
 export type Scene = z.infer<typeof Scene>;
 export type Presentation = z.infer<typeof Presentation>;
+export type Clip = z.infer<typeof Clip>;
+export type Voiceover = NonNullable<Presentation['voiceover']>;

@@ -3,7 +3,8 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export type Raw = Record<string, any>;
-export interface RawDoc { version: 1; title: string; scenes: RawScene[]; voiceover?: { upload: string; duration: number; name?: string } }
+export interface RawClip { id: string; upload: string; sourceDuration: number; offset: number; lane: number; trimStart: number; trimEnd: number; name?: string }
+export interface RawDoc { version: 1; title: string; scenes: RawScene[]; voiceover?: { upload?: string; duration?: number; name?: string; clips?: RawClip[] } }
 export interface RawScene { id: string; title?: string; inherit?: boolean; elements?: Raw[]; beats?: RawBeat[]; [k: string]: unknown }
 export interface RawBeat { title?: string; notes?: string; auto?: boolean; cue?: number; actions: Raw[] }
 

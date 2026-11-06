@@ -11,6 +11,12 @@ export interface TrackInput {
   offset: number;
   hasVideo: boolean;
   hasAudio: boolean;
+  /** Source window (seconds). When set, the audio is cut via `atrim` + positioned via `adelay`
+   * rather than `-itsoffset`, so one source file can be mixed in multiple times (e.g. a split take). */
+  trimStart?: number;
+  trimEnd?: number;
+  /** Full source length (for trimmed tracks: used to clamp `trimEnd` when unset). */
+  duration?: number;
 }
 
 export interface FfmpegJob {
@@ -88,9 +94,13 @@ export function buildFfmpegArgs(job: FfmpegJob): string[] {
 
   const args = ['-y', '-hide_banner', '-loglevel', 'error', '-f', 'image2pipe', '-framerate', String(fps), '-c:v', 'mjpeg', '-i', '-'];
   const inputIndex = new Map<string, number>();
+  const trimmed = (t: TrackInput) => t.trimStart !== undefined || t.trimEnd !== undefined;
   job.tracks.forEach((t, i) => {
     inputIndex.set(t.name, i + 1);
-    if (t.offset >= 0) args.push('-itsoffset', t.offset.toFixed(3), '-i', t.path);
+    // Trimmed audio tracks are offset in the filter graph (atrim + adelay) so one source file can
+    // appear multiple times at different positions. Other tracks keep the old `-itsoffset`/`-ss`.
+    if (trimmed(t)) args.push('-i', t.path);
+    else if (t.offset >= 0) args.push('-itsoffset', t.offset.toFixed(3), '-i', t.path);
     else args.push('-ss', (-t.offset).toFixed(3), '-i', t.path);
   });
 
@@ -116,7 +126,19 @@ export function buildFfmpegArgs(job: FfmpegJob): string[] {
   });
 
   const audio = job.tracks.filter((t) => t.hasAudio);
-  audio.forEach((t, i) => graph.push(`[${inputIndex.get(t.name)}:a]aresample=48000:async=1:first_pts=0[a${i}]`));
+  audio.forEach((t, i) => {
+    const input = `[${inputIndex.get(t.name)}:a]`;
+    const out = `[a${i}]`;
+    if (trimmed(t)) {
+      const start = (t.trimStart ?? 0).toFixed(3);
+      const end = (t.trimEnd ?? t.duration ?? 1e9).toFixed(3);
+      const delayMs = Math.max(0, Math.round(t.offset * 1000));
+      const delay = delayMs > 0 ? `,adelay=${delayMs}:all=1` : '';
+      graph.push(`${input}atrim=start=${start}:end=${end},asetpts=PTS-STARTPTS${delay},aresample=48000:async=1:first_pts=0${out}`);
+    } else {
+      graph.push(`${input}aresample=48000:async=1:first_pts=0${out}`);
+    }
+  });
   if (audio.length > 1) graph.push(`${audio.map((_, i) => `[a${i}]`).join('')}amix=inputs=${audio.length}:normalize=0:duration=longest[aout]`);
   else if (audio.length === 1) graph.push('[a0]anull[aout]');
 

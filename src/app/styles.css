@@ -25,6 +25,15 @@ button:hover, .file:hover, select:hover { border-color: var(--accent); }
 .spacer { flex: 1; }
 
 .main { flex: 1; display: flex; min-height: 0; }
+
+/* Draggable panel dividers. Thin line that lights up on hover; wider hit-target centred on it. */
+.resizer { position: relative; flex-shrink: 0; background: transparent; z-index: 1; }
+.resizer::before { content: ''; position: absolute; background: var(--line); transition: background 120ms; }
+.resizer:hover::before, .resizer.dragging::before { background: var(--accent); box-shadow: 0 0 8px color-mix(in srgb, var(--accent) 60%, transparent); }
+.resizer-h { width: 100%; height: 10px; cursor: row-resize; touch-action: none; }
+.resizer-h::before { left: 0; right: 0; top: 4px; height: 2px; border-radius: 1px; }
+.resizer-v { width: 10px; cursor: col-resize; touch-action: none; align-self: stretch; }
+.resizer-v::before { top: 0; bottom: 0; left: 4px; width: 2px; border-radius: 1px; }
 button:disabled { opacity: 0.4; cursor: default; border-color: var(--line); }
 input, textarea, select { font: inherit; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 5px; padding: 4px 6px; }
 .toggle { display: flex; }
@@ -33,7 +42,7 @@ input, textarea, select { font: inherit; color: var(--text); background: var(--b
 .toggle button:last-child { border-radius: 0 6px 6px 0; }
 .toggle button.on, .tabs button.on { border-color: var(--accent); color: var(--accent); }
 
-.left { width: 230px; display: flex; flex-direction: column; border-right: 1px solid var(--line); min-height: 0; }
+.left { width: var(--left-w, 230px); min-width: 180px; max-width: 520px; display: flex; flex-direction: column; border-right: 1px solid var(--line); min-height: 0; flex-shrink: 0; }
 .scenes { padding: 10px; display: flex; flex-direction: column; gap: 6px; overflow: auto; max-height: 40%; }
 .scene { display: flex; gap: 8px; align-items: center; padding: 5px 8px; border: 1px solid var(--line); border-radius: 6px; cursor: pointer; background: var(--panel); }
 .scene.active { border-color: var(--accent); }
@@ -60,7 +69,7 @@ input, textarea, select { font: inherit; color: var(--text); background: var(--b
 
 
 .center { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 10px; padding: 14px; overflow: auto; }
-.frame { position: relative; aspect-ratio: 16 / 9; width: 100%; max-height: calc(100vh - 260px); margin: 0 auto; background: #000; border-radius: 8px; overflow: hidden; flex-shrink: 0; touch-action: none; }
+.frame { position: relative; aspect-ratio: 16 / 9; width: 100%; max-height: var(--playback-max-h, calc(100vh - 260px)); margin: 0 auto; background: #000; border-radius: 8px; overflow: hidden; flex-shrink: 0; touch-action: none; }
 .mode-play .frame { cursor: pointer; }
 .mode-edit .frame { cursor: crosshair; }
 .frame:fullscreen { max-height: none; border-radius: 0; }
@@ -443,10 +452,10 @@ body.dragging { user-select: none; -webkit-user-select: none; }
 .file-btn { display: inline-flex; align-items: center; padding: 4px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); cursor: pointer; font-size: 13px; max-width: 420px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .file-btn:hover { border-color: var(--accent); }
 .file-btn input { display: none; }
-.timing-body { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 14px; padding: 14px 16px 6px; }
-.timing-board { min-height: 0; aspect-ratio: 16 / 9; max-height: 100%; max-width: 100%; justify-self: center; border-radius: 8px; overflow: hidden; background: #000; }
+.timing-body { flex: 1; min-height: 0; display: flex; gap: 10px; padding: 14px 16px 6px; align-items: stretch; }
+.timing-board { flex: 1 1 0; min-width: 0; aspect-ratio: 16 / 9; max-height: 100%; max-width: 100%; align-self: center; border-radius: 8px; overflow: hidden; background: #000; }
 .timing-board svg { width: 100%; height: 100%; }
-.timing-script { display: flex; flex-direction: column; gap: 12px; overflow: auto; }
+.timing-script { flex: 0 0 var(--timing-script-w, 360px); min-width: 180px; display: flex; flex-direction: column; gap: 12px; overflow: auto; }
 .timing-script > div { display: flex; flex-direction: column; gap: 4px; padding: 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
 .timing-script .now { border-color: color-mix(in srgb, var(--accent) 50%, var(--line)); }
 .timing-script .now p { font-size: 17px; line-height: 1.45; margin: 4px 0 0; }
@@ -459,15 +468,37 @@ body.dragging { user-select: none; -webkit-user-select: none; }
 .timing-controls .tap.on { border-color: #ff4fd8; color: #ff4fd8; box-shadow: 0 0 10px #ff4fd855; }
 .timing-controls .tap-now { border-color: #ff4fd8; color: #ff4fd8; }
 .timing-controls .zoom { display: flex; align-items: center; gap: 6px; }
-.timing-lane { height: 200px; overflow-x: auto; overflow-y: hidden; border-top: 1px solid var(--line); background: #0b0e11; cursor: text; flex-shrink: 0; }
-.timing-track { position: relative; height: 100%; }
-.timing-track .ruler { position: relative; height: 22px; border-bottom: 1px solid var(--line); }
+.timing-lane { height: var(--timing-lane-h, 200px); overflow-x: auto; overflow-y: hidden; border-top: 1px solid var(--line); background: #0b0e11; cursor: text; flex-shrink: 0; }
+/* Track = ruler + clip lanes + clicks, stacked. Ruler and clip lanes are fixed size; the clicks
+   area (where the per-beat markers live with their colored stems and flags) fills whatever height
+   is left, so dragging the timeline bigger gives the beat flags more vertical room instead of
+   leaving empty space below them. */
+.timing-track { position: relative; height: 100%; display: flex; flex-direction: column; }
+.timing-track .ruler { position: relative; flex: 0 0 22px; border-bottom: 1px solid var(--line); }
 .timing-track .ruler span { position: absolute; top: 4px; font-size: 11px; color: var(--muted); transform: translateX(-50%); font-variant-numeric: tabular-nums; }
 .timing-track .ruler span::after { content: ''; position: absolute; left: 50%; top: 14px; height: 5px; border-left: 1px solid var(--line); }
-.timing-track .wave { position: relative; height: 80px; }
-.timing-track .wave canvas { position: absolute; top: 0; height: 80px; }
+/* Clip lanes: two horizontal strips (lane 0 on top, lane 1 below) where each recording clip sits
+   as a draggable block. Each clip paints its own waveform inside its body, so peaks travel with
+   the clip as it's moved or trimmed. */
+.timing-track .clip-lanes { position: relative; flex: 0 0 76px; }
 .wave-empty { position: absolute; left: 24px; top: 30px; font-size: 12px; }
-.timing-track .clicks { position: relative; height: 96px; }
+.clip-block { position: absolute; height: 32px; border-radius: 6px; cursor: grab; touch-action: none; overflow: hidden; font-size: 12px; user-select: none; box-shadow: 0 1px 4px #0006; z-index: 2; }
+.clip-block.lane-0 { top: 2px; background: color-mix(in srgb, #3ef0ff 22%, #0b0e11); border: 1px solid color-mix(in srgb, #3ef0ff 55%, transparent); color: #d6f6fa; }
+.clip-block.lane-1 { top: 40px; background: color-mix(in srgb, #ff4fd8 20%, #0b0e11); border: 1px solid color-mix(in srgb, #ff4fd8 55%, transparent); color: #fbe0f3; }
+.clip-block:hover { filter: brightness(1.15); }
+.clip-block.dragging { cursor: grabbing; filter: brightness(1.25); box-shadow: 0 2px 10px #0008, 0 0 10px color-mix(in srgb, var(--accent) 40%, transparent); z-index: 3; }
+/* Peaks fill the clip body behind its label. Pointer-events off so dragging the block still works. */
+.clip-peaks { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; opacity: .5; }
+.clip-block .clip-name { position: absolute; left: 10px; right: 28px; top: 0; bottom: 0; display: flex; align-items: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; pointer-events: none; }
+.clip-block .clip-delete { position: absolute; right: 8px; top: 6px; width: 20px; height: 20px; padding: 0; font-size: 16px; line-height: 16px; background: transparent; border: none; color: inherit; cursor: pointer; opacity: .55; border-radius: 4px; z-index: 2; }
+.clip-block .clip-delete:hover { opacity: 1; background: #0006; }
+/* Trim edges: 6-px grab strips on each side; cursor becomes a horizontal resize. z-index above
+   the delete button so the top-right corner still trims instead of deleting. */
+.clip-trim { position: absolute; top: 0; bottom: 0; width: 6px; cursor: ew-resize; background: currentColor; opacity: .2; transition: opacity 120ms; z-index: 3; }
+.clip-trim:hover, .clip-trim:active { opacity: .9; }
+.clip-trim-start { left: 0; border-radius: 6px 0 0 6px; }
+.clip-trim-end { right: 0; border-radius: 0 6px 6px 0; }
+.timing-track .clicks { position: relative; flex: 1 1 auto; min-height: 96px; }
 .click { --c: #3ef0ff; position: absolute; top: -80px; bottom: 6px; border-left: 2px solid var(--c); cursor: ew-resize; }
 .click.auto { border-left-style: dashed; opacity: .6; }
 .click.late { --c: #ff6b7d; }
@@ -482,15 +513,18 @@ body.dragging { user-select: none; -webkit-user-select: none; }
 .claude-offer { display: flex; align-items: center; gap: 12px; padding: 10px 12px; margin-bottom: 8px; border: 1px solid #ff9a3c66; border-radius: 10px; background: #ff9a3c10; }
 .claude-offer p { margin: 2px 0 0; font-size: 12px; }
 .claude-offer button { flex-shrink: 0; }
-/* Prompter: the script large on the left, the board smaller beside it */
-.timing-body.prompter { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); }
-.timing-body.prompter .timing-script { order: -1; }
+/* Prompter: the script large on the left, the board smaller beside it. The flex order puts the
+   script before the board visually; the resizer handle (order: -1 in prompter via inline logic)
+   sits between them in both modes. Script gets order -2 so handle slots between script and board. */
+.timing-body.prompter .timing-script { order: -2; }
 .timing-body.prompter .timing-board { align-self: start; width: 100%; }
 .timing-body.prompter .timing-script .now p { font-size: clamp(22px, 2.3vw, 34px); line-height: 1.4; }
 .timing-body.prompter .timing-script .now b { font-size: 18px; }
 .timing-body.prompter .timing-script .next p { font-size: clamp(16px, 1.5vw, 22px); }
 .rec-banner { flex-direction: row !important; align-items: center; gap: 8px; border-color: #ff6b7d88 !important; background: #ff6b7d14 !important; font-size: 13px; }
 .rec-banner .dot { width: 10px; height: 10px; border-radius: 50%; background: #ff6b7d; animation: pulse-dot 1s infinite alternate; }
+.rec-banner.paused { border-color: #fff05a88 !important; background: #fff05a14 !important; color: #fff05a; }
+.rec-banner.paused .dot { background: #fff05a; animation: none; box-shadow: 0 0 6px #fff05aaa; }
 .rec-btn { border-color: #ff6b7d88; color: #ff6b7d; }
 .rec-btn.on { background: #ff6b7d; color: #14060a; font-weight: 600; }
 .timing-controls button.on { border-color: var(--accent); color: var(--accent); }

@@ -45,7 +45,8 @@
               "duration": 2.4
             }
           ],
-          "notes": "Hi, it's Jakub here\nThis is a showcase of application built by me in last couple of weeks. It is LLM first - explainer video creator."
+          "notes": "Hi, it's Jakub here\nand today I will share with you my latest app - JZ motion. \n",
+          "cue": 0
         },
         {
           "title": "What it is",
@@ -59,7 +60,8 @@
               "stagger": 0.8
             }
           ],
-          "notes": "Everything you'll see here was drawn by it: a glowing marker board, animated text & graphics beat by beat, with an LLM doing most of the work."
+          "notes": "LLM first - explainer video creator.\n\nEverything you'll see here was produced by it including a glowing marker board, animations, text, and charts.\n\nNo Photoshop, After Effect or Premire - just me Claude Code & my app",
+          "cue": 5.8
         }
       ]
     },
@@ -168,7 +170,6 @@
       "beats": [
         {
           "title": "Ideas, more than time",
-          "notes": "I have far more ideas than videos. I write notes, sometimes a full script…",
           "actions": [
             {
               "do": "draw",
@@ -183,11 +184,12 @@
               ],
               "stagger": 0.6
             }
-          ]
+          ],
+          "notes": "I have far more ideas than videos. I write notes, sometimes even a full script…",
+          "cue": 22
         },
         {
           "title": "A video, planned",
-          "notes": "…then I'd plan a video to go with the script. Action, lights, the whole thing.",
           "actions": [
             {
               "do": "draw",
@@ -201,7 +203,9 @@
               "do": "pulse",
               "target": "video"
             }
-          ]
+          ],
+          "notes": "…then I'd plan a video to go with the script. ",
+          "cue": 28.85
         },
         {
           "title": "Beat 5",
@@ -218,21 +222,21 @@
               "do": "pulse",
               "target": "i-would-like"
             }
-          ]
+          ],
+          "notes": "and this is when it usually stops."
         },
         {
           "title": "No time",
-          "notes": "And then it stops. Recording, drawing, editing, publishing — I never have the time. Another month gone, and nothing shipped.",
           "actions": [
             {
               "do": "draw",
               "target": "me"
             }
-          ]
+          ],
+          "notes": "Recording, drawing, editing, publishing — between my work and family I never have enough time to do it. "
         },
         {
           "title": "What if the board drew itself?",
-          "notes": "So the question became: what if the board could draw itself, and a model could help me write it?",
           "actions": [
             {
               "do": "pulse",
@@ -250,7 +254,9 @@
               "do": "pulse",
               "target": "lightbulb"
             }
-          ]
+          ],
+          "notes": "So the question became: what if the board could draw itself, and a model could help me do it?\n\nWhat if I can have my dedicated video creation assistant?",
+          "cue": 42.5
         }
       ]
     },
@@ -309,7 +315,6 @@
       "beats": [
         {
           "title": "Consistency matters",
-          "notes": "When you publish often, keeping a single style matters: viewers recognise it, you spend time on the idea, not the look.",
           "actions": [
             {
               "do": "draw",
@@ -319,11 +324,12 @@
               "do": "draw",
               "target": "lead"
             }
-          ]
+          ],
+          "notes": "I started from basics - I have defined the style. \nAs keeping a consistent style matters: viewers recognise it, also you spend more time on the idea, not the look.",
+          "cue": 54.2
         },
         {
           "title": "The reference",
-          "notes": "When I picked a style, I took inspiration from IBM Technology's lightboard explainers: one person, a glass board, neon diagrams.",
           "actions": [
             {
               "do": "draw",
@@ -335,11 +341,12 @@
               "start": "with",
               "delay": 0.6
             }
-          ]
+          ],
+          "notes": "I took inspiration from IBM lightboard explainers, as I enjoy aesthetics of glass board & neon diagrams.",
+          "cue": 59.75
         },
         {
           "title": "Clear, calm, fast to follow",
-          "notes": "Three qualities to copy: clear, calm, fast to follow.",
           "actions": [
             {
               "do": "spotlight",
@@ -351,7 +358,8 @@
               "do": "draw",
               "target": "qualities"
             }
-          ]
+          ],
+          "notes": "Three qualities to copy: clear, calm, fast to follow."
         }
       ]
     },
@@ -449,7 +457,6 @@
       "beats": [
         {
           "title": "Home",
-          "notes": "It starts like a chat. One box in the middle of the screen.",
           "actions": [
             {
               "do": "draw",
@@ -459,7 +466,9 @@
               "do": "draw",
               "target": "home"
             }
-          ]
+          ],
+          "notes": "Creating explainer videos starts like a chat. One box in the middle of the screen.",
+          "cue": 68.45
         },
         {
           "title": "Just a sentence",
@@ -510,7 +519,8 @@
               "target": "cap-modes",
               "start": "with"
             }
-          ]
+          ],
+          "cue": 82
         },
         {
           "title": "A model per job",
@@ -538,7 +548,8 @@
               "target": "cap-model",
               "start": "with"
             }
-          ]
+          ],
+          "cue": 86.95
         },
         {
           "title": "Back out",
@@ -685,7 +696,8 @@
               "do": "draw",
               "target": "editor"
             }
-          ]
+          ],
+          "cue": 93.1
         },
         {
           "title": "The board",
@@ -702,7 +714,8 @@
               "start": "with",
               "delay": 0.4
             }
-          ]
+          ],
+          "cue": 98.5
         },
         {
           "title": "Beats under it",
@@ -724,7 +737,8 @@
               "start": "with",
               "delay": 0.4
             }
-          ]
+          ],
+          "cue": 100.7
         },
         {
           "title": "Properties on the right",
@@ -746,11 +760,11 @@
               "start": "with",
               "delay": 0.4
             }
-          ]
+          ],
+          "cue": 102.25
         },
         {
           "title": "Scenes and library on the left",
-          "notes": "On the left: the list of scenes, and under it the library — icons, clipart, 3D models I can drop onto the board.",
           "actions": [
             {
               "do": "camera",
@@ -768,7 +782,9 @@
               "start": "with",
               "delay": 0.4
             }
-          ]
+          ],
+          "notes": "I am able to inspect the list of scenes, and under it the library — icons, clipart, 3D models I can drop onto the board.",
+          "cue": 103.7
         },
         {
           "title": "Back out",
@@ -901,7 +917,8 @@
               "start": "with",
               "delay": 1.2
             }
-          ]
+          ],
+          "cue": 113.2
         },
         {
           "title": "Watch the headline",
@@ -911,12 +928,9 @@
               "do": "circle",
               "target": "a-headline",
               "color": "yellow"
-            },
-            {
-              "do": "wait",
-              "duration": 1
             }
-          ]
+          ],
+          "cue": 116.8
         },
         {
           "title": "Click, pick a marker",
@@ -940,19 +954,12 @@
               "delay": 0.6
             },
             {
-              "do": "wait",
-              "duration": 2.5
-            },
-            {
               "do": "circle",
               "target": "a-markers",
               "color": "pink"
-            },
-            {
-              "do": "wait",
-              "duration": 3
             }
-          ]
+          ],
+          "cue": 118.6
         },
         {
           "title": "Then double-click to edit",
@@ -973,12 +980,9 @@
               "target": "cap-edit",
               "start": "with",
               "delay": 0.4
-            },
-            {
-              "do": "wait",
-              "duration": 5
             }
-          ]
+          ],
+          "cue": 120.65
         },
         {
           "title": "Hold the frame",
@@ -1003,7 +1007,8 @@
               "do": "pulse",
               "target": "clip"
             }
-          ]
+          ],
+          "cue": 129.65
         }
       ]
     },
@@ -1118,7 +1123,8 @@
               "start": "with",
               "delay": 1.2
             }
-          ]
+          ],
+          "cue": 132.35
         },
         {
           "title": "Watch the Script button",
@@ -3728,5 +3734,189 @@
         }
       ]
     }
-  ]
+  ],
+  "voiceover": {
+    "clips": [
+      {
+        "id": "rec-mw3borup",
+        "upload": "c35d9059.webm",
+        "sourceDuration": 0.06,
+        "offset": 0,
+        "lane": 0,
+        "trimStart": 0,
+        "trimEnd": 0.1,
+        "name": "narration 05/11/2026, 20:07:55"
+      },
+      {
+        "id": "rec-mw3bwcim",
+        "upload": "2d5b827f.webm",
+        "sourceDuration": 22.19,
+        "offset": 0,
+        "lane": 1,
+        "trimStart": 0,
+        "trimEnd": 21.95,
+        "name": "narration 05/11/2026, 20:13:48"
+      },
+      {
+        "id": "rec-mw3c1vy5-Lmw3c5fzn",
+        "upload": "1ff45723.webm",
+        "sourceDuration": 35.4,
+        "offset": 21.85,
+        "lane": 0,
+        "trimStart": 0,
+        "trimEnd": 12.952613230387339,
+        "name": "narration 05/11/2026, 20:18:06"
+      },
+      {
+        "id": "rec-mw3cd8j5",
+        "upload": "64f71444.webm",
+        "sourceDuration": 9.78,
+        "offset": 34.8,
+        "lane": 1,
+        "trimStart": 1.4,
+        "trimEnd": 8.95,
+        "name": "narration 05/11/2026, 20:26:56"
+      },
+      {
+        "id": "rec-mw3cfmvq",
+        "upload": "84d64aa6.webm",
+        "sourceDuration": 11.75,
+        "offset": 42.25,
+        "lane": 0,
+        "trimStart": 0,
+        "trimEnd": 11.75,
+        "name": "narration 05/11/2026, 20:28:48"
+      },
+      {
+        "id": "rec-mw3cuggg",
+        "upload": "fe9e5dc5.webm",
+        "sourceDuration": 8.72,
+        "offset": 53.7,
+        "lane": 1,
+        "trimStart": 0.6,
+        "trimEnd": 6.8,
+        "name": "narration 05/11/2026, 20:40:19"
+      },
+      {
+        "id": "rec-mw3d01py",
+        "upload": "cdcac378.webm",
+        "sourceDuration": 8.79,
+        "offset": 59.8,
+        "lane": 0,
+        "trimStart": 0,
+        "trimEnd": 8.79,
+        "name": "narration 05/11/2026, 20:44:40"
+      },
+      {
+        "id": "rec-mw3da8gp",
+        "upload": "5763928b.webm",
+        "sourceDuration": 7.45,
+        "offset": 68.25,
+        "lane": 1,
+        "trimStart": 0,
+        "trimEnd": 5.9,
+        "name": "narration 05/11/2026, 20:52:35"
+      },
+      {
+        "id": "rec-mw3dbyxo",
+        "upload": "86ea6837.webm",
+        "sourceDuration": 8.73,
+        "offset": 73.6,
+        "lane": 0,
+        "trimStart": 0,
+        "trimEnd": 6.2,
+        "name": "narration 05/11/2026, 20:53:56"
+      },
+      {
+        "id": "rec-mw3ddpp3",
+        "upload": "01bc070b.webm",
+        "sourceDuration": 5.29,
+        "offset": 78.4,
+        "lane": 1,
+        "trimStart": 0.85,
+        "trimEnd": 5.29,
+        "name": "narration 05/11/2026, 20:55:18"
+      },
+      {
+        "id": "rec-mw3dlmhw",
+        "upload": "d7526f08.webm",
+        "sourceDuration": 5.9,
+        "offset": 81.4,
+        "lane": 0,
+        "trimStart": 0,
+        "trimEnd": 5.6,
+        "name": "narration 05/11/2026, 21:01:27"
+      },
+      {
+        "id": "rec-mw3dnrhj",
+        "upload": "9c398456.webm",
+        "sourceDuration": 8.04,
+        "offset": 87,
+        "lane": 1,
+        "trimStart": 1.65,
+        "trimEnd": 4.8,
+        "name": "narration 05/11/2026, 21:03:07"
+      },
+      {
+        "id": "rec-mw3dq923",
+        "upload": "5a25547a.webm",
+        "sourceDuration": 3.16,
+        "offset": 89.65,
+        "lane": 0,
+        "trimStart": 0.3,
+        "trimEnd": 3.16,
+        "name": "narration 05/11/2026, 21:05:03"
+      },
+      {
+        "id": "rec-mw3drzt8",
+        "upload": "44eb4d2a.webm",
+        "sourceDuration": 14.59,
+        "offset": 92.75,
+        "lane": 0,
+        "trimStart": 3.45,
+        "trimEnd": 14.59,
+        "name": "narration 05/11/2026, 21:06:24"
+      },
+      {
+        "id": "rec-mw3e0w7x",
+        "upload": "7c51183a.webm",
+        "sourceDuration": 9.81,
+        "offset": 103.4,
+        "lane": 1,
+        "trimStart": 0,
+        "trimEnd": 9.81,
+        "name": "narration 05/11/2026, 21:13:19"
+      },
+      {
+        "id": "rec-mw3ebrey",
+        "upload": "ec9008bb.webm",
+        "sourceDuration": 5.56,
+        "offset": 112,
+        "lane": 0,
+        "trimStart": 0,
+        "trimEnd": 5.56,
+        "name": "narration 05/11/2026, 21:21:46"
+      },
+      {
+        "id": "rec-mw3edao7",
+        "upload": "b3a5f48b.webm",
+        "sourceDuration": 7.92,
+        "offset": 117.1,
+        "lane": 1,
+        "trimStart": 0,
+        "trimEnd": 3.15,
+        "name": "narration 05/11/2026, 21:22:58"
+      },
+      {
+        "id": "rec-mw3ey8ic",
+        "upload": "ae13722a.webm",
+        "sourceDuration": 7.15,
+        "offset": 120.75,
+        "lane": 0,
+        "trimStart": 0,
+        "trimEnd": 7.15,
+        "name": "narration 05/11/2026, 21:39:15"
+      }
+    ]
+  }
 }

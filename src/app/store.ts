@@ -1,6 +1,8 @@
 // Where presentations live: files on the local server (presentations/<id>.json) when it is running,
 // otherwise this browser's storage (a static build of the app has no server).
 
+import { log, voiceoverSummary, cuedBeatCount } from './debug';
+
 export interface PresentationInfo { id: string; title: string; scenes: number; updated: string }
 
 export interface Store {
@@ -21,6 +23,12 @@ const api = async (url: string, init?: RequestInit) => {
 // Per-id mtime we loaded, sent back on save so the server can refuse a stale write
 // (if the file changed on disk — e.g. a code agent, git checkout — the editor's copy is stale).
 const loadedMtime = new Map<string, string>();
+// Per-id in-flight save chain. Saves are serialized: #2 waits for #1 to finish (and update
+// `loadedMtime`) before it reads the mtime for its own PUT. Without this, two debounced saves
+// fired back-to-back both carry the pre-save mtime, the server accepts the first, rejects the
+// second as STALE, and the editor's later edits are silently dropped from disk — on next reload
+// you'd see your change "revert" to what the server actually kept.
+const pending = new Map<string, Promise<unknown>>();
 
 const files: Store = {
   kind: 'files',
@@ -32,28 +40,42 @@ const files: Store = {
     return res.text();
   },
   save: async (id, text) => {
-    const headers: Record<string, string> = {};
-    const m = loadedMtime.get(id);
-    if (m) headers['x-modified-at'] = m;
-    const res = await fetch(`/api/presentations/${id}`, { method: 'PUT', headers, body: text });
-    if (res.status === 409) {
-      const msg = await res.text().catch(() => '');
-      // The file was changed on disk; the editor's copy is stale.
-      const err = new Error('STALE: ' + msg);
-      (err as Error & { stale?: boolean }).stale = true;
-      throw err;
-    }
-    if (!res.ok) throw new Error(`${res.status} ${await res.text()}`);
-    // The server returns the new mtime (header + body). Track it so the next save doesn't look
-    // stale against the file this save just wrote.
-    const nm = res.headers.get('x-modified-at');
-    if (nm) {
-      loadedMtime.set(id, nm);
-    } else {
-      // Fallback: body may carry it.
-      const body = await res.json().catch(() => null);
-      if (body?.modifiedAt) loadedMtime.set(id, body.modifiedAt);
-    }
+    const summary = (() => { try { const d = JSON.parse(text); return { voiceover: voiceoverSummary(d.voiceover), cuedBeats: cuedBeatCount(d) }; } catch { return { parse: 'failed' }; } })();
+    log('save:queued', { id, ...summary, bytes: text.length });
+    const prev = pending.get(id) ?? Promise.resolve();
+    const task = prev.catch(() => undefined).then(async () => {
+      const headers: Record<string, string> = {};
+      const m = loadedMtime.get(id);
+      if (m) headers['x-modified-at'] = m;
+      log('save:sending', { id, expectedMtime: m, ...summary });
+      const res = await fetch(`/api/presentations/${id}`, { method: 'PUT', headers, body: text });
+      if (res.status === 409) {
+        const msg = await res.text().catch(() => '');
+        log('save:stale', { id, expectedMtime: m, message: msg });
+        // The file was changed on disk; the editor's copy is stale.
+        const err = new Error('STALE: ' + msg);
+        (err as Error & { stale?: boolean }).stale = true;
+        throw err;
+      }
+      if (!res.ok) {
+        const txt = await res.text();
+        log('save:error', { id, status: res.status, body: txt });
+        throw new Error(`${res.status} ${txt}`);
+      }
+      // The server returns the new mtime (header + body). Track it so the next save doesn't look
+      // stale against the file this save just wrote.
+      const nm = res.headers.get('x-modified-at');
+      if (nm) {
+        loadedMtime.set(id, nm);
+      } else {
+        // Fallback: body may carry it.
+        const body = await res.json().catch(() => null);
+        if (body?.modifiedAt) loadedMtime.set(id, body.modifiedAt);
+      }
+      log('save:ok', { id, newMtime: loadedMtime.get(id) });
+    });
+    pending.set(id, task);
+    return task;
   },
   create: async (text) => (await (await api('/api/presentations', { method: 'POST', body: text })).json()).id,
   remove: async (id) => void (await api(`/api/presentations/${id}`, { method: 'DELETE' })),

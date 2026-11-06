@@ -3,6 +3,7 @@ import intro from '../examples/intro.json';
 import { Editor } from './App';
 import { Home } from './Home';
 import { openStore, type Store } from './store';
+import { log } from './debug';
 import { loadUserLibrary } from './userLibrary';
 
 /** The id in the address (#/p/<id>), so a reload keeps the presentation open. */
@@ -55,11 +56,13 @@ export function Root() {
     if (!store || !openId) return;
     void store.save(openId, t).catch((e: Error & { stale?: boolean }) => {
       if (e.stale) {
+        log('stale:reload', { id: openId, message: e.message });
         // Disk copy is newer than ours. Refuse to clobber; reload the presentation from disk
         // (which replaces our in-memory copy) and tell the user what happened.
         alert('This presentation was changed on disk by another tool while you had it open. The editor will reload the latest version — your unsaved edits are not applied to the file.');
         store.load(openId).then(setText, (err: Error) => setError(err.message));
       } else {
+        log('save:catch', { id: openId, message: e.message });
         setError(e.message);
       }
     });

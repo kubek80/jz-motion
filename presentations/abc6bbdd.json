@@ -87,7 +87,6 @@
       "beats": [
         {
           "title": "A new “best” every week",
-          "cue": 0,
           "notes": "Every week a new AI model claims to be the best.",
           "actions": [
             {
@@ -103,11 +102,11 @@
               ],
               "stagger": 0.4
             }
-          ]
+          ],
+          "cue": 0
         },
         {
           "title": "Best for what?",
-          "cue": 5,
           "notes": "But best on whose data? Best for which job? And best at what price?",
           "actions": [
             {
@@ -119,11 +118,11 @@
               ],
               "stagger": 1.2
             }
-          ]
+          ],
+          "cue": 5
         },
         {
           "title": "Why we built LLM Lab",
-          "cue": 14,
           "notes": "We built LLM Lab so we can answer those questions ourselves, with our own data and by our own rules.",
           "actions": [
             {
@@ -139,7 +138,8 @@
               "target": "ours",
               "color": "green"
             }
-          ]
+          ],
+          "cue": 14
         }
       ]
     },
@@ -241,7 +241,6 @@
       "beats": [
         {
           "title": "Three ways to choose",
-          "cue": 25,
           "notes": "Most companies choose models in one of three ways: a public leaderboard, a vendor’s sales deck, or whatever the first team happened to use.",
           "actions": [
             {
@@ -279,11 +278,11 @@
                 "p-a3"
               ]
             }
-          ]
+          ],
+          "cue": 25
         },
         {
           "title": "One shared weakness",
-          "cue": 35,
           "notes": "All three share one weakness: the test wasn’t ours.",
           "actions": [
             {
@@ -295,7 +294,8 @@
               "target": "p-weak",
               "color": "yellow"
             }
-          ]
+          ],
+          "cue": 35
         }
       ]
     },
@@ -436,7 +436,6 @@
       "beats": [
         {
           "title": "Someone else's data",
-          "cue": 40,
           "notes": "A public benchmark measures someone else’s documents, someone else’s languages and someone else’s idea of “good”.",
           "actions": [
             {
@@ -447,11 +446,11 @@
               "do": "draw",
               "target": "t-others"
             }
-          ]
+          ],
+          "cue": 40
         },
         {
           "title": "English vs Polish",
-          "cue": 48,
           "notes": "A model that tops the charts in English may struggle with Polish support tickets.",
           "actions": [
             {
@@ -461,11 +460,11 @@
                 "t-note"
               ]
             }
-          ]
+          ],
+          "cue": 46.2
         },
         {
           "title": "Two points, thirty times the price",
-          "cue": 55,
           "notes": "A model that’s two points better might cost thirty times more.",
           "actions": [
             {
@@ -481,11 +480,11 @@
               "target": "t-cost",
               "color": "orange"
             }
-          ]
+          ],
+          "cue": 55
         },
         {
           "title": "Nobody re-checks",
-          "cue": 63,
           "notes": "And once a model is in production, nobody checks whether it’s still the right choice.",
           "actions": [
             {
@@ -509,7 +508,8 @@
               ],
               "stagger": 0.7
             }
-          ]
+          ],
+          "cue": 63
         }
       ]
     },
@@ -682,7 +682,6 @@
       "beats": [
         {
           "title": "Our data. Our criteria. Our decision.",
-          "cue": 70,
           "notes": "That’s what sovereignty means here. We’re not building our own models. We’re owning the decision.",
           "actions": [
             {
@@ -702,11 +701,11 @@
               "do": "draw",
               "target": "s-sub"
             }
-          ]
+          ],
+          "cue": 70
         },
         {
           "title": "Our data",
-          "cue": 80,
           "notes": "Our data. The test cases come from our own work: real support questions, real contracts, real tickets. They live in our own repository and get reviewed like code.",
           "actions": [
             {
@@ -730,11 +729,11 @@
               "do": "draw",
               "target": "d-review"
             }
-          ]
+          ],
+          "cue": 80
         },
         {
           "title": "Our criteria",
-          "cue": 92,
           "notes": "Our criteria. We decide what “good enough” means. For detecting personal data the bar is high, because a miss is a compliance incident. For product search it can be lower.",
           "actions": [
             {
@@ -750,11 +749,11 @@
               "target": "crit-search",
               "delay": 1
             }
-          ]
+          ],
+          "cue": 92
         },
         {
           "title": "Our decision",
-          "cue": 103,
           "notes": "Our decision. A model we call through an API and a model we host ourselves face exactly the same tests. If a provider raises prices or changes its terms, we already know our next-best option and what it costs.",
           "actions": [
             {
@@ -793,7 +792,8 @@
               "target": "dec-plan",
               "delay": 1
             }
-          ]
+          ],
+          "cue": 103
         }
       ]
     },
@@ -922,7 +922,6 @@
       "beats": [
         {
           "title": "Four types of models",
-          "cue": 115,
           "notes": "We’re starting with four types of models, the building blocks behind search, assistants and automation:",
           "actions": [
             {
@@ -933,11 +932,11 @@
               ],
               "stagger": 0.6
             }
-          ]
+          ],
+          "cue": 115
         },
         {
           "title": "Embedding",
-          "cue": 123,
           "notes": "Embedding models turn text into numbers, so we can find the documents that match a question.",
           "actions": [
             {
@@ -949,11 +948,11 @@
               ],
               "stagger": 0.6
             }
-          ]
+          ],
+          "cue": 123
         },
         {
           "title": "Chunking",
-          "cue": 130,
           "notes": "Chunking splits long documents into pieces that make sense on their own.",
           "actions": [
             {
@@ -964,11 +963,11 @@
               ],
               "stagger": 0.6
             }
-          ]
+          ],
+          "cue": 130
         },
         {
           "title": "Reranking",
-          "cue": 136,
           "notes": "Reranking takes the top search results and puts the best answer first.",
           "actions": [
             {
@@ -979,11 +978,11 @@
               ],
               "stagger": 0.6
             }
-          ]
+          ],
+          "cue": 136
         },
         {
           "title": "Classification",
-          "cue": 142,
           "notes": "Classification sorts incoming items: what the customer wants, how urgent it is, whether the message contains personal data.",
           "actions": [
             {
@@ -994,18 +993,19 @@
               ],
               "stagger": 0.6
             }
-          ]
+          ],
+          "cue": 142
         },
         {
           "title": "Built to grow",
-          "cue": 150,
           "notes": "More categories will follow. The lab is built to grow.",
           "actions": [
             {
               "do": "draw",
               "target": "more"
             }
-          ]
+          ],
+          "cue": 150
         }
       ]
     },
@@ -1482,7 +1482,6 @@
       "beats": [
         {
           "title": "Three numbers",
-          "cue": 155,
           "notes": "Every model gets just three numbers: quality on our tests, cost per thousand tasks, and speed.",
           "actions": [
             {
@@ -1498,11 +1497,11 @@
               ],
               "stagger": 0.8
             }
-          ]
+          ],
+          "cue": 155
         },
         {
           "title": "Everything else left out",
-          "cue": 163,
           "notes": "We left out everything else, because those three are what we actually choose on.",
           "actions": [
             {
@@ -1519,11 +1518,11 @@
               "color": "yellow",
               "id": "three-circle"
             }
-          ]
+          ],
+          "cue": 163
         },
         {
           "title": "Four answers",
-          "cue": 169,
           "notes": "From them, the lab gives four answers for every category: best quality, best value, cheapest and fastest.",
           "actions": [
             {
@@ -1558,7 +1557,8 @@
               "do": "draw",
               "target": "r-every"
             }
-          ]
+          ],
+          "cue": 169
         }
       ]
     },
@@ -1803,7 +1803,6 @@
       "beats": [
         {
           "title": "Quality against cost",
-          "cue": 176,
           "notes": "Here’s classification. The chart shows quality against cost, and up and to the left is better.",
           "actions": [
             {
@@ -1843,11 +1842,11 @@
               "do": "draw",
               "target": "better"
             }
-          ]
+          ],
+          "cue": 176
         },
         {
           "title": "The quality bar",
-          "cue": 184,
           "notes": "The dashed line is our quality bar. Anything below it isn’t recommended, however cheap it is.",
           "actions": [
             {
@@ -1863,11 +1862,11 @@
               "do": "draw",
               "target": "not-rec"
             }
-          ]
+          ],
+          "cue": 184
         },
         {
           "title": "ModernBERT looks great",
-          "cue": 192,
           "notes": "This fine-tuned model is a good example. On average it looks great, and it costs a tiny fraction of the alternatives.",
           "actions": [
             {
@@ -1887,11 +1886,11 @@
               ],
               "stagger": 0.8
             }
-          ]
+          ],
+          "cue": 192
         },
         {
           "title": "But not on personal data",
-          "cue": 200,
           "notes": "But on personal-data detection it falls below the minimum we set, so the lab won’t recommend it as our one classifier for everything.",
           "actions": [
             {
@@ -1906,11 +1905,11 @@
               "do": "draw",
               "target": "mb-verdict"
             }
-          ]
+          ],
+          "cue": 200
         },
         {
           "title": "Support intents only",
-          "cue": 209,
           "notes": "Now look at intent detection alone. Here it becomes the cheapest and fastest choice.",
           "actions": [
             {
@@ -1926,11 +1925,11 @@
               "target": "dot-mb",
               "times": 2
             }
-          ]
+          ],
+          "cue": 209
         },
         {
           "title": "Use it where it's strong",
-          "cue": 216,
           "notes": "It’s the same data with a more precise question: use the model where it’s strong.",
           "actions": [
             {
@@ -1942,7 +1941,8 @@
               "target": "switch",
               "color": "yellow"
             }
-          ]
+          ],
+          "cue": 216
         }
       ]
     },
@@ -2091,7 +2091,6 @@
       "beats": [
         {
           "title": "Scores with ranges",
-          "cue": 222,
           "notes": "The lab is also honest about uncertainty. Every score comes with a range.",
           "actions": [
             {
@@ -2128,11 +2127,11 @@
               ],
               "stagger": 0.3
             }
-          ]
+          ],
+          "cue": 222
         },
         {
           "title": "Within range = tie",
-          "cue": 228,
           "notes": "When two models are within that range of each other, the lab calls it a tie",
           "actions": [
             {
@@ -2148,11 +2147,11 @@
               "do": "pop",
               "target": "tie"
             }
-          ]
+          ],
+          "cue": 228
         },
         {
           "title": "Decide on cost or speed",
-          "cue": 232,
           "notes": "and tells us to decide on cost or speed, instead of paying for a difference that isn’t real.",
           "actions": [
             {
@@ -2163,7 +2162,8 @@
               "do": "draw",
               "target": "not-real"
             }
-          ]
+          ],
+          "cue": 232
         }
       ]
     },
@@ -2259,7 +2259,6 @@
       "beats": [
         {
           "title": "Test sets: scoring only",
-          "cue": 237,
           "notes": "Finally, the data itself. Test sets are used only for scoring.",
           "actions": [
             {
@@ -2279,11 +2278,11 @@
               "do": "flow",
               "target": "ds-a1"
             }
-          ]
+          ],
+          "cue": 237
         },
         {
           "title": "Training sets: fine-tuning only",
-          "cue": 241,
           "notes": "Training sets are used only for fine-tuning,",
           "actions": [
             {
@@ -2299,11 +2298,11 @@
               "do": "flow",
               "target": "ds-a2"
             }
-          ]
+          ],
+          "cue": 241
         },
         {
           "title": "Checked for overlap",
-          "cue": 245,
           "notes": "and they’re checked for overlap with the test sets, so no model scores higher just because it has already seen the answers.",
           "actions": [
             {
@@ -2314,7 +2313,8 @@
               "do": "draw",
               "target": "ds-seen"
             }
-          ]
+          ],
+          "cue": 245
         }
       ]
     },
@@ -2435,18 +2435,17 @@
       "beats": [
         {
           "title": "Decisions we can explain",
-          "cue": 253,
           "notes": "This gives us decisions we can explain.",
           "actions": [
             {
               "do": "draw",
               "target": "y-head"
             }
-          ]
+          ],
+          "cue": 253
         },
         {
           "title": "Not “top of a leaderboard”",
-          "cue": 257,
           "notes": "When someone asks “why this model?”, the answer isn’t “it was top of a leaderboard”.",
           "actions": [
             {
@@ -2461,11 +2460,11 @@
               "do": "draw",
               "target": "y-bad"
             }
-          ]
+          ],
+          "cue": 257
         },
         {
           "title": "Our tests, our data, this price",
-          "cue": 263,
           "notes": "It’s: it passed our tests, on our data, at this price, and here’s the evidence.",
           "actions": [
             {
@@ -2481,11 +2480,11 @@
               "target": "y-good",
               "color": "green"
             }
-          ]
+          ],
+          "cue": 263
         },
         {
           "title": "New model? Run it.",
-          "cue": 270,
           "notes": "And when a new model comes out, we add it, run it, and the lab shows us whether it’s worth switching.",
           "actions": [
             {
@@ -2512,7 +2511,8 @@
                 "y-a3"
               ]
             }
-          ]
+          ],
+          "cue": 270
         }
       ]
     },
@@ -2607,7 +2607,6 @@
       "beats": [
         {
           "title": "Working prototype",
-          "cue": 282,
           "notes": "LLM Lab is a working prototype today, running on example data.",
           "actions": [
             {
@@ -2622,11 +2621,11 @@
               ],
               "stagger": 0.4
             }
-          ]
+          ],
+          "cue": 282
         },
         {
           "title": "Next steps",
-          "cue": 287,
           "notes": "Next we’re connecting it to real evaluation runs and adding a way to compare two models case by case.",
           "actions": [
             {
@@ -2641,11 +2640,11 @@
               ],
               "stagger": 0.4
             }
-          ]
+          ],
+          "cue": 287
         },
         {
           "title": "Your test cases",
-          "cue": 293,
           "notes": "If your team has examples of real work, test cases are the most valuable thing you can contribute.",
           "actions": [
             {
@@ -2656,11 +2655,11 @@
               "do": "draw",
               "target": "contrib-t"
             }
-          ]
+          ],
+          "cue": 293
         },
         {
           "title": "Thank you",
-          "cue": 299,
           "layout": "camera",
           "notes": "Thank you.",
           "actions": [
@@ -2668,7 +2667,8 @@
               "do": "draw",
               "target": "thanks"
             }
-          ]
+          ],
+          "cue": 299
         }
       ]
     }
