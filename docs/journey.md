@@ -560,3 +560,9 @@ Jakub wanted to transcribe recorded voice easily and copy the transcript to past
 ![The transcript, by beat](journey/81-transcript.jpg)
 ![The prompter with the beat before](journey/82-prompter-before.jpg)
 ![Bold text keeps its outline while editing](journey/83-inline-edit-outline.jpg)
+
+## Step 40: OpenRouter for transcription
+
+Jakub asked what transcription costs (cents per narration: about $0.006 a minute for OpenAI's whisper-1, less on Groq) and whether his ChatGPT subscription covers it (no: the API is billed separately). He chose OpenRouter, which has an OpenAI-compatible transcription endpoint, so it is now a ready-made choice in **Settings → Transcription** (`https://openrouter.ai/api/v1`, model `openai/whisper-1`). `docs/models.md` explains the choices and costs.
+
+**Checked by:** typecheck, tests and build. Not tried against OpenRouter itself (no key here); whether it returns per-sentence timings decides if a transcript is split across beats or comes back as one block per clip.

@@ -5,6 +5,7 @@ export interface Transcriber { baseURL: string; model: string; apiKey: string }
 export const TRANSCRIBERS = [
   { label: 'OpenAI (whisper-1)', baseURL: 'https://api.openai.com/v1', model: 'whisper-1' },
   { label: 'Groq (whisper-large-v3)', baseURL: 'https://api.groq.com/openai/v1', model: 'whisper-large-v3' },
+  { label: 'OpenRouter (whisper-1)', baseURL: 'https://openrouter.ai/api/v1', model: 'openai/whisper-1' },
   { label: 'Local mock (no key)', baseURL: 'http://localhost:5199/v1', model: 'mock' },
   { label: 'Custom', baseURL: 'https://', model: '' },
 ];
