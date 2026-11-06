@@ -92,7 +92,7 @@ export function Home({ store, onOpen }: { store: Store; onOpen: (id: string) => 
       )}
       <header className="home-bar">
         <span className="spacer" />
-        <button onClick={() => setLibrary(true)} title="Icons, logos, clipart and 3D models">Library</button>
+        <button onClick={() => setLibrary(true)} title="Icons, logos, clipart, 3D models, and your pictures, recordings and sounds">Library</button>
         <button onClick={() => setSettings(true)} title="Models, API keys, transcription">⚙ Settings</button>
       </header>
       <div className="hero">

@@ -50,7 +50,7 @@ const QUICK: { do: string; needs: boolean; hint: string }[] = [
   { do: 'move', needs: true, hint: 'Move it somewhere else' },
   { do: 'flow', needs: true, hint: 'Dots travel along an arrow' },
   { do: 'erase', needs: true, hint: 'Wipe it off the board' },
-  { do: 'play', needs: true, hint: 'Play an animated picture (APNG, GIF, animated WebP); add another with "on" off to pause it' },
+  { do: 'play', needs: true, hint: 'Play an animated picture or video (APNG, GIF, WebP, WebM, MP4); add another with "on" off to pause it' },
   { do: 'wait', needs: false, hint: 'Pause before the next action' },
 ];
 

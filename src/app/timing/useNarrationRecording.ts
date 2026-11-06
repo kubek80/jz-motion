@@ -117,12 +117,21 @@ export function useNarrationRecording({ clock, clips, clicks, setClips, onCue, o
       // user was at when Record was pressed, on the free lane. Existing clips are untouched, so
       // multi-take editing is additive.
       const sourceDuration = Math.round(duration * 100) / 100;
+      // Now that its length is known, put it on a lane where nothing else plays during it: the lane chosen
+      // at the start if that is still free for the whole recording, else the other one. If both have
+      // something in the way, the lane with the least overlap, and say so (both would play at once).
+      const span = { from: r.clipOffset, to: r.clipOffset + sourceDuration };
+      const overlap = (lane: number) => clips.filter((c) => c.lane === lane)
+        .reduce((sum, c) => sum + Math.max(0, Math.min(span.to, c.offset + (c.trimEnd - c.trimStart)) - Math.max(span.from, c.offset)), 0);
+      const lanes = [r.lane, r.lane === 0 ? 1 : 0] as const;
+      const lane = lanes.find((l) => overlap(l) === 0) ?? (overlap(lanes[0]) <= overlap(lanes[1]) ? lanes[0] : lanes[1]);
+      if (overlap(lane) > 0) setError(`The new recording overlaps another clip on lane ${lane + 1}; trim or move one of them so they don't play at once.`);
       const newClip: Clip = {
         id: `rec-${Date.now().toString(36)}`,
         upload,
         sourceDuration,
         offset: r.clipOffset,
-        lane: r.lane,
+        lane,
         trimStart: 0,
         trimEnd: sourceDuration,
         name: `narration ${new Date().toLocaleString()}`,

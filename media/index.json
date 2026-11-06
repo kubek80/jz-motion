@@ -1,0 +1,104 @@
+{
+ "1d393ff1793636be.webm": {
+  "file": "1d393ff1793636be.webm",
+  "src": "/media/1d393ff1793636be.webm",
+  "name": "jzm-edit-colour",
+  "kind": "recording",
+  "bytes": 153885,
+  "width": 1440,
+  "height": 900,
+  "duration": 16.66,
+  "poster": "/media/1d393ff1793636be.webm.poster.webp",
+  "original": {
+   "name": "jzm-edit-colour.apng",
+   "bytes": 840192
+  },
+  "added": "2026-11-06T03:18:43.530Z"
+ },
+ "2dbae8c9aecb58d5.webm": {
+  "file": "2dbae8c9aecb58d5.webm",
+  "src": "/media/2dbae8c9aecb58d5.webm",
+  "name": "jzm-script-edit",
+  "kind": "recording",
+  "bytes": 157184,
+  "width": 1440,
+  "height": 900,
+  "duration": 6.34,
+  "poster": "/media/2dbae8c9aecb58d5.webm.poster.webp",
+  "original": {
+   "name": "jzm-script-edit.apng",
+   "bytes": 474144
+  },
+  "added": "2026-11-06T03:18:47.224Z"
+ },
+ "4b9030113ac6f590.webp": {
+  "file": "4b9030113ac6f590.webp",
+  "src": "/media/4b9030113ac6f590.webp",
+  "name": "jzm-editor-ai-full",
+  "kind": "picture",
+  "bytes": 96236,
+  "width": 1600,
+  "height": 1000,
+  "original": {
+   "name": "jzm-editor-ai-full.png",
+   "bytes": 568284
+  },
+  "added": "2026-11-06T03:18:43.861Z"
+ },
+ "663ada056a14651d.webp": {
+  "file": "663ada056a14651d.webp",
+  "src": "/media/663ada056a14651d.webp",
+  "name": "jzm-editor",
+  "kind": "picture",
+  "bytes": 94246,
+  "width": 1440,
+  "height": 900,
+  "original": {
+   "name": "jzm-editor.png",
+   "bytes": 423215
+  },
+  "added": "2026-11-06T03:18:44.204Z"
+ },
+ "82bbdbbedef4ff3a.webp": {
+  "file": "82bbdbbedef4ff3a.webp",
+  "src": "/media/82bbdbbedef4ff3a.webp",
+  "name": "jzm-prompter-llm-first-231",
+  "kind": "picture",
+  "bytes": 108486,
+  "width": 1600,
+  "height": 1000,
+  "original": {
+   "name": "jzm-prompter-llm-first-231.png",
+   "bytes": 358022
+  },
+  "added": "2026-11-06T03:18:44.887Z"
+ },
+ "8813533b5b0410e4.webp": {
+  "file": "8813533b5b0410e4.webp",
+  "src": "/media/8813533b5b0410e4.webp",
+  "name": "jzm-home-full",
+  "kind": "picture",
+  "bytes": 95804,
+  "width": 1600,
+  "height": 1000,
+  "original": {
+   "name": "jzm-home-full.png",
+   "bytes": 279126
+  },
+  "added": "2026-11-06T03:18:44.538Z"
+ },
+ "d646c507ff654c09.webp": {
+  "file": "d646c507ff654c09.webp",
+  "src": "/media/d646c507ff654c09.webp",
+  "name": "jzm-creator-lightbulb",
+  "kind": "picture",
+  "bytes": 63348,
+  "width": 1600,
+  "height": 1000,
+  "original": {
+   "name": "jzm-creator-lightbulb.png",
+   "bytes": 98430
+  },
+  "added": "2026-11-06T03:18:38.091Z"
+ }
+}

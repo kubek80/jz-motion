@@ -1,4 +1,4 @@
-// Pictures put on the board: stored by the local server (images/), or kept inside the presentation as a
+// Pictures put on the board: stored in the local server's media library (media/, converted), or kept inside the presentation as a
 // data: URL when there is no server (the app opened as static files).
 
 export interface PlacedImage { src: string; width: number; height: number }
@@ -26,7 +26,25 @@ const dataUrl = (blob: Blob) => new Promise<string>((resolve, reject) => {
   r.readAsDataURL(blob);
 });
 
+/** Puts a picture into the media library (converted: screenshots become WebP, animated pictures WebM video).
+ *  Without the media library, falls back to images/, and without any server to a data: URL. */
 export async function uploadImage(file: File): Promise<PlacedImage> {
+  try {
+    const name = file.name || `pasted.${EXT[file.type]}`;
+    const res = await fetch(`/api/media?filename=${encodeURIComponent(name)}`, { method: 'POST', body: file });
+    if (res.ok) {
+      const entry = (await res.json()) as { src: string; width?: number; height?: number };
+      return { src: entry.src, ...(entry.width && entry.height ? { width: entry.width, height: entry.height } : await naturalSize(file)) };
+    }
+    if (res.status !== 404 && res.status !== 405) throw new Error((await res.json().catch(() => ({}))).error ?? res.statusText);
+  } catch (e) {
+    if (!(e instanceof TypeError)) throw e;
+  }
+  return uploadToImages(file);
+}
+
+/** The older store: images/ on the local server, or a data: URL when there is no server. */
+async function uploadToImages(file: File): Promise<PlacedImage> {
   const size = await naturalSize(file);
   try {
     const res = await fetch(`/api/images?ext=${EXT[file.type]}`, { method: 'POST', body: file });

@@ -1,11 +1,11 @@
 // npm run assets            pictures, recordings and voice-overs: size, type, and which presentations use them
 // npm run assets -- --unused   only the files nothing uses (paths, one per line; nothing is deleted)
-// Reads presentations/, src/examples/ and library/ for references to /images/…, /examples/… and uploads.
+// Reads presentations/, src/examples/ and library/ for references to /media/…, /images/…, /examples/… and uploads.
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
 const args = process.argv.slice(2);
-const DIRS = ['images', 'uploads', 'public/examples'];
+const DIRS = ['media', 'images', 'uploads', 'public/examples'];
 const SOURCES = ['presentations', 'src/examples', 'library'];
 
 const files = (dir: string): string[] => (existsSync(dir) ? readdirSync(dir, { recursive: true, withFileTypes: true })
@@ -20,12 +20,14 @@ for (const dir of SOURCES) {
     const text = readFileSync(f, 'utf8');
     let title = f;
     try { title = `${JSON.parse(text).title ?? f}`; } catch { /* not JSON */ }
-    for (const m of text.matchAll(/"\/(images|examples)\/([^"?]+)"/g)) note(m[1] === 'images' ? `images/${m[2]}` : `public/examples/${m[2]}`, title);
+    for (const m of text.matchAll(/"\/(media|images|examples)\/([^"?]+)"/g)) note(m[1] === 'examples' ? `public/examples/${m[2]}` : `${m[1]}/${m[2]}`, title);
     for (const m of text.matchAll(/"upload"\s*:\s*"([^"]+)"/g)) note(`uploads/${m[1]}`, title);
   }
 }
 
 const kind = (p: string) => (/\.(apng|gif)$/i.test(p) ? 'animation' : /\.(png|jpe?g|webp|svg)$/i.test(p) ? 'picture' : /\.(webm|mp4|mov|m4a|mp3|wav|ogg)$/i.test(p) ? 'recording' : 'other');
+// A recording's poster picture belongs to the recording: count it as used when the recording is.
+for (const [k, v] of [...usedBy]) if (k.startsWith('media/')) usedBy.set(`${k}.poster.webp`, v);
 const rows = DIRS.flatMap((d) => files(d)).filter((p) => !/\.(json)$/.test(p)).map((p) => ({ path: p, bytes: statSync(p).size, kind: kind(p), users: [...new Set(usedBy.get(p) ?? [])] }));
 const mb = (n: number) => `${(n / 1e6).toFixed(2)} MB`;
 

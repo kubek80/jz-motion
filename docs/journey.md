@@ -457,3 +457,22 @@ With the app grown a lot (including Jakub's own work on voice clips, generated v
 - **Media**: a new read-only `npm run assets` lists every picture, recording and voice-over with its size and the presentations that use it, and what is referenced but missing. It found 39 of 46 files in `images/` (11 MB) unused, 18 voice clips that only exist on one computer (`uploads/` is not in git), and 4 UnDraw pictures never added. Measured: the APNG screen recordings are 3.5–6× smaller as WebM video, screenshots 3–6× smaller as WebP. `docs/media-plan.md` proposes one media library with conversion on import, video on the board, a Media tab with "used in" and clean-up, recording the screen from the app, and Git LFS; it ends with the decisions needed.
 - **Housekeeping**: the TypeScript build cache is no longer tracked, and tests no longer pick up the parallel working copies.
 - **Found on the way** (not fixed yet): `npm run snapshot` can render the first picture slightly differently between runs; a narration recording can be placed over a clip already on the second lane.
+
+## Step 33: One media library, and recordings as video
+
+Following the plan in `docs/media-plan.md`, the first half is built: pictures and recordings now live in one library, converted to small files on the way in, and screen recordings play on the board as video.
+
+- **The media library** (`media/`, `server/mediaStore.ts`): every file is named by its content (the same file added twice is stored once) and listed in `media/index.json` with a readable name, kind, size, dimensions and length. On the way in, screenshots become WebP, screen recordings (APNG, GIF, MOV, MP4, WebM) become WebM video with a still for a poster, sounds become Opus. Served with range requests, so videos can seek.
+- **Getting files in:** pasting or dropping a picture in the editor, the new `npm run media -- import <file…>`, and `npm run snap` / `npm run record`, which now keep the raw capture in `scratch/captures/` and put the converted copy in the library.
+- **The Media tab** in the Library window: previews (recordings play on hover), filters, size and length, **used in** (which presentations, clickable), rename, copy reference, delete (refused while something uses it, with the list), **Clean up** for what nothing uses, and **Put on the board** for pictures and recordings.
+- **Recordings on the board:** an `image` whose file is a video plays in a muted `<video>` with the same `play` action as animated pictures (on/off, `from`, `speed`, `loop`). Live, it plays natively and is nudged back in step if it drifts; in an export, each frame seeks to the exact time and waits until that frame is shown. Until the video is ready the poster shows.
+- **Migration:** `npm run media -- migrate --apply` converted the 7 files presentations use (2.9 MB → 0.75 MB; the two APNG recordings 821 KB → 150 KB and 463 KB → 154 KB), rewrote "about this app, with edit demo" to use them, and moved all 46 old files out of `images/` into `scratch/images/` (not in git, nothing deleted). `npm run check` now knows `/media/…` pictures.
+- **Bugs fixed on the way:** a narration recording could land over a clip already on the other lane (the lane is now chosen when recording stops, where it overlaps nothing); `npm run snapshot` could render the first picture differently between runs (the flattened background now waits until it is decoded and shown).
+
+**Checked by:** 68 unit tests (new: the video clock); a test video showing its own time rendered through the export page (still before play, the right time while playing, held when paused, correct after a jump at double speed and when looping, byte-identical between runs) and exported to MP4; the same video live in Play mode; the two migrated recordings rendered through the export page every half second (advancing in real time from their play beat and holding their last frame); a recording put on the board from the Media tab in the browser.
+
+**Still open:** Git LFS for `media/`, moving voice clips into the library so presentations carry their sound, recording the screen from inside the app, and the 4 UnDraw pictures the Sandbox refers to but were never added.
+
+![The Media tab: previews, sizes, what each file is used in, clean-up](journey/69-media-library.jpg)
+![A screen recording put on the board from the Media tab](journey/70-recording-on-board.jpg)
+![The migrated recordings playing in "about this app, with edit demo"](journey/71-migrated-recordings.jpg)

@@ -31,6 +31,8 @@ window.jzmRender = {
     if (!r.ok) throw new Error(r.errors.join('\n'));
     await stage.load(r.presentation);
     await document.fonts.ready;
+    // Let the browser paint once with everything loaded before the first frame is captured.
+    await new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(() => r())));
     perf = performance;
   },
   async frame(time) {

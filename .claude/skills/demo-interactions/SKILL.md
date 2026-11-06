@@ -1,6 +1,6 @@
 ---
 name: demo-interactions
-description: Build scenes that walk through app or UI interactions (click, edit text, change colour, drag, play a recorded screen) using screenshots framed as a browser, camera zooms into details with pinned explanations that stay readable, and animated screen recordings (APNG, GIF, animated WebP) played in sync with the narration. Use when a presentation needs to show how to use an app or an interface.
+description: Build scenes that walk through app or UI interactions (click, edit text, change colour, drag, play a recorded screen) using screenshots framed as a browser, camera zooms into details with pinned explanations that stay readable, and screen recordings (WebM video from the media library; APNG, GIF and animated WebP also work) played in sync with the narration. Use when a presentation needs to show how to use an app or an interface.
 ---
 
 # Showing how an app works
@@ -84,7 +84,7 @@ npm run record -- 'http://localhost:5173/#/p/sandbox' edit-text scripts/scenario
 # flags: --size 1280x800, --fps 15 (12 keeps files small)
 ```
 
-Writes `images/<name>.apng`. jz-motion plays APNG with the `play` action.
+Writes `images/<name>.apng`. Recordings in the media library are WebM video (`/media/<hash>.webm`, with a poster picture next to it; anything imported there, APNG and GIF included, is converted to that). The board plays a video exactly like an animated picture, with the `play` action, muted (sound belongs to the narration). APNG, GIF and animated WebP still play too.
 
 ### **Always record against the sandbox presentation**
 
@@ -138,7 +138,7 @@ export async function run(page) {
 }
 ```
 
-For a recording, swap `.png` → `.apng` and drive playback with `play`:
+For a recording, use the recording's `src` (a `/media/<hash>.webm` video, or an `.apng`) and drive playback with `play`:
 
 ```json
 { "do": "play", "target": "editor", "on": true, "from": 0 }

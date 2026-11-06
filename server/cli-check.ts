@@ -47,7 +47,7 @@ function listLibrary(mine: Set<string>) {
 /** Pictures a presentation points at that can't be found (in images/ or public/). */
 function missingPictures(doc: { scenes?: { elements?: { type?: string; src?: string }[] }[] }): string[] {
   const srcs = (doc.scenes ?? []).flatMap((s) => (s.elements ?? []).filter((e) => e.type === 'image' && typeof e.src === 'string' && !e.src.startsWith('data:')).map((e) => e.src!));
-  return srcs.filter((src) => !existsSync(src.startsWith('/images/') ? resolve(src.slice(1)) : resolve('public', src.replace(/^\//, ''))));
+  return srcs.filter((src) => !existsSync(/^\/(images|media)\//.test(src) ? resolve(src.slice(1).split('?')[0]) : resolve('public', src.replace(/^\//, ''))));
 }
 
 async function checkFile(path: string): Promise<boolean> {

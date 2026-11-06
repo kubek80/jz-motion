@@ -17,7 +17,8 @@
     "snapshot": "tsx server/cli-snapshot.ts",
     "snap": "node scripts/snap.mjs",
     "record": "node scripts/record.mjs",
-    "assets": "tsx server/cli-assets.ts"
+    "assets": "tsx server/cli-assets.ts",
+    "media": "tsx server/cli-media.ts"
   },
   "dependencies": {
     "@codemirror/lang-json": "^6.0.2",

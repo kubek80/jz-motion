@@ -59,8 +59,19 @@ async function flattenBackground(defs: SVGDefsElement, bg: SVGGElement) {
     URL.revokeObjectURL(svgUrl);
     const blob = await new Promise<Blob | null>((r) => canvas.toBlob(r, 'image/png'));
     if (!blob) return;
-    const flat = svgEl('image', { href: URL.createObjectURL(blob), width: VIEW.width, height: VIEW.height, preserveAspectRatio: 'none' });
+    // Decode the bitmap first and wait until the board's copy has loaded, so nothing (an export's first frame,
+    // a snapshot) can catch the board between the live texture and the bitmap.
+    const url = URL.createObjectURL(blob);
+    const pre = new Image();
+    pre.src = url;
+    await pre.decode();
+    const flat = svgEl('image', { href: url, width: VIEW.width, height: VIEW.height, preserveAspectRatio: 'none' });
+    const loaded = new Promise<void>((done) => {
+      flat.addEventListener('load', () => done(), { once: true });
+      setTimeout(done, 1000);
+    });
     bg.replaceChildren(flat);
+    await loaded;
   } catch {
     // Keep the live (slower) background.
   }

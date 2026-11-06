@@ -10,6 +10,7 @@ import { deleteIcon, readLibrary, saveIcon } from './library';
 import { findOffset } from './media';
 import { saveUpload, transcribe, uploadPath } from './transcribe';
 import { saveImage, serveImage } from './images';
+import { addMedia, deleteMedia, listMedia, readUpload, renameMedia, serveMedia } from './mediaStore';
 import { claudeCodeChat, claudeCodeStatus } from './claudeCode';
 import { runAgent } from './claudeAgent';
 import { createPresentation, deletePresentation, listPresentations, readPresentation, writePresentation } from './presentations';
@@ -23,6 +24,7 @@ import { generateTts, readSidecar as readTtsSidecar, serveTts } from './tts';
 //   /api/llm      proxy to OpenAI-compatible model APIs (browsers can't call most of them directly)
 //   /api/takes    recordings: create, upload tracks, set offsets, auto-sync, delete
 //   /api/tts      generate a voice clip for a sentence; the cache (tts/<id>.json) is served from /api/tts/<id>
+//   /api/media    the media library: add (converted), list with where each is used, rename, delete; served at /media/<file>
 //   /api/images   screenshots and pictures for the board (images/<hash>.<ext>), served at /images/<file>
 //   /api/export   render a presentation (and a take) to MP4; /exports/<file> to download it
 
@@ -224,6 +226,17 @@ export function jzmServer(): Plugin {
         }
         if (url.pathname === '/api/uploads' && req.method === 'POST') return send(res, 200, { upload: await saveUpload(req, url.searchParams.get('ext') ?? 'mp3') });
         if (parts[0] === 'uploads' && parts[1] && req.method === 'GET') return await serveUpload(req, res, parts[1]);
+        if (parts[0] === 'api' && parts[1] === 'media') {
+          const q = url.searchParams;
+          if (!parts[2] && req.method === 'GET') return send(res, 200, await listMedia());
+          if (!parts[2] && req.method === 'POST') return send(res, 200, await addMedia(await readUpload(req), q.get('filename') ?? 'upload.bin', q.get('name') ?? undefined));
+          if (parts[2] && req.method === 'PATCH') return send(res, 200, await renameMedia(parts[2], String((await readJson(req)).name ?? '')));
+          if (parts[2] && req.method === 'DELETE') {
+            const r = await deleteMedia(parts[2], q.get('force') === '1');
+            return send(res, r.ok ? 200 : 409, r);
+          }
+        }
+        if (parts[0] === 'media' && parts[1] && req.method === 'GET' && (await serveMedia(req, res, parts[1]))) return;
         if (url.pathname === '/api/images' && req.method === 'POST') return send(res, 200, await saveImage(req, url.searchParams.get('ext') ?? 'png'));
         if (parts[0] === 'images' && parts[1] && req.method === 'GET' && (await serveImage(res, parts[1]))) return;
         if (parts[0] === 'api' && parts[1] === 'library') {
