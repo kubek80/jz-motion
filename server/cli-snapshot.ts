@@ -5,9 +5,7 @@ import { mkdir, readFile } from 'node:fs/promises';
 import { basename, join, resolve } from 'node:path';
 import { createServer } from 'vite';
 import { compile } from '../src/engine/compile';
-import { addIsoModels, type IsoModel } from '../src/engine/iso';
-import { addIcons, type IconDef } from '../src/engine/library';
-import { readLibrary } from './library';
+import { registerLibrary } from './library';
 import type { Performance } from '../src/video/performance';
 
 const args = process.argv.slice(2);
@@ -22,10 +20,7 @@ if (!input) {
 }
 const presentation = JSON.parse(await readFile(input, 'utf8'));
 // Icons, clipart and 3D models made in the app (library/), as the page loads them too.
-for (const [name, def] of Object.entries(await readLibrary()) as [string, { kind?: string }][]) {
-  if (def.kind === 'iso') addIsoModels({ [name]: def as IsoModel });
-  else addIcons({ [name]: def as IconDef });
-}
+await registerLibrary();
 const r = compile(presentation);
 if (!r.ok) {
   console.error(`${input} does not load:\n${r.errors.map((e) => `  - ${e}`).join('\n')}`);

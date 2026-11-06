@@ -572,3 +572,11 @@ Jakub asked what transcription costs (cents per narration: about $0.006 a minute
 On Jakub's Windows computer transcription failed with "ffprobe could not start … Install FFmpeg or set FFMPEG_PATH", but setting `FFMPEG_PATH` didn't help `ffprobe`. Now `ffprobe` is taken from the same folder as `FFMPEG_PATH` when only that is set, and the message names the program, how to install FFmpeg on Windows and on a Mac, and to open a new terminal afterwards. The README's setup says FFmpeg is needed for the media library and transcription too, not only export.
 
 **Checked by:** typecheck, tests, build; the message with a missing `ffprobe`, and `FFMPEG_PATH=…/ffmpeg.exe` giving `…/ffprobe.exe`.
+
+## Step 42: Exports know the icons you made
+
+Exporting "about this app, with edit demo" failed with "unknown icon i-would-like / lightbulb / web-search / designer". Those are in `library/` (made in the app), and the editor and the page that renders each frame load them, but the exporter checked the presentation on the server first without them. A shared `registerLibrary()` (`server/library.ts`) now loads `library/` into the engine; the exporter calls it before checking (re-reading it each time, so something just made is included), and `npm run snapshot` uses it instead of its own copy.
+
+**Checked by:** the presentation compiled on the server: 16 errors without the library, none with its 60 items; a real export of its "Why I built it" scene (21 s, 633 frames) with the custom clipart in the video; typecheck, tests, build.
+
+![A frame of the exported scene, with clipart from the app's own library](journey/84-export-own-icons.jpg)

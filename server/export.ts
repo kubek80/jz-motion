@@ -5,6 +5,7 @@ import { dirname } from 'node:path';
 import { compile } from '../src/engine/compile';
 import { buildFfmpegArgs } from '../src/video/ffmpeg';
 import { autoPerformance, layoutSegments, type AutoTiming, type Performance } from '../src/video/performance';
+import { registerLibrary } from './library';
 import { FFMPEG, ffmpegMissing } from './media';
 import { trackPath, type Take } from './takes';
 
@@ -32,6 +33,8 @@ export interface ExportOptions {
  */
 export async function exportVideo(opts: ExportOptions): Promise<{ file: string; duration: number }> {
   const source = opts.take && opts.useTakePresentation !== false ? opts.take.presentation : opts.presentation;
+  // Icons and models made in the app are checked like built-in ones (the render page loads them too).
+  await registerLibrary();
   const compiled = compile(source);
   if (!compiled.ok) throw new Error(`The presentation has errors:\n${compiled.errors.join('\n')}`);
   const perf: Performance = opts.take?.performance ?? autoPerformance(compiled.presentation, opts.timing);
