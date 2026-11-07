@@ -20,8 +20,12 @@ export async function loadUserLibrary(): Promise<Record<string, Saved>> {
   }
 }
 
+/** Fired on window when library items are added or changed, so the palette can show them. */
+export const LIBRARY_CHANGED = 'jzm-library-changed';
+
 function register(all: Record<string, Saved>) {
   const entries = Object.entries(all);
+  if (typeof window !== 'undefined') queueMicrotask(() => window.dispatchEvent(new Event(LIBRARY_CHANGED)));
   Object.assign(userItems, all);
   addIcons(Object.fromEntries(entries.filter(([, d]) => d.kind !== 'iso')) as Record<string, IconDef>);
   addIsoModels(Object.fromEntries(entries.filter(([, d]) => d.kind === 'iso')) as Record<string, IsoModel>);

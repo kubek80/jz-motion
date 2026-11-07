@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { LIBRARY_CHANGED } from '../userLibrary';
 import { isoModels } from '../../engine/iso';
 import { icons, type IconDef } from '../../engine/library';
 import { IconPreview } from './IconPreview';
@@ -14,13 +15,20 @@ export type AddRequest =
 /** Palette of things to put on the board. Clicking adds the item in the middle of the view. */
 export function Library({ onAdd, arrowActive, onCreate, onBrowse, version }: { onAdd: (r: AddRequest) => void; arrowActive: boolean; onCreate?: () => void; onBrowse?: () => void; version?: number }) {
   const [query, setQuery] = useState('');
+  // Items made meanwhile (by an AI run, or in another window) show up without reloading the page.
+  const [added, setAdded] = useState(0);
+  useEffect(() => {
+    const bump = () => setAdded((n) => n + 1);
+    window.addEventListener(LIBRARY_CHANGED, bump);
+    return () => window.removeEventListener(LIBRARY_CHANGED, bump);
+  }, []);
   const [folded, toggle] = useFolded();
   /** While searching, every section is open so all matches show. */
   const isOpen = (title: string) => !!query.trim() || !folded.has(title);
   const shown = useMemo(() => {
     const q = query.trim().toLowerCase();
     return Object.entries(icons).filter(([name, d]) => !q || name.includes(q) || d.tags.some((t) => t.includes(q)) || d.description.toLowerCase().includes(q));
-  }, [query, version]);
+  }, [query, version, added]);
 
   const groups: [string, [string, IconDef][]][] = [
     ['Icons', shown.filter(([, d]) => !d.parts && !d.tags.includes('logo'))],
