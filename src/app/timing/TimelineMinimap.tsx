@@ -1,6 +1,6 @@
 // A strip over the timeline showing all of it at once: the voice clips on their two lanes, every beat
 // (coloured by scene), the playhead, and a box around the part the timeline shows. Click or drag to go
-// somewhere; the box follows. Useful once the timeline is zoomed in.
+// somewhere; the box follows. Shown only once the timeline is zoomed in (when it can scroll).
 import type { Clip } from '../../engine/schema';
 import { fmt, SCENE_COLORS } from './format';
 import type { NowPlaying } from './useNowPlaying';
@@ -22,6 +22,8 @@ interface Props {
 export function TimelineMinimap({ total, clips, missing, np, time, view, centerOn, onFit }: Props) {
   const pct = (t: number) => `${(Math.max(0, Math.min(total, t)) / total) * 100}%`;
   const all = view.from <= 0.01 && view.to >= total - 0.01;
+  // Only useful when there is somewhere to scroll to: with the whole timeline in view it stays out of the way.
+  if (all || !(total > 0)) return null;
   const go = (e: React.PointerEvent<HTMLDivElement>) => {
     const r = e.currentTarget.getBoundingClientRect();
     centerOn(((e.clientX - r.left) / r.width) * total);
@@ -47,11 +49,11 @@ export function TimelineMinimap({ total, clips, missing, np, time, view, centerO
         {np.shown.map((c) => (
           <span key={`${c.scene}:${c.beat}`} className={`mm-click ${c.cued ? 'cued' : ''}`} style={{ left: pct(c.t), background: SCENE_COLORS[c.scene % SCENE_COLORS.length] }} />
         ))}
-        {!all && <span className="mm-view" style={{ left: pct(view.from), width: pct(view.to - view.from) }} />}
+        <span className="mm-view" style={{ left: pct(view.from), width: pct(view.to - view.from) }} />
         <span className="mm-playhead" style={{ left: pct(time) }} />
       </div>
       <span className="muted mm-range">{fmt(view.from)}–{fmt(Math.min(view.to, total))}</span>
-      <button onClick={onFit} disabled={all} title="Zoom out to show the whole timeline">Fit</button>
+      <button onClick={onFit} title="Zoom out to show the whole timeline">Fit</button>
     </div>
   );
 }

@@ -65,7 +65,7 @@ export function Timeline({ laneRef, missing, height, rec, seek, time, total, pps
     >
       <div className="timing-track" style={{ width }}>
         <div className="ruler">
-          {Array.from({ length: Math.ceil(total / rulerStep(pps)) + 1 }, (_, i) => i * rulerStep(pps)).map((s) => (
+          {Array.from({ length: Math.floor(total / rulerStep(pps)) + 1 }, (_, i) => i * rulerStep(pps)).map((s) => (
             <span key={s} style={{ left: 20 + s * pps }}>{fmt(s).replace(/\.\d$/, '')}</span>
           ))}
         </div>
