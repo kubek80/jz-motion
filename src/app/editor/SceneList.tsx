@@ -30,7 +30,7 @@ export function SceneList({ doc, sceneIndex, mode, onGo, onRemove, onAdd, update
       {(doc?.scenes ?? []).map((s, i) => (
         <div
           key={i}
-          className={[i === sceneIndex ? 'scene active' : 'scene', menu?.i === i ? 'menu-open' : ''].join(' ')}
+          className={[i === sceneIndex ? 'scene active' : 'scene', menu?.i === i ? 'menu-open' : '', s.skip ? 'left-out' : ''].join(' ')}
           onClick={() => onGo(i)}
           onContextMenu={(e) => {
             if (!editing) return;
@@ -41,6 +41,7 @@ export function SceneList({ doc, sceneIndex, mode, onGo, onRemove, onAdd, update
         >
           <span className="num">{i + 1}</span>
           <span className="scene-title">{s.title ?? s.id}{s.inherit ? ' ↲' : ''}</span>
+          {!!s.skip && <span className="left-out-tag" title="Left out of the video: Timing, Play all, presenting and export pass over it">left out</span>}
           {editing && (
             <span className="tools" onClick={(e) => e.stopPropagation()}>
               <button title="Move up" onClick={() => update({ ...doc!, scenes: moveItem(doc!.scenes, i, i - 1) })}>↑</button>
@@ -66,6 +67,8 @@ export function SceneList({ doc, sceneIndex, mode, onGo, onRemove, onAdd, update
             { label: <>{TOOL_ICONS.sparkle} New scene before, with AI…</>, tone: 'ai', onClick: () => onAdd(menu.i, 'before', true) },
             { label: <>{TOOL_ICONS.sparkle} New scene after, with AI…</>, tone: 'ai', onClick: () => onAdd(menu.i, 'after', true) },
             'separator',
+            { label: doc!.scenes[menu.i]?.skip ? '◉ Put back in the video' : '◌ Leave out of the video', hint: 'Timing, Play all, presenting and export pass over a scene left out; it stays here to edit',
+              onClick: () => update({ ...doc!, scenes: doc!.scenes.map((x, j) => { if (j !== menu.i) return x; const { skip: _s, ...rest } = x; return x.skip ? rest : { ...rest, skip: true }; }) }) },
             { label: '↑ Move up', disabled: menu.i === 0, onClick: () => update({ ...doc!, scenes: moveItem(doc!.scenes, menu.i, menu.i - 1) }) },
             { label: '↓ Move down', disabled: menu.i === count - 1, onClick: () => update({ ...doc!, scenes: moveItem(doc!.scenes, menu.i, menu.i + 1) }) },
             'separator',

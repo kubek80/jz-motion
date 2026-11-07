@@ -85,3 +85,6 @@ input, textarea, select { font: inherit; color: var(--text); background: var(--b
 .context-menu .plus { color: var(--accent); width: 14px; text-align: center; }
 .context-menu hr { border: none; border-top: 1px solid var(--line); margin: 3px 4px; }
 .scene.menu-open { border-color: color-mix(in srgb, var(--accent) 60%, transparent); }
+/* A scene left out of the video: dimmed, with a tag. */
+.scene.left-out .scene-title, .scene.left-out .num { opacity: 0.5; text-decoration: line-through; text-decoration-color: #ffffff55; }
+.left-out-tag { font-size: 10px; color: var(--muted); border: 1px dashed var(--line); border-radius: 4px; padding: 0 4px; white-space: nowrap; }

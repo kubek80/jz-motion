@@ -890,6 +890,7 @@
     {
       "id": "start-b",
       "title": "Start with a sentence (B)",
+      "skip": true,
       "elements": [
         {
           "id": "h",
@@ -1370,6 +1371,7 @@
     {
       "id": "editor-b",
       "title": "Edit like a whiteboard (B)",
+      "skip": true,
       "elements": [
         {
           "id": "h",
@@ -1885,6 +1887,7 @@
     {
       "id": "edit-colour-b",
       "title": "Edit text, change colour (B)",
+      "skip": true,
       "elements": [
         {
           "id": "h",
@@ -4172,6 +4175,7 @@
     {
       "id": "timing-b",
       "title": "Timing, prompter and voice-over (B)",
+      "skip": true,
       "elements": [
         {
           "id": "h",
@@ -4747,6 +4751,7 @@
     {
       "id": "ai-helpers-b",
       "title": "AI helpers across the app (B)",
+      "skip": true,
       "elements": [
         {
           "id": "h",

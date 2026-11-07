@@ -3,7 +3,9 @@ dist
 *.local
 takes
 exports
-uploads
+# Recordings stay on this computer; generated narration (generated-*) is kept in git so it travels with a presentation.
+uploads/*
+!uploads/generated-*
 snapshots
 tts
 presentations/.drafts

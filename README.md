@@ -87,6 +87,8 @@ Then the **Video** tab: pick the take, add a friend's recording (with **Auto-syn
 
 **⛶** (top bar) puts the whole app full screen, and back; **Present** still shows the board alone, and leaving it returns to the full-screen app.
 
+**Leave a scene out of the video** (right-click it in the scene list, or its properties): Timing, Play all, presenting and the export pass over it, so you can keep two versions of a scene side by side and switch which one plays.
+
 **Edit / Play** sits just above the beats: beside the AI box in Edit mode, beside the play controls in Play mode. **P** switches between them (not while typing or with a window like Timing open); Esc in Play goes back to Edit.
 
 **Play mode keys:** → / Space / Page Down / click: next beat (finishes a running one first) · ← / Page Up: previous · F: full screen.
