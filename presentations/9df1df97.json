@@ -885,7 +885,8 @@
           ],
           "auto": true
         }
-      ]
+      ],
+      "skip": true
     },
     {
       "id": "start-b",
@@ -1005,7 +1006,7 @@
               "delay": 0.8
             }
           ],
-          "cue": 93.55
+          "cue": 70.45
         },
         {
           "title": "A sentence",
@@ -1030,7 +1031,7 @@
               "start": "with"
             }
           ],
-          "cue": 100.59
+          "cue": 77.49
         },
         {
           "title": "Three ways in",
@@ -1066,7 +1067,7 @@
               "delay": 0.6
             }
           ],
-          "cue": 106.5
+          "cue": 83.4
         },
         {
           "title": "Watch it work",
@@ -1100,7 +1101,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 117.21
+          "cue": 94.11
         },
         {
           "title": "A first draft",
@@ -1133,7 +1134,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 124.82
+          "cue": 101.72
         }
       ]
     },
@@ -1263,7 +1264,7 @@
               "target": "editor"
             }
           ],
-          "cue": 136.53
+          "cue": 113.43
         },
         {
           "title": "The board",
@@ -1281,7 +1282,7 @@
               "delay": 0.4
             }
           ],
-          "cue": 141.93
+          "cue": 118.83
         },
         {
           "title": "Beats under it",
@@ -1304,7 +1305,7 @@
               "delay": 0.4
             }
           ],
-          "cue": 144.13
+          "cue": 121.03
         },
         {
           "title": "Properties on the right",
@@ -1327,7 +1328,7 @@
               "delay": 0.4
             }
           ],
-          "cue": 145.68
+          "cue": 122.58
         },
         {
           "title": "Scenes and library on the left",
@@ -1350,7 +1351,7 @@
             }
           ],
           "notes": "I am able to inspect the list of scenes, and under it the library — icons, clipart, 3D models I can drop onto the board.",
-          "cue": 147.13
+          "cue": 124.03
         },
         {
           "title": "Back out",
@@ -1370,7 +1371,8 @@
           ],
           "auto": true
         }
-      ]
+      ],
+      "skip": true
     },
     {
       "id": "editor-b",
@@ -1510,7 +1512,7 @@
               "delay": 0.8
             }
           ],
-          "cue": 153.98
+          "cue": 113.7
         },
         {
           "title": "Click to select",
@@ -1550,7 +1552,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 160.53
+          "cue": 120.25
         },
         {
           "title": "The beats",
@@ -1586,7 +1588,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 167.87
+          "cue": 127.59
         },
         {
           "title": "From the library",
@@ -1628,7 +1630,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 175.23
+          "cue": 134.95
         },
         {
           "title": "P to play",
@@ -1663,7 +1665,7 @@
               "delay": 0.5
             }
           ],
-          "cue": 184.45
+          "cue": 144.17
         }
       ]
     },
@@ -1779,7 +1781,7 @@
               "delay": 1.2
             }
           ],
-          "cue": 190.89
+          "cue": 167.79
         },
         {
           "title": "Watch the headline",
@@ -1791,7 +1793,7 @@
               "color": "yellow"
             }
           ],
-          "cue": 193.24
+          "cue": 170.14
         },
         {
           "title": "Click, pick a marker",
@@ -1823,7 +1825,7 @@
               "goto": 7
             }
           ],
-          "cue": 193.85
+          "cue": 170.75
         },
         {
           "title": "Then double-click to edit",
@@ -1850,7 +1852,7 @@
               "target": "a-markers"
             }
           ],
-          "cue": 197.7
+          "cue": 174.6
         },
         {
           "title": "Hold the frame",
@@ -1878,7 +1880,7 @@
               "start": "after"
             }
           ],
-          "cue": 204.04
+          "cue": 180.94
         },
         {
           "title": "Frame 5",
@@ -1890,7 +1892,8 @@
             }
           ]
         }
-      ]
+      ],
+      "skip": true
     },
     {
       "id": "edit-colour-b",
@@ -2010,7 +2013,7 @@
               "delay": 0.8
             }
           ],
-          "cue": 211.29
+          "cue": 151.3
         },
         {
           "title": "Select",
@@ -2052,7 +2055,7 @@
               "start": "with"
             }
           ],
-          "cue": 220.12
+          "cue": 160.13
         },
         {
           "title": "Recolour",
@@ -2073,7 +2076,7 @@
               "goto": 11,
               "fade": true,
               "duration": 0.5,
-              "delay": 1.0
+              "delay": 1
             },
             {
               "do": "play",
@@ -2084,7 +2087,7 @@
               "delay": 0.4
             }
           ],
-          "cue": 226.02
+          "cue": 166.03
         },
         {
           "title": "Rewrite",
@@ -2127,7 +2130,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 231.58
+          "cue": 171.59
         },
         {
           "title": "Made by the app",
@@ -2154,7 +2157,7 @@
               "delay": 0.5
             }
           ],
-          "cue": 239.14
+          "cue": 179.15
         }
       ]
     },
@@ -2302,7 +2305,7 @@
             }
           ],
           "notes": "Under the hood, jz-motion is designed to be LLM first. ",
-          "cue": 249.98
+          "cue": 189.99
         },
         {
           "title": "Context",
@@ -2326,7 +2329,7 @@
             }
           ],
           "notes": "A presentation is not pixels: it's one JSON document.\n\nEvery request sends the model the format reference, the drawing rules and the whole library: every icon, logo, clipart and 3D model it may use.",
-          "cue": 252.87
+          "cue": 192.88
         },
         {
           "title": "Schema check",
@@ -2341,7 +2344,7 @@
             }
           ],
           "notes": "LLM generated JSON is then being sent to schema checker to ensure that results are correct.",
-          "cue": 270.73
+          "cue": 210.74
         },
         {
           "title": "Repair",
@@ -2356,7 +2359,7 @@
               "target": "repair"
             }
           ],
-          "cue": 276.12
+          "cue": 216.13
         },
         {
           "title": "Board",
@@ -2374,7 +2377,7 @@
               "target": "web-search"
             }
           ],
-          "cue": 281.73
+          "cue": 221.74
         },
         {
           "title": "The JSON",
@@ -2392,17 +2395,22 @@
               "padding": 260
             }
           ],
-          "cue": 288.62
+          "cue": 228.63
         },
         {
           "title": "Beat 7",
           "actions": [
             {
+              "do": "camera",
+              "focus": "all",
+              "zoom": 1
+            },
+            {
               "do": "draw",
               "target": "repair-2"
             }
           ],
-          "cue": 294.87
+          "cue": 234.86
         }
       ]
     },
@@ -2602,7 +2610,7 @@
             }
           ],
           "notes": "The other goal is consistency. Whatever a model makes has to look like it came from the same set of markers.",
-          "cue": 296.12
+          "cue": 243.06
         },
         {
           "title": "Everything",
@@ -2624,7 +2632,7 @@
               "target": "rule"
             }
           ],
-          "cue": 301.03
+          "cue": 247.97
         },
         {
           "title": "Six marker colours",
@@ -2869,7 +2877,7 @@
               "start": "with"
             }
           ],
-          "cue": 321.78
+          "cue": 268.72
         },
         {
           "title": "Both AIs follow them",
@@ -2892,7 +2900,7 @@
               "stagger": 0.4
             }
           ],
-          "cue": 331.17
+          "cue": 278.11
         },
         {
           "title": "One source of truth",
@@ -3110,7 +3118,7 @@
               "target": "server-stack"
             }
           ],
-          "cue": 342.08
+          "cue": 289.02
         },
         {
           "title": "Each explainer adds one",
@@ -3145,7 +3153,7 @@
               ]
             }
           ],
-          "cue": 353.63
+          "cue": 300.57
         }
       ]
     },
@@ -3360,7 +3368,7 @@
               "target": "h"
             }
           ],
-          "cue": 361.33
+          "cue": 308.27
         },
         {
           "title": "In the browser",
@@ -3415,7 +3423,7 @@
             }
           ],
           "notes": "paired with local server responsible for: \nkeeping the files, \nproxying LLM calls,\ntranscription of recordings, \nand export of videos.",
-          "cue": 373.33
+          "cue": 320.27
         },
         {
           "title": "Swappable models",
@@ -3439,7 +3447,7 @@
               ]
             }
           ],
-          "cue": 381.48
+          "cue": 328.42
         },
         {
           "title": "Voice both ways",
@@ -3701,7 +3709,7 @@
             }
           ],
           "notes": "Because every request is checked and repaired, I can experiment with smaller models.",
-          "cue": 388.03
+          "cue": 334.97
         },
         {
           "title": "Story",
@@ -3718,7 +3726,7 @@
               "stagger": 0.25
             }
           ],
-          "cue": 393.23
+          "cue": 340.17
         },
         {
           "title": "Small edits",
@@ -3735,7 +3743,7 @@
             }
           ],
           "notes": "Small edits, like changing a beat, work fine with a fast, cheap models like Haiku.",
-          "cue": 397.53
+          "cue": 344.47
         },
         {
           "title": "Drawings",
@@ -3752,7 +3760,7 @@
               "stagger": 0.25
             }
           ],
-          "cue": 402.23
+          "cue": 349.17
         },
         {
           "title": "Voice",
@@ -3769,7 +3777,7 @@
             }
           ],
           "notes": "I have used small OpenAI models for text-to-speech & transcription. Let me just add that I am using text to speach just for timing purposes - I have recorded final voice over myself.",
-          "cue": 408.67
+          "cue": 355.61
         },
         {
           "title": "Transcription",
@@ -3904,7 +3912,7 @@
               "target": "script-ico"
             }
           ],
-          "cue": 422.83
+          "cue": 369.77
         },
         {
           "title": "Three ways to touch it",
@@ -3923,7 +3931,7 @@
             }
           ],
           "notes": "I can read and edit the whole thing in the Script view, \n\ninline in the Timing prompter, \n\nor in the raw JSON tab if I want to see the shape.",
-          "cue": 431.88
+          "cue": 378.82
         },
         {
           "title": "Same text, three lenses",
@@ -3942,7 +3950,7 @@
             }
           ],
           "notes": "I have three views on the same text. so that I can pick whichever one fits what I'm doing right now.",
-          "cue": 437.17
+          "cue": 384.11
         }
       ]
     },
@@ -4058,7 +4066,7 @@
             }
           ],
           "notes": "Once presentation is ready I can move to the Timing window in prompter mode. \n",
-          "cue": 441.67
+          "cue": 388.61
         },
         {
           "title": "Each sentence, its own line",
@@ -4117,7 +4125,7 @@
               "start": "with"
             }
           ],
-          "cue": 453.98
+          "cue": 400.92
         },
         {
           "title": "A clock that keeps me honest",
@@ -4180,9 +4188,10 @@
               "delay": 0.4
             }
           ],
-          "cue": 460.63
+          "cue": 407.57
         }
-      ]
+      ],
+      "skip": true
     },
     {
       "id": "timing-b",
@@ -4329,7 +4338,7 @@
               "delay": 0.5
             }
           ],
-          "cue": 464.03
+          "cue": 390.4
         },
         {
           "title": "One line at a time",
@@ -4365,7 +4374,7 @@
               "delay": 0.8
             }
           ],
-          "cue": 471.13
+          "cue": 397.5
         },
         {
           "title": "The timeline",
@@ -4393,7 +4402,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 477.19
+          "cue": 403.56
         },
         {
           "title": "Just read",
@@ -4427,7 +4436,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 486.67
+          "cue": 413.04
         },
         {
           "title": "Tidy up",
@@ -4463,7 +4472,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 495.52
+          "cue": 421.89
         },
         {
           "title": "Back out",
@@ -4625,7 +4634,7 @@
             }
           ],
           "notes": "The AI isn't a single feature here — it's everywhere in the app. It's in the home screen, inside the editor, in the library & in timing screen",
-          "cue": 505.56
+          "cue": 452.5
         },
         {
           "title": "A sentence to a draft",
@@ -4650,7 +4659,7 @@
               "start": "with"
             }
           ],
-          "cue": 508.26
+          "cue": 455.2
         },
         {
           "title": "Change THIS scene",
@@ -4685,7 +4694,7 @@
               "start": "with"
             }
           ],
-          "cue": 511.16
+          "cue": 458.1
         },
         {
           "title": "Chat about the whole thing",
@@ -4720,7 +4729,7 @@
               "start": "with"
             }
           ],
-          "cue": 514.21
+          "cue": 461.15
         },
         {
           "title": "Same skills everywhere",
@@ -4760,9 +4769,10 @@
             }
           ],
           "notes": "All of them have access to the same skills. Pick the place that fits the move — the house style follows.",
-          "cue": 518.76
+          "cue": 465.7
         }
-      ]
+      ],
+      "skip": true
     },
     {
       "id": "ai-helpers-b",
@@ -4918,7 +4928,7 @@
               "delay": 0.8
             }
           ],
-          "cue": 525.21
+          "cue": 430.4
         },
         {
           "title": "Home",
@@ -4954,7 +4964,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 530.86
+          "cue": 436.05
         },
         {
           "title": "This scene",
@@ -4996,7 +5006,7 @@
               "delay": 1
             }
           ],
-          "cue": 535.01
+          "cue": 440.2
         },
         {
           "title": "The AI tab",
@@ -5032,7 +5042,7 @@
               "delay": 0.5
             }
           ],
-          "cue": 545.39
+          "cue": 450.58
         },
         {
           "title": "The library",
@@ -5068,7 +5078,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 553.02
+          "cue": 458.21
         },
         {
           "title": "Same skills",
@@ -5090,7 +5100,7 @@
               "delay": 0.4
             }
           ],
-          "cue": 559.48
+          "cue": 464.67
         }
       ]
     },
@@ -5178,7 +5188,7 @@
             }
           ],
           "notes": "One of main goals was to create an app that would allow me to create a ten-minute explainer under five dollars. I am happy to share that I was successful.",
-          "cue": 566.46
+          "cue": 469.4
         },
         {
           "title": "Why it works",
@@ -5190,7 +5200,7 @@
             }
           ],
           "notes": "If I would have to name 3 main cotributors those would be: \n\na presentation is pure JSON, so the tokens are cheap; \n\nthe library grows, so most drawings are reused; \n\nand the repair loop lets me use small, fast models.",
-          "cue": 581.81
+          "cue": 487
         },
         {
           "title": "Beat 3",
@@ -5200,7 +5210,7 @@
               "target": "lib"
             }
           ],
-          "cue": 586.4
+          "cue": 491.59
         },
         {
           "title": "Beat 4",
@@ -5210,7 +5220,7 @@
               "target": "mini"
             }
           ],
-          "cue": 590.36
+          "cue": 495.55
         }
       ]
     },
@@ -5327,7 +5337,7 @@
             }
           ],
           "notes": "And the last mile: I click Record and adjusting the timeing, like I'm doing now. My script, my voice, and every click are saved as a take.\n\nThank you for watching",
-          "cue": 594.15
+          "cue": 499.34
         },
         {
           "title": "Export",
@@ -5433,70 +5443,10 @@
         "name": "narration 05/11/2026, 20:44:40"
       },
       {
-        "id": "rec-mw3da8gp",
-        "upload": "5763928b.webm",
-        "sourceDuration": 7.45,
-        "offset": 68.7,
-        "lane": 1,
-        "trimStart": 0,
-        "trimEnd": 5.9,
-        "name": "narration 05/11/2026, 20:52:35"
-      },
-      {
-        "id": "rec-mw3dbyxo",
-        "upload": "86ea6837.webm",
-        "sourceDuration": 8.73,
-        "offset": 74.05,
-        "lane": 0,
-        "trimStart": 0,
-        "trimEnd": 6.2,
-        "name": "narration 05/11/2026, 20:53:56"
-      },
-      {
-        "id": "rec-mw3ddpp3",
-        "upload": "01bc070b.webm",
-        "sourceDuration": 5.29,
-        "offset": 78.85,
-        "lane": 1,
-        "trimStart": 0.85,
-        "trimEnd": 5.29,
-        "name": "narration 05/11/2026, 20:55:18"
-      },
-      {
-        "id": "rec-mw3dlmhw",
-        "upload": "d7526f08.webm",
-        "sourceDuration": 5.9,
-        "offset": 81.85,
-        "lane": 0,
-        "trimStart": 0,
-        "trimEnd": 5.6,
-        "name": "narration 05/11/2026, 21:01:27"
-      },
-      {
-        "id": "rec-mw3dnrhj",
-        "upload": "9c398456.webm",
-        "sourceDuration": 8.04,
-        "offset": 87.45,
-        "lane": 1,
-        "trimStart": 1.65,
-        "trimEnd": 4.8,
-        "name": "narration 05/11/2026, 21:03:07"
-      },
-      {
-        "id": "rec-mw3dq923",
-        "upload": "5a25547a.webm",
-        "sourceDuration": 3.16,
-        "offset": 90.1,
-        "lane": 0,
-        "trimStart": 0.3,
-        "trimEnd": 3.16,
-        "name": "narration 05/11/2026, 21:05:03"
-      },
-      {
         "id": "rec-mw3drzt8",
         "upload": "44eb4d2a.webm",
         "sourceDuration": 14.59,
-        "offset": 93.2,
+        "offset": 87.6,
         "lane": 0,
         "trimStart": 3.45,
         "trimEnd": 3.8,
@@ -5506,87 +5456,27 @@
         "id": "gen-start-b",
         "upload": "generated-start-b.webm",
         "sourceDuration": 42.576,
-        "offset": 93.55,
+        "offset": 70.45,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 42.576,
         "name": "generated voice · Start with a sentence (B)"
       },
       {
-        "id": "rec-mw3drzt8-after-start-b",
-        "upload": "44eb4d2a.webm",
-        "sourceDuration": 14.59,
-        "offset": 136.526,
-        "lane": 0,
-        "trimStart": 3.8,
-        "trimEnd": 14.59,
-        "name": "narration 05/11/2026, 21:06:24"
-      },
-      {
-        "id": "rec-mw3e0w7x",
-        "upload": "7c51183a.webm",
-        "sourceDuration": 9.81,
-        "offset": 146.826,
-        "lane": 1,
-        "trimStart": 0,
-        "trimEnd": 7.15,
-        "name": "narration 05/11/2026, 21:13:19"
-      },
-      {
         "id": "gen-editor-b",
         "upload": "generated-editor-b.webm",
         "sourceDuration": 36.515,
-        "offset": 153.976,
+        "offset": 113.55,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 36.515,
         "name": "generated voice · Edit like a whiteboard (B)"
       },
       {
-        "id": "rec-mw3e0w7x-after-editor-b",
-        "upload": "7c51183a.webm",
-        "sourceDuration": 9.81,
-        "offset": 190.891,
-        "lane": 1,
-        "trimStart": 7.15,
-        "trimEnd": 9.81,
-        "name": "narration 05/11/2026, 21:13:19"
-      },
-      {
-        "id": "rec-mw3ebrey",
-        "upload": "ec9008bb.webm",
-        "sourceDuration": 5.56,
-        "offset": 193.741,
-        "lane": 0,
-        "trimStart": 0,
-        "trimEnd": 5.56,
-        "name": "narration 05/11/2026, 21:21:46"
-      },
-      {
-        "id": "rec-mw4obr1q",
-        "upload": "ac465a84.webm",
-        "sourceDuration": 9.46,
-        "offset": 199.091,
-        "lane": 1,
-        "trimStart": 0,
-        "trimEnd": 9.46,
-        "name": "narration 06/11/2026, 18:49:28"
-      },
-      {
-        "id": "rec-mw51k7iy",
-        "upload": "fe1e0d33.webm",
-        "sourceDuration": 22.41,
-        "offset": 209.191,
-        "lane": 0,
-        "trimStart": 1.65,
-        "trimEnd": 3.75,
-        "name": "narration 07/11/2026, 00:59:58"
-      },
-      {
         "id": "gen-edit-colour-b",
         "upload": "generated-edit-colour-b.webm",
         "sourceDuration": 38.28,
-        "offset": 211.291,
+        "offset": 151.301,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 38.28,
@@ -5596,7 +5486,7 @@
         "id": "rec-mw51k7iy-after-edit-colour-b",
         "upload": "fe1e0d33.webm",
         "sourceDuration": 22.41,
-        "offset": 249.971,
+        "offset": 189.981,
         "lane": 0,
         "trimStart": 3.75,
         "trimEnd": 11.15,
@@ -5606,7 +5496,7 @@
         "id": "rec-mw51ottv",
         "upload": "905677a0.webm",
         "sourceDuration": 12.5,
-        "offset": 256.621,
+        "offset": 196.631,
         "lane": 1,
         "trimStart": 0,
         "trimEnd": 12.5,
@@ -5616,7 +5506,7 @@
         "id": "rec-mw51trpm",
         "upload": "20db9f5e.webm",
         "sourceDuration": 10.11,
-        "offset": 268.471,
+        "offset": 208.481,
         "lane": 0,
         "trimStart": 2.5,
         "trimEnd": 9.85,
@@ -5626,7 +5516,7 @@
         "id": "rec-mw51vcsn",
         "upload": "45bcef42.webm",
         "sourceDuration": 7.71,
-        "offset": 275.071,
+        "offset": 215.081,
         "lane": 1,
         "trimStart": 1.35,
         "trimEnd": 7.71,
@@ -5636,7 +5526,7 @@
         "id": "rec-mw51xdpq",
         "upload": "016043cf.webm",
         "sourceDuration": 7.99,
-        "offset": 281.121,
+        "offset": 221.131,
         "lane": 0,
         "trimStart": 1.7,
         "trimEnd": 7.99,
@@ -5646,7 +5536,7 @@
         "id": "rec-mw51yqgp",
         "upload": "b4814c07.webm",
         "sourceDuration": 9.5,
-        "offset": 286.971,
+        "offset": 226.981,
         "lane": 1,
         "trimStart": 2.15,
         "trimEnd": 9.5,
@@ -5656,7 +5546,7 @@
         "id": "rec-mw522fkr",
         "upload": "f59324e0.webm",
         "sourceDuration": 11.81,
-        "offset": 293.671,
+        "offset": 240.86,
         "lane": 0,
         "trimStart": 4.05,
         "trimEnd": 11.81,
@@ -5666,7 +5556,7 @@
         "id": "rec-mw524wbk",
         "upload": "3feec469.webm",
         "sourceDuration": 14.18,
-        "offset": 300.621,
+        "offset": 247.561,
         "lane": 1,
         "trimStart": 0,
         "trimEnd": 11.5,
@@ -5676,7 +5566,7 @@
         "id": "rec-mw526lk4",
         "upload": "fb3bcaea.webm",
         "sourceDuration": 11.39,
-        "offset": 311.871,
+        "offset": 258.811,
         "lane": 0,
         "trimStart": 2.05,
         "trimEnd": 11.39,
@@ -5686,7 +5576,7 @@
         "id": "rec-mw528tx6",
         "upload": "82104101.webm",
         "sourceDuration": 16.15,
-        "offset": 321.071,
+        "offset": 268.011,
         "lane": 1,
         "trimStart": 2.85,
         "trimEnd": 12.75,
@@ -5696,7 +5586,7 @@
         "id": "rec-mw52c6ln",
         "upload": "7018f457.webm",
         "sourceDuration": 19.58,
-        "offset": 330.671,
+        "offset": 277.611,
         "lane": 0,
         "trimStart": 1.9,
         "trimEnd": 13.05,
@@ -5706,7 +5596,7 @@
         "id": "rec-mw52f2rl",
         "upload": "b2ffdd55.webm",
         "sourceDuration": 11.3,
-        "offset": 341.471,
+        "offset": 288.411,
         "lane": 1,
         "trimStart": 1.55,
         "trimEnd": 11.3,
@@ -5716,7 +5606,7 @@
         "id": "rec-mw52je4z",
         "upload": "3b0830c6.webm",
         "sourceDuration": 13.43,
-        "offset": 350.971,
+        "offset": 297.911,
         "lane": 0,
         "trimStart": 2.1,
         "trimEnd": 13,
@@ -5726,7 +5616,7 @@
         "id": "rec-mw52z80x",
         "upload": "dfe1cb08.webm",
         "sourceDuration": 3.55,
-        "offset": 360.471,
+        "offset": 307.411,
         "lane": 1,
         "trimStart": 0,
         "trimEnd": 3.55,
@@ -5736,7 +5626,7 @@
         "id": "rec-mw53mr55",
         "upload": "94e3a6c0.webm",
         "sourceDuration": 11.7,
-        "offset": 363.721,
+        "offset": 310.661,
         "lane": 0,
         "trimStart": 1.5,
         "trimEnd": 11.7,
@@ -5746,7 +5636,7 @@
         "id": "rec-mw53tozq",
         "upload": "13718d9f.webm",
         "sourceDuration": 10.51,
-        "offset": 374.021,
+        "offset": 320.961,
         "lane": 1,
         "trimStart": 2.25,
         "trimEnd": 10.51,
@@ -5756,7 +5646,7 @@
         "id": "rec-mw541301",
         "upload": "2d02a93c.webm",
         "sourceDuration": 6.02,
-        "offset": 381.871,
+        "offset": 328.811,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 5.95,
@@ -5766,7 +5656,7 @@
         "id": "rec-mw547pck",
         "upload": "ead480c5.webm",
         "sourceDuration": 11.84,
-        "offset": 387.921,
+        "offset": 334.861,
         "lane": 1,
         "trimStart": 1.45,
         "trimEnd": 7.1,
@@ -5776,7 +5666,7 @@
         "id": "rec-mw548j67",
         "upload": "80c82c3e.webm",
         "sourceDuration": 5.11,
-        "offset": 393.371,
+        "offset": 340.311,
         "lane": 0,
         "trimStart": 0.75,
         "trimEnd": 5.11,
@@ -5786,7 +5676,7 @@
         "id": "rec-mw54avj2",
         "upload": "ee44e043.webm",
         "sourceDuration": 6.57,
-        "offset": 397.421,
+        "offset": 344.361,
         "lane": 1,
         "trimStart": 1,
         "trimEnd": 6.57,
@@ -5796,7 +5686,7 @@
         "id": "rec-mw54dhaa",
         "upload": "96595d98.webm",
         "sourceDuration": 7.29,
-        "offset": 402.371,
+        "offset": 349.311,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 7.29,
@@ -5806,7 +5696,7 @@
         "id": "rec-mw54jm6z",
         "upload": "f5f71161.webm",
         "sourceDuration": 15.77,
-        "offset": 409.771,
+        "offset": 356.711,
         "lane": 1,
         "trimStart": 2.3,
         "trimEnd": 15.77,
@@ -5816,7 +5706,7 @@
         "id": "rec-mw54l6t9",
         "upload": "65e47db8.webm",
         "sourceDuration": 9.39,
-        "offset": 422.871,
+        "offset": 369.811,
         "lane": 0,
         "trimStart": 1.2,
         "trimEnd": 9.39,
@@ -5826,57 +5716,17 @@
         "id": "rec-mw54o0fy",
         "upload": "86cdc516.webm",
         "sourceDuration": 11.74,
-        "offset": 431.021,
+        "offset": 377.961,
         "lane": 1,
         "trimStart": 1.25,
         "trimEnd": 11.74,
         "name": "narration 07/11/2026, 02:26:54"
       },
       {
-        "id": "rec-mw54xvho",
-        "upload": "757398dd.webm",
-        "sourceDuration": 7.21,
-        "offset": 441.371,
-        "lane": 0,
-        "trimStart": 1.85,
-        "trimEnd": 7.21,
-        "name": "narration 07/11/2026, 02:34:34"
-      },
-      {
-        "id": "rec-mw54zqiy",
-        "upload": "71a2517b.webm",
-        "sourceDuration": 11.62,
-        "offset": 446.671,
-        "lane": 1,
-        "trimStart": 0,
-        "trimEnd": 7.65,
-        "name": "narration 07/11/2026, 02:36:01"
-      },
-      {
-        "id": "rec-mw551lj4",
-        "upload": "a4d23d85.webm",
-        "sourceDuration": 6.41,
-        "offset": 454.021,
-        "lane": 0,
-        "trimStart": 1.45,
-        "trimEnd": 6.41,
-        "name": "narration 07/11/2026, 02:37:28"
-      },
-      {
-        "id": "rec-mw5532l2",
-        "upload": "6c98f050.webm",
-        "sourceDuration": 5.33,
-        "offset": 458.771,
-        "lane": 1,
-        "trimStart": 0,
-        "trimEnd": 5.15,
-        "name": "narration 07/11/2026, 02:38:37"
-      },
-      {
         "id": "rec-mw55ca1p",
         "upload": "4b90863f.webm",
         "sourceDuration": 15.57,
-        "offset": 463.821,
+        "offset": 409.261,
         "lane": 0,
         "trimStart": 4.2,
         "trimEnd": 4.4,
@@ -5886,48 +5736,18 @@
         "id": "gen-timing-b",
         "upload": "generated-timing-b.webm",
         "sourceDuration": 41.128,
-        "offset": 464.021,
+        "offset": 388,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 41.128,
         "name": "generated voice · Timing, prompter and voice-over (B)"
       },
       {
-        "id": "rec-mw55ca1p-after-timing-b",
-        "upload": "4b90863f.webm",
-        "sourceDuration": 15.57,
-        "offset": 505.549,
-        "lane": 0,
-        "trimStart": 4.4,
-        "trimEnd": 15.57,
-        "name": "narration 07/11/2026, 02:45:46"
-      },
-      {
-        "id": "rec-mw55fwx2",
-        "upload": "61f8b875.webm",
-        "sourceDuration": 9.32,
-        "offset": 516.549,
-        "lane": 1,
-        "trimStart": 1.6,
-        "trimEnd": 9.32,
-        "name": "narration 07/11/2026, 02:48:36"
-      },
-      {
-        "id": "rec-mw55l5gk",
-        "upload": "3d54f2ee.webm",
-        "sourceDuration": 13.78,
-        "offset": 524.099,
-        "lane": 0,
-        "trimStart": 1.65,
-        "trimEnd": 2.75,
-        "name": "narration 07/11/2026, 02:52:40"
-      },
-      {
         "id": "gen-ai-helpers-b",
         "upload": "generated-ai-helpers-b.webm",
         "sourceDuration": 39.828,
-        "offset": 525.199,
-        "lane": 0,
+        "offset": 428.85,
+        "lane": 1,
         "trimStart": 0,
         "trimEnd": 39.828,
         "name": "generated voice · AI helpers across the app (B)"
@@ -5936,7 +5756,7 @@
         "id": "rec-mw55l5gk-after-ai-helpers-b",
         "upload": "3d54f2ee.webm",
         "sourceDuration": 13.78,
-        "offset": 566.451,
+        "offset": 469.55,
         "lane": 0,
         "trimStart": 2.75,
         "trimEnd": 13.78,
@@ -5946,7 +5766,7 @@
         "id": "rec-mw55rho6",
         "upload": "c3c5e511.webm",
         "sourceDuration": 19.05,
-        "offset": 577.201,
+        "offset": 480.141,
         "lane": 1,
         "trimStart": 1.95,
         "trimEnd": 19.05,
@@ -5956,7 +5776,7 @@
         "id": "rec-mw55zwmv",
         "upload": "6e72a101.webm",
         "sourceDuration": 12.43,
-        "offset": 594.301,
+        "offset": 497.241,
         "lane": 0,
         "trimStart": 1.75,
         "trimEnd": 12.43,
@@ -5966,7 +5786,7 @@
         "id": "rec-mw560zf8",
         "upload": "a9a1ac08.webm",
         "sourceDuration": 2.46,
-        "offset": 605.001,
+        "offset": 507.941,
         "lane": 1,
         "trimStart": 0.9,
         "trimEnd": 2.46,
