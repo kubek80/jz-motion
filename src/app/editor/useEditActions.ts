@@ -2,7 +2,10 @@
 // pasted picture), duplicate, rename and delete elements; delete a scene after asking.
 import type { Stage } from '../../engine';
 import type { Camera } from '../../engine/schema';
+import { compile } from '../../engine';
+import { cueClicks } from '../../video/performance';
 import { confirmDialog } from '../confirm';
+import { closeGap, sceneGap } from './closeGap';
 import { addElement, addSceneAt, deleteElement, deleteScene, renameElement, sceneSlot, uniqueId, type Raw, type RawDoc } from './doc';
 import { newElement } from './elements';
 import type { AddRequest } from './Library';
@@ -40,19 +43,28 @@ export function useEditActions({ doc, docRef, sceneIndex, picked, pickedEl, stag
   const removeScene = async (i: number) => {
     if (!doc) return;
     const s = doc.scenes[i];
+    // A timed presentation: take the scene's time out too, so later beats and the narration close up.
+    const gapOf = (d: RawDoc) => {
+      const r = compile(d);
+      return r.ok ? sceneGap(cueClicks(r.presentation), i) : undefined;
+    };
+    const gap = gapOf(doc);
     const ok = await confirmDialog({
       title: `Delete scene ${i + 1}, “${s.title ?? s.id}”?`,
-      message: `${s.elements?.length ?? 0} elements and ${s.beats?.length ?? 0} beats go with it. Undo (Ctrl+Z) brings it back.`,
+      message: `${s.elements?.length ?? 0} elements and ${s.beats?.length ?? 0} beats go with it.${gap
+        ? ` Its ${(gap.end - gap.start).toFixed(1)} s on the timeline go too: later beats move earlier and the narration recorded over it is cut out, so nothing is left with a hole.`
+        : ''} Undo (Ctrl+Z) brings it back.`,
       confirm: 'Delete scene', danger: true,
     });
     const now = docRef.current;
     if (!ok || !now || now.scenes[i] !== s) return;
+    const gapNow = gapOf(now);
     // Stay on the same scene, or the one before it if it was the open one or came earlier.
     editCams.current.clear(); // its views are kept by scene number, which shift
     openScene.current = i <= sceneIndex ? Math.max(0, sceneIndex - 1) : sceneIndex;
     setPicked([]);
     setSelection(null);
-    update(deleteScene(now, i));
+    update(deleteScene(gapNow ? closeGap(now, i, gapNow) : now, i));
   };
 
   const deletePicked = (list: string[]) => {

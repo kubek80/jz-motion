@@ -96,7 +96,7 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
   /** The beat whose options are open in the drawer. */
   const [openBeat, setOpenBeat] = useState<{ scene: number; beat: number } | null>(null);
   const { clipDrag, startDragClip, deleteClip, startTrimClip, splitAtPlayhead, splitClipAt, canSplitAt, setClipLane } = useClipEditing(clips, setClips, rec, pps, now);
-  const { drag, startDrag, tapping, setTapping, tapIndex, setTapIndex, nextAfter, tap } = useCueDragging(clicks, rec, pps, onCue, seek, now, (i) => setOpenBeat({ scene: clicks[i].scene, beat: clicks[i].beat }));
+  const { drag, startDrag, tapping, setTapping, tapIndex, setTapIndex, nextAfter, tap } = useCueDragging(clicks, rec, pps, onCue, onCues, seek, now, (i) => setOpenBeat({ scene: clicks[i].scene, beat: clicks[i].beat }));
 
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);

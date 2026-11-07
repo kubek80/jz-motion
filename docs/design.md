@@ -88,6 +88,7 @@ Presentation
 | The properties panel | `src/app/editor/Inspector.tsx`, `ActionEditor.tsx` (an action), `Fields.tsx`, `fields/` |
 | The actions offered and how they are explained | `src/app/editor/actionInfo.ts` (names, explanations, what they work on, defaults), `AddActionMenu.tsx` |
 | The Timing window | `src/app/timing/` (start at `Timing.tsx`) |
+| Deleting a scene in a timed presentation (closing the gap) | `src/app/editor/closeGap.ts` (used by `removeScene` in `useEditActions.ts`) |
 | The media library (pictures, recordings, sounds) | `server/mediaStore.ts` (conversion, trim, index, where used, a recording's frames), `src/app/MediaPanel.tsx`, `MediaDetail.tsx`, `ScreenRecorder.tsx` (Record screen), `media.ts` |
 | Export | `server/export.ts`, `src/render/page.ts`, `src/video/` |
 
