@@ -1,4 +1,4 @@
-// The control bar under the board: record narration, prompter toggle, play/pause and clock, tap
+// The control bar under the board: record narration, play/pause and clock, tap
 // mode, split, and the timeline zoom.
 import type { Click } from '../../video/performance';
 import { fmt } from './format';
@@ -8,8 +8,6 @@ interface Props {
   busy: string | null;
   startRecording: () => Promise<void>;
   stopRecording: () => Promise<void>;
-  prompter: boolean;
-  setPrompter: (on: boolean) => void;
   playing: boolean;
   play: () => void;
   pause: () => void;
@@ -31,7 +29,7 @@ interface Props {
 }
 
 export function TimingControls(p: Props) {
-  const { recording, busy, startRecording, stopRecording, prompter, setPrompter, playing, play, pause, time, total, clicks, tapping, setTapping, tapIndex, setTapIndex, nextAfter, now, tap, splitAtPlayhead, pps, setPps } = p;
+  const { recording, busy, startRecording, stopRecording, playing, play, pause, time, total, clicks, tapping, setTapping, tapIndex, setTapIndex, nextAfter, now, tap, splitAtPlayhead, pps, setPps } = p;
   return (
     <div className="timing-controls">
       {recording ? (
@@ -39,7 +37,6 @@ export function TimingControls(p: Props) {
       ) : (
         <button className="rec-btn" disabled={!!busy} onClick={() => void startRecording()} title="Record narration from the playhead onward: a new clip is added at the current timeline position (lane 0 if free, else lane 1). → places each beat's cue, Space holds the prompter still, Esc stops.">● Record narration</button>
       )}
-      <button className={prompter ? 'on' : ''} onClick={() => setPrompter(!prompter)} title="Show the script large, as a teleprompter">Prompter</button>
       <button className="play" disabled={recording} onClick={() => (playing ? pause() : play())} title="Play / pause (Space)">{playing ? '❚❚' : '▶'}</button>
       <span className="clock">{fmt(time)} / {fmt(total)}</span>
       <button

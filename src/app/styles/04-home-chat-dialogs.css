@@ -115,3 +115,7 @@
   .left, .right { width: auto; border: 0; border-top: 1px solid var(--line); }
   .right { height: 50vh; }
 }
+/* Edit / Play switch beside the scene's AI box (Edit mode) and the play controls (Play mode). */
+.ask-row { display: flex; gap: 8px; align-items: flex-start; }
+.ask-row > .scene-ask { flex: 1; min-width: 0; }
+.mode-switch { flex: none; align-self: center; }

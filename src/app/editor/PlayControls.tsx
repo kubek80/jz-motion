@@ -11,13 +11,16 @@ interface Props {
   setWithCamera: (on: boolean) => void;
   /** Opens the Video tab, where takes are exported. */
   onVideo: () => void;
+  /** Edit / Play, at the start of the controls. */
+  modeSwitch?: React.ReactNode;
 }
 
-export function PlayControls({ stage, pos, recorder, withCamera, setWithCamera, onVideo }: Props) {
+export function PlayControls({ stage, pos, recorder, withCamera, setWithCamera, onVideo, modeSwitch }: Props) {
   const recording = recorder.state.status === 'recording';
   return (
     <>
       <div className="controls">
+        {modeSwitch}
         <button onClick={() => stage.current?.prev()} title="Previous beat (←)">◀</button>
         <button onClick={() => stage.current?.next()} title="Next beat (→ or space)">▶</button>
         <button onClick={() => (pos.playing ? stage.current?.pause() : stage.current?.playAll())}>{pos.playing ? 'Pause' : 'Play all'}</button>

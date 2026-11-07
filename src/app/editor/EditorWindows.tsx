@@ -94,6 +94,7 @@ export function EditorWindows({
           onEditBeat={onEditBeat}
           doc={doc}
           onBeat={(si, bi, next) => update(updateBeats(latest(), si, (beats) => beats.map((b, i) => (i === bi ? next : b))))}
+          startScene={sceneIndex}
           onClose={() => setTimingOpen(false)}
         />
       )}

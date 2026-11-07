@@ -24,7 +24,6 @@ export function useNarrationRecording({ clock, clips, clicks, setClips, onCue, o
   // ---------------------------------------------------------------- recording narration, with the script as a prompter
   const [recording, setRecording] = useState(false);
   const [recIndex, setRecIndex] = useState(0);
-  const [prompter, setPrompter] = useState(false);
   const startRecording = async () => {
     setError(null);
     try {
@@ -51,7 +50,6 @@ export function useNarrationRecording({ clock, clips, clicks, setClips, onCue, o
       setRecIndex(startIndex);
       setRecording(true);
       setRecPaused(false);
-      setPrompter(true);
     } catch (e) {
       setError(`Could not use the microphone: ${(e as Error).message}`);
     }
@@ -156,5 +154,5 @@ export function useNarrationRecording({ clock, clips, clicks, setClips, onCue, o
     mixer.dispose();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  return { recording, recPaused, prompter, setPrompter, startRecording, nextLine, previousLine, togglePauseRecording, stopRecording };
+  return { recording, recPaused, startRecording, nextLine, previousLine, togglePauseRecording, stopRecording };
 }
