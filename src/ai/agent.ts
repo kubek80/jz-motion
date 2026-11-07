@@ -1,3 +1,4 @@
+import { loadUserLibrary } from '../app/userLibrary';
 import type { ModelProfile } from './profiles';
 
 // Talking to Claude Code in agent mode (server/claudeAgent.ts): it works on a draft file in the repository
@@ -48,6 +49,9 @@ export async function runAgent(
     }
   }
   if (!done) throw new Error(failure ?? 'Claude Code stopped without an answer');
+  // It may have made library items (icons, logos, 3D models) for the presentation: load them before the
+  // answer is checked, or the presentation would look like it uses unknown icons.
+  await loadUserLibrary();
   return done;
 }
 

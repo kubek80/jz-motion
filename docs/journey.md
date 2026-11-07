@@ -675,3 +675,12 @@ Jakub asked the scene bar to turn part of scene 1's script ("No Photoshop, After
 **Checked by:** 2 new tests (81 in all); in the browser with the test model on a copy of "about this app, with edit demo": asking for a new scene added "No Photoshop needed" as scene 2, said so and opened it; a request the model declined said "Nothing was changed" with its reason; the log had both model calls and both outcomes. Typecheck, build.
 
 ![The scene bar after asking for a new scene](journey/92-scene-ask-new-scene.jpg)
+
+## Step 51: Library items an AI makes are known straight away
+
+Jakub's full test branch showed more: the AI had understood the request and drawn four logos into the library (Photoshop, After Effects, Premiere, Illustrator; all valid), and presumably used them in the new scene, yet nothing was applied. The app loads the library once, when it starts, so in the open page the logos made a minute earlier were unknown: the checked answer failed with "unknown icon …" and was thrown away, with a message that gave nothing to act on. (The "change only scene 1" wording, fixed in step 50, made it worse.)
+
+- When a Claude Code run finishes, the app now reloads the library before checking the answer (`runAgent` in `src/ai/agent.ts`), so icons, logos and 3D models it made count. This covers the scene bar, the AI tab and "New with AI".
+- The sidebar library shows newly registered items without reloading the page (an event from `userLibrary.ts`).
+
+**Checked by:** in the browser: a logo written into `library/` while the page was open (as the AI does) made a presentation using it fail the app's check with "unknown icon"; after the reload agent runs now do, it loaded and the logo appeared in the sidebar. Typecheck, tests, build.
