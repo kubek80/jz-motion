@@ -730,3 +730,19 @@ Jakub asked to verify that the skills reflect how screen recordings must be brou
 - Capture script and scenario comments no longer describe APNG playback.
 
 **Checked by:** a 4-second MP4 holding each of 4 pictures for a second, imported with `npm run media -- import`: WebM with a poster and an index entry, and `frames` listed exactly 4 frames (its pictures, not its 120 video frames); the clipart pipeline restyled 56 SVGs into `scratch/clipart/` and an import gave a `/media/…svg` drawing (both test imports removed afterwards); typecheck, tests (including the format doc's example), build.
+
+## Step 56: Edit / Play above the beats, P to switch, Timing opens where you are
+
+Jakub asked for the Edit / Play buttons to sit just above the beats (in the AI row in Edit mode, with the play controls in Play mode), a key to toggle between them, Timing to open at the start of the scene being looked at, and Timing to drop its non-prompter layout, since he only uses the prompter.
+
+- **`ModeSwitch`** (new) leaves the top bar: in Edit mode it sits left of the scene's AI box, in Play mode first in the play controls row.
+- **P** toggles Edit / Play (`useEditorKeys`); ignored while typing or while Timing, Script, the Library or a dialog is open. **Esc** in Play mode (not full screen) goes back to Edit.
+- **Timing opens at the scene** you were on: the playhead goes to that scene's first click and the timeline scrolls to it (the first scene starts at 0:00).
+- **Timing is always the prompter**: the Prompter button, its state and the narrow-script layout are gone; one script width is remembered.
+
+![Edit mode: Edit / Play beside the AI box](journey/96-edit-play-above-beats.jpg)
+![Play mode: Edit / Play with the play controls](journey/97-edit-play-in-play-mode.jpg)
+![Timing opened from scene 3, at 0:54, always as a prompter](journey/98-timing-prompter-only.jpg)
+
+**Checked by:** Playwright on a copy of a presentation: P → Play, Esc → Edit, P P → Edit; typing "p" in the AI box stays in the box; opening Timing from scene 3 put the playhead at 0:54.0, no Prompter button, and P inside Timing did nothing; no page errors. Typecheck, tests, build.
+

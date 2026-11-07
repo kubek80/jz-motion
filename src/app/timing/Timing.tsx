@@ -6,7 +6,7 @@ import { BeatDrawer } from './BeatDrawer';
 import { TranscriptWindow } from './TranscriptWindow';
 import { TimelineMinimap } from './TimelineMinimap';
 import { useMissingUploads } from './useMissingUploads';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { CompiledPresentation } from '../../engine/compile';
 import type { Clip, Voiceover } from '../../engine/schema';
 import { clipsDuration, clipsOf } from '../../engine/voiceover';
@@ -49,6 +49,8 @@ interface Props {
   /** The presentation as edited, and replacing one beat (from the beat drawer). */
   doc: RawDoc;
   onBeat: (scene: number, beat: number, next: RawBeat) => void;
+  /** The scene being looked at in the editor: Timing opens with the playhead at its start. */
+  startScene?: number;
   onClose: () => void;
 }
 
@@ -56,7 +58,7 @@ interface Props {
  * Timing a presentation to a voice-over: the narration's waveform with every click placed on it. Drag a click
  * to move it, or play and tap T as each line starts. The board plays along, with the script line beside it.
  */
-export function Timing({ presentation, text, presentationId, voiceover, onVoiceover, onCues, onNotes, onTake, onEditBeat, doc, onBeat, onClose }: Props) {
+export function Timing({ presentation, text, presentationId, voiceover, onVoiceover, onCues, onNotes, onTake, onEditBeat, doc, onBeat, startScene = 0, onClose }: Props) {
   const onCue = (scene: number, beat: number, cue: number | undefined) => onCues([{ scene, beat, cue }]);
   const clicks = useMemo(() => cueClicks(presentation), [presentation]);
   // Voiceover is held either as a legacy single clip or as a multi-clip arrangement; `clipsOf()`
@@ -82,15 +84,22 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
     onVoiceover(next.length ? { clips: next } : undefined);
   };
 
-  // Panel sizes the user can drag; separate stores for the Timing vs. Prompter script width so each
-  // remembers its own comfortable width. Double-click any divider to reset.
+  // Panel sizes the user can drag (the script is always shown large, as a prompter). Double-click a divider to reset.
   const laneH = useResizable('timing-lane-h', 200, 120, 600);
-  const scriptWTiming = useResizable('timing-script-w', 360, 220, 900);
-  const scriptWPrompter = useResizable('prompter-script-w', 820, 320, 1600);
+  const scriptW = useResizable('prompter-script-w', 820, 320, 1600);
 
   const host = useBoardFollowsClock(presentation, perf, clips, total, clock);
   const { lane, pps, setPps, zoomTo, width, drawClipPeaks, view, centerOn, fit } = useWaveformZoom(primary, total, clock);
   const missing = useMissingUploads(clips);
+  // Open at the start of the scene being edited (the very start for the first scene), once the timeline has its scale.
+  const placed = useRef(false);
+  useEffect(() => {
+    if (placed.current || !pps) return;
+    placed.current = true;
+    const t = startScene > 0 ? clicks.find((c) => c.scene === startScene)?.t ?? 0 : 0;
+    seek(t);
+    centerOn(t);
+  }, [pps]); // eslint-disable-line react-hooks/exhaustive-deps
   /** Clips being transcribed in the Transcript window. */
   const [transcribing, setTranscribing] = useState<Clip[] | null>(null);
   /** The beat whose options are open in the drawer. */
@@ -107,7 +116,7 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
 
   const notes = useNotesEditing(pause, onNotes);
   const { voicer, tts, generating, missingSentences, generateVoice } = useVoiceGeneration(presentation, presentationId, setError);
-  const { recording, recPaused, prompter, setPrompter, startRecording, nextLine, previousLine, togglePauseRecording, stopRecording } =
+  const { recording, recPaused, startRecording, nextLine, previousLine, togglePauseRecording, stopRecording } =
     useNarrationRecording({ clock, clips, clicks, setClips, onCue, onCues, setBusy, setError });
 
   useTimingKeys({ playing, tapping, tap, play, pause, seek, now, onClose, recording, nextLine, previousLine, stopRecording, togglePauseRecording, splitAtPlayhead });
@@ -147,21 +156,12 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
         onTranscript={() => setTranscribing(clips.filter((c) => !missing.has(c.upload)))}
         onClose={onClose}
       />
-      <div className={prompter ? 'timing-body prompter' : 'timing-body'}>
+      <div className="timing-body prompter">
         <div className="timing-board" ref={host} />
-        <Resizer
-          orientation="vertical"
-          value={prompter ? scriptWPrompter.value : scriptWTiming.value}
-          onChange={prompter ? scriptWPrompter.setValue : scriptWTiming.setValue}
-          onReset={prompter ? scriptWPrompter.reset : scriptWTiming.reset}
-          reverse={!prompter}
-          min={prompter ? 320 : 220}
-          max={prompter ? 1600 : 900}
-          style={prompter ? { order: -1 } : undefined}
-        />
+        <Resizer orientation="vertical" value={scriptW.value} onChange={scriptW.setValue} onReset={scriptW.reset} min={320} max={1600} style={{ order: -1 }} />
         <ScriptPanel
           voiceNow={voiceNow}
-          width={prompter ? scriptWPrompter.value : scriptWTiming.value}
+          width={scriptW.value}
           recording={recording}
           recPaused={recPaused}
           time={time}
@@ -177,8 +177,6 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
         busy={busy}
         startRecording={startRecording}
         stopRecording={stopRecording}
-        prompter={prompter}
-        setPrompter={setPrompter}
         playing={playing}
         play={play}
         pause={pause}

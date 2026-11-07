@@ -75,7 +75,7 @@ Every model reply is checked against the format and the drawing rules, and sent 
 - **Click a beat** on the timeline to open its options in a drawer: title, speaker notes, play automatically, start time, video layout, and its actions (click one to change it). A taller timeline (drag its top edge) spreads beat labels over more rows so none overlap.
 - **Getting around:** the mouse wheel scrolls the timeline, Ctrl/⌘ + wheel zooms around the pointer, and the **minimap** above it shows the whole timeline (clips, beats, playhead and the part in view): click or drag it to go there, **Fit** to see everything.
 - **Generate voice** (needs a text-to-speech key in Settings → Voice generation) makes a short clip for every sentence of the notes, so the prompter can show how long each line should take; regenerated only when a sentence changes.
-- The board plays in sync, with the current and next line beside it (and, dimmed above, the end of the beat before, so you can pick up where you left off; lines already read fade), and the notes can be edited right there (**✎ Edit**), at the same size as shown. **Prompter** shows the script large at any time. Space plays and pauses, ←/→ move two seconds.
+- The board plays in sync, with the current and next line beside it (and, dimmed above, the end of the beat before, so you can pick up where you left off; lines already read fade), and the notes can be edited right there (**✎ Edit**), at the same size as shown. Timing always shows the script large, as a prompter, and opens at the start of the scene you were looking at. Space plays and pauses, ←/→ move two seconds.
 - **Transcript** (header, or right-click a clip → *Transcribe…*) turns what you recorded into text, laid out under the beats you said it over (uses the speech-to-text service from Settings; kept next to the recording, so it opens instantly next time). **Copy all** or **Copy** one beat to paste anywhere, **Use as speaker notes** to put a beat's words straight into the prompter, or click a sentence to go there.
 - **Make a take for export** turns it into a take with all clips mixed as its sound.
 
@@ -84,6 +84,8 @@ Or present live: **Play** mode → **● Record** (tick *camera* to film yoursel
 Then the **Video** tab: pick the take, add a friend's recording (with **Auto-sync**), choose where the camera goes per beat or scene (`layout`: board, pip, pip-left, camera, side), and **Export MP4** (1080p or 4K, 30 or 60 fps) into `exports/`. *Even out volume* (on by default) brings the sound to the standard loudness of online video, so a quiet recording comes up and a loud one doesn't clip. Without a take, the video uses even pauses between beats.
 
 **In Play mode** the storyboard stays under the board and follows the playback: the running beat is lit, each action glows while it runs (with a playhead) and gets a tick when done, and what it animates is outlined on the board (not in full screen). Click an action or beat to change it in Properties while you watch; ⏮ on a beat goes to just before it.
+
+**Edit / Play** sits just above the beats: beside the AI box in Edit mode, beside the play controls in Play mode. **P** switches between them (not while typing or with a window like Timing open); Esc in Play goes back to Edit.
 
 **Play mode keys:** → / Space / Page Down / click: next beat (finishes a running one first) · ← / Page Up: previous · F: full screen.
 

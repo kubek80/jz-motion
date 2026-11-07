@@ -15,6 +15,7 @@ import { pinPatch, RESIZABLE } from './editor/elements';
 import { EditorWindows } from './editor/EditorWindows';
 import { FrameStepper, isRecording } from './editor/FrameStepper';
 import { InlineTextEditor, useInlineText } from './editor/InlineTextEditor';
+import { ModeSwitch } from './editor/ModeSwitch';
 import { Library } from './editor/Library';
 import { PlayControls } from './editor/PlayControls';
 import { RightPanel, type Panel } from './editor/RightPanel';
@@ -236,7 +237,7 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
     }
   };
 
-  useEditorKeys({ mode, picked, deletePicked, history, duplicate, startInline, resetView, togglePresent }, { stage, setPicked, setSelection, setArrowFrom });
+  useEditorKeys({ mode, setMode, picked, deletePicked, history, duplicate, startInline, resetView, togglePresent }, { stage, setPicked, setSelection, setArrowFrom });
   // Paste a screenshot (Ctrl+V) or drop a picture on the board to add it.
   const addPicture = usePictureInput(mode, add);
 
@@ -269,7 +270,7 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
         onEditBeat={(si, beat) => { setTimingOpen(false); openScene.current = si; if (mode === 'edit') goToScene(si); else setMode('edit'); setSelection({ kind: 'beat', beat }); setPanel('props'); }}
       />
       <TopBar
-        title={doc?.title} mode={mode} setMode={setMode} history={history} valid={result.ok} onHome={onHome}
+        title={doc?.title} history={history} valid={result.ok} onHome={onHome}
         onScript={() => setScriptOpen(true)} onTiming={() => setTimingOpen(true)} onPresent={() => void togglePresent()} onSettings={() => setSettingsOpen(true)}
       />
 
@@ -320,11 +321,11 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
           <Resizer orientation="horizontal" value={playbackH.value} onChange={playbackH.setValue} onReset={playbackH.reset} min={240} max={2000} />
 
           {mode === 'play' && (
-            <PlayControls stage={stage} pos={pos} recorder={recorder} withCamera={withCamera} setWithCamera={setWithCamera} onVideo={() => setPanel('video')} />
+            <PlayControls stage={stage} pos={pos} recorder={recorder} withCamera={withCamera} setWithCamera={setWithCamera} onVideo={() => setPanel('video')} modeSwitch={<ModeSwitch mode={mode} setMode={setMode} />} />
           )}
 
           {mode === 'edit' && doc && scene && (
-            <SceneAsk presentation={text} scene={sceneIndex} title={scene.title ?? scene.id} onApply={(json, open) => { log('ai:sceneAsk', { bytes: json.length }); if (open !== undefined) openScene.current = open; history.set(json); }} />
+            <div className="ask-row"><ModeSwitch mode={mode} setMode={setMode} /><SceneAsk presentation={text} scene={sceneIndex} title={scene.title ?? scene.id} onApply={(json, open) => { log('ai:sceneAsk', { bytes: json.length }); if (open !== undefined) openScene.current = open; history.set(json); }} /></div>
           )}
           {doc && scene && (
             <Beats

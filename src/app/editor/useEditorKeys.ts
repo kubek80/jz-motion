@@ -1,12 +1,17 @@
 // Keyboard shortcuts of the editor window: undo/redo everywhere; Delete, Escape, Enter/F2, Ctrl+D and
-// 0/Home on the board in edit mode; stepping through beats and F (full screen) in play mode.
+// 0/Home on the board in edit mode; stepping through beats and F (full screen) in play mode; P switches between
+// Edit and Play, and Esc in Play goes back to Edit.
 import { useEffect, useRef } from 'react';
 import type { Stage } from '../../engine';
 import { log } from '../debug';
 import type { Selection } from './types';
 
+/** Windows that open over the editor; while one is up, the editor's own mode keys stay quiet. */
+const OTHER_WINDOWS = '.timing, .script, .libman, .modal-back';
+
 interface EditorKeys {
   mode: 'edit' | 'play';
+  setMode: (mode: 'edit' | 'play') => void;
   picked: string[];
   deletePicked: (list: string[]) => void;
   history: { undo: () => void; redo: () => void };
@@ -43,6 +48,9 @@ export function useEditorKeys(current: EditorKeys, { stage, setPicked, setSelect
         k.history.redo();
       } else if (typing) {
         return;
+      } else if (e.key.toLowerCase() === 'p' && !mod && !e.altKey && !document.querySelector(OTHER_WINDOWS)) {
+        // Edit ⇄ Play, unless another window (Timing, Script, the Library, a dialog) is on top.
+        k.setMode(k.mode === 'edit' ? 'play' : 'edit');
       } else if (k.mode === 'edit') {
         if (e.key === 'Delete' || e.key === 'Backspace') k.deletePicked(k.picked);
         else if (e.key === 'Escape') { setPicked([]); setSelection(null); setArrowFrom(undefined); }
@@ -56,6 +64,7 @@ export function useEditorKeys(current: EditorKeys, { stage, setPicked, setSelect
         if (['ArrowRight', 'PageDown', ' ', 'Enter'].includes(e.key)) s.next();
         else if (['ArrowLeft', 'PageUp', 'Backspace'].includes(e.key)) s.prev();
         else if (e.key === 'f') void k.togglePresent();
+        else if (e.key === 'Escape' && !document.fullscreenElement && !document.querySelector(OTHER_WINDOWS)) k.setMode('edit');
         else return;
       }
       e.preventDefault();
