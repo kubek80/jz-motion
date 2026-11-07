@@ -97,7 +97,7 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
   useEffect(() => {
     if (placed.current || !pps) return;
     placed.current = true;
-    const t = startScene > 0 ? clicks.find((c) => c.scene === startScene)?.t ?? 0 : 0;
+    const t = startScene > 0 ? clicks.find((c) => c.scene >= startScene)?.t ?? 0 : 0;
     seek(t);
     centerOn(t);
   }, [pps]); // eslint-disable-line react-hooks/exhaustive-deps

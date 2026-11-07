@@ -85,6 +85,15 @@ describe('performance', () => {
     expect(cuePerformance(r.presentation, 0).events.slice(1)).toEqual([{ t: 0, scene: 0, from: 0, until: 3 }, { t: 1, scene: 0, from: 3, until: 4 }]);
   });
 
+  it('passes over scenes left out of the video', () => {
+    const scene = (id: string, extra = {}) => ({ id, ...extra, elements: [{ id: 'x', type: 'text', text: 'x', x: 0, y: 0 }], beats: [{ actions: [{ do: 'fade-in', target: 'x', duration: 1 }] }] });
+    const r = compile({ version: 1, title: 't', scenes: [scene('a', { skip: true }), scene('b'), scene('c', { skip: true }), scene('d')] });
+    if (!r.ok) throw new Error(r.errors.join());
+    expect(cueClicks(r.presentation).map((c) => c.scene)).toEqual([1, 3]);
+    expect(cuePerformance(r.presentation, 0).events[0].scene).toEqual(1);
+    expect([...new Set(autoPerformance(r.presentation).events.map((e) => e.scene))]).toEqual([1, 3]);
+  });
+
   it('finds the scene and timeline position at any moment', () => {
     const perf: Performance = { events: [{ t: 0, scene: 0, from: 0, until: 0 }, { t: 2, scene: 0, from: 0, until: 3 }, { t: 3, scene: 0, from: 3, until: 3 }], duration: 6 };
     expect(stateAt(perf, 1)).toEqual({ scene: 0, time: 0 });

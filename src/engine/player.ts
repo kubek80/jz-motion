@@ -167,6 +167,13 @@ export class StagePlayer {
     this.showScene(scene, Math.min(at.beat, p.scenes[scene].beats.length));
   }
 
+  /** The next (dir 1) or previous (-1) scene that isn't left out of the video, or null. */
+  private nextScene(dir: 1 | -1): number | null {
+    const scenes = this.presentation?.scenes ?? [];
+    for (let i = this.sceneIndex + dir; i >= 0 && i < scenes.length; i += dir) if (!scenes[i].skip) return i;
+    return null;
+  }
+
   /** Jumps to a scene with `beat` beats already completed. */
   showScene(index: number, beat = 0) {
     if (!this.presentation) return;
@@ -210,8 +217,8 @@ export class StagePlayer {
     }
     if (this.beat < scene.beats.length) {
       this.playBeat(this.beat);
-    } else if (this.sceneIndex < this.presentation.scenes.length - 1) {
-      this.showScene(this.sceneIndex + 1, 0);
+    } else if (this.nextScene(1) !== null) {
+      this.showScene(this.nextScene(1)!, 0);
       if (this.scene!.beats[0]?.auto) this.playBeat(0);
     }
   }
@@ -224,9 +231,9 @@ export class StagePlayer {
       let b = this.beat - 1;
       while (b > 0 && this.scene.beats[b].auto) b--;
       this.jumpToBeat(b);
-    } else if (this.sceneIndex > 0) {
-      const prevScene = this.presentation!.scenes[this.sceneIndex - 1];
-      this.showScene(this.sceneIndex - 1, prevScene.beats.length);
+    } else if (this.nextScene(-1) !== null) {
+      const i = this.nextScene(-1)!;
+      this.showScene(i, this.presentation!.scenes[i].beats.length);
     }
   }
 
@@ -234,8 +241,8 @@ export class StagePlayer {
   playAll() {
     const scene = this.scene;
     if (!scene) return;
-    if (this.beat >= scene.beats.length && this.sceneIndex < this.presentation!.scenes.length - 1) {
-      this.showScene(this.sceneIndex + 1, 0);
+    if (this.beat >= scene.beats.length && this.nextScene(1) !== null) {
+      this.showScene(this.nextScene(1)!, 0);
     }
     this.playThrough = true;
     this.stopAt = this.scene!.duration;
@@ -268,8 +275,8 @@ export class StagePlayer {
     this.stopAt = null;
     this.perform();
     if (this.playThrough) {
-      if (this.sceneIndex < this.presentation!.scenes.length - 1) {
-        this.showScene(this.sceneIndex + 1, 0);
+      if (this.nextScene(1) !== null) {
+        this.showScene(this.nextScene(1)!, 0);
         this.playAll();
         return;
       }

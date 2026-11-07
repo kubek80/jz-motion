@@ -285,6 +285,8 @@ export const Scene = z.object({
   title: z.string().optional(),
   /** Start with the previous scene's visible elements and camera. */
   inherit: z.boolean().default(false),
+  /** Left out of the video: Timing, Play all, presenting and export pass over it; it stays in the editor. */
+  skip: z.boolean().optional(),
   camera: Camera.optional(),
   /** Video layout for the scene's beats that don't set their own. */
   ...videoLayout,

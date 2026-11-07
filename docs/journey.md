@@ -792,3 +792,16 @@ Jakub asked for a second version of scenes 6, 7, 8, 16 and 17 of his presentatio
 ![Timing (B): the prompter, recorded from the app](journey/104-b-timing.jpg)
 
 **Checked by:** `npm run check` on the presentation (only the five scenes added; everything else byte-for-byte the same); beat snapshots of each B scene; an export of 6B–8B and the narrated preview, looked at frame by frame; the Voxtral preset in Settings with Playwright; typecheck, tests, build. The B scenes have no cues: they play after the scene before, and the original scenes' cues after them no longer line up until one version of each is kept and the narration is re-recorded.
+
+## Step 61: Leave a scene out of the video; the B versions with their generated voice
+
+Jakub didn't see the generated voice, and the timing was off. Both were right: the generated narration had only been used in this cloud session (uploads/ and tts/ aren't in git), and inserting five B scenes without cues pushed everything after scene 6 later: Timing ignored 47 of his cues (an original scene's cue came before the B scene before it had started).
+
+- **"Leave out of the video"** (`"skip": true` on a scene; right-click a scene, or its properties): Timing, Play all, presenting and the export pass over it and its beats take no time; it stays in the editor, dimmed with a "left out" tag. The five B scenes are left out in his presentation, and every original beat plays at exactly the time it did before (compared click by click: identical, 0 cues ignored).
+- **"JZ-motion (B versions)"** (`presentations/9df1df97-b.json`): a copy where each B scene plays instead of its original. On the timeline, the stretch of his narration that belonged to the original scene is cut out of his clips, the B scene's generated voice goes in its place (one clip per scene), and everything after moves on by the difference (17–22 s per scene); the B scenes' beats are cued where their sentences start. 0 cues ignored.
+- **Generated narration travels with the repository**: `uploads/generated-*` is kept in git (with LFS), while his own recordings in `uploads/` stay on his computer.
+
+![Scenes left out of the video, in the scene list](journey/105-left-out-scenes.jpg)
+![The B versions in Timing: generated voice where each B scene plays](journey/106-b-versions-timing.jpg)
+
+**Checked by:** a new test (left-out scenes take no clicks, and the first event is the first scene that plays); the click times of his presentation before and after (identical); Timing on the copy opening at the first B scene with its generated voice under the playhead; Play mode stepping from scene 6 straight to "Edit like a whiteboard"; typecheck, tests, build.

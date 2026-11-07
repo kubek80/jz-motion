@@ -66,6 +66,8 @@ export interface CompiledBeat {
 export interface CompiledScene {
   id: string;
   title?: string;
+  /** Left out of the video (Timing, Play all, presenting, export). */
+  skip?: boolean;
   elements: CompiledElement[];
   initial: Record<string, ElementState>;
   final: Record<string, ElementState>;

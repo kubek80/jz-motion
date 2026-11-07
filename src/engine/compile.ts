@@ -180,6 +180,7 @@ export function compile(input: unknown): CompileResult {
     scenes.push({
       id: scene.id,
       title: scene.title,
+      ...(scene.skip ? { skip: true } : {}),
       elements,
       initial,
       final: structuredClone(state),

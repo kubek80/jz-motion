@@ -24,6 +24,7 @@ export function autoPerformance(p: CompiledPresentation, timing: AutoTiming = DE
   const events: PerformEvent[] = [];
   let t = 0;
   p.scenes.forEach((scene, si) => {
+    if (scene.skip) return;
     events.push({ t, scene: si, from: 0, until: 0 });
     t += timing.lead;
     for (let b = 0; b < scene.beats.length;) {
@@ -56,6 +57,7 @@ export function cueClicks(p: CompiledPresentation, timing: AutoTiming = DEFAULT_
   let prevStart = -Infinity;
   let prevEnd = 0;
   p.scenes.forEach((scene, si) => {
+    if (scene.skip) return;
     for (let b = 0; b < scene.beats.length;) {
       let e = b;
       while (e + 1 < scene.beats.length && scene.beats[e + 1].auto) e++;
@@ -79,7 +81,8 @@ export function cueClicks(p: CompiledPresentation, timing: AutoTiming = DEFAULT_
  */
 export function cuePerformance(p: CompiledPresentation, recordingSeconds: number, timing: AutoTiming = DEFAULT_TIMING): Performance {
   const clicks = cueClicks(p, timing);
-  const events: PerformEvent[] = [{ t: 0, scene: 0, from: 0, until: 0 }, ...clicks.map((c) => ({ t: c.t, scene: c.scene, from: c.from, until: c.until }))];
+  const first = Math.max(0, p.scenes.findIndex((s) => !s.skip));
+  const events: PerformEvent[] = [{ t: 0, scene: first, from: 0, until: 0 }, ...clicks.map((c) => ({ t: c.t, scene: c.scene, from: c.from, until: c.until }))];
   const end = clicks.length ? clicks[clicks.length - 1].t + (clicks[clicks.length - 1].until - clicks[clicks.length - 1].from) : 0;
   return { events, duration: Math.max(recordingSeconds, end + timing.tail) };
 }
