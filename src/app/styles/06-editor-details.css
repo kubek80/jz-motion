@@ -46,3 +46,14 @@ body.dragging { user-select: none; -webkit-user-select: none; }
 .ai-add svg { width: 15px; height: 15px; color: #ff4fd8; filter: drop-shadow(0 0 3px #ff4fd899); }
 .scene-adds .ai-add { justify-content: flex-start; }
 .add-scene .plus { color: #3dff8b; font-weight: 700; margin-right: 2px; }
+
+/* Under a selected recording: step through its frames and add play actions. */
+.frame-stepper { position: absolute; z-index: 6; display: flex; flex-direction: column; gap: 6px; padding: 7px 9px; background: color-mix(in srgb, var(--panel) 94%, transparent); border: 1px solid var(--line); border-radius: 9px; box-shadow: 0 8px 24px #000a; font-size: 12px; max-width: calc(100% - 16px); }
+.frame-stepper .row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.frame-stepper button { font-size: 12px; padding: 3px 9px; }
+.frame-stepper .which { min-width: 92px; text-align: center; font-variant-numeric: tabular-nums; color: var(--muted); }
+.frame-stepper .which b { color: var(--accent); font-size: 14px; }
+.frame-stepper input[type=range] { flex: 1; min-width: 120px; }
+.frame-stepper select { font-size: 12px; padding: 2px 4px; }
+.frame-stepper .check { display: inline-flex; align-items: center; gap: 4px; color: var(--muted); }
+.frame-stepper .note { color: #3dff8b; }

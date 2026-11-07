@@ -1,7 +1,8 @@
-// Videos on the board (WebM, MP4, MOV; screen recordings from the media library): a muted <video> in place of
-// the picture, driven by the same play state as animated pictures. Live, it plays natively at the play's speed
+// Recordings on the board (WebM, MP4, MOV; screen recordings from the media library): a muted <video> in place of
+// the picture, driven by the play state animatedPictures.ts schedules. Live, it plays natively at the play's speed
 // and the clip follows the video's own time (re-synced when it drifts from the clock). In export (manual
 // frames), it is seeked to the exact clip time of every frame, and `settled()` waits until that frame is shown.
+// A play can stop at a frame (`until`), and a jump can cross-fade: a second video shows the picture it fades from.
 import { svgEl } from './dom';
 import type { ImageNodes, VideoNodes } from './stageNodes';
 import { advanceClip, drift, posterOf, seekTime } from './videoClock';
@@ -18,9 +19,12 @@ export class VideoPictures {
   /** Forgets the previous scene's videos (the board is being rebuilt) and lets go of their files. */
   reset() {
     for (const v of this.videos) {
-      v.video.pause();
-      v.video.removeAttribute('src');
-      v.video.load();
+      for (const video of [v.video, v.fade?.video]) {
+        if (!video) continue;
+        video.pause();
+        video.removeAttribute('src');
+        video.load();
+      }
     }
     this.videos.clear();
   }
@@ -43,7 +47,11 @@ export class VideoPictures {
     video.setAttribute('playsinline', '');
     video.style.cssText = 'width:100%;height:100%;display:block;object-fit:cover';
     const box = svgEl('foreignObject', { x: o.x, y: o.y, width: o.width, height: o.height, 'clip-path': `url(#${o.clipId})` }) as SVGForeignObjectElement;
-    box.appendChild(video);
+    // A frame for the video and, during a cross-fade, the one it fades from on top.
+    const holder = document.createElement('div');
+    holder.style.cssText = 'position:relative;width:100%;height:100%';
+    holder.appendChild(video);
+    box.appendChild(holder);
     video.src = src;
     const ok = await new Promise<boolean>((resolve) => {
       const done = (r: boolean) => { clearTimeout(timer); resolve(r); };
@@ -57,9 +65,11 @@ export class VideoPictures {
       return undefined;
     }
     image.fx.appendChild(box);
+    const still = { epoch: 0, seekTo: 0, seq: 0, stopAt: -1, arrive: 0 };
     const v: VideoNodes = {
-      video, box, loop: o.loop, duration: Number.isFinite(video.duration) && video.duration > 0 ? video.duration : Infinity,
-      state: { speed: o.state ?? 0, epoch: 0, seekTo: 0 }, epoch: 0, planned: { epoch: 0, seekTo: 0 }, clip: 0, target: -1, busy: null,
+      src, video, box, loop: o.loop, duration: Number.isFinite(video.duration) && video.duration > 0 ? video.duration : Infinity,
+      state: { speed: o.state ?? 0, ...still }, planned: { speed: o.state ?? 0, ...still, t: 0, clip: 0, holding: false },
+      epoch: 0, seq: 0, clip: 0, stopAt: -1, speedTo: null, fades: [], target: -1, busy: null,
     };
     // The first frame is decoded; make sure it is on screen before the picture underneath goes.
     v.busy = shown(video, () => undefined).finally(() => { v.busy = null; });
@@ -72,7 +82,16 @@ export class VideoPictures {
     return v;
   }
 
-  render(dt: number, manual: boolean) {
+  /** The recording's frame list from the media library (once); other videos count 30 frames a second. */
+  loadFrames(v: VideoNodes): Promise<void> {
+    if (v.frames) return Promise.resolve();
+    const known = framesLoading.get(v.src) ?? fetchFrames(v.src);
+    framesLoading.set(v.src, known);
+    return known.then((times) => { v.frames = times; });
+  }
+
+  /** `now` is the timeline's time, for cross-fades. */
+  render(dt: number, manual: boolean, now: number) {
     this.manual = manual;
     for (const v of this.videos) {
       let jumped = false;
@@ -81,16 +100,65 @@ export class VideoPictures {
         v.clip = Math.min(v.state.seekTo, v.duration);
         jumped = true;
       }
-      v.clip = advanceClip(v.clip, dt, v.state.speed, v.duration, v.loop);
+      if (v.state.seq !== v.seq) {
+        // A new play: where it stops (only ahead of the clip), and the speed that gets it there in time.
+        v.seq = v.state.seq;
+        v.stopAt = v.state.stopAt >= 0 && v.clip <= v.state.stopAt + 1e-6 ? v.state.stopAt : -1;
+        v.speedTo = v.stopAt >= 0 && v.state.arrive > 0 ? Math.max(0, (v.stopAt - v.clip) / v.state.arrive) : null;
+      }
+      const holding = v.stopAt >= 0 && v.clip >= v.stopAt - 1e-6;
+      const speed = holding ? 0 : v.speedTo ?? v.state.speed;
+      v.clip = advanceClip(v.clip, dt, speed, v.duration, v.loop);
+      if (v.stopAt >= 0) v.clip = Math.min(v.clip, v.stopAt);
       if (manual) this.seek(v);
-      else this.follow(v, jumped);
+      else this.follow(v, jumped, speed);
+      if (v.stopAt >= 0) v.clip = Math.min(v.clip, v.stopAt);
+      this.crossFade(v, now, manual);
     }
   }
 
+  /** During a cross-fade, the picture it fades from lies on top, fading out (from the timeline's time, so it scrubs). */
+  private crossFade(v: VideoNodes, now: number, manual: boolean) {
+    // Strictly after it starts: standing exactly on the jump (the end of the beat before), nothing has changed yet.
+    const f = v.fades.find((x) => now > x.t + 1e-6 && now < x.t + x.dur);
+    if (!f) {
+      if (v.fade) v.fade.video.style.display = 'none';
+      return;
+    }
+    const fade = v.fade ?? this.makeFade(v);
+    fade.video.style.display = 'block';
+    fade.video.style.opacity = String(Math.max(0, 1 - (now - f.t) / f.dur));
+    const t = seekTime(f.from, v.duration);
+    if (Math.abs(t - fade.target) < 1e-6) return;
+    fade.target = t;
+    const before = fade.busy ?? fade.ready.then(() => undefined);
+    const job: Promise<void> = before.then(() => (fade.target === t ? shown(fade.video, () => { fade.video.currentTime = t; }) : undefined));
+    fade.busy = job;
+    void job.finally(() => { if (fade.busy === job) fade.busy = null; });
+    if (!manual) fade.video.pause();
+  }
+
+  private makeFade(v: VideoNodes) {
+    const video = document.createElement('video');
+    video.muted = true;
+    video.playsInline = true;
+    video.preload = 'auto';
+    video.setAttribute('muted', '');
+    video.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;display:none;object-fit:cover';
+    video.src = v.src;
+    v.video.parentElement?.appendChild(video);
+    const ready = new Promise<boolean>((resolve) => {
+      video.addEventListener('loadeddata', () => resolve(true), { once: true });
+      video.addEventListener('error', () => resolve(false), { once: true });
+      setTimeout(() => resolve(false), LOAD_TIMEOUT);
+    });
+    v.fade = { video, target: -1, busy: null, ready };
+    return v.fade;
+  }
+
   /** Live: lets the video play by itself, keeping it (and the clip) in step with the board's clock. */
-  private follow(v: VideoNodes, jumped: boolean) {
+  private follow(v: VideoNodes, jumped: boolean, speed: number) {
     const video = v.video;
-    const speed = v.state.speed;
     // A video that has played to its end stops there (playing it again would start it over).
     if (speed > 0 && !v.loop && video.ended && !jumped) v.clip = v.duration;
     const ended = !v.loop && v.clip >= v.duration;
@@ -122,7 +190,10 @@ export class VideoPictures {
 
   /** Resolves when every video shows the frame asked for (export waits for this). */
   async settled() {
-    for (const v of this.videos) while (v.busy) await v.busy;
+    for (const v of this.videos) {
+      while (v.busy) await v.busy;
+      while (v.fade?.busy) await v.fade.busy;
+    }
   }
 }
 
@@ -144,3 +215,24 @@ function shown(video: HTMLVideoElement, change: () => void): Promise<void> {
 }
 
 const limit = (p: Promise<void>, ms: number) => Promise.race([p, new Promise<void>((resolve) => setTimeout(resolve, ms))]);
+
+/** Frame lists by recording, shared by every board on the page. */
+const framesLoading = new Map<string, Promise<number[]>>();
+
+async function fetchFrames(src: string): Promise<number[]> {
+  const file = /^\/media\/([^/?#]+)$/.exec(src)?.[1];
+  if (!file) return [];
+  try {
+    const res = await fetch(`/api/media/${file}/frames`);
+    return res.ok ? ((await res.json()) as { times: number[] }).times : [];
+  } catch {
+    return [];
+  }
+}
+
+/** When frame `index` (0 = the first) starts, in seconds; without a frame list, 30 frames a second. */
+export function frameAt(v: Pick<VideoNodes, 'frames' | 'duration'>, index: number): number {
+  const i = Math.max(0, Math.round(index));
+  const t = v.frames?.length ? v.frames[Math.min(i, v.frames.length - 1)] : i / 30;
+  return Math.min(t, v.duration);
+}

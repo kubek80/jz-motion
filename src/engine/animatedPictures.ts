@@ -1,70 +1,35 @@
-// Animated pictures (APNG, GIF, animated WebP) on the board: decoding them, hooking their plays to the
-// timeline, advancing them with the board's clock, and telling export when every frame asked for is drawn.
-// Videos (WebM, MP4, MOV) take the same plays; videoPictures.ts shows them.
+// Recordings on the board (videos: WebM from the media library, MP4, MOV): hooking their plays to the timeline,
+// advancing them with the board's clock, and telling export when every frame asked for is shown. Plays are
+// scheduled in order, working out where the clip will be at each one, so a jump to a frame can cross-fade from
+// the right picture and `until` knows where to stop. videoPictures.ts shows them.
 import type { CompiledScene, Op } from './compile';
-import { svgEl } from './dom';
-import type { AnimNodes, ImageNodes, Playable } from './stageNodes';
+import type { ImageNodes, VideoNodes } from './stageNodes';
 import { isVideoSrc } from './videoClock';
-import { VideoPictures } from './videoPictures';
+import { frameAt, VideoPictures } from './videoPictures';
 
 type PlayOp = Extract<Op, { kind: 'play' }>;
+const needsFrames = (op: PlayOp) => op.seekFrame !== undefined || op.untilFrame !== undefined;
 
 export class AnimatedPictures {
-  private animations = new Set<AnimNodes>();
   private loading = new Set<Promise<unknown>>();
-  private pendingPlays: { image: ImageNodes; op: PlayOp }[] = [];
+  /** Plays waiting for their recording to load (or for its frame list), in order. */
+  private queued = new Map<ImageNodes, PlayOp[]>();
   private videos = new VideoPictures();
 
   /** `timeline` is the current scene's timeline; `builtFor` the scene currently on the board. */
   constructor(private timeline: () => gsap.core.Timeline, private builtFor: () => CompiledScene | undefined) {}
 
-  /** Forgets the previous scene's pictures (the board is being rebuilt). */
+  /** Forgets the previous scene's recordings (the board is being rebuilt). */
   reset() {
-    for (const a of this.animations) a.decoder.close();
-    this.animations.clear();
     this.videos.reset();
-    this.pendingPlays = [];
+    this.queued.clear();
   }
 
-  /** If the picture is animated (or a video), swaps in a canvas (or video) that shows whichever frame the timeline asks for. */
+  /** If the picture is a recording, swaps in a video that shows whichever moment the timeline asks for. */
   watch(image: ImageNodes, src: string, o: { x: number; y: number; width: number; height: number; clipId: string; loop: boolean; state?: number | null }) {
-    if (isVideoSrc(src)) {
-      const built = this.builtFor();
-      this.track(this.videos.watch(image, src, o, () => this.builtFor() === built).then((v) => v && this.hookPending(image, v)));
-      return;
-    }
-    if (!/\.(png|apng|gif|webp)(\?|$)/i.test(src) && !/^data:image\/(png|gif|webp)/.test(src)) return;
-    if (typeof ImageDecoder === 'undefined') return;
+    if (!isVideoSrc(src)) return;
     const built = this.builtFor();
-    const job = (async () => {
-      const res = await fetch(src);
-      const type = res.headers.get('content-type')?.split(';')[0] || (/\.gif/i.test(src) ? 'image/gif' : /\.webp/i.test(src) ? 'image/webp' : 'image/png');
-      if (!(await ImageDecoder.isTypeSupported(type))) return;
-      const decoder = new ImageDecoder({ data: await res.arrayBuffer(), type });
-      await decoder.tracks.ready;
-      const track = decoder.tracks.selectedTrack;
-      if (!track?.animated || track.frameCount < 2 || this.builtFor() !== built) { decoder.close(); return; }
-      const first = await decoder.decode({ frameIndex: 0 });
-      const canvas = document.createElement('canvas');
-      canvas.width = first.image.displayWidth;
-      canvas.height = first.image.displayHeight;
-      canvas.style.cssText = 'width:100%;height:100%;display:block;object-fit:cover';
-      canvas.getContext('2d')!.drawImage(first.image, 0, 0);
-      const frameSeconds = (first.image.duration ?? 100_000) / 1e6 || 0.1;
-      first.image.close();
-      const box = svgEl('foreignObject', { x: o.x, y: o.y, width: o.width, height: o.height, 'clip-path': `url(#${o.clipId})` }) as SVGForeignObjectElement;
-      box.appendChild(canvas);
-      image.fx.appendChild(box);
-      image.img.style.display = 'none';
-      const anim: AnimNodes = {
-        decoder, frames: track.frameCount, frameSeconds, loop: o.loop, canvas, box,
-        state: { speed: o.state ?? 0, epoch: 0, seekTo: 0 }, epoch: 0, planned: { epoch: 0, seekTo: 0 }, clip: 0, shown: 0, want: 0, busy: null,
-      };
-      image.anim = anim;
-      this.animations.add(anim);
-      this.hookPending(image, anim);
-    })();
-    this.track(job);
+    this.track(this.videos.watch(image, src, o, () => this.builtFor() === built).then((v) => v && this.flush(image, v)));
   }
 
   private track(job: Promise<unknown>) {
@@ -73,64 +38,88 @@ export class AnimatedPictures {
     void safe.finally(() => this.loading.delete(safe));
   }
 
-  /** Plays scheduled before the picture was ready: hook them up now. */
-  private hookPending(image: ImageNodes, target: Playable) {
-    for (const play of this.pendingPlays.filter((p) => p.image === image)) this.schedulePlay(target, play.op);
-  }
-
-  /** A play op from the timeline. */
+  /** A play op from the timeline; hooked up once the recording (and, if it names frames, its frame list) is ready. */
   play(image: ImageNodes, op: PlayOp) {
-    // The picture may still be loading; the play is hooked up when it is ready.
-    const target = image.anim ?? image.video;
-    if (target) this.schedulePlay(target, op);
-    else this.pendingPlays.push({ image, op });
+    const list = this.queued.get(image) ?? [];
+    list.push(op);
+    this.queued.set(image, list);
+    if (image.video) this.flush(image, image.video);
   }
 
-  /** Plays are scheduled in order; only one with `from` counts as a jump (a new epoch). */
-  private schedulePlay(anim: Playable, op: PlayOp) {
+  private async flush(image: ImageNodes, v: VideoNodes): Promise<void> {
+    const list = this.queued.get(image);
+    if (!list?.length) return;
+    if (!v.frames && list.some(needsFrames)) {
+      const job: Promise<void> = this.videos.loadFrames(v).then(() => this.flush(image, v));
+      this.track(job);
+      return job;
+    }
+    this.queued.delete(image);
+    for (const op of list) this.schedule(v, op);
+  }
+
+  /** Schedules one play on the timeline, after the ones before it. */
+  private schedule(v: VideoNodes, op: PlayOp) {
+    const p = v.planned;
     const tl = this.timeline();
-    const before = { speed: op.from ?? 0, ...anim.planned };
-    if (op.seek !== undefined) anim.planned = { epoch: anim.planned.epoch + 1, seekTo: op.seek };
-    const after = { speed: op.to ?? 0, ...anim.planned };
-    tl.fromTo(anim.state, before, { ...after, duration: 0.001, immediateRender: false }, op.t);
-    // Apply it now if the timeline is already past it (the picture finished loading after a jump).
+    // Where the clip is when this play starts, following the plays before it.
+    let clip = clipAt(p, op.t, v);
+    const before = pick(p, op.from ?? 0);
+    const seekTo = op.seekFrame !== undefined ? frameAt(v, op.seekFrame) : op.seek;
+    if (op.fade && seekTo !== undefined) v.fades.push({ t: op.t, dur: op.fade, from: clip });
+    if (seekTo !== undefined) {
+      p.epoch += 1;
+      p.seekTo = seekTo;
+      clip = seekTo;
+    }
+    p.seq += 1;
+    p.stopAt = op.untilFrame !== undefined ? frameAt(v, op.untilFrame) : -1;
+    p.arrive = op.arriveIn ?? 0;
+    p.speed = op.to ?? 0;
+    p.t = op.t;
+    p.clip = clip;
+    // `until` only plays forwards: if the clip is already past it, the stop doesn't apply.
+    p.holding = p.stopAt >= 0 && clip <= p.stopAt + 1e-6;
+    if (!p.holding) p.stopAt = -1;
+    tl.fromTo(v.state, before, { ...pick(p, p.speed), duration: 0.001, immediateRender: false }, op.t);
+    // Apply it now if the timeline is already past it (the recording finished loading after a jump).
     tl.time(tl.time(), true);
   }
 
-  /** Advances every picture's clip by `dt` seconds; `manual` when drawing export frames. */
+  /** Advances every recording by `dt` seconds of the board's clock; `manual` when drawing export frames. */
   render(dt: number, manual = false) {
-    this.videos.render(dt, manual);
-    for (const a of this.animations) {
-      if (a.state.epoch !== a.epoch) {
-        a.epoch = a.state.epoch;
-        a.clip = a.state.seekTo;
-      }
-      const length = a.frames * a.frameSeconds;
-      if (a.state.speed > 0) a.clip += dt * a.state.speed;
-      if (a.clip >= length) a.clip = a.loop ? a.clip % length : length - 1e-6;
-      const index = Math.min(a.frames - 1, Math.floor(a.clip / a.frameSeconds));
-      if (index !== a.shown) this.showFrame(a, index);
-    }
+    this.videos.render(dt, manual, this.timeline().time());
   }
 
-  private showFrame(a: AnimNodes, index: number) {
-    a.want = index;
-    if (a.busy) return;
-    a.busy = (async () => {
-      while (a.shown !== a.want) {
-        const i = a.want;
-        const r = await a.decoder.decode({ frameIndex: i });
-        a.canvas.getContext('2d')!.drawImage(r.image, 0, 0);
-        r.image.close();
-        a.shown = i;
-      }
-    })().catch(() => undefined).finally(() => { a.busy = null; });
+  /** The frame list of a recording on the board (for the editor's frame stepper); undefined if it isn't one. */
+  async framesOf(image: ImageNodes): Promise<number[] | undefined> {
+    if (!image.video) return undefined;
+    await this.videos.loadFrames(image.video);
+    return image.video.frames;
   }
 
-  /** Resolves when every animated picture has loaded and drawn the frame asked for (export waits for this). */
+  /** Editing: shows frame `index` (0 = the first) of a recording, without playing it. */
+  showFrame(image: ImageNodes, index: number) {
+    const v = image.video;
+    if (v?.frames) v.clip = frameAt(v, index);
+  }
+
+  /** Resolves when every recording has loaded and shows the frame asked for (export waits for this). */
   async settled() {
     while (this.loading.size) await Promise.all([...this.loading]);
-    for (const a of this.animations) while (a.busy) await a.busy;
     await this.videos.settled();
   }
+}
+
+/** The numbers the timeline tweens, from a plan. */
+const pick = (p: VideoNodes['planned'], speed: number) => ({ speed, epoch: p.epoch, seekTo: p.seekTo, seq: p.seq, stopAt: p.stopAt, arrive: p.arrive });
+
+/** Where a planned clip is at timeline time `t`: moving at its speed since the last play, held at its stop or end. */
+function clipAt(p: VideoNodes['planned'], t: number, v: VideoNodes): number {
+  if (t <= p.t) return p.clip;
+  const speed = p.holding && p.arrive > 0 ? Math.max(0, (p.stopAt - p.clip) / p.arrive) : p.speed;
+  let clip = p.clip + (t - p.t) * speed;
+  if (p.holding) clip = Math.min(clip, p.stopAt);
+  if (clip >= v.duration) clip = v.loop ? clip % v.duration : v.duration;
+  return clip;
 }

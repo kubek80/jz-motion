@@ -38,7 +38,12 @@ export type Op =
   | { kind: 'spin'; id: string; from: number | null; to: number | null; t: number }
   | { kind: 'values'; id: string; from: number[]; to: number[]; t: number; dur: number }
   | { kind: 'spotlight'; from: Spotlight | null; to: Spotlight | null; t: number; dur: number }
-  | { kind: 'play'; id: string; from: number | null; to: number | null; seek?: number; t: number };
+  /**
+   * A recording's play state changes: speed `from` → `to` (null: paused). `seek` (seconds) or `seekFrame` (0 = first)
+   * jumps first; `untilFrame` holds it once it gets there (in `arriveIn` seconds when set); `fade` cross-fades
+   * from what was showing over that many seconds.
+   */
+  | { kind: 'play'; id: string; from: number | null; to: number | null; seek?: number; seekFrame?: number; untilFrame?: number; arriveIn?: number; fade?: number; t: number };
 
 /** A spotlight: the lit region in board coordinates, and how everything outside it is dimmed. */
 export interface Spotlight { x: number; y: number; width: number; height: number; shape: 'rect' | 'ellipse'; style: 'dark' | 'fade'; amount: number }

@@ -57,6 +57,25 @@ export class Stage extends StagePlayer {
     return !!this.nodes.get(id)?.pinned;
   }
 
+  /** Where an element is in the window (client pixels), to put a tool next to it. */
+  clientBox(id: string) {
+    const n = this.nodes.get(id);
+    const r = (n?.image?.outer ?? n?.outer)?.getBoundingClientRect();
+    return r ? { left: r.left, top: r.top, width: r.width, height: r.height } : undefined;
+  }
+
+  /** A recording's frame list (seconds each distinct picture starts), or undefined if the element isn't one. */
+  pictureFrames(id: string): Promise<number[] | undefined> {
+    const image = this.nodes.get(id)?.image;
+    return image ? this.animations.framesOf(image) : Promise.resolve(undefined);
+  }
+
+  /** Editing: shows frame `index` (0 = the first) of a recording, without playing it. */
+  showPictureFrame(id: string, index: number) {
+    const image = this.nodes.get(id)?.image;
+    if (image) this.animations.showFrame(image, index);
+  }
+
   // The rest of the editing API is in editing.ts (BoardEditing), documented there.
   fitCamera(padding?: number) { return this.editing.fitCamera(padding); }
   boardPoint(clientX: number, clientY: number) { return this.editing.boardPoint(clientX, clientY); }

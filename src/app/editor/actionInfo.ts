@@ -31,7 +31,7 @@ export const ACTIONS: Record<string, ActionInfo> = {
   camera: { icon: '⌖', label: 'Camera', family: 'camera', on: undefined, does: 'Moves the view to frame it (or everything)' },
   move: { icon: '➜', label: 'Move', family: 'motion', does: 'Slides it to another place on the board' },
   flow: { icon: '⇢', label: 'Flow', family: 'motion', on: ['arrow'], onNote: 'arrows', does: 'Sends dots along an arrow until turned off' },
-  play: { icon: '▶', label: 'Play', family: 'motion', on: ['image'], onNote: 'pictures and videos', does: 'Plays a recording or animated picture; another with "on" off pauses it' },
+  play: { icon: '▶', label: 'Play', family: 'motion', on: ['image'], onNote: 'recordings', does: 'Plays a recording, goes to one of its frames (with a fade if you like), or plays on to a frame and stops' },
   rotate: { icon: '↻', label: 'Rotate', family: 'motion', on: ['iso'], onNote: '3D models', does: 'Turns a 3D model' },
   spin: { icon: '⟳', label: 'Spin', family: 'motion', on: ['iso'], onNote: '3D models', does: 'Keeps a 3D model turning until stopped' },
   explode: { icon: '✺', label: 'Explode', family: 'motion', on: ['iso'], onNote: '3D models', does: 'Pulls a 3D model apart to show its layers' },
