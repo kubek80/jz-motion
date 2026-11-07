@@ -1,0 +1,13 @@
+{
+ "description": "Illustrator-style app tile: a rounded square with the letters \"Ai\", in orange. Stands for Adobe Illustrator, vector drawing, classic design tools.",
+ "tags": ["clipart", "logo", "illustrator", "adobe", "design tool", "vector"],
+ "paths": [],
+ "box": [100, 100],
+ "parts": [
+  { "d": "M 16 6 H 84 Q 94 6 94 16 V 84 Q 94 94 84 94 H 16 Q 6 94 6 84 V 16 Q 6 6 16 6 Z", "color": "orange", "width": 4, "fill": "orange", "fillOpacity": 0.1 },
+  { "d": "M 22 72 L 38 30 L 54 72", "color": "orange", "width": 5.5 },
+  { "d": "M 28 58 H 48", "color": "orange", "width": 5.5 },
+  { "d": "M 70 48 V 72", "color": "orange", "width": 5.5 },
+  { "d": "M 70 35 V 37", "color": "orange", "width": 6.5 }
+ ]
+}

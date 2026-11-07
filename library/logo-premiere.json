@@ -1,0 +1,12 @@
+{
+ "description": "Premiere-style app tile: a rounded square with the letters \"Pr\", in yellow. Stands for Adobe Premiere Pro, video editing software.",
+ "tags": ["clipart", "logo", "premiere", "adobe", "video editing"],
+ "paths": [],
+ "box": [100, 100],
+ "parts": [
+  { "d": "M 16 6 H 84 Q 94 6 94 16 V 84 Q 94 94 84 94 H 16 Q 6 94 6 84 V 16 Q 6 6 16 6 Z", "color": "yellow", "width": 4, "fill": "yellow", "fillOpacity": 0.1 },
+  { "d": "M 24 72 V 30 H 38 Q 50 30 50 42 Q 50 54 38 54 H 24", "color": "yellow", "width": 5.5 },
+  { "d": "M 61 46 V 72", "color": "yellow", "width": 5.5 },
+  { "d": "M 61 56 Q 64 46 76 47", "color": "yellow", "width": 5.5 }
+ ]
+}

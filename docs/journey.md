@@ -684,3 +684,11 @@ Jakub's full test branch showed more: the AI had understood the request and draw
 - The sidebar library shows newly registered items without reloading the page (an event from `userLibrary.ts`).
 
 **Checked by:** in the browser: a logo written into `library/` while the page was open (as the AI does) made a presentation using it fail the app's check with "unknown icon"; after the reload agent runs now do, it loaded and the logo appeared in the sidebar. Typecheck, tests, build.
+
+## Step 52: The four logos the AI drew, in the library
+
+The logos Claude Code drew while answering Jakub's "No Photoshop" request (step 51) were only on his test branch: `logo-photoshop`, `logo-after-effects`, `logo-premiere` and `logo-illustrator`, app tiles in the board's colours. They are now in `library/` on main, so the scene request can use them.
+
+**Checked by:** `npm run check` on each, and a snapshot of the four side by side.
+
+![The four logos on the board](journey/93-adobe-logos.jpg)
