@@ -1,0 +1,11 @@
+{
+ "description": "Photoshop-style app tile: a rounded square with the letters \"Ps\", in cyan. Stands for Adobe Photoshop, photo editing, classic design tools.",
+ "tags": ["clipart", "logo", "photoshop", "adobe", "design tool", "photo editing"],
+ "paths": [],
+ "box": [100, 100],
+ "parts": [
+  { "d": "M 16 6 H 84 Q 94 6 94 16 V 84 Q 94 94 84 94 H 16 Q 6 94 6 84 V 16 Q 6 6 16 6 Z", "color": "cyan", "width": 4, "fill": "cyan", "fillOpacity": 0.1 },
+  { "d": "M 24 72 V 30 H 38 Q 50 30 50 42 Q 50 54 38 54 H 24", "color": "cyan", "width": 5.5 },
+  { "d": "M 75 50 Q 71 46 65 46 Q 57 46 57 53 Q 57 59 66 60 Q 75 61 75 67 Q 75 73 66 73 Q 59 73 56 68", "color": "cyan", "width": 5.5 }
+ ]
+}

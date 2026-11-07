@@ -1,0 +1,12 @@
+{
+ "description": "After Effects-style app tile: a rounded square with the letters \"Ae\", in pink. Stands for Adobe After Effects, motion graphics, animation software.",
+ "tags": ["clipart", "logo", "after effects", "adobe", "motion graphics", "animation"],
+ "paths": [],
+ "box": [100, 100],
+ "parts": [
+  { "d": "M 16 6 H 84 Q 94 6 94 16 V 84 Q 94 94 84 94 H 16 Q 6 94 6 84 V 16 Q 6 6 16 6 Z", "color": "pink", "width": 4, "fill": "pink", "fillOpacity": 0.1 },
+  { "d": "M 18 72 L 33 30 L 48 72", "color": "pink", "width": 5.5 },
+  { "d": "M 24 58 H 42", "color": "pink", "width": 5.5 },
+  { "d": "M 57 60 H 79 Q 79 46 68 46 Q 57 46 57 59.5 Q 57 73 68 73 Q 75 73 78 68", "color": "pink", "width": 5.5 }
+ ]
+}
