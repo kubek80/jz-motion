@@ -34,6 +34,9 @@ interface Props {
   playFrom: (t: number) => void;
   /** Opens the transcript of one clip. */
   onTranscribe: (index: number) => void;
+  /** Removes a clip's background noise (a cleaned copy), or goes back to the original recording. */
+  onClean: (index: number) => void;
+  onRestore: (index: number) => void;
   /** Closes Timing and edits a beat in the editor. */
   onEditBeat: (scene: number, beat: number) => void;
   drawClipPeaks: (canvasEl: HTMLCanvasElement | null, c: Clip) => void;
@@ -48,7 +51,7 @@ interface Props {
 const FLAG_ROW = 24;
 const FLAG_MAX = 160;
 
-export function Timeline({ laneRef, missing, height, rec, seek, time, total, pps, width, clips, primary, clipDrag, startDragClip, startTrimClip, deleteClip, splitClipAt, canSplitAt, setClipLane, playFrom, onTranscribe, onEditBeat, drawClipPeaks, np, tapping, tapIndex, startDrag, onCue }: Props) {
+export function Timeline({ laneRef, missing, height, rec, seek, time, total, pps, width, clips, primary, clipDrag, startDragClip, startTrimClip, deleteClip, splitClipAt, canSplitAt, setClipLane, playFrom, onTranscribe, onClean, onRestore, onEditBeat, drawClipPeaks, np, tapping, tapIndex, startDrag, onCue }: Props) {
   const { shown, currentIndex, beatOf, sceneTitle } = np;
   // Beat labels go in rows above their lines: as many rows as the timeline's height allows, each label in the
   // lowest row where it doesn't run into the label before it (a short timeline keeps two rows).
@@ -111,7 +114,7 @@ export function Timeline({ laneRef, missing, height, rec, seek, time, total, pps
                 title={`${gone ? `The recording ${c.upload} isn't on this computer; × removes the clip. ` : ''}${c.name ?? 'clip'} (${(trimEnd - trimStart).toFixed(1)} s) · drag body to move/swap lane · drag edges to trim · S splits at playhead`}
               >
                 <canvas className="clip-peaks" ref={(el) => drawClipPeaks(el, previewClip)} />
-                <span className="clip-name">{gone ? '⚠ missing · ' : ''}{c.name ?? `clip ${i + 1}`}</span>
+                <span className="clip-name">{gone ? '⚠ missing · ' : ''}{c.cleanedFrom ? '✨ ' : ''}{c.name ?? `clip ${i + 1}`}</span>
                 <button
                   className="clip-delete"
                   onPointerDown={(e) => e.stopPropagation()}
@@ -170,6 +173,9 @@ export function Timeline({ laneRef, missing, height, rec, seek, time, total, pps
             title={`${c.name ?? `clip ${menu.index + 1}`} · ${fmt(c.trimEnd - c.trimStart)}${missing.has(c.upload) ? ' · recording missing' : ''}`}
             items={[
               { label: '▶ Play from here', onClick: () => playFrom(menu.t), disabled: missing.has(c.upload) },
+              c.cleanedFrom
+                ? { label: '↺ Back to the original recording', onClick: () => onRestore(menu.index), hint: 'Use the recording as it was, with its background noise (the cleaned copy stays on disk)' }
+                : { label: '✨ Clean up voice', onClick: () => onClean(menu.index), disabled: missing.has(c.upload), hint: 'Remove background noise (fan, hum, room, keyboard) with RNNoise, on this computer; the original is kept' },
               { label: '✎ Transcribe…', onClick: () => onTranscribe(menu.index), disabled: missing.has(c.upload), hint: 'What you said in this clip, as text: copy it or put it into the speaker notes' },
               { label: '✂ Split here', onClick: () => splitClipAt(menu.index, menu.t), disabled: !canSplitAt(menu.index, menu.t), hint: 'Cut this clip in two where you right-clicked' },
               { label: c.lane === 0 ? '↓ Move to the lower lane' : '↑ Move to the upper lane', onClick: () => setClipLane(menu.index, c.lane === 0 ? 1 : 0) },

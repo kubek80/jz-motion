@@ -1,5 +1,6 @@
 // The Timing window: wires the clock, board, timeline editing, prompter, narration recording and
 // voice-over hooks together and lays out the header, board, script panel, controls and timeline.
+import { useCleanVoice } from './useCleanVoice';
 import type { RawBeat, RawDoc } from '../editor/doc';
 import { BeatDrawer } from './BeatDrawer';
 import { TranscriptWindow } from './TranscriptWindow';
@@ -99,6 +100,7 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
 
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const { cleanClip, restoreClip } = useCleanVoice(clips, setClips, setBusy, setError);
 
   const notes = useNotesEditing(pause, onNotes);
   const { voicer, tts, generating, missingSentences, generateVoice } = useVoiceGeneration(presentation, presentationId, setError);
@@ -227,6 +229,8 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
         playFrom={(t) => { seek(t); play(); }}
         onEditBeat={onEditBeat}
         onTranscribe={(i) => setTranscribing([clips[i]])}
+        onClean={(i) => void cleanClip(i)}
+        onRestore={restoreClip}
         drawClipPeaks={drawClipPeaks}
         np={np}
         tapping={tapping}
