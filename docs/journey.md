@@ -812,3 +812,16 @@ Jakub wanted to see the timeline with both A and B, the B scenes with their gene
 
 **Checked by:** 0 cues ignored; each original scene's beats keep their spacing (e.g. Edit like a whiteboard: 5.4, 2.2, 1.5, 1.5 s apart, as before); no clips overlap on either lane; `npm run check`.
 
+## Step 63: The skills now say how to do it next time
+
+Jakub asked to update the skills so that next time it is done exactly this way. What had been one-off scripts became a command, and the skills say when to use it:
+
+- **`npm run voice -- time <presentation> [--scenes …]`**: per beat, how long the animation runs and how long its words take in generated speech (cached per sentence in `tts/`, shared with the app's Generate voice).
+- **`npm run voice -- place <presentation> --scenes …`**: gives new scenes in a timed presentation their generated voice on the timeline: one clip per scene (`uploads/generated-<scene>.webm`, in git), a gap opened where the scene plays, its beats cued to its sentences, later clips and cues moved on (`src/video/makeRoom.ts`, tested). The speech service comes from `OPENROUTER_API_KEY`, `OPENAI_API_KEY` or `TTS_*` variables.
+- **edit-presentation**: new scenes in a timed presentation are never left without cues (that is what pushed everything late); a second version of a scene goes right after the original, both play one after the other with their own voice, compared on one timeline, not in a copy; "leave out of the video" for choosing; how to write the script.
+- **voiceover-and-video**: the voice command and its services.
+- **demo-interactions**: record against copies made for the demo, at 1600×1000 for the editor and Timing; requests that match what the mock model returns; look at a recording's frames and check scenes in an export (snapshots can lag a recording by a frame); only remove takes you made; the layout that worked (picture, title, one caption, zoom plus spotlight per beat, frames and areas from the scenario's notes).
+- The app's own AI (agent mode) may run `npm run voice` too.
+
+**Checked by:** `place` run on his presentation as it was before step 62 gives the same clips and cues as the version built by hand (to the hundredth of a second); `time` on a scene, and without a key (says what to set); a test for making room on the timeline; typecheck, tests, build.
+
