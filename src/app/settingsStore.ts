@@ -17,11 +17,12 @@ export const VOICERS = [
   { label: 'OpenAI (gpt-4o-mini-tts, cheapest)', baseURL: 'https://api.openai.com/v1', model: 'gpt-4o-mini-tts' },
   { label: 'OpenAI (tts-1)', baseURL: 'https://api.openai.com/v1', model: 'tts-1' },
   { label: 'OpenAI (tts-1-hd)', baseURL: 'https://api.openai.com/v1', model: 'tts-1-hd' },
+  { label: 'OpenRouter (Voxtral; voice en_paul_neutral)', baseURL: 'https://openrouter.ai/api/v1', model: 'mistralai/voxtral-mini-tts-2603', voice: 'en_paul_neutral' },
   { label: 'Custom', baseURL: 'https://', model: '' },
 ];
 
-/** Common OpenAI voices; a Custom input lets you type any name a provider supports. */
-export const VOICES = ['alloy', 'ash', 'ballad', 'coral', 'echo', 'fable', 'nova', 'onyx', 'sage', 'shimmer', 'verse'];
+/** Common voices (OpenAI's, and Voxtral's on OpenRouter); you can type any name a provider supports. */
+export const VOICES = ['alloy', 'ash', 'ballad', 'coral', 'echo', 'fable', 'nova', 'onyx', 'sage', 'shimmer', 'verse', 'en_paul_neutral'];
 
 const read = <T,>(key: string, fallback: T): T => {
   try {

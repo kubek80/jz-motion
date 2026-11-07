@@ -30,7 +30,7 @@ export function VoicerFields({ value, onChange }: { value: Voicer; onChange: (v:
     <>
       <label className="field">
         <span>service</span>
-        <select value={preset} onChange={(e) => { const v = VOICERS.find((x) => x.label === e.target.value)!; onChange({ ...value, baseURL: v.baseURL, model: v.model || value.model }); }}>
+        <select value={preset} onChange={(e) => { const v = VOICERS.find((x) => x.label === e.target.value)!; onChange({ ...value, baseURL: v.baseURL, model: v.model || value.model, ...('voice' in v && v.voice ? { voice: v.voice } : {}) }); }}>
           {VOICERS.map((v) => <option key={v.label}>{v.label}</option>)}
         </select>
       </label>

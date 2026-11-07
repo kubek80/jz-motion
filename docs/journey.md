@@ -775,3 +775,20 @@ Jakub asked for a full screen button in the top bar. **⛶** (next to Settings) 
 
 **Checked by:** Playwright: ⛶ → the app is full screen and the button pressed; Present → the board is full screen; leaving it → back to the full-screen app; ⛶ → out of full screen, button released; no page errors. Typecheck, tests, build.
 
+
+## Step 60: Version B of five scenes, from real recordings, timed with a generated voice
+
+Jakub asked for a second version of scenes 6, 7, 8, 16 and 17 of his presentation (Start with a sentence, Edit like a whiteboard, Edit text and change colour, Timing, AI helpers), made with the new ways of capturing and managing recordings, with a more thoughtful script, and checked for timing with speech generated through his OpenRouter account. Each B scene sits right after its original.
+
+- **Five new recordings of the app**, each a scripted scenario in `scripts/scenarios/` against a copy made for the demo (never his own files), at 3200×2000 with text at 125 %, so the camera can zoom in: the home screen from one sentence to a first draft (with the mock model), a tour of the editor (select, beats, the library, P to play), editing and recolouring a headline on a clean board, Timing opening on its scene with the prompter and the clip menu, and the AI in four places (home, the scene bar making a "No Photoshop" scene, the AI chat, New with AI in the library).
+- **Each scene moves through its recording a step per beat** (`play` with `goto` and a fade, or `until` over a set time), with a camera zoom and a dark spotlight on the part being talked about, and one short caption under the picture. The scenarios note when each step happened and where things were on screen (`jzm-helpers.mjs`), so frames and areas match the recording exactly.
+- **The script**: one idea per beat, said the way he talks, leading into the next scene; what the viewer sees is what the sentence names.
+- **Recording tool fixes found on the way**: a scenario's `setup(page)` now runs before recording starts (no white frames while a page loads), and the helpers wait at most a second for something that isn't there (a 30-second wait had padded a recording with a minute of nothing).
+- **Voice generation through OpenRouter**: a Settings preset for Voxtral (`mistralai/voxtral-mini-tts-2603`, voice `en_paul_neutral`, about 2¢ per 1,000 characters). OpenRouter's speech endpoint is OpenAI-compatible, so nothing else changed. In the cloud session the key came through the session's credential store; the dev server needs `NODE_USE_ENV_PROXY=1` there to reach it.
+- **Timing check**: every sentence of the B scenes was generated (about 4 cents) and compared with each beat's animation. In every beat the words outlast the animation, so the board settles while the sentence finishes; the scenes run 33–39 s in the generated voice (Jakub speaks about 40 % faster). A preview MP4 of the five scenes with the generated voice was exported from a take built from those clips.
+
+![Start with a sentence (B): the box zoomed and spotlighted](journey/102-b-start.jpg)
+![Edit text, change colour (B): a step of the recording, zoomed](journey/103-b-edit.jpg)
+![Timing (B): the prompter, recorded from the app](journey/104-b-timing.jpg)
+
+**Checked by:** `npm run check` on the presentation (only the five scenes added; everything else byte-for-byte the same); beat snapshots of each B scene; an export of 6B–8B and the narrated preview, looked at frame by frame; the Voxtral preset in Settings with Playwright; typecheck, tests, build. The B scenes have no cues: they play after the scene before, and the original scenes' cues after them no longer line up until one version of each is kept and the narration is re-recorded.
