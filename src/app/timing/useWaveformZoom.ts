@@ -38,14 +38,15 @@ export function useWaveformZoom(primary: Clip | undefined, total: number, clock:
   /** Until you zoom, the timeline keeps showing all of it (its length is only known once everything has loaded). */
   const zoomed = useRef(false);
   useEffect(() => {
-    if (lane.current && (!pps || !zoomed.current)) setPps(Math.max(4, (lane.current.clientWidth - 40) / total));
+    if (lane.current && (!pps || !zoomed.current)) setPps(Math.max(0.5, (lane.current.clientWidth - 40) / total));
   }, [pps, total]);
   const width = Math.ceil(total * (pps || 20)) + 40;
   const ppsRef = useRef(pps);
   ppsRef.current = pps;
   /** After a zoom, put this moment back at this x in the lane (applied once the new width is laid out). */
   const anchor = useRef<{ t: number; x: number } | null>(null);
-  const clampPps = (v: number) => Math.max(4, Math.min(400, v));
+  // Far enough out that a long presentation (half an hour on a laptop screen) still fits.
+  const clampPps = (v: number) => Math.max(0.5, Math.min(400, v));
   /** Zoom to `next` pixels per second, keeping the moment at lane x `x` where it is. */
   const zoomAround = (next: number, x: number) => {
     zoomed.current = true;

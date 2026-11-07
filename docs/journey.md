@@ -591,3 +591,11 @@ Jakub found that prompter text sometimes lost its line breaks after editing. Edi
 **Checked by:** 3 new unit tests for how notes are split into lines (73 in all); in the browser, typing with Enter into the prompter, and into the notes in Properties on a copy of "about this app, with edit demo" (the blank lines already there were kept and the two typed lines added on their own lines); typecheck and build.
 
 ![Speaker notes in Properties, several lines](journey/85-notes-field.jpg)
+
+## Step 44: The timeline map only when there is somewhere to scroll
+
+Jakub asked for the minimap above the Timing timeline to be hidden while the whole timeline is in view. It now only appears once you zoom in (with Fit to zoom back out, which hides it again).
+
+- **Found on the way:** the zoom couldn't go out far enough for a longer presentation (it stopped at 4 pixels per second; "about this app, with edit demo" is now 6½ minutes, wider than a 1600-pixel window at that zoom), so it never fully fit. It now goes down to half a pixel per second, the slider included. Ruler labels past the end, the last beat labels and very short clips poked a few pixels past the end, which made a fitted timeline scroll slightly; the timeline is now cut at its end.
+
+**Checked by:** in the browser on a copy of that presentation: no minimap when it opens (the timeline exactly as wide as the window, no scrolling), the minimap after zooming in with Ctrl + wheel, gone again after Fit; typecheck, tests, build.
