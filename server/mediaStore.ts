@@ -37,7 +37,7 @@ export interface MediaEntry {
 
 export interface MediaUse { id: string; title: string }
 
-const MAX_WIDTH = 2560;
+const MAX_WIDTH = 3840;
 const TYPES: Record<string, string> = {
   webp: 'image/webp', webm: 'video/webm', svg: 'image/svg+xml', png: 'image/png', jpg: 'image/jpeg', gif: 'image/gif', apng: 'image/apng', mp4: 'video/mp4',
 };

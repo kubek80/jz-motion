@@ -72,8 +72,11 @@ npm run snap -- 'http://localhost:5173/#/p/<id>' editor-open
 # a single element (clipped to its bounding box)
 npm run snap -- http://localhost:5173 home --selector '.start-box'
 
-# flags: --size 1440x900 (viewport, default 1280×800), --wait 400 (ms before shot), --selector CSS
+# flags: --size 1440x900 (browser window, default 1280×800), --zoom 1.25 (text and controls bigger, default 1.25),
+#        --scale 2 (pixels per point, default 2), --wait 400 (ms before shot), --selector CSS
 ```
+
+**Captures are made for camera zooms.** By default the page is laid out like a 1280×800 window at 125 % browser zoom and captured at 2× pixel density: a 2560×1600 picture with text a little larger than on screen. A camera move can zoom two times into it on a 1080p video before the interface goes soft, and the text is readable even when the whole screenshot fills only part of the board. Keep the defaults; use `--zoom 1.5` for a busy, dense UI you will mostly show zoomed out, and `--scale 3` only when the camera goes in further than two times (bigger files).
 
 Keeps the raw PNG in `scratch/captures/` and adds a WebP copy to the media library; it prints the `/media/<hash>.webp` src. Reference it as that `src` in an `image` element with `"frame": "browser"` and the real URL in `url`.
 
@@ -81,7 +84,7 @@ Keeps the raw PNG in `scratch/captures/` and adds a WebP copy to the media libra
 
 ```sh
 npm run record -- 'http://localhost:5173/#/p/sandbox' edit-text scripts/scenarios/edit-text.mjs
-# flags: --size 1280x800, --fps 15 (12 keeps files small)
+# flags: --size 1280x800, --zoom 1.25, --scale 2 (as for snap), --fps 15 (at most this many frames a second)
 ```
 
 Records the scenario, keeps the raw capture in `scratch/captures/`, adds it to the media library as WebM video and prints its `/media/<hash>.webm` src. Recordings in the media library are WebM video (`/media/<hash>.webm`, with a poster picture next to it; anything imported there, APNG and GIF included, is converted to that). The board plays it with the `play` action, muted (sound belongs to the narration). APNG and GIF files are not played on the board; put them in the media library and use the WebM it makes.
@@ -101,7 +104,7 @@ A natural-speed interaction looks like a glitch on the board. The viewer has to 
 - **Hover before every click.** Move to the target, wait 300–500 ms so the pointer is visible, then click.
 - **Pause after every change.** 600–1000 ms so the viewer registers the new state.
 - **Type character by character** with `--delay 60–100 ms` for a readable typing cadence.
-- **Prefer `--fps 10`** — more frames don't help if the interaction itself is paced right, and fewer keeps the capture small.
+- **`--fps` only caps the rate**: a frame is kept when the page changes, so a still page costs nothing. 10–15 is plenty for a well-paced interaction.
 - **Keep the whole clip 6–12 seconds.** Two seconds of a hovering pointer is better than four seconds of a blur.
 - **Recolour demos: pick single-colour elements.** Multi-colour clipart (icons with a `label`, logos) doesn't visibly change when the colour is swapped — the `color` field only affects uncoloured parts. Target plain `text` or a `box`.
 
@@ -173,7 +176,7 @@ If a `snap` would show it clearly, do that first — static files are smaller, m
 
 ### Dependencies
 
-The record script uses `playwright` to screenshot in a loop and `upng-js` to stitch the raw capture (APNG, in `scratch/captures/`); the media library converts it to WebM with FFmpeg.
+The record script renders the page at the capture's pixel density, keeps the frames Chrome's screencast sends as the page repaints, and has FFmpeg join them into a lossless video in `scratch/captures/`; the media library converts it to WebM.
 
 ### Other apps (not jz-motion)
 

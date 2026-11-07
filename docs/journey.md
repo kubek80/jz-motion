@@ -754,3 +754,16 @@ Jakub asked that closing Timing should land on the scene being looked at there. 
 
 **Checked by:** Playwright on a copy of a presentation: opened Timing from scene 3, moved the playhead to 3:59 and pressed Esc → scene 10; reopened, moved to 5:32 and clicked ✕ → scene 14; reopened (at 5:22, scene 14's start) and closed without moving → stays on 14; no page errors. Typecheck, tests, build.
 
+## Step 58: Sharper screenshots and recordings, made for camera zooms
+
+Jakub noticed that camera moves into screenshots pixelate the interface, and asked for captures in a higher resolution with the text zoomed in a bit.
+
+- **`snap` and `record` capture at 2× pixel density with the page at 125 % zoom** (new `scripts/capturePage.mjs`): the page lays out like a 1280×800 window with bigger text, and the picture is 2560×1600. `--zoom` and `--scale` change it (`--size` is still the window).
+- **Recording had to change to keep up**: a 2560×1600 screenshot takes about 350 ms here, so the old loop managed 6 frames in 3 seconds, and holding them all as one APNG in memory would not fit long clips. The browser now renders at the capture's density from the start and the recorder keeps the frames Chrome's screencast sends whenever the page repaints (at most `--fps` a second), writing them to disk; FFmpeg joins them, each held for as long as it was on screen, into a lossless video that the media library turns into WebM. `upng-js` is no longer needed.
+- The media library keeps pictures and recordings up to 3840 px wide (was 2560), for `--scale 3`.
+- The `demo-interactions` skill explains the defaults and when to change them.
+
+![The same part of a screenshot zoomed in three times: before and now](journey/100-sharper-captures.jpg)
+
+**Checked by:** `snap` of a presentation: 2560×1600 PNG, 183 KB as WebP. `record` of a scenario switching scenes twice: 20 frames over 3.2 s at 2560×1600, 351 KB as WebM, `frames` lists its 6 distinct pictures, and a frame from it is as sharp as a still screenshot. The test captures were removed from the media library afterwards. Typecheck, tests, build.
+
