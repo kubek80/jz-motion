@@ -1,6 +1,7 @@
 // The editor's top bar: back to all presentations, title, undo/redo, and the buttons that
-// open the Script, Timing and Settings windows or present full screen.
+// open the Script, Timing and Settings windows, present the board full screen, or put the whole app full screen.
 import { log } from '../debug';
+import { toggleAppFullscreen, useFullscreen } from '../fullscreen';
 
 interface Props {
   title: string | undefined;
@@ -15,6 +16,7 @@ interface Props {
 }
 
 export function TopBar({ title, history, valid, onHome, onScript, onTiming, onPresent, onSettings }: Props) {
+  const full = useFullscreen();
   return (
     <header className="bar">
       <button className="logo-button" onClick={onHome} title="All presentations"><img className="logo" src="/logo.svg" alt="jz-motion" /></button>
@@ -25,6 +27,7 @@ export function TopBar({ title, history, valid, onHome, onScript, onTiming, onPr
       <button onClick={onScript} disabled={!valid} title="Read and edit the whole narration beat by beat, with reading-time estimates">Script</button>
       <button onClick={onTiming} disabled={!valid} title="Time the beats to a voice-over">Timing</button>
       <button onClick={onPresent} title="Full screen (F). Arrows, space or a clicker to step.">Present</button>
+      <button className={full ? 'on' : ''} onClick={() => void toggleAppFullscreen()} aria-pressed={full} title={full ? 'Leave full screen (Esc)' : 'The whole app full screen (Present shows the board alone)'}>⛶</button>
       <button onClick={onSettings} title="Models, API keys, transcription">⚙</button>
     </header>
   );

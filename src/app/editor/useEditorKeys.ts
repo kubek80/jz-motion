@@ -1,6 +1,7 @@
 // Keyboard shortcuts of the editor window: undo/redo everywhere; Delete, Escape, Enter/F2, Ctrl+D and
 // 0/Home on the board in edit mode; stepping through beats and F (full screen) in play mode; P switches between
 // Edit and Play, and Esc in Play goes back to Edit.
+import { boardFullscreen } from '../fullscreen';
 import { useEffect, useRef } from 'react';
 import type { Stage } from '../../engine';
 import { log } from '../debug';
@@ -64,7 +65,7 @@ export function useEditorKeys(current: EditorKeys, { stage, setPicked, setSelect
         if (['ArrowRight', 'PageDown', ' ', 'Enter'].includes(e.key)) s.next();
         else if (['ArrowLeft', 'PageUp', 'Backspace'].includes(e.key)) s.prev();
         else if (e.key === 'f') void k.togglePresent();
-        else if (e.key === 'Escape' && !document.fullscreenElement && !document.querySelector(OTHER_WINDOWS)) k.setMode('edit');
+        else if (e.key === 'Escape' && !boardFullscreen() && !document.querySelector(OTHER_WINDOWS)) k.setMode('edit');
         else return;
       }
       e.preventDefault();

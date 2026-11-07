@@ -5,6 +5,7 @@ import { compile, Stage, type StagePosition } from '../engine';
 import type { Camera } from '../engine/schema';
 import type { CreateRequest } from './Creator';
 import type { ChatMessageView } from './Chat';
+import { boardFullscreen } from './fullscreen';
 import { imageFrom } from './images';
 import { Resizer, useResizable } from './Resizer';
 import { useRecorder } from './useRecorder';
@@ -230,7 +231,7 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
   };
 
   const togglePresent = async () => {
-    if (document.fullscreenElement) await document.exitFullscreen();
+    if (boardFullscreen()) await document.exitFullscreen();
     else {
       setMode('play');
       await stageFrame.current?.requestFullscreen();

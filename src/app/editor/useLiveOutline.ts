@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import type { CompiledScene, Stage, StagePosition } from '../../engine';
+import { boardFullscreen } from '../fullscreen';
 import type { RawBeat } from './doc';
 
 // Play mode: a faint dashed outline around whatever the running actions animate, so you can see each element
@@ -10,7 +11,7 @@ export function useLiveOutline(stage: React.RefObject<Stage | null>, on: boolean
   useEffect(() => {
     const s = stage.current;
     if (!s) return;
-    if (!on || !scene || !beats || document.fullscreenElement) {
+    if (!on || !scene || !beats || boardFullscreen()) {
       if (shown.current) s.setSelection([], []);
       shown.current = '';
       return;
