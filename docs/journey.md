@@ -652,3 +652,13 @@ Jakub asked whether a model could clean a whole recording; of the options (Adobe
 **Checked by:** a spoken test sentence (FFmpeg's own speech synthesizer) mixed with pink noise and 50 Hz hum: after cleaning, the speech kept its level (-18.7 → -19.0 dB overall, loudest moment -11.4 → -11.8 dB) while the background between words dropped from -42.7 to -59.0 dB. (A plain tone is removed almost entirely: RNNoise keeps speech, not any sound.) In the browser on a copy of "about this app, with edit demo": the menu item, the clip switching to the cleaned copy (saved with `cleanedFrom`, the ✨ shown) and back to the original. Typecheck, tests, build.
 
 ![Clean up voice, and back to the original](journey/91-clean-up-voice.jpg)
+
+## Step 49: No hole when a scene goes, and beats that move the same way both ways
+
+Jakub found that deleting a scene left a hole in the timing, and that dragging a beat right moved all the beats after it while dragging left moved only that one.
+
+- **Why dragging was lopsided:** a beat's cue only counts if it comes after the previous beat's cue. Dragging a beat right past later beats made their cues "go backwards", so they were dropped and those beats followed the dragged one: they were pulled along. Dragging left never crossed anything.
+- **Now:** a plain drag moves just that beat and stops before the next beat that has its own cue (beats without one simply follow it); **Shift + drag** moves it and every later beat with a cue by the same amount, in either direction, with all of them shown moving while you drag.
+- **Deleting a scene of a timed presentation** (one whose later beats have cues) takes its stretch of timeline out too, like a ripple delete in a video editor: later cues move earlier by the scene's length, and the narration recorded over it is cut out of the voice clips (trimmed, split, or removed; later clips move earlier), so the words still meet their beats. The confirmation says how many seconds go; Undo brings everything back. The logic is in `src/app/editor/closeGap.ts`, with tests.
+
+**Checked by:** 2 new tests (79 in all); in the browser on a copy of "about this app, with edit demo" with a 400-second test narration: dragging beat 2.2 far right stopped it at 31.35 s, just before 2.3 (nothing else changed); dragging it left 1.5 s moved only it; Shift + drag right 2 s moved it and the 55 later cued beats by the same 2.05 s; deleting "Inspiration" (14.5 s) moved the next scene's first cue from 68.45 to 53.95 and split the narration around the cut. Typecheck, build.
