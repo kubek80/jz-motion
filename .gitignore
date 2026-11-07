@@ -10,3 +10,4 @@ presentations/.drafts
 .claude/worktrees
 *.tsbuildinfo
 scratch
+logs

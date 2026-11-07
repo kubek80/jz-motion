@@ -38,6 +38,7 @@ Explainers about *any* app (including jz-motion itself) use `snap` and `record` 
 | `images/` | Older pictures, from before the media library (migrated; `npm run media -- migrate` moves any new ones in) | yes |
 | `scratch/` | Raw captures and files moved out of the way (`migrate` puts unused pictures here); safe to delete | no |
 | `uploads/`, `takes/`, `exports/`, `snapshots/` | Recordings, voice-overs, takes, videos, previews | no |
+| `logs/` | `ai.jsonl`: every AI request, its reply and what came of it (read it when an AI change didn't do what was asked) | no |
 | `src/examples/` | Example presentations shipped with the app (`public/examples/` holds their pictures) | yes |
 
 ## Working on the code
