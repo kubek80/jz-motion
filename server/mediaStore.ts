@@ -1,10 +1,11 @@
 import { createHash } from 'node:crypto';
+import { spawn } from 'node:child_process';
 import { createReadStream, existsSync } from 'node:fs';
 import { mkdir, mkdtemp, readdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { tmpdir } from 'node:os';
 import { extname, join, resolve } from 'node:path';
-import { FFMPEG, FFPROBE, run } from './media';
+import { FFMPEG, FFPROBE, ffmpegMissing, run } from './media';
 
 // The media library: every picture, screen recording and sound used on boards, in media/<hash>.<ext>, with an
 // index (media/index.json) of readable names, sizes and dimensions. Files are converted on the way in, so they
@@ -134,6 +135,8 @@ export async function addMedia(data: Buffer, originalName: string, name?: string
     };
     index[file] = entry;
     await writeIndex(index);
+    // Ready for the frame stepper and `play` frames before anyone asks.
+    if (done.kind === 'recording') void mediaFrames(file).catch(() => undefined);
     return entry;
   } finally {
     await rm(work, { recursive: true, force: true });
@@ -230,3 +233,40 @@ export async function serveMedia(req: IncomingMessage, res: ServerResponse, file
   return true;
 }
 
+/** Frame lists already worked out, by file (files are named by their content, so they never change). */
+const frameTimes = new Map<string, Promise<number[]>>();
+const FRAMES_DIR = resolve('scratch/frames');
+
+/**
+ * When each distinct picture of a recording starts (seconds, in order): what "frame 5" means for `play`.
+ * Repeated frames (a converted APNG holds each picture for several video frames; a screen recording stands
+ * still between changes) are skipped with FFmpeg's mpdecimate, so frames are the pictures you can see change.
+ * Worked out once per file, kept in scratch/frames/ (not in git; rebuilt when missing). Pictures have none.
+ */
+export function mediaFrames(file: string): Promise<{ times: number[] }> {
+  const name = safe(file);
+  if (!/\.(webm|mp4|mov|m4v)$/i.test(name)) return Promise.resolve({ times: [] });
+  let job = frameTimes.get(name);
+  if (!job) {
+    job = framesOf(name);
+    frameTimes.set(name, job);
+    job.catch(() => frameTimes.delete(name));
+  }
+  return job.then((times) => ({ times }));
+}
+
+async function framesOf(name: string): Promise<number[]> {
+  const kept = join(FRAMES_DIR, `${name}.json`);
+  try { return JSON.parse(await readFile(kept, 'utf8')); } catch { /* not worked out yet */ }
+  const log = await new Promise<string>((done, fail) => {
+    const p = spawn(FFMPEG, ['-hide_banner', '-nostats', '-i', join(MEDIA_DIR, name), '-an', '-vf', 'mpdecimate,showinfo', '-f', 'null', '-']);
+    let err = '';
+    p.stderr.on('data', (d: Buffer) => { err += d.toString(); });
+    p.on('error', (e) => fail(new Error(ffmpegMissing(FFMPEG, e.message))));
+    p.on('close', (code) => (code === 0 ? done(err) : fail(new Error(`could not read the frames of ${name}: ${err.slice(-300)}`))));
+  });
+  const times = [...log.matchAll(/pts_time:([\d.]+)/g)].map((m) => Math.round(Number(m[1]) * 1000) / 1000);
+  await mkdir(FRAMES_DIR, { recursive: true });
+  await writeFile(kept, JSON.stringify(times));
+  return times;
+}

@@ -61,6 +61,30 @@ describe('fade-out and erase', () => {
   });
 });
 
+describe('play: frames', () => {
+  const els = [{ id: 'clip', type: 'image', src: '/media/a.webm', x: 0, y: 0, width: 100, height: 60 }];
+  const plays = (beats: object[]) => {
+    const r = compile(deck({ elements: els, beats }));
+    if (!r.ok) throw new Error(r.errors.join('; '));
+    return r.presentation.scenes[0];
+  };
+  it('goes to a frame and stays there, optionally cross-fading over the duration', () => {
+    const s = plays([{ actions: [{ do: 'play', target: 'clip', goto: 5 }] }, { actions: [{ do: 'play', target: 'clip', goto: 2, fade: true, duration: 0.8 }] }]);
+    expect(s.ops.filter((o) => o.kind === 'play')).toMatchObject([{ seekFrame: 4, to: null }, { seekFrame: 1, to: null, fade: 0.8 }]);
+    expect(s.beats[1].end - s.beats[1].start).toBeCloseTo(0.8);
+  });
+  it('plays on until a frame, in a given time when asked, then counts as paused', () => {
+    const s = plays([{ actions: [{ do: 'play', target: 'clip', goto: 2, until: 9, duration: 2 }] }, { actions: [{ do: 'play', target: 'clip', on: false }] }]);
+    expect(s.ops.filter((o) => o.kind === 'play')).toMatchObject([{ seekFrame: 1, untilFrame: 8, arriveIn: 2, to: 1 }, { from: null, to: null }]);
+    expect(s.beats[0].end).toBeCloseTo(2);
+  });
+  it('explains what cannot work', () => {
+    const bad = (a: object) => { const r = compile(deck({ elements: els, beats: [{ actions: [a] }] })); return r.ok ? '' : r.errors.join(); };
+    expect(bad({ do: 'play', target: 'clip', goto: 6, until: 3 })).toMatch(/only plays forwards/);
+    expect(bad({ do: 'play', target: 'clip', fade: true })).toMatch(/needs "goto"/);
+  });
+});
+
 describe('pinned elements', () => {
   const doc = (extra: object[], actions: object[]) => ({
     version: 1, title: 't',

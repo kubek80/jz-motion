@@ -231,16 +231,24 @@ export const Action = z.discriminatedUnion('do', [
     padding: z.number().min(0).default(24),
   }),
   /**
-   * Plays an animated picture (APNG, GIF, animated WebP) or a video (WebM, MP4, MOV; muted); it keeps playing between beats until it ends
-   * (or loops), or another `play` with "on": false pauses it. Without `play` it shows its first frame.
+   * Plays a recording (a video: WebM from the media library, MP4, MOV; muted); it keeps playing between beats until
+   * it ends (or loops), or another `play` with "on": false pauses it. Without `play` it shows its first frame.
+   * `goto` jumps to a frame (and stays there, unless `until` or "on": true); `until` plays on to a frame and holds it.
    */
   z.object({
     do: z.literal('play'),
     ...timing,
     target: Targets,
-    on: z.boolean().default(true),
-    /** Seconds into the animation to jump to first; without it, it continues from where it is. */
+    /** Playing (true) or paused (false). Default: playing, except a jump with `goto` (and no `until`) stays still. */
+    on: z.boolean().optional(),
+    /** Seconds into the recording to jump to first; without it (or `goto`), it continues from where it is. */
     from: z.number().min(0).optional(),
+    /** Frame to jump to first (1 is the first frame; frames are the recording's distinct pictures). */
+    goto: z.number().int().min(1).optional(),
+    /** Play on until this frame (1 is the first), then hold it. With `duration`, it gets there in exactly that time. */
+    until: z.number().int().min(1).optional(),
+    /** With `goto`: cross-fade from what was showing to the new frame, over `duration` (default 0.5 s). */
+    fade: z.boolean().optional(),
     speed: z.number().positive().default(1),
   }),
   z.object({ do: z.literal('wait'), ...timing }),

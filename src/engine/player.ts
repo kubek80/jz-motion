@@ -61,7 +61,7 @@ export class StagePlayer {
   private manual = false;
   private builtFor?: CompiledScene;
   private prefix = `jzm${nextUid()}`;
-  private animations = new AnimatedPictures(() => this.tl, () => this.builtFor);
+  protected animations = new AnimatedPictures(() => this.tl, () => this.builtFor);
   /** Resolves once the board background has been flattened (see boardBackground.ts). */
   private backgroundReady: Promise<void>;
 

@@ -50,41 +50,47 @@ export interface ElementNodes {
  */
 export interface ImageNodes {
   outer: SVGGElement; fx: SVGGElement; clip: SVGRectElement; img: SVGImageElement; left: number; width: number; reveal: { v: number };
-  anim?: AnimNodes;
   video?: VideoNodes;
 }
 
-/**
- * Something on a picture that `play` drives (an animated picture or a video). `state` is set by the timeline
- * (speed; `epoch` changes when a play jumps to `seekTo`); `clip` (seconds) advances with the board's clock.
- */
-export interface Playable {
-  loop: boolean;
-  /** The foreignObject that holds the canvas or video, clipped like the picture. */
-  box: SVGForeignObjectElement;
-  state: { speed: number; epoch: number; seekTo: number };
+/** What the timeline sets for a recording's plays (all numbers, so it scrubs both ways): see animatedPictures.ts. */
+export interface PlayState {
+  /** Playing speed; 0 paused. */
+  speed: number;
+  /** Goes up with every jump (to `seekTo` seconds). */
   epoch: number;
-  /** While scheduling plays in order: the jump count and position so far. */
-  planned: { epoch: number; seekTo: number };
-  clip: number;
+  seekTo: number;
+  /** Goes up with every play. */
+  seq: number;
+  /** Seconds to stop and hold at (-1: none), and how long it should take to get there (0: at its own speed). */
+  stopAt: number;
+  arrive: number;
 }
 
-/** An animated picture (APNG, GIF, animated WebP), decoded frame by frame on demand into a canvas. */
-export interface AnimNodes extends Playable {
-  decoder: ImageDecoder;
-  frames: number;
-  frameSeconds: number;
-  canvas: HTMLCanvasElement;
-  shown: number;
-  want: number;
-  busy: Promise<void> | null;
-}
-
-/** A video (WebM, MP4, MOV) played muted in a <video>; live it plays natively, in export it is seeked frame by frame. */
-export interface VideoNodes extends Playable {
+/** A recording (a video: WebM, MP4, MOV) played muted; live it plays natively, in export it is seeked frame by frame. */
+export interface VideoNodes {
+  src: string;
   video: HTMLVideoElement;
+  /** The foreignObject that holds the video (and a cross-fade's), clipped like the picture. */
+  box: SVGForeignObjectElement;
+  loop: boolean;
   /** Seconds; Infinity when the file doesn't say. */
   duration: number;
+  /** When each distinct picture starts (seconds): "frame 5" is frames[4]. Loaded when a play or the editor needs it. */
+  frames?: number[];
+  state: PlayState;
+  /** While scheduling plays in order: the state so far, and where the clip will be (to know what a cross-fade starts from). */
+  planned: PlayState & { t: number; clip: number; holding: boolean };
+  epoch: number;
+  seq: number;
+  /** Seconds into the recording now; where this play holds (-1: nowhere) and its own speed to get there (null: the play's). */
+  clip: number;
+  stopAt: number;
+  speedTo: number | null;
+  /** Cross-fades: from the picture at `from` seconds, starting at timeline time `t`, over `dur` seconds. */
+  fades: { t: number; dur: number; from: number }[];
+  /** The second video that shows what a cross-fade starts from (made when a play first fades). */
+  fade?: { video: HTMLVideoElement; target: number; busy: Promise<void> | null; ready: Promise<boolean> };
   /** Export: the time last asked of the video, and the wait until that frame is shown. */
   target: number;
   busy: Promise<void> | null;
@@ -181,8 +187,7 @@ export function renderImage(n: ElementNodes) {
   const v = Math.max(0, Math.min(1, im.reveal.v));
   im.clip.setAttribute('width', String(im.width * v));
   im.img.style.opacity = String(Math.min(1, v * 2.5));
-  const live = im.anim ?? im.video;
-  if (live) live.box.style.opacity = im.img.style.opacity;
+  if (im.video) im.video.box.style.opacity = im.img.style.opacity;
 }
 
 export function preloadImage(src: string): Promise<void> {

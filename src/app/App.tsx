@@ -13,6 +13,7 @@ import { Beats } from './editor/Beats';
 import { idsInScope, sceneSlot, updateBeats, type RawDoc } from './editor/doc';
 import { pinPatch, RESIZABLE } from './editor/elements';
 import { EditorWindows } from './editor/EditorWindows';
+import { FrameStepper, isRecording } from './editor/FrameStepper';
 import { InlineTextEditor, useInlineText } from './editor/InlineTextEditor';
 import { Library } from './editor/Library';
 import { PlayControls } from './editor/PlayControls';
@@ -294,6 +295,7 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
             <div className="host" ref={stageHost} />
             <video ref={preview} className={recording && recorder.state.stream?.getVideoTracks().length ? 'cam-preview on' : 'cam-preview'} autoPlay muted playsInline />
             {inline && <InlineTextEditor inline={inline} setInline={setInline} finishInline={finishInline} />}
+            {mode === 'edit' && doc && pickedEl && isRecording(pickedEl) && !inline && <FrameStepper stage={stage} frame={stageFrame} id={pickedEl.id} doc={doc} sceneIndex={sceneIndex} update={update} />}
             {mode === 'edit' && (
               <div className="view-tools" onPointerDown={(e) => e.stopPropagation()} onDoubleClick={(e) => e.stopPropagation()}>
                 <button onClick={() => resetView()} title="Back to the scene's start view (0)">

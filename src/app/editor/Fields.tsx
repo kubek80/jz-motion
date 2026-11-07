@@ -30,6 +30,9 @@ const FIELD_INFO: Record<string, FieldInfo> = {
   times: { label: 'how many times' },
   speed: { help: 'Play: 1 is normal speed, 2 twice as fast. Spin: degrees per second. Flow: how fast the dots travel.' },
   from: { label: 'jump to (s)', help: 'Play: the second of the recording to start from.' },
+  goto: { label: 'go to frame', help: 'Play: jump to this frame (1 is the first) and stay there, unless "until" is set or it is told to play. Select the recording on the board to step through its frames.' },
+  until: { label: 'play until frame', help: 'Play: play on to this frame and hold it. With "takes", it gets there in exactly that time.' },
+  fade: { label: 'fade to it', help: 'Play with "go to frame": cross-fade from what was showing to the new frame, over "takes" (0.5 s if empty).' },
   zoom: { help: '1 shows the whole board, 2 is twice as close.' },
   focus: { help: 'What the camera frames; "all" frames everything visible.' },
   padding: { help: 'Space around what the camera frames, in screen pixels.' },
@@ -46,7 +49,7 @@ const FIELD_INFO: Record<string, FieldInfo> = {
   shape: { help: 'Shape of the area (and of a spotlight on it).' },
   style: { label: 'style', help: 'Text: handwritten marker, bold outlined capitals, or code (several lines allowed). Spotlight: what happens outside it, darker or faded.' },
   amount: { label: 'strength', help: 'How much darker or fainter, from 0 to 1.' },
-  on: { help: 'Off turns it off.' },
+  on: { help: 'Off turns it off (play: pauses). Play with "go to frame" stays still unless this is on.' },
 };
 
 /** Position and size fields, shown together as a compact grid with drawing-program style labels. */

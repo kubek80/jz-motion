@@ -1,6 +1,6 @@
 ---
 name: demo-interactions
-description: Build scenes that walk through app or UI interactions (click, edit text, change colour, drag, play a recorded screen) using screenshots framed as a browser, camera zooms into details with pinned explanations that stay readable, and screen recordings (WebM video from the media library; APNG, GIF and animated WebP also work) played in sync with the narration. Use when a presentation needs to show how to use an app or an interface.
+description: Build scenes that walk through app or UI interactions (click, edit text, change colour, drag, play a recorded screen) using screenshots framed as a browser, camera zooms into details with pinned explanations that stay readable, and screen recordings (WebM video from the media library) played in sync with the narration, frame by frame when that reads better. Use when a presentation needs to show how to use an app or an interface.
 ---
 
 # Showing how an app works
@@ -84,7 +84,7 @@ npm run record -- 'http://localhost:5173/#/p/sandbox' edit-text scripts/scenario
 # flags: --size 1280x800, --fps 15 (12 keeps files small)
 ```
 
-Records the scenario, keeps the raw capture in `scratch/captures/`, adds it to the media library as WebM video and prints its `/media/<hash>.webm` src. Recordings in the media library are WebM video (`/media/<hash>.webm`, with a poster picture next to it; anything imported there, APNG and GIF included, is converted to that). The board plays a video exactly like an animated picture, with the `play` action, muted (sound belongs to the narration). APNG, GIF and animated WebP still play too.
+Records the scenario, keeps the raw capture in `scratch/captures/`, adds it to the media library as WebM video and prints its `/media/<hash>.webm` src. Recordings in the media library are WebM video (`/media/<hash>.webm`, with a poster picture next to it; anything imported there, APNG and GIF included, is converted to that). The board plays it with the `play` action, muted (sound belongs to the narration). APNG and GIF files are not played on the board; put them in the media library and use the WebM it makes.
 
 ### **Always record against the sandbox presentation**
 
@@ -92,7 +92,7 @@ Records the scenario, keeps the raw capture in `scratch/captures/`, adds it to t
 
 ### Scenario files
 
-Live in `scripts/scenarios/<name>.mjs`. Each exports `run(page)`; the browser is already at the URL you passed. Keep interactions short — 2–8 seconds — so the APNG stays small (hundreds of KB, not megabytes) and the beat it plays over doesn't drag.
+Live in `scripts/scenarios/<name>.mjs`. Each exports `run(page)`; the browser is already at the URL you passed. Keep interactions short — 2–8 seconds — so the recording stays small and the beat it plays over doesn't drag.
 
 ### Pacing: slow is the point
 
@@ -101,7 +101,7 @@ A natural-speed interaction looks like a glitch on the board. The viewer has to 
 - **Hover before every click.** Move to the target, wait 300–500 ms so the pointer is visible, then click.
 - **Pause after every change.** 600–1000 ms so the viewer registers the new state.
 - **Type character by character** with `--delay 60–100 ms` for a readable typing cadence.
-- **Prefer `--fps 10`** — more frames don't help if the interaction itself is paced right, and 10 fps keeps the APNG small.
+- **Prefer `--fps 10`** — more frames don't help if the interaction itself is paced right, and fewer keeps the capture small.
 - **Keep the whole clip 6–12 seconds.** Two seconds of a hovering pointer is better than four seconds of a blur.
 - **Recolour demos: pick single-colour elements.** Multi-colour clipart (icons with a `label`, logos) doesn't visibly change when the colour is swapped — the `color` field only affects uncoloured parts. Target plain `text` or a `box`.
 
@@ -138,11 +138,20 @@ export async function run(page) {
 }
 ```
 
-For a recording, use the recording's `src` (a `/media/<hash>.webm` video, or an `.apng`) and drive playback with `play`:
+For a recording, use the recording's `src` (a `/media/<hash>.webm` video) and drive playback with `play`:
 
 ```json
-{ "do": "play", "target": "editor", "on": true, "from": 0 }
+{ "do": "play", "target": "editor", "from": 0 }
 ```
+
+Recordings of steps (a scenario that clicks, waits, clicks) are best shown **frame by frame**: a frame is one distinct picture of the recording, numbered from 1 (`curl localhost:5173/api/media/<file>/frames` lists when each starts). Move one step per beat:
+
+```json
+{ "do": "play", "target": "editor", "goto": 3, "fade": true, "duration": 0.6 }
+{ "do": "play", "target": "editor", "until": 7, "duration": 2 }
+```
+
+The first jumps to frame 3 with a soft cross-fade and holds it while you talk; the second plays on to frame 7 in two seconds and holds it.
 
 ### When to snap, when to record
 
@@ -160,19 +169,19 @@ If a `snap` would show it clearly, do that first — static files are smaller, m
 
 ### Dependencies
 
-No FFmpeg needed — the record script uses `playwright` to screenshot in a loop and `upng-js` to stitch frames into APNG, both in `devDependencies`.
+The record script uses `playwright` to screenshot in a loop and `upng-js` to stitch the raw capture (APNG, in `scratch/captures/`); the media library converts it to WebM with FFmpeg.
 
 ### Other apps (not jz-motion)
 
 The scripts take any URL. For a presentation about another product:
 
 1. Make sure both apps run — jz-motion on `localhost:5173` to build the deck, the target app wherever it lives (local dev, staging, or a public URL).
-2. Capture against the target app's URL. Store under `images/<app>-<state>.png` or `.apng` with a stable prefix so you can tell them apart.
+2. Capture against the target app's URL, with names like `<app>-<state>` so you can tell them apart in the media library.
 3. Add a per-app scenarios folder if you need many: `scripts/scenarios/<app>/`.
 
 ### Save, don't paste
 
-The two scripts write directly into `images/` so the files are version-controlled with the presentation. Dragging a file into the editor also works for one-off captures, but prefer `snap`/`record` for anything referenced from the JSON — the command is the regeneration recipe when the UI changes.
+The two scripts put their results in the media library (`media/`, in git) so the files travel with the presentation. Dragging a file into the editor also works for one-off captures, but prefer `snap`/`record` for anything referenced from the JSON — the command is the regeneration recipe when the UI changes.
 
 ## Self-verify after every capture *and* every slide
 
@@ -180,7 +189,7 @@ The two most costly re-work loops both come from skipping a quick look.
 
 ### 1. Verify every capture before you use it
 
-After `npm run snap` or `npm run record`, open the resulting `images/<name>.png` or `.apng`. Ask:
+After `npm run snap` or `npm run record`, look at the result (the raw capture is in `scratch/captures/`, the library copy at the `/media/…` src it prints). Ask:
 
 - Does the shot show what the beat needs? If the AI chat panel is empty because no model is set up, is that still useful?
 - Is the window big enough that the detail is readable at a glance?

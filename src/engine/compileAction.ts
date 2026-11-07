@@ -266,10 +266,29 @@ export function compileAction(c: ActionContext): number | null {
           errors.push(`${at}: play only works on (animated) images, "${id}" is a ${el.type}`);
           return 0;
         }
-        const to = action.on ? action.speed : null;
-        ops.push({ kind: 'play', id, from: state[id].play ?? null, to, seek: action.from, t });
-        state[id].play = to;
-        return Math.max(action.duration ?? 0, SWITCH);
+        if (action.until !== undefined && action.goto !== undefined && action.until < action.goto) {
+          errors.push(`${at}: "until" (frame ${action.until}) comes before "goto" (frame ${action.goto}); a recording only plays forwards`);
+          return 0;
+        }
+        if (action.fade && action.goto === undefined) {
+          errors.push(`${at}: "fade" cross-fades to a new frame, so it needs "goto"`);
+          return 0;
+        }
+        // A jump to a frame stays there unless it is told to play (or to play on to another frame).
+        const on = action.until !== undefined || (action.on ?? action.goto === undefined);
+        const to = on ? action.speed : null;
+        const fade = action.fade ? action.duration ?? 0.5 : undefined;
+        const arriveIn = action.until !== undefined && action.duration ? action.duration : undefined;
+        ops.push({
+          kind: 'play', id, from: state[id].play ?? null, to, t,
+          ...(action.goto !== undefined ? { seekFrame: action.goto - 1 } : action.from !== undefined ? { seek: action.from } : {}),
+          ...(action.until !== undefined ? { untilFrame: action.until - 1 } : {}),
+          ...(arriveIn ? { arriveIn } : {}),
+          ...(fade ? { fade } : {}),
+        });
+        // Once it reaches `until` it holds still; later plays start from there.
+        state[id].play = action.until !== undefined ? null : to;
+        return Math.max(fade ?? arriveIn ?? action.duration ?? 0, SWITCH);
       });
       break;
     case 'spotlight': {
