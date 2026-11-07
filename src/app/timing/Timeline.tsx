@@ -44,8 +44,27 @@ interface Props {
   onCue: (scene: number, beat: number, cue: number | undefined) => void;
 }
 
+/** Height of one row of beat labels, and a label's widest. */
+const FLAG_ROW = 24;
+const FLAG_MAX = 160;
+
 export function Timeline({ laneRef, missing, height, rec, seek, time, total, pps, width, clips, primary, clipDrag, startDragClip, startTrimClip, deleteClip, splitClipAt, canSplitAt, setClipLane, playFrom, onTranscribe, onEditBeat, drawClipPeaks, np, tapping, tapIndex, startDrag, onCue }: Props) {
   const { shown, currentIndex, beatOf, sceneTitle } = np;
+  // Beat labels go in rows above their lines: as many rows as the timeline's height allows, each label in the
+  // lowest row where it doesn't run into the label before it (a short timeline keeps two rows).
+  const rowCount = Math.max(2, Math.floor((height - 22 - 76 - 34) / FLAG_ROW));
+  const flagRow = (() => {
+    const ends: number[] = Array(rowCount).fill(-Infinity);
+    return shown.map((c) => {
+      const x = 20 + c.t * pps;
+      const label = `${c.scene + 1}.${c.beat + 1} ${beatOf(c)?.title ?? ''}`;
+      const w = Math.min(FLAG_MAX, 14 + label.length * 6.1);
+      let row = ends.findIndex((end) => end <= x - 2);
+      if (row < 0) row = ends.indexOf(Math.min(...ends));
+      ends[row] = x + w;
+      return row;
+    });
+  })();
   const [menu, setMenu] = useState<(MenuAt & ({ kind: 'clip'; index: number; t: number } | { kind: 'beat'; index: number })) | null>(null);
   /** The timeline moment under the pointer. */
   const timeAt = (e: React.MouseEvent) => {
@@ -80,10 +99,12 @@ export function Timeline({ laneRef, missing, height, rec, seek, time, total, pps
             // Wide enough to grab and to reach its ×, however short it is.
             const w = Math.max(34, (trimEnd - trimStart) * pps);
             const gone = missing.has(c.upload);
+            // The clip whose voice is heard at the playhead.
+            const sounding = !dragging && time >= offset && time < offset + (trimEnd - trimStart);
             return (
               <div
                 key={c.id}
-                className={['clip-block', `lane-${lane}`, dragging ? 'dragging' : '', gone ? 'missing' : ''].join(' ')}
+                className={['clip-block', `lane-${lane}`, dragging ? 'dragging' : '', gone ? 'missing' : '', sounding ? 'sounding' : ''].join(' ')}
                 style={{ left: 20 + offset * pps, width: w }}
                 onPointerDown={(e) => startDragClip(e, i)}
                 onContextMenu={(e) => { e.preventDefault(); e.stopPropagation(); if (!rec.current) setMenu({ kind: 'clip', index: i, t: timeAt(e), ...menuAt(e, 240) }); }}
@@ -110,6 +131,12 @@ export function Timeline({ laneRef, missing, height, rec, seek, time, total, pps
               </div>
             );
           })}
+          {rec.current && (
+            // The narration being recorded, growing on the lane it goes to.
+            <div className={`clip-block lane-${rec.current.lane} recording-live`} style={{ left: 20 + rec.current.clipOffset * pps, width: Math.max(6, (time - rec.current.clipOffset) * pps) }} title={`Recording on lane ${rec.current.lane + 1}`}>
+              <span className="clip-name">● recording · lane {rec.current.lane + 1}</span>
+            </div>
+          )}
           {!primary && <span className="muted wave-empty">No voice-over yet: load one above, or tap along in silence.</span>}
         </div>
         <div className="clicks">
@@ -119,8 +146,8 @@ export function Timeline({ laneRef, missing, height, rec, seek, time, total, pps
             return (
               <div
                 key={`${c.scene}:${c.beat}`}
-                className={['click', i % 2 ? 'row2' : '', c.cued ? 'cued' : 'auto', c.late ? 'late' : '', i === currentIndex ? 'current' : '', tapping && i === tapIndex ? 'tap-next' : ''].join(' ')}
-                style={{ left: 20 + c.t * pps, '--c': color } as React.CSSProperties}
+                className={['click', c.cued ? 'cued' : 'auto', c.late ? 'late' : '', i === currentIndex ? 'current' : '', tapping && i === tapIndex ? 'tap-next' : ''].join(' ')}
+                style={{ left: 20 + c.t * pps, '--c': color, '--row': flagRow[i] } as React.CSSProperties}
                 onPointerDown={(e) => startDrag(e, i)}
                 onDoubleClick={() => onEditBeat(c.scene, c.beat)}
                 onContextMenu={(e) => { e.preventDefault(); e.stopPropagation(); if (!rec.current) setMenu({ kind: 'beat', index: i, ...menuAt(e, 200) }); }}

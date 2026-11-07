@@ -6,7 +6,7 @@
 .file-btn { display: inline-flex; align-items: center; padding: 4px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); cursor: pointer; font-size: 13px; max-width: 420px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .file-btn:hover { border-color: var(--accent); }
 .file-btn input { display: none; }
-.timing-body { flex: 1; min-height: 0; display: flex; gap: 10px; padding: 14px 16px 6px; align-items: stretch; }
+.timing-body { position: relative; flex: 1; min-height: 0; display: flex; gap: 10px; padding: 14px 16px 6px; align-items: stretch; }
 .timing-board { flex: 1 1 0; min-width: 0; aspect-ratio: 16 / 9; max-height: 100%; max-width: 100%; align-self: center; border-radius: 8px; overflow: hidden; background: #000; }
 .timing-board svg { width: 100%; height: 100%; }
 .timing-script { flex: 0 0 var(--timing-script-w, 360px); min-width: 180px; display: flex; flex-direction: column; gap: 12px; overflow: auto; }
@@ -62,8 +62,7 @@
 .click { --c: #3ef0ff; position: absolute; top: -80px; bottom: 6px; border-left: 2px solid var(--c); cursor: ew-resize; }
 .click.auto { border-left-style: dashed; opacity: .6; }
 .click.late { --c: #ff6b7d; }
-.click .flag { position: absolute; bottom: 30px; left: -1px; max-width: 160px; padding: 2px 6px; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--c); background: color-mix(in srgb, var(--c) 14%, #0b0e11); border: 1px solid color-mix(in srgb, var(--c) 50%, transparent); border-radius: 0 6px 6px 0; }
-.click.row2 .flag { bottom: 54px; }
+.click .flag { position: absolute; bottom: calc(30px + var(--row, 0) * 24px); left: -1px; max-width: 160px; padding: 2px 6px; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--c); background: color-mix(in srgb, var(--c) 14%, #0b0e11); border: 1px solid color-mix(in srgb, var(--c) 50%, transparent); border-radius: 0 6px 6px 0; }
 .click .anim { position: absolute; bottom: 14px; left: 0; height: 6px; border-radius: 0 3px 3px 0; background: color-mix(in srgb, var(--c) 45%, transparent); }
 .click.current .flag { color: #0b0e11; background: var(--c); }
 .click.tap-next .flag { outline: 2px solid #ff4fd8; }
@@ -161,3 +160,27 @@
 .transcript-groups p { margin: 6px 0 0; font-size: 15px; line-height: 1.5; color: #f3f6fa; user-select: text; }
 .transcript-groups .said { cursor: pointer; border-radius: 3px; }
 .transcript-groups .said:hover { background: #3ef0ff1a; }
+
+/* Which lane is heard: the clip under the playhead glows; a recording grows live on its lane. */
+.clip-block.sounding { box-shadow: 0 0 0 1px currentColor, 0 0 12px color-mix(in srgb, currentColor 45%, transparent); filter: brightness(1.2); }
+.clip-block.recording-live { background: repeating-linear-gradient(90deg, #ff4f6a33 0 8px, #ff4f6a1a 8px 16px); border: 1px solid #ff4f6a; color: #ffd0d8; pointer-events: none; animation: pulse-dot .8s infinite alternate; }
+.timing-script .voice-now { font-size: 11px; padding: 1px 8px; border-radius: 9px; border: 1px solid var(--line); color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 55%; }
+.timing-script .voice-now.lane-0 { border-color: color-mix(in srgb, #3ef0ff 55%, transparent); color: #9ff6ff; }
+.timing-script .voice-now.lane-1 { border-color: color-mix(in srgb, #ff4fd8 55%, transparent); color: #ffb3ef; }
+.timing-script .voice-now.live { border-color: #ff4f6a; color: #ff9aaa; }
+
+/* A beat's options, over the right side of Timing. */
+.beat-drawer { position: absolute; top: 10px; right: 12px; bottom: 6px; width: min(420px, 46%); z-index: 6; display: flex; flex-direction: column; background: var(--panel); border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--line)); border-radius: 10px; box-shadow: -12px 0 30px #0008; }
+.beat-drawer .drawer-head { display: flex; align-items: flex-start; gap: 6px; padding: 10px 12px 8px; border-bottom: 1px solid var(--line); }
+.beat-drawer .drawer-head h3 { margin: 2px 0 0; font-size: 16px; }
+.beat-drawer .drawer-head .muted { font-size: 11px; }
+.beat-drawer .drawer-head button { font-size: 12px; padding: 3px 9px; }
+.beat-drawer .drawer-body { flex: 1; overflow: auto; padding: 10px 12px 14px; display: flex; flex-direction: column; gap: 8px; }
+.beat-drawer h4 { margin: 6px 0 0; font-size: 12px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
+.drawer-actions { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 3px; }
+.drawer-actions li { display: flex; align-items: center; gap: 8px; padding: 4px 8px; border: 1px solid var(--line); border-left: 3px solid var(--fam, #7d8790); border-radius: 6px; cursor: pointer; font-size: 13px; }
+.drawer-actions li:hover { background: #ffffff08; }
+.drawer-actions li.on { border-color: var(--fam); background: color-mix(in srgb, var(--fam) 10%, transparent); }
+.drawer-actions .who { flex: 1; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.drawer-actions .when { font-size: 11px; font-variant-numeric: tabular-nums; }
+.beat-drawer .action-editor { padding: 0; border-top: 1px solid var(--line); padding-top: 8px; }

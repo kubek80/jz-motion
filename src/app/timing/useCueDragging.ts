@@ -1,4 +1,4 @@
-// Placing beat cues on the timeline by hand: dragging a click marker (a plain click seeks to it),
+// Placing beat cues on the timeline by hand: dragging a click marker (a plain click seeks to it and opens it),
 // and tap mode, where each T press places the next click at the playhead.
 import { useState, type RefObject } from 'react';
 import type { Click } from '../../video/performance';
@@ -11,6 +11,8 @@ export function useCueDragging(
   onCue: (scene: number, beat: number, cue: number | undefined) => void,
   seek: (t: number) => void,
   now: () => number,
+  /** A plain click (no drag) on a beat: open its options. */
+  onOpen?: (index: number) => void,
 ) {
   // ---------------------------------------------------------------- dragging clicks, tapping
   const [drag, setDrag] = useState<{ index: number; t: number } | null>(null);
@@ -31,7 +33,10 @@ export function useCueDragging(
       target.removeEventListener('pointerup', up);
       setDrag(null);
       if (Math.abs(latest - t0) > 0.01) onCue(clicks[index].scene, clicks[index].beat, latest);
-      else seek(clicks[index].t);
+      else {
+        seek(clicks[index].t);
+        onOpen?.(index);
+      }
     };
     target.addEventListener('pointermove', move);
     target.addEventListener('pointerup', up);

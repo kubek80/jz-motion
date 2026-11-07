@@ -1,6 +1,5 @@
 // Builds one element's SVG on the board (icon, text, box, arrow, ring, image, area, chart, iso) and
 // collects the DrawParts its "draw" animation traces. Called by the Stage for every element of a scene.
-import gsap from 'gsap';
 import { buildChart, type ChartNodes } from './chart';
 import type { CompiledElement, ElementState } from './compile';
 import { svgEl } from './dom';
@@ -11,7 +10,7 @@ import { ICON_GRID, iconHeight, icons, type PartColor } from './library';
 import { board, palette } from './palette';
 import {
   FLOW_PERIOD, lineOf, nextUid, renderIso, ringPath,
-  type DrawPart, type ElementNodes, type ImageNodes, type IsoNodes,
+  type DrawPart, type ElementNodes, type IdleNodes, type ImageNodes, type IsoNodes,
 } from './stageNodes';
 
 /** What building an element needs from the Stage: where to put things, and a hook for animated pictures. */
@@ -45,6 +44,7 @@ export function buildElement(ctx: BuildContext, el: CompiledElement, lookup: (id
   let chart: ChartNodes | undefined;
   let image: ImageNodes | undefined;
   let areaOutline: SVGElement | undefined;
+  let idle: IdleNodes | undefined;
 
   switch (el.type) {
     case 'icon': {
@@ -57,27 +57,18 @@ export function buildElement(ctx: BuildContext, el: CompiledElement, lookup: (id
         // "ink" = currentColor so the element's own marker colour drives the part — a clipart
         // of ink-only parts recolours uniformly when you change the element's `color`.
         const colour = (c: PartColor) => (c === 'board' ? board.background : c === 'ink' ? 'currentColor' : palette[c]);
-        // Imported external cliparts (tagged "undraw") get a subtle idle loop — a vertical bob
-        // and slight rotation on an inner group, so a scene with a character tile doesn't feel
-        // frozen. Driven by GSAP (CSS transforms on <g> have SVG-coord-space quirks); respects
-        // prefers-reduced-motion by skipping the tween. Amplitude scales with the clipart's own
-        // box so the motion reads similarly whether the tile is tall or wide.
+        // Imported external cliparts (tagged "undraw") get a subtle idle loop: a vertical bob and slight
+        // rotation on an inner group, so a scene with a character tile doesn't feel frozen. It runs on the
+        // board's clock (sceneState.ts), not the wall clock, so every export frame is exactly where it should
+        // be; its pace and phase come from the element's id, so it is the same on every run. Skipped for
+        // prefers-reduced-motion. Amplitude scales with the clipart's own box.
         let inner: SVGElement = g;
         if (def.tags.includes('undraw')) {
           inner = svgEl('g', {}, g);
           const reduced = typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
           if (!reduced) {
-            // Per-instance variation in duration + phase so several tiles don't pulse in lockstep.
-            gsap.to(inner, {
-              y: -bh * 0.03,
-              rotation: 1.4,
-              duration: 3.2 + Math.random() * 1.2,
-              delay: Math.random() * 1.5,
-              yoyo: true,
-              repeat: -1,
-              ease: 'sine.inOut',
-              transformOrigin: `${bw / 2}px ${bh / 2}px`,
-            });
+            const h = hash(el.id);
+            idle = { g: inner, rise: bh * 0.03, turn: 1.4, cx: bw / 2, cy: bh / 2, period: 2 * (3.2 + (h % 1000) / 1000 * 1.2), phase: ((h >> 10) % 1000) / 1000 };
           }
         }
         for (const part of def.parts) {
@@ -237,5 +228,12 @@ export function buildElement(ctx: BuildContext, el: CompiledElement, lookup: (id
       break;
     }
   }
-  return { outer, fx, parts, pivot, flowPath, iso, chart, image, areaOutline, pinned };
+  return { outer, fx, parts, pivot, flowPath, iso, chart, image, areaOutline, pinned, idle };
+}
+
+/** A steady number from a string (for per-element variety that is the same on every run). */
+function hash(s: string): number {
+  let h = 2166136261;
+  for (let i = 0; i < s.length; i++) h = Math.imul(h ^ s.charCodeAt(i), 16777619);
+  return h >>> 0;
 }

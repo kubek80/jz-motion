@@ -18,7 +18,7 @@ description: Time a jz-motion presentation to a narration and export it as an MP
 3. **An existing narration file:** **Timing** → **Load a voice-over…**, then drag beats onto the waveform, or **Tap to place** and press T as each line starts.
 4. **Present live:** Play mode → **● Record** (optionally with camera); your clicks are the timing.
 
-From 1 or 3: **Make a take for export** in the Timing window. Then the **Video** tab → choose the take, layouts per beat or scene (`layout`: board, pip, pip-left, camera, side), **Export MP4** (files in `exports/`).
+From 1 or 3: **Make a take for export** in the Timing window. Then the **Video** tab → choose the take, layouts per beat or scene (`layout`: board, pip, pip-left, camera, side), **Export MP4** (files in `exports/`). The sound is evened out to a standard loudness (-16 LUFS) by default, so a quiet recording comes up; untick *even out volume* to keep it exactly as recorded.
 
 ## Your part as the assistant
 
@@ -28,7 +28,7 @@ From 1 or 3: **Make a take for export** in the Timing window. Then the **Video**
 
 ```sh
 npm run export -- presentations/<id>.json                 # even pauses between beats, no sound
-npm run export -- presentations/<id>.json --take <takeId> # a take's timing and sound (ls takes/)
+npm run export -- presentations/<id>.json --take <takeId> # a take's timing and sound (ls takes/); --raw-audio keeps the volume as recorded
 ```
 
 Export needs FFmpeg and Playwright's Chromium (`npx playwright install chromium`). It takes roughly a minute per minute of video.

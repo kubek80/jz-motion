@@ -134,6 +134,13 @@ describe('ffmpeg', () => {
     expect(args.slice(-1)).toEqual(['out.mp4']);
   });
 
+  it('evens out the loudness unless told not to', () => {
+    const job = { width: 1920, height: 1080, fps: 30, duration: 5, out: 'o.mp4', tracks: [{ name: 'me', path: 'me.webm', offset: 0, hasVideo: false, hasAudio: true }], segments: [] };
+    const graphOf = (a: string[]) => a[a.indexOf('-filter_complex') + 1];
+    expect(graphOf(buildFfmpegArgs(job))).toContain('[a0]loudnorm=I=-16:TP=-1.5:LRA=11,aresample=48000[aout]');
+    expect(graphOf(buildFfmpegArgs({ ...job, normalizeAudio: false }))).toContain('[a0]anull[aout]');
+  });
+
   it('makes a board-only video without tracks', () => {
     const args = buildFfmpegArgs({ width: 1280, height: 720, fps: 30, duration: 5, out: 'o.mp4', tracks: [], segments: [{ layout: 'pip', track: 'me', start: 0, end: 5 }] });
     const graph = args[args.indexOf('-filter_complex') + 1];

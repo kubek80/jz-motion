@@ -23,6 +23,8 @@ export interface ExportOptions {
   appUrl: string;
   onProgress?: (done: number, total: number) => void;
   signal?: AbortSignal;
+  /** Even out the sound's loudness (default on). */
+  normalizeAudio?: boolean;
   /** Browser pages rendering frames in parallel. Default: number of CPUs − 1, at most 4 (or JZM_EXPORT_WORKERS). */
   workers?: number;
 }
@@ -46,7 +48,7 @@ export async function exportVideo(opts: ExportOptions): Promise<{ file: string; 
 
   await mkdir(dirname(opts.out), { recursive: true });
   const args = buildFfmpegArgs({
-    width, height, fps, duration: frames / fps, out: opts.out, tracks,
+    width, height, fps, duration: frames / fps, out: opts.out, tracks, normalizeAudio: opts.normalizeAudio,
     segments: layoutSegments(compiled.presentation, perf, fps),
   });
   const ffmpeg = spawn(FFMPEG, args, { stdio: ['pipe', 'ignore', 'pipe'] });

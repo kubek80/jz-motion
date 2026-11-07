@@ -27,6 +27,8 @@ export interface FfmpegJob {
   tracks: TrackInput[];
   segments: Segment[];
   out: string;
+  /** Even out the sound to a standard loudness (default on): a quiet recording comes up, a loud one doesn't clip. */
+  normalizeAudio?: boolean;
 }
 
 const BG = '0x0d1114';
@@ -139,8 +141,11 @@ export function buildFfmpegArgs(job: FfmpegJob): string[] {
       graph.push(`${input}aresample=48000:async=1:first_pts=0${out}`);
     }
   });
-  if (audio.length > 1) graph.push(`${audio.map((_, i) => `[a${i}]`).join('')}amix=inputs=${audio.length}:normalize=0:duration=longest[aout]`);
-  else if (audio.length === 1) graph.push('[a0]anull[aout]');
+  // Loudness (EBU R128) to -16 LUFS, peaks under -1.5 dB: the usual level for online video. loudnorm works at
+  // 192 kHz, so the mix is brought back to 48 kHz after it.
+  const level = job.normalizeAudio === false ? 'anull' : 'loudnorm=I=-16:TP=-1.5:LRA=11,aresample=48000';
+  if (audio.length > 1) graph.push(`${audio.map((_, i) => `[a${i}]`).join('')}amix=inputs=${audio.length}:normalize=0:duration=longest,${level}[aout]`);
+  else if (audio.length === 1) graph.push(`[a0]${level}[aout]`);
 
   args.push('-filter_complex', graph.join(';'), '-map', `[${current}]`);
   if (audio.length) args.push('-map', '[aout]', '-c:a', 'aac', '-b:a', '192k');
