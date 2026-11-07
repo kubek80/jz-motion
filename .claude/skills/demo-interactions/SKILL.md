@@ -97,6 +97,10 @@ Records the scenario, keeps the raw capture in `scratch/captures/`, adds it to t
 
 Live in `scripts/scenarios/<name>.mjs`. Each exports `run(page)`; the browser is already at the URL you passed. Keep interactions short — 2–8 seconds — so the recording stays small and the beat it plays over doesn't drag.
 
+- An optional `setup(page)` runs first and isn't recorded: settings in `localStorage`, a reload, picking the scene to start on. Without it the recording starts with a white page while it loads.
+- `scripts/scenarios/jzm-helpers.mjs` has what the jz-motion demos share: `useMockModel(page)` (AI steps with `npm run mock-llm`, no key), `glide` (a visible mouse move), and `notes(name)`, which writes `scratch/captures/<name>-steps.json`: when each step happened (seconds into the recording) and where things were on screen. A scene uses the step times to pick its frames (`goto` / `until`) and the boxes to place its `area`s exactly; `jzm-home-start`, `jzm-editor-tour`, `jzm-edit-colour-b`, `jzm-timing` and `jzm-ai-everywhere` are examples.
+- Record against copies (a presentation made for the demo, or a copy of a real one), never the user's own files: scenarios click, type and save. AI steps with the mock model can create a presentation: delete it afterwards.
+
 ### Pacing: slow is the point
 
 A natural-speed interaction looks like a glitch on the board. The viewer has to see the cursor arrive, see the click, see the result. Make the scenario deliberately slow:

@@ -17,7 +17,8 @@
 //   npm run record -- 'http://localhost:5173/#/p/9df1df96' edit-text scripts/scenarios/edit-text.mjs
 //
 // A scenario file exports `run(page)` and does the clicks/types. The browser is open at <url> before
-// run() is called. Frames are kept while run() executes (at most <fps> a second); it stops when run() returns.
+// run() is called (after an optional `setup(page)`, which isn't recorded). Frames are kept while run() executes
+// (at most <fps> a second); it stops when run() returns.
 
 import { chromium } from 'playwright';
 import { spawnSync } from 'node:child_process';
@@ -59,6 +60,8 @@ try {
 
   const mod = await import(pathToFileURL(resolve(scenario)).href);
   if (typeof mod.run !== 'function') throw new Error(`${scenario} must export a run(page) function`);
+  // An optional setup(page) gets the page ready (settings, a reload) before anything is recorded.
+  if (typeof mod.setup === 'function') await mod.setup(page);
 
   // Chrome's screencast sends a frame whenever the page repaints. Frames go straight to disk (too big to keep in
   // memory), at most <fps> a second; a frame skipped for that is still written if nothing newer follows it.

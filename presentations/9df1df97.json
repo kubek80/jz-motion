@@ -888,6 +888,251 @@
       ]
     },
     {
+      "id": "start-b",
+      "title": "Start with a sentence (B)",
+      "elements": [
+        {
+          "id": "h",
+          "type": "text",
+          "text": "START WITH A SENTENCE",
+          "x": 960,
+          "y": 70,
+          "size": 56,
+          "color": "cyan",
+          "style": "bold",
+          "pinned": true
+        },
+        {
+          "id": "clip",
+          "type": "image",
+          "src": "/media/e5270e172e7fbf3f.webm",
+          "x": 960,
+          "y": 560,
+          "width": 1200,
+          "height": 750,
+          "frame": "browser",
+          "url": "localhost:5173",
+          "color": "cyan"
+        },
+        {
+          "id": "a-sentence",
+          "type": "area",
+          "x": 960,
+          "y": 578,
+          "width": 909,
+          "height": 124,
+          "shape": "rect",
+          "color": "yellow"
+        },
+        {
+          "id": "a-modes",
+          "type": "area",
+          "x": 960,
+          "y": 631,
+          "width": 974,
+          "height": 294,
+          "shape": "rect",
+          "color": "pink"
+        },
+        {
+          "id": "a-chat",
+          "type": "area",
+          "x": 683,
+          "y": 441,
+          "width": 609,
+          "height": 305,
+          "shape": "rect",
+          "color": "green"
+        },
+        {
+          "id": "cap-box",
+          "type": "text",
+          "text": "one box, one sentence",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "cyan",
+          "pinned": true
+        },
+        {
+          "id": "cap-modes",
+          "type": "text",
+          "text": "a topic, a script, or a recording of me talking",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "pink",
+          "pinned": true
+        },
+        {
+          "id": "cap-steps",
+          "type": "text",
+          "text": "every step on screen: asked, answered, checked",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "green",
+          "pinned": true
+        },
+        {
+          "id": "cap-draft",
+          "type": "text",
+          "text": "a first draft to react to",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "yellow",
+          "pinned": true
+        }
+      ],
+      "beats": [
+        {
+          "title": "One box",
+          "notes": "So where does a video start? With one box, and one sentence about what I want to explain.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "h"
+            },
+            {
+              "do": "draw",
+              "target": "clip"
+            },
+            {
+              "do": "draw",
+              "target": "cap-box",
+              "start": "with",
+              "delay": 0.8
+            }
+          ]
+        },
+        {
+          "title": "A sentence",
+          "notes": "Here I'm asking for an explainer about this very app: how one sentence becomes a video.",
+          "actions": [
+            {
+              "do": "camera",
+              "focus": "a-sentence",
+              "zoom": 1.7
+            },
+            {
+              "do": "spotlight",
+              "target": "a-sentence",
+              "start": "with",
+              "amount": 0.75
+            },
+            {
+              "do": "play",
+              "target": "clip",
+              "until": 28,
+              "duration": 4.5,
+              "start": "with"
+            }
+          ]
+        },
+        {
+          "title": "Three ways in",
+          "notes": "That sentence is a topic. I could paste a script I've already written instead, or upload a recording of me talking it through, and every beat gets cued to the moment I say it.",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "cap-box"
+            },
+            {
+              "do": "camera",
+              "focus": "a-modes",
+              "zoom": 1.5,
+              "start": "with"
+            },
+            {
+              "do": "spotlight",
+              "target": "a-modes",
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap-modes",
+              "start": "with",
+              "delay": 0.3
+            },
+            {
+              "do": "play",
+              "target": "clip",
+              "until": 76,
+              "duration": 7,
+              "start": "with",
+              "delay": 0.6
+            }
+          ]
+        },
+        {
+          "title": "Watch it work",
+          "notes": "The model I picked writes it, and every step is on screen: what was asked, what came back, and what the checker found.",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "cap-modes"
+            },
+            {
+              "do": "play",
+              "target": "clip",
+              "until": 90,
+              "duration": 2.5,
+              "start": "with"
+            },
+            {
+              "do": "camera",
+              "focus": "a-chat",
+              "zoom": 1.8
+            },
+            {
+              "do": "spotlight",
+              "target": "a-chat",
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap-steps",
+              "start": "with",
+              "delay": 0.3
+            }
+          ]
+        },
+        {
+          "title": "A first draft",
+          "notes": "A minute later there's a first draft: scenes, drawings, beats and speaker notes. Not finished, but something to react to, and that's the hard part done.",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "cap-steps"
+            },
+            {
+              "do": "camera",
+              "focus": "all",
+              "start": "with"
+            },
+            {
+              "do": "spotlight",
+              "on": false,
+              "start": "with"
+            },
+            {
+              "do": "play",
+              "target": "clip",
+              "until": 111,
+              "duration": 3,
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap-draft",
+              "delay": 0.3
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "editor",
       "title": "Edit like a whiteboard",
       "elements": [
@@ -1123,6 +1368,296 @@
       ]
     },
     {
+      "id": "editor-b",
+      "title": "Edit like a whiteboard (B)",
+      "elements": [
+        {
+          "id": "h",
+          "type": "text",
+          "text": "EDIT LIKE A WHITEBOARD",
+          "x": 960,
+          "y": 70,
+          "size": 56,
+          "color": "yellow",
+          "style": "bold",
+          "pinned": true
+        },
+        {
+          "id": "clip",
+          "type": "image",
+          "src": "/media/188c72d9c4c4653f.webm",
+          "x": 960,
+          "y": 560,
+          "width": 1200,
+          "height": 750,
+          "frame": "browser",
+          "url": "localhost:5173",
+          "color": "yellow"
+        },
+        {
+          "id": "a-props",
+          "type": "area",
+          "x": 1391,
+          "y": 619,
+          "width": 338,
+          "height": 699,
+          "shape": "rect",
+          "color": "pink"
+        },
+        {
+          "id": "a-beats",
+          "type": "area",
+          "x": 904,
+          "y": 803,
+          "width": 611,
+          "height": 195,
+          "shape": "rect",
+          "color": "green"
+        },
+        {
+          "id": "a-library",
+          "type": "area",
+          "x": 467,
+          "y": 758,
+          "width": 215,
+          "height": 419,
+          "shape": "rect",
+          "color": "orange"
+        },
+        {
+          "id": "a-board",
+          "type": "area",
+          "x": 904,
+          "y": 454,
+          "width": 611,
+          "height": 344,
+          "shape": "rect",
+          "color": "cyan"
+        },
+        {
+          "id": "cap-editor",
+          "type": "text",
+          "text": "one window, built like a whiteboard",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "yellow",
+          "pinned": true
+        },
+        {
+          "id": "cap-props",
+          "type": "text",
+          "text": "click anything: its properties open on the right",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "pink",
+          "pinned": true
+        },
+        {
+          "id": "cap-beats",
+          "type": "text",
+          "text": "each card is one click, its actions in order",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "green",
+          "pinned": true
+        },
+        {
+          "id": "cap-library",
+          "type": "text",
+          "text": "pick from the library: drawn in the same markers",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "orange",
+          "pinned": true
+        },
+        {
+          "id": "cap-play",
+          "type": "text",
+          "text": "P switches to Play, right where I am",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "cyan",
+          "pinned": true
+        }
+      ],
+      "beats": [
+        {
+          "title": "The editor",
+          "notes": "The draft opens in the editor. It's built to feel like a whiteboard, not like a video timeline.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "h"
+            },
+            {
+              "do": "draw",
+              "target": "clip"
+            },
+            {
+              "do": "draw",
+              "target": "cap-editor",
+              "start": "with",
+              "delay": 0.8
+            }
+          ]
+        },
+        {
+          "title": "Click to select",
+          "notes": "I click anything on the board, and its properties open on the right: where it sits, how big it is, which marker draws it.",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "cap-editor"
+            },
+            {
+              "do": "play",
+              "target": "clip",
+              "until": 19,
+              "duration": 3,
+              "start": "with"
+            },
+            {
+              "do": "camera",
+              "focus": [
+                "a-board",
+                "a-props"
+              ],
+              "padding": 60
+            },
+            {
+              "do": "spotlight",
+              "target": [
+                "a-board",
+                "a-props"
+              ],
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap-props",
+              "start": "with",
+              "delay": 0.3
+            }
+          ]
+        },
+        {
+          "title": "The beats",
+          "notes": "Under the board are the beats. Each card is one click when I present, and its actions play in order, left to right.",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "cap-props"
+            },
+            {
+              "do": "camera",
+              "focus": "a-beats",
+              "zoom": 1.9,
+              "start": "with"
+            },
+            {
+              "do": "spotlight",
+              "target": "a-beats",
+              "start": "with"
+            },
+            {
+              "do": "play",
+              "target": "clip",
+              "until": 29,
+              "duration": 3,
+              "start": "with",
+              "delay": 0.4
+            },
+            {
+              "do": "draw",
+              "target": "cap-beats",
+              "start": "with",
+              "delay": 0.3
+            }
+          ]
+        },
+        {
+          "title": "From the library",
+          "notes": "On the left are the scenes, and under them the library. I pick an icon, and it lands on the board, drawn in the same marker style as everything else.",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "cap-beats"
+            },
+            {
+              "do": "camera",
+              "focus": [
+                "a-library",
+                "a-board"
+              ],
+              "padding": 60,
+              "start": "with"
+            },
+            {
+              "do": "spotlight",
+              "target": [
+                "a-library",
+                "a-board"
+              ],
+              "start": "with"
+            },
+            {
+              "do": "play",
+              "target": "clip",
+              "until": 46,
+              "duration": 4,
+              "start": "with",
+              "delay": 0.4
+            },
+            {
+              "do": "draw",
+              "target": "cap-library",
+              "start": "with",
+              "delay": 0.3
+            }
+          ]
+        },
+        {
+          "title": "P to play",
+          "notes": "And when I want to see it move, P switches to Play, right where I am.",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "cap-library"
+            },
+            {
+              "do": "spotlight",
+              "on": false,
+              "start": "with"
+            },
+            {
+              "do": "camera",
+              "focus": "all",
+              "start": "with"
+            },
+            {
+              "do": "play",
+              "target": "clip",
+              "until": 76,
+              "duration": 4,
+              "start": "with",
+              "delay": 0.3
+            },
+            {
+              "do": "draw",
+              "target": "cap-play",
+              "start": "with",
+              "delay": 0.5
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "edit-colour",
       "title": "Edit text, change colour",
       "elements": [
@@ -1342,6 +1877,267 @@
               "do": "play",
               "target": "clip",
               "goto": 5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "edit-colour-b",
+      "title": "Edit text, change colour (B)",
+      "elements": [
+        {
+          "id": "h",
+          "type": "text",
+          "text": "EDIT AND RECOLOUR, LIVE",
+          "x": 960,
+          "y": 70,
+          "size": 56,
+          "color": "cyan",
+          "style": "bold",
+          "pinned": true
+        },
+        {
+          "id": "clip",
+          "type": "image",
+          "src": "/media/8775a1e7b833ad74.webm",
+          "x": 960,
+          "y": 560,
+          "width": 1200,
+          "height": 750,
+          "frame": "browser",
+          "url": "localhost:5173",
+          "color": "cyan"
+        },
+        {
+          "id": "a-headline",
+          "type": "area",
+          "x": 903,
+          "y": 372,
+          "width": 399,
+          "height": 91,
+          "shape": "rect",
+          "color": "yellow"
+        },
+        {
+          "id": "a-markers",
+          "type": "area",
+          "x": 1448,
+          "y": 460,
+          "width": 226,
+          "height": 86,
+          "shape": "rect",
+          "color": "pink"
+        },
+        {
+          "id": "cap-real",
+          "type": "text",
+          "text": "a real recording, one frame per step",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "cyan",
+          "pinned": true
+        },
+        {
+          "id": "cap-select",
+          "type": "text",
+          "text": "one click: its marker is lifted on the right",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "yellow",
+          "pinned": true
+        },
+        {
+          "id": "cap-colour",
+          "type": "text",
+          "text": "another marker: redrawn in that ink",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "pink",
+          "pinned": true
+        },
+        {
+          "id": "cap-edit",
+          "type": "text",
+          "text": "double-click: rewrite it in place",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "green",
+          "pinned": true
+        },
+        {
+          "id": "cap-meta",
+          "type": "text",
+          "text": "recorded by the app, kept in the media library",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "orange",
+          "pinned": true
+        }
+      ],
+      "beats": [
+        {
+          "title": "A real recording",
+          "notes": "Now a closer look at editing. This is a real recording of the app, and I'm stepping through it one frame at a time, in step with what I say.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "h"
+            },
+            {
+              "do": "draw",
+              "target": "clip"
+            },
+            {
+              "do": "draw",
+              "target": "cap-real",
+              "start": "with",
+              "delay": 0.8
+            }
+          ]
+        },
+        {
+          "title": "Select",
+          "notes": "One click selects the headline, and its properties open on the right, with the marker it's drawn in lifted up.",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "cap-real"
+            },
+            {
+              "do": "camera",
+              "focus": [
+                "a-headline",
+                "a-markers"
+              ],
+              "padding": 80,
+              "start": "with"
+            },
+            {
+              "do": "spotlight",
+              "target": [
+                "a-headline",
+                "a-markers"
+              ],
+              "start": "with"
+            },
+            {
+              "do": "play",
+              "target": "clip",
+              "goto": 3,
+              "fade": true,
+              "duration": 0.6,
+              "start": "with",
+              "delay": 0.5
+            },
+            {
+              "do": "draw",
+              "target": "cap-select",
+              "start": "with"
+            }
+          ]
+        },
+        {
+          "title": "Recolour",
+          "notes": "Pick another marker, and the text is redrawn in that ink. Yellow. Or pink.",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "cap-select"
+            },
+            {
+              "do": "draw",
+              "target": "cap-colour",
+              "start": "with"
+            },
+            {
+              "do": "play",
+              "target": "clip",
+              "goto": 11,
+              "fade": true,
+              "duration": 0.5,
+              "delay": 1.0
+            },
+            {
+              "do": "play",
+              "target": "clip",
+              "goto": 18,
+              "fade": true,
+              "duration": 0.5,
+              "delay": 0.4
+            }
+          ]
+        },
+        {
+          "title": "Rewrite",
+          "notes": "A double-click opens the text right where it is. I type the new words, press Enter, and they're written in the same hand.",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "cap-colour"
+            },
+            {
+              "do": "camera",
+              "focus": "a-headline",
+              "zoom": 2.2,
+              "start": "with"
+            },
+            {
+              "do": "spotlight",
+              "target": "a-headline",
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap-edit",
+              "start": "with"
+            },
+            {
+              "do": "play",
+              "target": "clip",
+              "goto": 24,
+              "fade": true,
+              "duration": 0.5,
+              "start": "with",
+              "delay": 0.8
+            },
+            {
+              "do": "play",
+              "target": "clip",
+              "until": 40,
+              "duration": 3.5,
+              "delay": 0.3
+            }
+          ]
+        },
+        {
+          "title": "Made by the app",
+          "notes": "And this clip was made by the app itself: a short script clicks through the editor, and the recording lands in the media library, sharp enough to zoom into.",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "cap-edit"
+            },
+            {
+              "do": "spotlight",
+              "on": false,
+              "start": "with"
+            },
+            {
+              "do": "camera",
+              "focus": "all",
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap-meta",
+              "start": "with",
+              "delay": 0.5
             }
           ]
         }
@@ -3374,6 +4170,305 @@
       ]
     },
     {
+      "id": "timing-b",
+      "title": "Timing, prompter and voice-over (B)",
+      "elements": [
+        {
+          "id": "h",
+          "type": "text",
+          "text": "RECORDING, MADE EASY",
+          "x": 960,
+          "y": 70,
+          "size": 56,
+          "color": "yellow",
+          "style": "bold",
+          "pinned": true
+        },
+        {
+          "id": "clip",
+          "type": "image",
+          "src": "/media/7665128ccdb495f4.webm",
+          "x": 960,
+          "y": 560,
+          "width": 1200,
+          "height": 750,
+          "frame": "browser",
+          "url": "localhost:5173 · Timing",
+          "color": "cyan"
+        },
+        {
+          "id": "a-now",
+          "type": "area",
+          "x": 759,
+          "y": 489,
+          "width": 769,
+          "height": 232,
+          "shape": "rect",
+          "color": "yellow"
+        },
+        {
+          "id": "a-lanes",
+          "type": "area",
+          "x": 960,
+          "y": 837,
+          "width": 1201,
+          "height": 71,
+          "shape": "rect",
+          "color": "green"
+        },
+        {
+          "id": "a-record",
+          "type": "area",
+          "x": 429,
+          "y": 742,
+          "width": 137,
+          "height": 78,
+          "shape": "rect",
+          "color": "pink"
+        },
+        {
+          "id": "a-menu",
+          "type": "area",
+          "x": 562,
+          "y": 850,
+          "width": 266,
+          "height": 233,
+          "shape": "rect",
+          "color": "cyan"
+        },
+        {
+          "id": "cap-open",
+          "type": "text",
+          "text": "Timing opens on the scene I was working on",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "yellow",
+          "pinned": true
+        },
+        {
+          "id": "cap-lines",
+          "type": "text",
+          "text": "one sentence per line, with the time it should take",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "yellow",
+          "pinned": true
+        },
+        {
+          "id": "cap-lanes",
+          "type": "text",
+          "text": "my voice on two lanes, every beat placed on it",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "green",
+          "pinned": true
+        },
+        {
+          "id": "cap-record",
+          "type": "text",
+          "text": "Record, read, → for the next line",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "pink",
+          "pinned": true
+        },
+        {
+          "id": "cap-tidy",
+          "type": "text",
+          "text": "clean up the voice, or get the words back",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "cyan",
+          "pinned": true
+        }
+      ],
+      "beats": [
+        {
+          "title": "Timing",
+          "notes": "When the words are right, I open Timing. It starts on the scene I was working on, and the script turns into a prompter.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "h"
+            },
+            {
+              "do": "draw",
+              "target": "clip"
+            },
+            {
+              "do": "play",
+              "target": "clip",
+              "until": 8,
+              "duration": 2.5,
+              "delay": 0.3
+            },
+            {
+              "do": "draw",
+              "target": "cap-open",
+              "start": "with",
+              "delay": 0.5
+            }
+          ]
+        },
+        {
+          "title": "One line at a time",
+          "notes": "Each sentence sits on its own line, large enough to read from across the room, with the time it should take beside it.",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "cap-open"
+            },
+            {
+              "do": "camera",
+              "focus": "a-now",
+              "zoom": 1.6,
+              "start": "with"
+            },
+            {
+              "do": "spotlight",
+              "target": "a-now",
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap-lines",
+              "start": "with",
+              "delay": 0.3
+            },
+            {
+              "do": "play",
+              "target": "clip",
+              "until": 68,
+              "duration": 5,
+              "start": "with",
+              "delay": 0.8
+            }
+          ]
+        },
+        {
+          "title": "The timeline",
+          "notes": "Underneath is the timeline: my voice on two lanes, and every beat placed on it. Drag a beat, and that's the moment it appears in the video.",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "cap-lines"
+            },
+            {
+              "do": "camera",
+              "focus": "a-lanes",
+              "padding": 40,
+              "start": "with"
+            },
+            {
+              "do": "spotlight",
+              "target": "a-lanes",
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap-lanes",
+              "start": "with",
+              "delay": 0.3
+            }
+          ]
+        },
+        {
+          "title": "Just read",
+          "notes": "To record, I press Record and read. The arrow key moves on to the next line, and every beat lands exactly where I said it.",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "cap-lanes"
+            },
+            {
+              "do": "camera",
+              "focus": [
+                "a-record",
+                "a-now"
+              ],
+              "padding": 60,
+              "start": "with"
+            },
+            {
+              "do": "spotlight",
+              "target": [
+                "a-record",
+                "a-now"
+              ],
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap-record",
+              "start": "with",
+              "delay": 0.3
+            }
+          ]
+        },
+        {
+          "title": "Tidy up",
+          "notes": "If a take is noisy, one click cleans up the voice. If I want the words back, it transcribes them for me.",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "cap-record"
+            },
+            {
+              "do": "play",
+              "target": "clip",
+              "goto": 72,
+              "fade": true,
+              "duration": 0.6,
+              "start": "with"
+            },
+            {
+              "do": "camera",
+              "focus": "a-menu",
+              "zoom": 1.9,
+              "start": "with"
+            },
+            {
+              "do": "spotlight",
+              "target": "a-menu",
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap-tidy",
+              "start": "with",
+              "delay": 0.3
+            }
+          ]
+        },
+        {
+          "title": "Back out",
+          "auto": true,
+          "notes": "",
+          "actions": [
+            {
+              "do": "spotlight",
+              "on": false
+            },
+            {
+              "do": "camera",
+              "focus": "all",
+              "start": "with"
+            },
+            {
+              "do": "fade-out",
+              "target": "cap-tidy",
+              "start": "with"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "ai-helpers",
       "title": "AI helpers across the app",
       "elements": [
@@ -3646,6 +4741,330 @@
           ],
           "notes": "All of them have access to the same skills. Pick the place that fits the move — the house style follows.",
           "cue": 358.65
+        }
+      ]
+    },
+    {
+      "id": "ai-helpers-b",
+      "title": "AI helpers across the app (B)",
+      "elements": [
+        {
+          "id": "h",
+          "type": "text",
+          "text": "AI, WHEREVER I AM",
+          "x": 960,
+          "y": 70,
+          "size": 56,
+          "color": "pink",
+          "style": "bold",
+          "pinned": true
+        },
+        {
+          "id": "clip",
+          "type": "image",
+          "src": "/media/5f2e100242841983.webm",
+          "x": 960,
+          "y": 560,
+          "width": 1200,
+          "height": 750,
+          "frame": "browser",
+          "url": "localhost:5173",
+          "color": "pink"
+        },
+        {
+          "id": "a-home",
+          "type": "area",
+          "x": 960,
+          "y": 549,
+          "width": 761,
+          "height": 218,
+          "shape": "rect",
+          "color": "cyan"
+        },
+        {
+          "id": "a-ask",
+          "type": "area",
+          "x": 904,
+          "y": 698,
+          "width": 641,
+          "height": 117,
+          "shape": "rect",
+          "color": "yellow"
+        },
+        {
+          "id": "a-tab",
+          "type": "area",
+          "x": 1391,
+          "y": 619,
+          "width": 338,
+          "height": 699,
+          "shape": "rect",
+          "color": "pink"
+        },
+        {
+          "id": "a-creator",
+          "type": "area",
+          "x": 960,
+          "y": 593,
+          "width": 1162,
+          "height": 675,
+          "shape": "rect",
+          "color": "green"
+        },
+        {
+          "id": "cap-every",
+          "type": "text",
+          "text": "not one button in the corner",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "white",
+          "pinned": true
+        },
+        {
+          "id": "cap-home",
+          "type": "text",
+          "text": "home: one sentence, a first draft",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "cyan",
+          "pinned": true
+        },
+        {
+          "id": "cap-ask",
+          "type": "text",
+          "text": "the scene bar: change just this scene",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "yellow",
+          "pinned": true
+        },
+        {
+          "id": "cap-tab",
+          "type": "text",
+          "text": "the AI tab: bigger changes, each step shown",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "pink",
+          "pinned": true
+        },
+        {
+          "id": "cap-lib",
+          "type": "text",
+          "text": "the library: describe the picture you need",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "green",
+          "pinned": true
+        },
+        {
+          "id": "cap-same",
+          "type": "text",
+          "text": "the same skills everywhere, so it all looks like it belongs",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "white",
+          "pinned": true
+        }
+      ],
+      "beats": [
+        {
+          "title": "Everywhere",
+          "notes": "The AI isn't one button in the corner. It's wherever I happen to be working.",
+          "actions": [
+            {
+              "do": "play",
+              "target": "clip",
+              "goto": 4
+            },
+            {
+              "do": "draw",
+              "target": "h",
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "clip"
+            },
+            {
+              "do": "draw",
+              "target": "cap-every",
+              "start": "with",
+              "delay": 0.8
+            }
+          ]
+        },
+        {
+          "title": "Home",
+          "notes": "On the home screen, it turns a sentence into a first draft.",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "cap-every"
+            },
+            {
+              "do": "camera",
+              "focus": "a-home",
+              "zoom": 1.7,
+              "start": "with"
+            },
+            {
+              "do": "spotlight",
+              "target": "a-home",
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap-home",
+              "start": "with",
+              "delay": 0.3
+            },
+            {
+              "do": "play",
+              "target": "clip",
+              "until": 36,
+              "duration": 2.5,
+              "start": "with",
+              "delay": 0.3
+            }
+          ]
+        },
+        {
+          "title": "This scene",
+          "notes": "In the editor, the bar above the beats changes just this scene: split a beat, add a database, or, like here, turn one part into a scene of its own.",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "cap-home"
+            },
+            {
+              "do": "play",
+              "target": "clip",
+              "goto": 42,
+              "fade": true,
+              "duration": 0.6,
+              "start": "with"
+            },
+            {
+              "do": "camera",
+              "focus": "a-ask",
+              "zoom": 1.9
+            },
+            {
+              "do": "spotlight",
+              "target": "a-ask",
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap-ask",
+              "start": "with",
+              "delay": 0.3
+            },
+            {
+              "do": "play",
+              "target": "clip",
+              "until": 78,
+              "duration": 5,
+              "delay": 1
+            }
+          ]
+        },
+        {
+          "title": "The AI tab",
+          "notes": "The AI tab is for bigger conversations about the whole presentation, and I can watch each step as it edits the file.",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "cap-ask"
+            },
+            {
+              "do": "camera",
+              "focus": "a-tab",
+              "zoom": 1.5,
+              "start": "with"
+            },
+            {
+              "do": "spotlight",
+              "target": "a-tab",
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap-tab",
+              "start": "with",
+              "delay": 0.3
+            },
+            {
+              "do": "play",
+              "target": "clip",
+              "until": 130,
+              "duration": 4.5,
+              "start": "with",
+              "delay": 0.5
+            }
+          ]
+        },
+        {
+          "title": "The library",
+          "notes": "And in the library, I describe a picture I'm missing, and it's drawn in the same marker style.",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "cap-tab"
+            },
+            {
+              "do": "spotlight",
+              "on": false,
+              "start": "with"
+            },
+            {
+              "do": "camera",
+              "focus": "a-creator",
+              "padding": 40,
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap-lib",
+              "start": "with",
+              "delay": 0.3
+            },
+            {
+              "do": "play",
+              "target": "clip",
+              "until": 176,
+              "duration": 4.5,
+              "start": "with",
+              "delay": 0.3
+            }
+          ]
+        },
+        {
+          "title": "Same skills",
+          "notes": "Every one of them reads the same skills, so whichever I reach for, the result looks like it belongs.",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "cap-lib"
+            },
+            {
+              "do": "camera",
+              "focus": "all",
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap-same",
+              "start": "with",
+              "delay": 0.4
+            }
+          ]
         }
       ]
     },
