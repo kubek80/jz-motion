@@ -2,7 +2,8 @@
 // Restyle external SVG clipart into the jz-motion marker aesthetic.
 //
 // Input:  library/<source>/*.svg (raw downloads, e.g. UnDraw)
-// Output: images/<source>-<name>-<mode>-<accent>.svg
+// Output: scratch/clipart/<source>-<name>-<mode>-<accent>.svg (working files: bring the ones you use into the
+// media library with `npm run media -- import <file>`, which prints the /media/… src to use).
 //
 // Modes:
 //   palette  — keep the illustration intact, remap every known UnDraw hex colour to the jz-motion
@@ -107,7 +108,7 @@ function toOutlines(svg) {
 }
 
 const inDir = resolve('library', source);
-const outDir = resolve('images');
+const outDir = resolve('scratch/clipart');
 await mkdir(outDir, { recursive: true });
 const files = (await readdir(inDir)).filter((f) => f.endsWith('.svg'));
 if (!files.length) { console.error(`no SVGs in library/${source}/`); process.exit(2); }
@@ -125,4 +126,4 @@ for (const file of files) {
     wrote++;
   }
 }
-console.log(`→ ${wrote} restyled file${wrote === 1 ? '' : 's'} in images/`);
+console.log(`→ ${wrote} restyled file${wrote === 1 ? '' : 's'} in scratch/clipart/ (npm run media -- import <file> to use one)`);

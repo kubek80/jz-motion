@@ -22,7 +22,8 @@ npm run check -- presentations/<id>.json          # valid? (also library/<name>.
 npm run snapshot -- presentations/<id>.json       # PNGs of each scene in snapshots/<id>/ — look at them
 npm run snap -- <url> <name>                      # scripts/snap.mjs: screenshot a web page into the media library (WebP); prints its /media/… src
 npm run record -- <url> <name> <scenario.mjs>     # scripts/record.mjs: record a scripted interaction into the media library (WebM video)
-npm run media -- import <file…>                   # add any picture, recording or sound to the media library (converted)
+npm run media -- import <file…>                   # add any picture, recording or sound to the media library (converted); prints its /media/… src
+npm run media -- frames <file>                    # a recording's frames (its distinct pictures), for play's goto / until
 npm run assets                                    # what's in media/, images/ and uploads/, how big, and which presentations use it
 ```
 

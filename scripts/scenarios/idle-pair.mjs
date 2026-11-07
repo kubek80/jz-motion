@@ -7,6 +7,6 @@ export async function run(page) {
   if (buttons.length >= 3) await buttons[2].click();
   await page.waitForTimeout(1600);
   const a = await page.screenshot({ type: 'png', fullPage: false });
-  await writeFile('images/jzm-idle-pair-A.png', a);
+  await writeFile('scratch/captures/jzm-idle-pair-A.png', a);
   await page.waitForTimeout(2200);
 }

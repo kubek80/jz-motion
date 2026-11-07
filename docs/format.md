@@ -73,12 +73,12 @@ A 3D object drawn in the same marker style: outlines in its color, faces filled 
 ### Screenshots (`image`)
 
 ```json
-{ "id": "shot", "type": "image", "src": "/images/9a10139fc3473100.png", "x": 960, "y": 540, "width": 1100, "height": 690,
+{ "id": "shot", "type": "image", "src": "/media/9a10139fc3473100.webp", "x": 960, "y": 540, "width": 1100, "height": 690,
   "frame": "browser", "url": "myapp.com/settings", "color": "cyan" },
 { "id": "save-button", "type": "area", "x": 1320, "y": 760, "width": 220, "height": 90 }
 ```
 
-- `src` is a picture added in the app (`/images/<file>`). Don't invent one: only use `src` values already in the presentation.
+- `src` is a file in the **media library**: `/media/<file>` (pictures are WebP, screen recordings WebM video). Files get there converted: pasted, dropped or recorded in the app (Library → Media → Record screen), or with `npm run media -- import <file>`, `npm run snap` and `npm run record`. Every one is listed in `media/index.json` (name, kind, size, length). Don't invent a `src` and don't copy files into `images/` yourself (older `/images/…` srcs still work).
 - `width` × `height` is the picture itself; `"frame": "browser"` draws a browser window around it in marker (in the element's colour) with `url` in its address bar, adding a bar above the picture. The picture and its bar together are centered on `x`, `y`.
 - Pictures always sit under the marker drawing, so arrows, text and circles can be drawn on top of them.
 - `draw` draws the frame, then reveals the picture left to right.

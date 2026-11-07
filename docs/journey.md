@@ -717,3 +717,16 @@ Jakub wanted "go to frame" to be an action in the beat, not only a setting hidde
 **Checked by:** in the browser on a copy of "about this app, with edit demo": with the recording selected, + action listed Go to frame and Play to frame; choosing Go to frame added "Go to frame 1"; its properties showed only acts on, go to frame and fade; setting 4 with fade read "Go to frame 4, fading" and saved `{"do":"play","target":"clip","goto":4,"fade":true}`. Typecheck, tests, build.
 
 ![A Go to frame action's properties](journey/95-go-to-frame-action.jpg)
+
+## Step 55: Skills and docs agree on how recordings come in
+
+Jakub asked to verify that the skills reflect how screen recordings must be brought in. A sweep of every skill, the format, style and library docs, the app's own prompts and the capture scripts found the recording parts right (WebM from the media library, frames, `goto` / `until` / `fade`) but several places still pointing at the old `images/` folder, which would have led a model to copy a file there instead of importing it:
+
+- **`docs/format.md`** (what the app's models read): the picture example and rule said `/images/<file>`; now `/media/<file>`, how files get into the media library, `media/index.json` to see what's there, and never to copy into `images/`.
+- **`new-presentation`**: "copy screenshots to `images/`" → `npm run media -- import <file> --name …`, which converts and prints the src.
+- **`demo-interactions`**: its main examples and the rule "`src` must be in `images/`" now use the media library; a new section, *Recordings the user brings* (any video, or APNG/GIF: import, never reference the original); frames via `npm run media -- frames <file>`, and Go to frame / Play to frame as they appear in the app.
+- **`external-clipart`**: the restyle scripts wrote into `images/`; they now write working files to `scratch/clipart/`, and the skill imports the variant it uses into the media library (an SVG stays a drawing).
+- **The app's agent** could only run `check` and `snapshot`, so it could not import a recording the user named: it may now run `npm run media -- import` and the new **`npm run media -- frames <file>`** (lists a recording's frames and when each starts), and its instructions say so and point at `media/index.json`.
+- Capture script and scenario comments no longer describe APNG playback.
+
+**Checked by:** a 4-second MP4 holding each of 4 pictures for a second, imported with `npm run media -- import`: WebM with a poster and an index entry, and `frames` listed exactly 4 frames (its pictures, not its 120 video frames); the clipart pipeline restyled 56 SVGs into `scratch/clipart/` and an import gave a `/media/…svg` drawing (both test imports removed afterwards); typecheck, tests (including the format doc's example), build.

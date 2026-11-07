@@ -2,7 +2,7 @@
 // loaded. Interact with it however you like — clicks, keyboard, waits — and return when the clip
 // should end. The capture loop runs in parallel at the fps you asked for.
 //
-// Scenario files live in scripts/scenarios/. Keep them short (2–8 seconds of real time) so the APNG
+// Scenario files live in scripts/scenarios/. Keep them short (2–8 seconds of real time) so the recording
 // stays small and the beat it plays over doesn't drag.
 
 export async function run(page) {

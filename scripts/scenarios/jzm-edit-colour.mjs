@@ -1,6 +1,6 @@
 // Deliberate-pace demo of "edit text, change colour" against presentations/sandbox.json.
 // The sandbox has a plain cyan headline at board (960, 460), size 110. We hover before every
-// click and pause after every change so the viewer can follow each step on the APNG.
+// click and pause after every change so the viewer can follow each step in the recording.
 //
 // What the clip shows, in order:
 //   1. The editor idle (small pause so the first frame is readable).

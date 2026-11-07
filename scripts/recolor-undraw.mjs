@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // Recolour UnDraw SVGs into the jz-motion palette. For each SVG in library/iso-tiles/, produce
-// variants in `images/` for each listed palette colour, by swapping the UnDraw accent `#6c63ff`.
+// variants in `scratch/clipart/` for each listed palette colour, by swapping the UnDraw accent `#6c63ff`
+// (bring the ones you use into the media library with `npm run media -- import <file>`).
 //
 // Optional: pass `--all-colors` to generate a variant for every palette colour per file
 //           pass `--color cyan` to only produce one chosen colour (default behaviour writes a cyan
@@ -29,7 +30,7 @@ const palette = all ? Object.keys(PALETTE) : [chosen ?? 'cyan'];
 for (const c of palette) if (!(c in PALETTE)) { console.error(`unknown colour: ${c}`); process.exit(2); }
 
 const inDir = resolve('library', 'iso-tiles');
-const outDir = resolve('images');
+const outDir = resolve('scratch/clipart');
 await mkdir(outDir, { recursive: true });
 
 const files = (await readdir(inDir)).filter((f) => f.endsWith('.svg'));
@@ -50,4 +51,4 @@ for (const file of files) {
     wrote++;
   }
 }
-console.log(`→ ${wrote} recoloured file${wrote === 1 ? '' : 's'} in images/`);
+console.log(`→ ${wrote} recoloured file${wrote === 1 ? '' : 's'} in scratch/clipart/ (npm run media -- import <file> to use one)`);
