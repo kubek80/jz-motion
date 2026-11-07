@@ -322,7 +322,7 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
           )}
 
           {mode === 'edit' && doc && scene && (
-            <SceneAsk presentation={text} scene={sceneIndex} title={scene.title ?? scene.id} onApply={(json) => { log('ai:sceneAsk', { bytes: json.length }); history.set(json); }} />
+            <SceneAsk presentation={text} scene={sceneIndex} title={scene.title ?? scene.id} onApply={(json, open) => { log('ai:sceneAsk', { bytes: json.length }); if (open !== undefined) openScene.current = open; history.set(json); }} />
           )}
           {doc && scene && (
             <Beats

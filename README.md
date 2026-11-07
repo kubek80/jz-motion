@@ -51,7 +51,8 @@ Presentations, your library and your pictures, recordings and sounds are plain f
 
 ## AI while editing
 
-- **Ask about this scene** (the bar above the beats): "split the second beat in two", "zoom into the database first". Only that scene changes; Ctrl+Z undoes it.
+- **Ask about this scene** (the bar above the beats): "split the second beat in two", "zoom into the database first", or "make a new scene for the part about …" (it is added right after, with that part of the script moved into it, and opened). It says plainly what changed ("Added scene 2 … · changed scene 1"), or that nothing did and why; Ctrl+Z undoes it.
+- **AI log:** every AI request and what came of it (the model, what was asked, the reply, the steps an agent took, what changed or the error) is kept in `logs/ai.jsonl` (not in git), to see afterwards what went wrong.
 - **AI tab**: a chat about the whole presentation that can change it, or **Compare** several models on one request.
 - **New with AI** (library window, left panel): an icon, clipart or 3D model made in a conversation. Every reply is a version with a preview; ask for changes until you like one, then save it to your library. **Refine with AI** continues from one of your items, **Make a variation** from a built-in one.
 

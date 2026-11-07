@@ -662,3 +662,16 @@ Jakub found that deleting a scene left a hole in the timing, and that dragging a
 - **Deleting a scene of a timed presentation** (one whose later beats have cues) takes its stretch of timeline out too, like a ripple delete in a video editor: later cues move earlier by the scene's length, and the narration recorded over it is cut out of the voice clips (trimmed, split, or removed; later clips move earlier), so the words still meet their beats. The confirmation says how many seconds go; Undo brings everything back. The logic is in `src/app/editor/closeGap.ts`, with tests.
 
 **Checked by:** 2 new tests (79 in all); in the browser on a copy of "about this app, with edit demo" with a 400-second test narration: dragging beat 2.2 far right stopped it at 31.35 s, just before 2.3 (nothing else changed); dragging it left 1.5 s moved only it; Shift + drag right 2 s moved it and the 55 later cued beats by the same 2.05 s; deleting "Inspiration" (14.5 s) moved the next scene's first cue from 68.45 to 53.95 and split the narration around the cut. Typecheck, build.
+
+## Step 50: The scene bar can make a new scene, says what happened, and every AI request is logged
+
+Jakub asked the scene bar to turn part of scene 1's script ("No Photoshop, After Effects or Premiere — just me, Claude Code and my app") into a new scene with the logos crossed off. Nothing changed (the branch he pushed showed only a nudged cue), the feedback didn't say what to do, and there was no log to find out why.
+
+- **Why:** every request from the scene bar was sent starting with "Change only scene 1 … Keep every other scene exactly as it is", so a request for a new scene contradicted its own instructions and the model could not do it.
+- **Now:** the bar's instruction is "This is about scene 1; change it as asked; if the request asks for a new scene, add it right after and move that part of the speaker notes into it". The edit-presentation skill (what Claude Code follows) has a rule for exactly this: a new scene after it, the narration moved (said once), the tools drawn and crossed out, a library item made if needed, new beats without a cue in a timed presentation.
+- **Plain feedback:** after an answer the bar says what changed, scene by scene ("Added scene 2 “No Photoshop needed” · changed scene 1"), and opens a new scene. If nothing changed it says "Nothing was changed" with the model's explanation; if the result doesn't load it says it was not applied and why. (`src/ai/changes.ts`, tested.)
+- **The AI log**, `logs/ai.jsonl` (not in git): the server records every agent run (the model, the prompt, each step it took, problems, the reply, whether it changed the draft, its session id, how long it took) and every one-request call (service, model, the request, the reply, the status); the scene bar adds what it did with the answer (applied, no change, not applied and why). `GET /api/ai-log` shows the last ones.
+
+**Checked by:** 2 new tests (81 in all); in the browser with the test model on a copy of "about this app, with edit demo": asking for a new scene added "No Photoshop needed" as scene 2, said so and opened it; a request the model declined said "Nothing was changed" with its reason; the log had both model calls and both outcomes. Typecheck, build.
+
+![The scene bar after asking for a new scene](journey/92-scene-ask-new-scene.jpg)

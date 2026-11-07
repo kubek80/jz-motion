@@ -47,10 +47,16 @@ function answer(messages) {
       ...[-1.1, -0.37, 0.37, 1.1].map((x) => ({ shape: 'box', size: [0.4, 1.4, 1.6], at: [x, 0.3, 0], color: 'green' })),
       { shape: 'cylinder', size: [1, 0.25, 1], at: [0, 1.7, 0], color: 'pink' }] };
   }
-  if (/Change only scene (\d+)/.test(last)) {
-    // Edit the current presentation: rename the scene and add a beat to it.
-    const n = Number(last.match(/Change only scene (\d+)/)[1]) - 1;
+  if (/This is about scene (\d+)/.test(last)) {
+    // A request from the scene bar: add a scene after it when asked for one, else add a beat; "#nothing" changes nothing.
+    const n = Number(last.match(/This is about scene (\d+)/)[1]) - 1;
     const current = JSON.parse(last.slice(last.indexOf('\n') + 1, last.indexOf('\n\n')));
+    const asked = last.slice(last.lastIndexOf('\n\n') + 2);
+    if (asked.includes('#nothing')) return { reply: 'That would need a different tool; nothing to change here.', presentation: null };
+    if (/new scene/i.test(asked)) {
+      current.scenes.splice(n + 1, 0, { id: 'mock-tools', title: 'No Photoshop needed', elements: [{ id: 'note', type: 'text', text: 'no Photoshop', x: 960, y: 540 }], beats: [{ title: 'Crossed off', notes: 'No Photoshop, After Effects or Premiere.', actions: [{ do: 'draw', target: 'note' }] }] });
+      return { reply: `Added a scene after scene ${n + 1}.`, presentation: current };
+    }
     current.scenes[n].beats.push({ title: 'Added by AI', actions: [{ do: 'wait', duration: 1 }] });
     return { reply: `Added a beat to scene ${n + 1}.`, presentation: current };
   }

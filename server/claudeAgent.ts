@@ -1,3 +1,4 @@
+import { logAi, shorten } from './aiLog';
 import { spawn } from 'node:child_process';
 import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import type { IncomingMessage, ServerResponse } from 'node:http';
@@ -55,7 +56,12 @@ export async function runAgent(_req: IncomingMessage, res: ServerResponse, body:
   res.statusCode = 200;
   res.setHeader('content-type', 'application/x-ndjson');
   res.setHeader('cache-control', 'no-cache');
-  const send = (ev: AgentEvent) => res.write(`${JSON.stringify(ev)}\n`);
+  // Everything the app is told is also kept for the AI log (logs/ai.jsonl).
+  const trail: AgentEvent[] = [];
+  const send = (ev: AgentEvent) => {
+    trail.push(ev.e === 'done' ? { ...ev, presentation: undefined } : ev);
+    res.write(`${JSON.stringify(ev)}\n`);
+  };
 
   const args = ['-p', '--output-format', 'stream-json', '--verbose', '--model', body.model || 'sonnet', '--allowedTools', ...TOOLS];
   if (body.resume) args.push('--resume', body.resume);
@@ -112,5 +118,12 @@ export async function runAgent(_req: IncomingMessage, res: ServerResponse, body:
     });
   });
   res.end();
+  const end = trail.at(-1) as Record<string, unknown> | undefined;
+  void logAi({
+    kind: 'agent', model: body.model || 'sonnet', draft: body.draftId, resumed: body.resume ?? undefined, prompt: shorten(body.prompt, 6000),
+    steps: trail.filter((e) => e.e !== 'done').map((e) => shorten(`${e.e}: ${'tool' in e ? `${e.tool} ` : ''}${'text' in e ? e.text : 'session' in e ? e.session : ''}`, 400)),
+    outcome: end?.e === 'done' ? (end.changed ? 'changed the draft' : 'answered without changing the draft') : 'error',
+    reply: end?.e === 'done' ? end.reply : end?.text, session: end?.session, ms: Date.now() - started,
+  });
 }
 

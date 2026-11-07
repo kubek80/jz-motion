@@ -8,6 +8,7 @@ import type { Plugin, PreviewServer, ViteDevServer } from 'vite';
 import { exportVideo } from './export';
 import { deleteIcon, readLibrary, saveIcon } from './library';
 import { findOffset } from './media';
+import { logAi, readAiLog, shorten } from './aiLog';
 import { cleanVoice } from './cleanVoice';
 import { saveUpload, transcribe, transcribeKept, uploadPath } from './transcribe';
 import { saveImage, serveImage } from './images';
@@ -22,6 +23,7 @@ import { generateTts, readSidecar as readTtsSidecar, serveTts } from './tts';
 //   /api/presentations  list, create, read, save, delete presentations (presentations/<id>.json)
 //   /api/library  icons and clipart made in the app (library/<name>.json)
 //   /api/uploads/<file>/clean  a cleaned copy of a narration clip (background noise removed with RNNoise)
+//   /api/ai-log   every AI request and what came of it (logs/ai.jsonl): the app adds its outcome; GET the last ones
 //   /api/transcribe  upload a recording and transcribe it (to make a presentation from it), or transcribe a narration clip already in uploads/ (?upload=)
 //   /api/llm      proxy to OpenAI-compatible model APIs (browsers can't call most of them directly)
 //   /api/takes    recordings: create, upload tracks, set offsets, auto-sync, delete
@@ -90,10 +92,15 @@ function send(res: ServerResponse, status: number, body: unknown) {
 
 async function llm(req: IncomingMessage, res: ServerResponse) {
   const { baseURL, apiKey, body } = await readJson(req);
+  const started = Date.now();
+  const asked = { model: body?.model, service: String(baseURL).startsWith('claude-code') ? 'claude-code' : new URL(String(baseURL)).host, lastMessage: shorten(body?.messages?.at(-1)?.content) };
   if (String(baseURL).startsWith('claude-code')) {
     try {
-      return send(res, 200, await claudeCodeChat(String(body?.model ?? ''), body?.messages ?? []));
+      const answer = await claudeCodeChat(String(body?.model ?? ''), body?.messages ?? []);
+      void logAi({ kind: 'llm', ...asked, status: 200, reply: shorten(JSON.stringify(answer)), ms: Date.now() - started });
+      return send(res, 200, answer);
     } catch (e) {
+      void logAi({ kind: 'llm', ...asked, status: 502, error: (e as Error).message, ms: Date.now() - started });
       return send(res, 502, { error: (e as Error).message });
     }
   }
@@ -112,7 +119,9 @@ async function llm(req: IncomingMessage, res: ServerResponse) {
   });
   res.statusCode = upstream.status;
   res.setHeader('content-type', upstream.headers.get('content-type') ?? 'application/json');
-  res.end(await upstream.text());
+  const answer = await upstream.text();
+  void logAi({ kind: 'llm', ...asked, status: upstream.status, reply: shorten(answer), ms: Date.now() - started });
+  res.end(answer);
 }
 
 async function takes(req: IncomingMessage, res: ServerResponse, parts: string[], query: URLSearchParams) {
@@ -219,6 +228,8 @@ export function jzmServer(): Plugin {
       const parts = url.pathname.split('/').filter(Boolean);
       try {
         if (url.pathname === '/api/llm' && req.method === 'POST') return await llm(req, res);
+        if (url.pathname === '/api/ai-log' && req.method === 'POST') { await logAi({ kind: 'app', ...(await readJson(req)) }); return send(res, 200, { ok: true }); }
+        if (url.pathname === '/api/ai-log' && req.method === 'GET') return send(res, 200, await readAiLog(Number(url.searchParams.get('limit')) || 20));
         if (url.pathname === '/api/agent' && req.method === 'POST') return await runAgent(req, res, await readJson(req));
         if (url.pathname === '/api/claude-code' && req.method === 'GET') return send(res, 200, await claudeCodeStatus());
         if (url.pathname === '/api/transcribe' && req.method === 'POST') {

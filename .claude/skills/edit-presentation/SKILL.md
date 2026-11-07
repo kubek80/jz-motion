@@ -18,6 +18,7 @@ Presentations are `presentations/<id>.json` (`ls presentations`, or find the tit
 - **`inherit: true`** makes a scene start with the previous scene's visible elements. Inserting or deleting a scene in front of an inheriting scene changes what it inherits; check the scenes after it.
 - **Beats** are clicks; `auto: true` makes a beat follow the one before. `cue` is seconds into the voice-over: if you add or split beats in a timed presentation, leave the new beats without a cue (they follow the one before) and tell the user to place them in the Timing window.
 - Speaker `notes` are the script. When content changes, update the notes of the beats that changed.
+- **A part of a scene in a scene of its own** ("make a new scene for the part about …"): add the new scene right after it, with a fresh id and title, and **move** that part of the speaker notes into the new scene's beats (take it out of the old beat, so it is said once). Draw what that part says (for "no Photoshop, After Effects or Premiere": the tools as logos or labelled icons, crossed out one by one with a `circle` or a marker line, then what is used instead). If you need a picture the library doesn't have, make it (the library-item skill) or use a labelled `box`. In a timed presentation leave the new beats without a `cue`; they play after the scene before, and the person places them in Timing.
 
 ## Check and look
 
