@@ -184,3 +184,13 @@
 .drawer-actions .who { flex: 1; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .drawer-actions .when { font-size: 11px; font-variant-numeric: tabular-nums; }
 .beat-drawer .action-editor { padding: 0; border-top: 1px solid var(--line); padding-top: 8px; }
+
+/* Beats are easier to grab: a wider invisible strip along the line, in the beats area (not over the clips). */
+.click::before { content: ''; position: absolute; top: 80px; bottom: 0; left: -8px; width: 16px; cursor: ew-resize; }
+/* While a beat is dragged: where it goes, and what Shift and Ctrl add. Stays in view when the timeline scrolls. */
+.drag-hint-anchor { position: sticky; left: 0; top: 0; height: 0; z-index: 8; }
+.drag-hint { position: absolute; left: 8px; top: 24px; display: flex; align-items: center; gap: 10px; padding: 4px 10px; font-size: 12px; white-space: nowrap; background: color-mix(in srgb, var(--panel) 95%, transparent); border: 1px solid var(--line); border-radius: 7px; box-shadow: 0 6px 18px #000a; pointer-events: none; }
+.drag-hint .key { color: var(--muted); }
+.drag-hint .key kbd { font: inherit; font-size: 11px; padding: 0 5px; margin-right: 4px; border: 1px solid var(--line); border-radius: 4px; }
+.drag-hint .key.on { color: var(--accent); }
+.drag-hint .key.on kbd { border-color: var(--accent); background: #3ef0ff1f; }

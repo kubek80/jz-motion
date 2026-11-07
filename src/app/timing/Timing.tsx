@@ -96,7 +96,10 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
   /** The beat whose options are open in the drawer. */
   const [openBeat, setOpenBeat] = useState<{ scene: number; beat: number } | null>(null);
   const { clipDrag, startDragClip, deleteClip, startTrimClip, splitAtPlayhead, splitClipAt, canSplitAt, setClipLane } = useClipEditing(clips, setClips, rec, pps, now);
-  const { drag, startDrag, tapping, setTapping, tapIndex, setTapIndex, nextAfter, tap } = useCueDragging(clicks, rec, pps, onCue, onCues, seek, now, (i) => setOpenBeat({ scene: clicks[i].scene, beat: clicks[i].beat }));
+  const { drag, startDrag, tapping, setTapping, tapIndex, setTapIndex, nextAfter, tap } = useCueDragging(clicks, rec, pps, onCue, onCues, seek, now, (i) => setOpenBeat({ scene: clicks[i].scene, beat: clicks[i].beat }),
+    (from, by) => setClips(clips.map((c) => (c.offset >= from - 1e-3 ? { ...c, offset: Math.max(0, Math.round((c.offset + by) * 1000) / 1000) } : c))),
+    (from) => { const after = clips.filter((c) => c.offset >= from - 1e-3); return after.length ? Math.min(...after.map((c) => c.offset)) : undefined; },
+  );
 
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -236,6 +239,7 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
         tapping={tapping}
         tapIndex={tapIndex}
         startDrag={startDrag}
+        beatDrag={drag}
         onCue={onCue}
       />
       {transcribing && (

@@ -45,13 +45,15 @@ interface Props {
   tapIndex: number;
   startDrag: (e: React.PointerEvent, index: number) => void;
   onCue: (scene: number, beat: number, cue: number | undefined) => void;
+  /** A beat being dragged (for the hint, and to show the voice clips that move with it). */
+  beatDrag: { index: number; t0: number; t: number; ripple: boolean; clips: boolean } | null;
 }
 
 /** Height of one row of beat labels, and a label's widest. */
 const FLAG_ROW = 24;
 const FLAG_MAX = 160;
 
-export function Timeline({ laneRef, missing, height, rec, seek, time, total, pps, width, clips, primary, clipDrag, startDragClip, startTrimClip, deleteClip, splitClipAt, canSplitAt, setClipLane, playFrom, onTranscribe, onClean, onRestore, onEditBeat, drawClipPeaks, np, tapping, tapIndex, startDrag, onCue }: Props) {
+export function Timeline({ laneRef, missing, height, rec, seek, time, total, pps, width, clips, primary, clipDrag, startDragClip, startTrimClip, deleteClip, splitClipAt, canSplitAt, setClipLane, playFrom, onTranscribe, onClean, onRestore, onEditBeat, drawClipPeaks, np, tapping, tapIndex, startDrag, onCue, beatDrag }: Props) {
   const { shown, currentIndex, beatOf, sceneTitle } = np;
   // Beat labels go in rows above their lines: as many rows as the timeline's height allows, each label in the
   // lowest row where it doesn't run into the label before it (a short timeline keeps two rows).
@@ -85,6 +87,20 @@ export function Timeline({ laneRef, missing, height, rec, seek, time, total, pps
         seek((e.clientX - r.left + e.currentTarget.scrollLeft - 20) / pps);
       }}
     >
+      {beatDrag && (() => {
+        const c = shown[beatDrag.index];
+        const by = beatDrag.t - beatDrag.t0;
+        return (
+          <div className="drag-hint-anchor">
+            <div className="drag-hint">
+              <b>{c ? `${c.scene + 1}.${c.beat + 1}` : 'Beat'} → {fmt(beatDrag.t)}</b>
+              <span className="muted"> ({by >= 0 ? '+' : '−'}{Math.abs(by).toFixed(2)} s)</span>
+              <span className={beatDrag.ripple ? 'key on' : 'key'}><kbd>Shift</kbd> later beats too</span>
+              <span className={beatDrag.clips ? 'key on' : 'key'}><kbd>Ctrl</kbd> voice clips that start after it too</span>
+            </div>
+          </div>
+        );
+      })()}
       <div className="timing-track" style={{ width }}>
         <div className="ruler">
           {Array.from({ length: Math.floor(total / rulerStep(pps)) + 1 }, (_, i) => i * rulerStep(pps)).map((s) => (
@@ -94,7 +110,9 @@ export function Timeline({ laneRef, missing, height, rec, seek, time, total, pps
         <div className="clip-lanes">
           {clips.map((c, i) => {
             const dragging = clipDrag?.index === i;
-            const offset = dragging ? clipDrag!.offset : c.offset;
+            // Ctrl + dragging a beat: the clips that start after it move with it.
+            const carried = !!beatDrag?.clips && c.offset >= beatDrag.t0 - 1e-3;
+            const offset = dragging ? clipDrag!.offset : carried ? Math.max(0, c.offset + beatDrag!.t - beatDrag!.t0) : c.offset;
             const lane = dragging ? clipDrag!.lane : c.lane;
             const trimStart = dragging && clipDrag!.trimStart !== undefined ? clipDrag!.trimStart : c.trimStart;
             const trimEnd = dragging && clipDrag!.trimEnd !== undefined ? clipDrag!.trimEnd : c.trimEnd;

@@ -52,7 +52,7 @@ export function TimingControls(p: Props) {
       {tapping && <button className="primary tap-now" onClick={tap} disabled={!clicks[tapIndex]}>T · place it now</button>}
       <button onClick={splitAtPlayhead} disabled={!p.hasClips || recording} title="Split any clip under the playhead into two adjacent clips (S)">✂ Split</button>
       <span className="spacer" />
-      <span className="muted hint">Drag a beat to move it (Shift: with all after it) · double-click it to edit it · right-click a beat or clip for more · ←/→ seek</span>
+      <span className="muted hint">Drag a beat to move it (Shift: later beats too · Ctrl: later voice clips too) · double-click it to edit it · right-click a beat or clip for more · ←/→ seek</span>
       <label className="zoom" title="Zoom the timeline">
         <span className="muted">zoom</span>
         <input type="range" min={0.5} max={200} step={0.5} value={pps || 20} onChange={(e) => setPps(Number(e.target.value))} />
