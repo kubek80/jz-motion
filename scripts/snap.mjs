@@ -3,7 +3,8 @@
 // reference it by the "/media/…" src it prints and show the real UI instead of a hand-drawn placeholder.
 //
 // Usage:
-//   node scripts/snap.mjs <url> <name> [--size 1280x800] [--selector ".foo"] [--wait 500]
+//   node scripts/snap.mjs <url> <name> [--size 1280x800] [--zoom 1.25] [--scale 2] [--selector ".foo"] [--wait 500]
+// Captures are sharp enough for camera zooms: see scripts/capturePage.mjs.
 // or:
 //   npm run snap -- <url> <name> ...
 //
@@ -19,6 +20,7 @@ import { spawnSync } from 'node:child_process';
 import { mkdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { captureOptions, openCapturePage } from './capturePage.mjs';
 
 const args = process.argv.slice(2);
 const posArgs = args.filter((a, i) => !a.startsWith('--') && !args[i - 1]?.startsWith('--'));
@@ -29,10 +31,10 @@ const value = (name, fallback) => {
 const url = posArgs[0];
 const name = posArgs[1];
 if (!url || !name) {
-  console.error('usage: node scripts/snap.mjs <url> <name> [--size WxH] [--selector CSS] [--wait ms]');
+  console.error('usage: node scripts/snap.mjs <url> <name> [--size WxH] [--zoom Z] [--scale S] [--selector CSS] [--wait ms]');
   process.exit(2);
 }
-const [w, h] = (value('size', '1280x800')).split('x').map(Number);
+const capture = captureOptions(value);
 const waitMs = Number(value('wait', 400));
 const selector = value('selector');
 const scenario = value('scenario');
@@ -43,7 +45,7 @@ await mkdir(resolve('scratch/captures'), { recursive: true });
 // Google Chrome when installed (as on a Mac), otherwise Playwright's own Chromium.
 const browser = await chromium.launch({ channel: 'chrome' }).catch(() => chromium.launch());
 try {
-  const page = await browser.newPage({ viewport: { width: w, height: h } });
+  const page = await openCapturePage(browser, capture);
   await page.goto(url, { waitUntil: 'domcontentloaded' });
   await page.waitForLoadState('networkidle').catch(() => undefined);
   if (scenario) {
@@ -55,7 +57,7 @@ try {
   await page.waitForTimeout(waitMs);
   if (selector) await page.locator(selector).screenshot({ path: out });
   else await page.screenshot({ path: out, fullPage: false });
-  console.log(`captured scratch/captures/${name}.png`);
+  console.log(`captured scratch/captures/${name}.png${selector ? '' : ` (${capture.pixels})`}`);
   importIntoMedia(out, name);
 } finally {
   await browser.close();

@@ -29,7 +29,7 @@ Git keeps every version of every binary forever, so the repository is already 24
 ### One media library: `media/`
 
 - Every picture, recording and voice clip goes into `media/`, named by its content hash (as `images/` already does), with a small index, `media/index.json`, holding a readable name, kind (screenshot, recording, voice, clipart), original file name, size, dimensions, duration and when it was added.
-- **Import converts**: PNG/JPEG → WebP (quality 90, at most 2560 px wide); APNG/GIF/MOV/MP4/WebM screen recordings → WebM (VP9) plus a poster frame; voice → Opus in WebM. The server already has FFmpeg for exports.
+- **Import converts**: PNG/JPEG → WebP (quality 90, at most 3840 px wide); APNG/GIF/MOV/MP4/WebM screen recordings → WebM (VP9) plus a poster frame; voice → Opus in WebM. The server already has FFmpeg for exports.
 - Existing `images/…` and `uploads/…` references keep working; a one-off migration command converts them and rewrites the presentations.
 
 ### Recordings as video on the board

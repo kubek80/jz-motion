@@ -96,8 +96,8 @@ Then the **Video** tab: pick the take, add a friend's recording (with **Auto-syn
 | `npm run dev` | The app, with its local server (files, model calls, transcription, export) |
 | `npm run check -- <file.json>` | Checks a presentation or library item against the app's rules; `--library` lists everything that can be drawn |
 | `npm run snapshot -- <file.json>` | PNG of each scene fully drawn (`--beats`: after every beat) in `snapshots/` |
-| `npm run snap -- <url> <name>` | Screenshots a web page (or one element, `--selector`) into the media library |
-| `npm run record -- <url> <name> <scenario.mjs>` | Records an interaction scripted in `scripts/scenarios/` into the media library as video |
+| `npm run snap -- <url> <name>` | Screenshots a web page (or one element, `--selector`) into the media library, sharp enough for camera zooms (2560×1600 at 125 % zoom by default; `--size`, `--zoom`, `--scale`) |
+| `npm run record -- <url> <name> <scenario.mjs>` | Records an interaction scripted in `scripts/scenarios/` into the media library as video, at the same sharpness as `snap` |
 | `npm run media -- import <file…>` | Adds pictures, recordings or sounds to the media library, converted (WebP, WebM, Opus); `migrate` moves older `images/` files in; `frames <file>` lists a recording's frames |
 | `npm run assets` | Lists pictures, recordings and voice-overs with their size and the presentations that use them; `--unused` lists what nothing uses (deletes nothing) |
 | `npm run export -- <file.json>` | Renders to MP4 (`--take <id>`, `--4k`, `--fps 60`, `--gap 1.5`, `--out file.mp4`) |
