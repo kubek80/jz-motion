@@ -16,7 +16,7 @@ export const DRAFTS_DIR = join(PRESENTATIONS_DIR, '.drafts');
 /** What the agent may do: read anything in the project, write files, use skills, run the two check commands. */
 // Besides reading and writing files: checking and snapshotting presentations, bringing a picture or recording into the
 // media library (converted, the only way they should arrive), and listing a recording's frames.
-const TOOLS = ['Read', 'Write', 'Edit', 'Glob', 'Grep', 'Skill', 'Bash(npm run check:*)', 'Bash(npm run snapshot:*)', 'Bash(npm run media -- import:*)', 'Bash(npm run media -- frames:*)'];
+const TOOLS = ['Read', 'Write', 'Edit', 'Glob', 'Grep', 'Skill', 'Bash(npm run check:*)', 'Bash(npm run snapshot:*)', 'Bash(npm run media -- import:*)', 'Bash(npm run media -- frames:*)', 'Bash(npm run voice -- time:*)', 'Bash(npm run voice -- place:*)'];
 
 export type AgentEvent =
   | { e: 'start'; session: string; cwd: string; file: string }

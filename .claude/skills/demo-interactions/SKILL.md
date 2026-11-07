@@ -89,9 +89,9 @@ npm run record -- 'http://localhost:5173/#/p/sandbox' edit-text scripts/scenario
 
 Records the scenario, keeps the raw capture in `scratch/captures/`, adds it to the media library as WebM video and prints its `/media/<hash>.webm` src. Recordings in the media library are WebM video (`/media/<hash>.webm`, with a poster picture next to it; anything imported there, APNG and GIF included, is converted to that). The board plays it with the `play` action, muted (sound belongs to the narration). APNG and GIF files are not played on the board; put them in the media library and use the WebM it makes.
 
-### **Always record against the sandbox presentation**
+### **Record against a copy, never the user's own presentation**
 
-`presentations/sandbox.json` exists exactly for this: a scratch board with text elements the scenarios can click, retype and recolour. Point `record` at `http://localhost:5173/#/p/sandbox` — the scenario *will* save edits back to the file, so a real presentation would be modified. Reset the sandbox with `git checkout -- presentations/sandbox.json` after a session.
+Scenarios click, type and save, so the presentation they open gets changed. Make a presentation for the demo (a clean board with just what the clip needs: a sandbox full of leftovers looks bad on camera) or a copy of a real one (`jzm-demo`, without its voice-over and cues), record, then delete the copies. `presentations/sandbox.json` is there for quick tries (`git checkout -- presentations/sandbox.json` afterwards).
 
 ### Scenario files
 
@@ -100,6 +100,26 @@ Live in `scripts/scenarios/<name>.mjs`. Each exports `run(page)`; the browser is
 - An optional `setup(page)` runs first and isn't recorded: settings in `localStorage`, a reload, picking the scene to start on. Without it the recording starts with a white page while it loads.
 - `scripts/scenarios/jzm-helpers.mjs` has what the jz-motion demos share: `useMockModel(page)` (AI steps with `npm run mock-llm`, no key), `glide` (a visible mouse move), and `notes(name)`, which writes `scratch/captures/<name>-steps.json`: when each step happened (seconds into the recording) and where things were on screen. A scene uses the step times to pick its frames (`goto` / `until`) and the boxes to place its `area`s exactly; `jzm-home-start`, `jzm-editor-tour`, `jzm-edit-colour-b`, `jzm-timing` and `jzm-ai-everywhere` are examples.
 - Record against copies (a presentation made for the demo, or a copy of a real one), never the user's own files: scenarios click, type and save. AI steps with the mock model can create a presentation: delete it afterwards.
+
+### Recording at the right size
+
+- Editor, Timing and anything with side panels: `--size 1600x1000` (3200×2000 pixels); at the default 1280×800 the board in the middle is tiny. The home screen and simple pages: the default.
+- Mock AI steps answer from the bundled examples: type a request that matches what comes back (the home box: something about jz-motion; the scene bar: "a new scene for the part about no Photoshop"), so what is typed and what appears agree.
+- Restore the demo copy before every take: a failed take leaves changes behind that show in the next one.
+
+### Look at a recording's frames, then at the scene in an export
+
+- After `record`, pull frames at the noted step times (`ffmpeg -ss <t> -i media/<file>.webm -frames:v 1 out.png`) and look: a step that didn't happen, a menu already closed, a white page while loading, an empty result (wait for it in the scenario).
+- **Beat snapshots can show a recording a frame behind**; to check a scene with recordings, export it (`npm run export -- <file> --out scratch/x.mp4`) and look at frames there. Beats in that export start at the times `cueClicks` gives, plus small gaps between scenes.
+- Media hygiene: remove only the takes you made that ended up unused (their file, poster and `media/index.json` entry). Never delete media that was there before you.
+
+### A scene built on a recording
+
+What worked for the jz-motion demos:
+
+- The recording as one `image`, `"frame": "browser"`, 1200×750 at (960, 560): room for a title above (pinned, y 70) and one caption below (pinned, y ≈ 1025, size 42).
+- Each beat: fade out the previous caption, `camera` on an `area` with an explicit `zoom` (1.5–2.2), a dark `spotlight` on the same area (captions over the dimmed interface stay readable), draw the new caption, and move the recording: `goto` a step's frame with `"fade": true`, or `until` a frame over the time the words take. Spotlight off and `focus: "all"` at the end.
+- Areas from the scenario's noted boxes (page points × image width ÷ page width, from the picture's top-left under the browser bar), frames from its noted step times (the frame showing just after each step): a step that changes the layout (a box growing) needs an area big enough for both.
 
 ### Pacing: slow is the point
 
