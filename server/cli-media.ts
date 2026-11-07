@@ -1,5 +1,6 @@
 // npm run media -- import <file…> [--name "Display name"]   add files to the media library (converted)
 // npm run media -- migrate [--apply]                         move pictures and recordings from images/ into media/
+// npm run media -- frames <file|/media/src>                   a recording's frames (its distinct pictures), for play's goto / until
 //
 // migrate converts every images/ file a presentation uses (PNG → WebP, APNG/GIF → WebM video), rewrites the
 // presentations to point at /media/…, and moves images/ files nothing uses into scratch/images/ (ignored by git,
@@ -7,7 +8,7 @@
 import { existsSync } from 'node:fs';
 import { mkdir, readdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { importFile } from './mediaStore';
+import { importFile, mediaFrames } from './mediaStore';
 
 const args = process.argv.slice(2);
 const [command, ...rest] = args;
@@ -71,11 +72,21 @@ async function migrate() {
   console.log(`\nConverted ${toConvert.length} files: ${kb(before)} → ${kb(after)}. Moved ${toConvert.length + unused.length} files from images/ to scratch/images/ (not in git).`);
 }
 
+async function framesCommand() {
+  const file = (rest[0] ?? '').replace(/^\/?media\//, '');
+  if (!file) throw new Error('usage: npm run media -- frames <file>   (e.g. 1d393ff1793636be.webm or /media/1d393ff1793636be.webm)');
+  const { times } = await mediaFrames(file);
+  if (!times.length) throw new Error(`${file} has no frames (not a recording in media/?)`);
+  console.log(`${file}: ${times.length} frames (distinct pictures). In a play action: "goto": N or "until": N.`);
+  times.forEach((t, i) => console.log(`  frame ${String(i + 1).padStart(3)}  starts ${t.toFixed(2)} s`));
+}
+
 try {
   if (command === 'import') await importCommand();
+  else if (command === 'frames') await framesCommand();
   else if (command === 'migrate') await migrate();
   else {
-    console.error('usage: npm run media -- import <file…> | npm run media -- migrate [--apply]');
+    console.error('usage: npm run media -- import <file…> | migrate [--apply] | frames <file>');
     process.exit(1);
   }
 } catch (e) {

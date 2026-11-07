@@ -7,13 +7,13 @@ description: Bring high-quality SVG clipart from external libraries (UnDraw, and
 
 The built-in icon library is line art on a 24×24 grid — great for diagrams, generic for characters and scenes. When a slide needs *a person at a laptop with floating widgets*, drawing it from primitives doesn't work (iso is blocky, flat SVG from scratch is too simple). The answer is to **import a real illustration** from a permissively-licensed external pack, restyle it to our palette, and drop it in as a scene `image`.
 
-This skill is the pipeline: fetch → restyle → save → use.
+This skill is the pipeline: fetch → restyle → import into the media library → use.
 
 ## What's supported today
 
 - **Source**: [UnDraw](https://undraw.co) — MIT, no attribution required, 600+ illustrations, one primary accent colour per file that's easy to remap.
 - **Mode**: `palette` — remap UnDraw's whole colour set to the jz-motion palette, preserve the illustration structure. Light greys dissolve into the dark board; dark navies become `white` so they stay visible; the primary accent (`#6c63ff`) becomes whichever accent you pick (`cyan`, `pink`, `yellow`, `orange`, `green`).
-- **Output**: regular jz-motion `image` elements placed with `src: "/images/undraw-<name>-palette-<accent>.svg"`.
+- **Output**: regular jz-motion `image` elements whose `src` is the restyled SVG in the media library (`/media/<hash>.svg`, kept as a drawing).
 
 ## Not yet supported (but noted)
 
@@ -30,13 +30,16 @@ node scripts/fetch-undraw.mjs <search-term> <filename> "<Exact Title>"
 # 2. Batch fetch the shortlist at the top of batch-undraw.mjs.
 node scripts/batch-undraw.mjs
 
-# 3. Restyle every SVG in library/undraw/ into images/<name>-palette-<accent>.svg.
+# 3. Restyle every SVG in library/undraw/ into scratch/clipart/<name>-palette-<accent>.svg.
 #    Run once per accent you want (cyan, pink, yellow, orange, green):
 node scripts/restyle-svg.mjs --mode palette --accent cyan
 node scripts/restyle-svg.mjs --mode palette --accent pink
+
+# 4. Bring the variant you use into the media library; it prints the src for the scene.
+npm run media -- import scratch/clipart/undraw-team-palette-cyan.svg --name "team (UnDraw, cyan)"
 ```
 
-Raw SVGs live in `library/undraw/`; restyled variants land in `images/`. Only the restyled files are referenced from presentations.
+Raw SVGs live in `library/undraw/`; restyled variants land in `scratch/clipart/` (working files, not in git). Only what you import into the media library is referenced from presentations; check `media/index.json` first, the variant may already be there.
 
 ## Adding new tiles
 
@@ -46,7 +49,7 @@ The *exactTitle* must match UnDraw's card label character-for-character (case ma
 
 **Option B — one-shot fetch** for a single new tile: `node scripts/fetch-undraw.mjs programmer programmer "Programmer"`.
 
-Then re-run `restyle-svg.mjs` for each accent you want and the new file appears as `images/undraw-programmer-palette-<accent>.svg`.
+Then re-run `restyle-svg.mjs` for each accent you want: the new file appears as `scratch/clipart/undraw-programmer-palette-<accent>.svg`; import the one you use.
 
 ## Using a tile in a scene
 
@@ -56,7 +59,7 @@ Plain `image` element:
 {
   "id": "team-pic",
   "type": "image",
-  "src": "/images/undraw-team-palette-cyan.svg",
+  "src": "/media/<hash>.svg",
   "x": 960, "y": 540,
   "width": 600, "height": 400,
   "color": "white"

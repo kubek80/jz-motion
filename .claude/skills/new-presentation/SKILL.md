@@ -24,7 +24,7 @@ A presentation is one JSON file in `presentations/<id>.json`. The app (`npm run 
 
 - Pick an id: lowercase words and dashes, e.g. `cdn-explained` (letters, digits, `-` and `_` only). Don't overwrite an existing file unless asked.
 - Write `presentations/<id>.json` with `"version": 1`, a `"title"` and the scenes.
-- Pictures: only reference files that exist. Screenshots the user gives you can be copied to `images/<name>.png` and used as `"src": "/images/<name>.png"`.
+- Pictures and screen recordings: only reference files in the media library (`/media/<file>`; listed in `media/index.json`). A screenshot or recording the user gives you goes in with `npm run media -- import <file> --name "what it shows"`, which converts it (WebP, WebM video) and prints the `src` to use. Don't copy files into `images/`. For how to use recordings (play, go to frame), see the demo-interactions skill.
 
 ## 4. Check, look, fix
 

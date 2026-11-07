@@ -3,8 +3,8 @@
 // so a jz-motion presentation can reference it by the "/media/…" src it prints and play the actual UI
 // motion in sync with the narration ("play" action).
 //
-// Capture is pure-JS (Playwright + upng-js); no FFmpeg needed. jz-motion plays APNGs through the
-// browser's ImageDecoder in the same way as GIF and animated WebP.
+// Capture is pure-JS (Playwright + upng-js): the raw capture is an APNG in scratch/captures/, which the media
+// library then converts to WebM video (the only kind of recording the board plays).
 //
 // Usage:
 //   node scripts/record.mjs <url> <name> <scenario.mjs> [--size WxH] [--fps N]

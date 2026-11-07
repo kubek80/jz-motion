@@ -17,7 +17,7 @@ Read `docs/style.md` first (the big table of "which action, when" — the row fo
 {
   "id": "editor",
   "type": "image",
-  "src": "/images/editor.png",
+  "src": "/media/4b9030113ac6f590.webp",
   "x": 960, "y": 540,
   "width": 1600, "height": 900,
   "frame": "browser",
@@ -26,7 +26,7 @@ Read `docs/style.md` first (the big table of "which action, when" — the row fo
 }
 ```
 
-- `src` must be a file that exists in `images/` (user pastes/drops them in the editor; or copy a file there yourself). Never invent paths.
+- `src` must be a file in the media library (`/media/<file>`): see what is there in `media/index.json` (each entry has a `name`, a `kind` — picture or recording — and its `src`). New ones come in converted: the user pastes, drops or records them in the app, or you run `npm run snap` / `npm run record` / `npm run media -- import <file>`, which print the `src`. Never invent paths, and never copy files into `images/` (that folder is from before the media library).
 - `"frame": "browser"` makes it look like a window of your app, with the URL in the address bar — so the viewer knows what app this is.
 - `color` is the frame colour; use the scene's accent.
 
@@ -129,7 +129,7 @@ export async function run(page) {
 {
   "id": "editor",
   "type": "image",
-  "src": "/images/editor-open.png",
+  "src": "/media/<hash>.webp",
   "x": 960, "y": 540,
   "width": 1600, "height": 900,
   "frame": "browser",
@@ -144,7 +144,7 @@ For a recording, use the recording's `src` (a `/media/<hash>.webm` video) and dr
 { "do": "play", "target": "editor", "from": 0 }
 ```
 
-Recordings of steps (a scenario that clicks, waits, clicks) are best shown **frame by frame**: a frame is one distinct picture of the recording, numbered from 1 (`curl localhost:5173/api/media/<file>/frames` lists when each starts). Move one step per beat:
+Recordings of steps (a scenario that clicks, waits, clicks) are best shown **frame by frame**: a frame is one distinct picture of the recording, numbered from 1 (`npm run media -- frames <file>` lists them and when each starts; in the app, selecting the recording shows a frame stepper). In the app's beats these show as **Go to frame** and **Play to frame**. Move one step per beat:
 
 ```json
 { "do": "play", "target": "editor", "goto": 3, "fade": true, "duration": 0.6 }
@@ -152,6 +152,10 @@ Recordings of steps (a scenario that clicks, waits, clicks) are best shown **fra
 ```
 
 The first jumps to frame 3 with a soft cross-fade and holds it while you talk; the second plays on to frame 7 in two seconds and holds it.
+
+### Recordings the user brings
+
+A screen recording the user made elsewhere (any video: MP4, MOV, WebM; or an APNG or GIF) goes in with `npm run media -- import <file> --name "what it shows"`: it becomes WebM video with a poster picture, and the command prints its `/media/<hash>.webm` src. Don't reference the original file and don't copy it into `images/`: APNG and GIF don't animate on the board unless they go through the media library. Then `npm run media -- frames <file>` to see its frames.
 
 ### When to snap, when to record
 
