@@ -45,6 +45,23 @@ export function TextAreaField({ value, onChange }: { value?: string; onChange: (
   );
 }
 
+/**
+ * Several lines of prose (speaker notes): Enter starts a new line and line breaks are kept (a one-line
+ * box would drop them). Grows with the text; commits when focus leaves, or with Ctrl+Enter.
+ */
+export function ProseField({ value, placeholder, onChange }: { value?: string; placeholder?: string; onChange: (v: unknown) => void }) {
+  const [draft, setDraft] = useState(value ?? '');
+  useEffect(() => setDraft(value ?? ''), [value]);
+  const commit = () => draft !== (value ?? '') && onChange(draft.trim() === '' ? undefined : draft);
+  return (
+    <textarea
+      className="prose-input" rows={Math.min(14, Math.max(3, draft.split('\n').length + 1))} value={draft} placeholder={placeholder}
+      onChange={(e) => setDraft(e.target.value)} onBlur={commit}
+      onKeyDown={(e) => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) commit(); }}
+    />
+  );
+}
+
 export function NumberField({ value, placeholder, onChange }: { value?: number; placeholder?: string; onChange: (v: number | undefined) => void }) {
   const [draft, setDraft] = useState(value === undefined ? '' : String(value));
   useEffect(() => setDraft(value === undefined ? '' : String(value)), [value]);

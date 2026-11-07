@@ -580,3 +580,14 @@ Exporting "about this app, with edit demo" failed with "unknown icon i-would-lik
 **Checked by:** the presentation compiled on the server: 16 errors without the library, none with its 60 items; a real export of its "Why I built it" scene (21 s, 633 frames) with the custom clipart in the video; typecheck, tests, build.
 
 ![A frame of the exported scene, with clipart from the app's own library](journey/84-export-own-icons.jpg)
+
+## Step 43: Speaker notes keep their line breaks wherever they are edited
+
+Jakub found that prompter text sometimes lost its line breaks after editing. Editing in the prompter (Timing) and on the Script page kept them; the beat's **speaker notes** in Properties was a one-line text box, and browsers drop line breaks from those, so typing anything there saved the notes as one line. Since double-clicking a beat in Timing now opens exactly that field, it happened more often. Speaker notes now get a multi-line box there that grows with the text (Enter is a new line, Ctrl+Enter or clicking away keeps it).
+
+- Also: two or more blank lines in a row left an empty line at the top of the next prompter line; and the prompter's "Before" box now keeps line breaks too.
+- How notes become prompter lines is unchanged: each sentence gets its own line; a single line break stays inside the sentence; a blank line starts a new one.
+
+**Checked by:** 3 new unit tests for how notes are split into lines (73 in all); in the browser, typing with Enter into the prompter, and into the notes in Properties on a copy of "about this app, with edit demo" (the blank lines already there were kept and the two typed lines added on their own lines); typecheck and build.
+
+![Speaker notes in Properties, several lines](journey/85-notes-field.jpg)
