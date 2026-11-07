@@ -614,3 +614,19 @@ Jakub wanted to click through the frames of an animated recording in edit mode, 
 
 ![The frame stepper under a recording](journey/86-frame-stepper.jpg)
 ![Halfway through a cross-fade from frame 4 to frame 10](journey/87-frame-crossfade.jpg)
+
+## Step 46: Smooth clipart in exports, even volume, and a roomier Timing
+
+Jakub found that slightly moving cliparts shook in the MP4, his recording came out too quiet, and asked for Timing to show which audio lane is active, to use a taller timeline better (more rows for beats), and to change a beat's options right there.
+
+- **Shaking clipart:** imported UnDraw clipart has a gentle idle sway. It ran on a GSAP tween on the wall clock with random timing, so the exporter, which draws frames at its own pace, caught it at arbitrary points: in the video it jumped back and forth. The sway now runs on the board's clock (like flows and spins, advanced exactly one frame per exported frame), with its pace and phase from the element's id, so it is smooth and the same in every export.
+- **Even volume:** export brings the sound to -16 LUFS (EBU R128, the usual level for online video; peaks under -1.5 dB) with FFmpeg's `loudnorm`, after mixing the tracks. On by default; *even out volume* in the Video tab (or `npm run export -- … --raw-audio`) turns it off.
+- **Which lane is heard:** the clip under the playhead glows, and the Now card (also in the prompter) says "lane 1 · narration …"; while recording, the new narration grows live as a red block on the lane it goes to, and the card says "● Recording on lane 1".
+- **A taller timeline** spreads beat labels over as many rows as fit, each in the lowest row where it doesn't run into the label before it (two rows when short, as before).
+- **The beat drawer:** a plain click on a beat (it still moves the playhead) opens its options over the right of Timing: title, speaker notes, play automatically, start time, video layout and recording, and its actions with their timing; click an action to change it with the same editor as in Properties. "Open in editor" (or double-click) goes to the editor; Esc closes just the drawer.
+
+**Checked by:** 30 export frames of a scene with UnDraw clipart, twice (the second with uneven pauses between frames): the sway moves smoothly (largest step 0.19 units, one turn at its peak) and is identical in both runs; a quiet test sound at -60 LUFS came out at -16.0 LUFS through the export's filter; a test for the filter switch (77 tests); in the browser on a copy of "about this app, with edit demo" with a test voice clip: 73 beat labels in 11 rows with none overlapping on a 420-pixel timeline, the lane tag and glowing clip, a recording with the fake microphone growing on lane 1, and the drawer (renaming a beat saved, an action opened in the action editor, Esc closed only the drawer).
+
+![Timing: beats spread over more rows, the lane tag in the Now card](journey/88-timing-rows-lane.jpg)
+![The beat drawer](journey/89-beat-drawer.jpg)
+![Even out volume in the Video tab](journey/90-even-volume.jpg)

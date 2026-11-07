@@ -1,4 +1,4 @@
-// npm run export -- <presentation.json> [--take <id>] [--current] [--out file.mp4] [--fps 30|60] [--4k] [--gap 1.5]
+// npm run export -- <presentation.json> [--take <id>] [--current] [--out file.mp4] [--fps 30|60] [--4k] [--gap 1.5] [--raw-audio]
 // Renders a presentation (optionally with a recorded take) to MP4 without opening the app.
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
@@ -15,7 +15,7 @@ const value = (name: string) => {
 };
 const input = args.find((a, i) => !a.startsWith('--') && !args[i - 1]?.startsWith('--'));
 if (!input) {
-  console.error('usage: npm run export -- <presentation.json> [--take <id>] [--current] [--out file.mp4] [--fps 30|60] [--4k] [--gap seconds]');
+  console.error('usage: npm run export -- <presentation.json> [--take <id>] [--current] [--out file.mp4] [--fps 30|60] [--4k] [--gap seconds] [--raw-audio]');
   process.exit(1);
 }
 
@@ -28,7 +28,7 @@ const started = Date.now();
 try {
   const { duration } = await exportVideo({
     presentation, take, useTakePresentation: !flag('current'),
-    fps: value('fps') === '60' ? 60 : 30, scale: flag('4k') ? 2 : 1,
+    fps: value('fps') === '60' ? 60 : 30, scale: flag('4k') ? 2 : 1, normalizeAudio: !flag('raw-audio'),
     timing: { ...DEFAULT_TIMING, ...(value('gap') ? { gap: Number(value('gap')) } : {}) },
     out, appUrl: server.resolvedUrls!.local[0],
     onProgress: (done, total) => {

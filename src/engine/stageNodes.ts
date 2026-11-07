@@ -42,7 +42,12 @@ export interface ElementNodes {
   areaOutline?: SVGElement;
   /** Fixed on the screen, outside the camera. */
   pinned?: boolean;
+  /** Imported clipart's gentle idle sway, driven by the board's clock. */
+  idle?: IdleNodes;
 }
+
+/** An idle sway: up by `rise` and turned by `turn` degrees about (cx, cy) and back, every `period` seconds. */
+export interface IdleNodes { g: SVGElement; rise: number; turn: number; cx: number; cy: number; period: number; phase: number }
 
 /**
  * A picture lives in its own layer under the marker glow (so it stays crisp), and copies the element's

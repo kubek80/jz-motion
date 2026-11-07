@@ -162,7 +162,7 @@ function startExport(body: any, appUrl: string): Job { // eslint-disable-line @t
       const out = join(EXPORTS_DIR, `${slug}-${new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-')}.mp4`);
       await exportVideo({
         presentation: body.presentation, take, useTakePresentation: body.useTakePresentation !== false,
-        fps: body.fps === 60 ? 60 : 30, scale: body.scale === 2 ? 2 : 1, timing: body.timing, out, appUrl,
+        fps: body.fps === 60 ? 60 : 30, scale: body.scale === 2 ? 2 : 1, timing: body.timing, out, appUrl, normalizeAudio: body.normalizeAudio !== false,
         onProgress: (done, total) => Object.assign(job, { done, total }),
       });
       Object.assign(job, { status: 'done', file: basename(out) });

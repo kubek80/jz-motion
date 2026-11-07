@@ -13,9 +13,11 @@ interface Props {
   time: number;
   np: NowPlaying;
   notes: NotesEditing;
+  /** Which lane's voice is heard now (or is being recorded), for the Now card. */
+  voiceNow?: { text: string; lane: number | null; live: boolean };
 }
 
-export function ScriptPanel({ width, recording, recPaused, time, np, notes }: Props) {
+export function ScriptPanel({ width, recording, recPaused, time, np, notes, voiceNow }: Props) {
   const { current, next, prev, prevLines, beatOf, sceneTitle, nowLines, nextLines, budget, anyClip, beatElapsed, playDur, activeLine, getBeatElapsed } = np;
   const { editingThis, startEditing, saveEditing, setEditingBeat, draftNotes, setDraftNotes } = notes;
   return (
@@ -46,6 +48,7 @@ export function ScriptPanel({ width, recording, recPaused, time, np, notes }: Pr
       <div className="now">
         <div className="now-head">
           <span className="muted">Now · {sceneTitle(current)}</span>
+          {voiceNow && <span className={['voice-now', voiceNow.lane !== null ? `lane-${voiceNow.lane}` : '', voiceNow.live ? 'live' : ''].join(' ')} title="Which lane's voice is heard here">{voiceNow.text}</span>}
           {budget > 0 && !editingThis(current) && (
             <span className={['beat-budget', beatElapsed > budget + 0.2 ? 'over' : '', anyClip ? '' : 'estimated'].join(' ')} title={anyClip ? 'Seconds into this beat vs. the total length of its generated voice clips' : 'Seconds into this beat vs. an estimate from word count at ~150 wpm (generate voice for the real pace)'}>
               {beatElapsed.toFixed(1)}s / {anyClip ? '' : '~'}{budget.toFixed(1)}s

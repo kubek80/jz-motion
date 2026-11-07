@@ -28,6 +28,8 @@ export function useTimingKeys(handlers: TimingKeys) {
       if ((e.target as HTMLElement).closest('input, textarea, select')) return;
       // A right-click menu is open: Esc closes it, not the Timing window.
       if (document.querySelector('.context-menu, .transcript-window')) return;
+      // Esc with the beat drawer open closes the drawer (it handles that itself).
+      if (e.key === 'Escape' && document.querySelector('.beat-drawer')) return;
       const k = keys.current;
       if (k.recording) {
         // Space during recording: hold the prompter/board still while the mic keeps capturing,

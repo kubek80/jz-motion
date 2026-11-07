@@ -1,5 +1,7 @@
 // The Timing window: wires the clock, board, timeline editing, prompter, narration recording and
 // voice-over hooks together and lays out the header, board, script panel, controls and timeline.
+import type { RawBeat, RawDoc } from '../editor/doc';
+import { BeatDrawer } from './BeatDrawer';
 import { TranscriptWindow } from './TranscriptWindow';
 import { TimelineMinimap } from './TimelineMinimap';
 import { useMissingUploads } from './useMissingUploads';
@@ -43,6 +45,9 @@ interface Props {
   onTake: (id: string) => void;
   /** Close Timing and edit this beat in the editor. */
   onEditBeat: (scene: number, beat: number) => void;
+  /** The presentation as edited, and replacing one beat (from the beat drawer). */
+  doc: RawDoc;
+  onBeat: (scene: number, beat: number, next: RawBeat) => void;
   onClose: () => void;
 }
 
@@ -50,7 +55,7 @@ interface Props {
  * Timing a presentation to a voice-over: the narration's waveform with every click placed on it. Drag a click
  * to move it, or play and tap T as each line starts. The board plays along, with the script line beside it.
  */
-export function Timing({ presentation, text, presentationId, voiceover, onVoiceover, onCues, onNotes, onTake, onEditBeat, onClose }: Props) {
+export function Timing({ presentation, text, presentationId, voiceover, onVoiceover, onCues, onNotes, onTake, onEditBeat, doc, onBeat, onClose }: Props) {
   const onCue = (scene: number, beat: number, cue: number | undefined) => onCues([{ scene, beat, cue }]);
   const clicks = useMemo(() => cueClicks(presentation), [presentation]);
   // Voiceover is held either as a legacy single clip or as a multi-clip arrangement; `clipsOf()`
@@ -87,8 +92,10 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
   const missing = useMissingUploads(clips);
   /** Clips being transcribed in the Transcript window. */
   const [transcribing, setTranscribing] = useState<Clip[] | null>(null);
+  /** The beat whose options are open in the drawer. */
+  const [openBeat, setOpenBeat] = useState<{ scene: number; beat: number } | null>(null);
   const { clipDrag, startDragClip, deleteClip, startTrimClip, splitAtPlayhead, splitClipAt, canSplitAt, setClipLane } = useClipEditing(clips, setClips, rec, pps, now);
-  const { drag, startDrag, tapping, setTapping, tapIndex, setTapIndex, nextAfter, tap } = useCueDragging(clicks, rec, pps, onCue, seek, now);
+  const { drag, startDrag, tapping, setTapping, tapIndex, setTapIndex, nextAfter, tap } = useCueDragging(clicks, rec, pps, onCue, seek, now, (i) => setOpenBeat({ scene: clicks[i].scene, beat: clicks[i].beat }));
 
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -103,6 +110,14 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
   const { loadVoiceover, makeTake } = useVoiceoverFile({ clips, perf, text, presentationId, onVoiceover, onTake, seek, setPps, setBusy, setError });
 
   const np = useNowPlaying({ presentation, clicks, drag, time, total, now, tts, voicer });
+
+  // Whose voice is heard at the playhead (or where the narration being recorded goes), for the prompter.
+  const sounding = clips.filter((c) => time >= c.offset && time < c.offset + (c.trimEnd - c.trimStart));
+  const voiceNow = recording && rec.current
+    ? { text: `● Recording on lane ${rec.current.lane + 1}`, lane: rec.current.lane, live: true }
+    : sounding.length
+      ? { text: `${sounding.map((c) => `lane ${c.lane + 1}`).join(' + ')} · ${sounding[0].name ?? 'clip'}`, lane: sounding.length === 1 ? sounding[0].lane : null, live: false }
+      : clips.length ? { text: 'no voice here', lane: null, live: false } : undefined;
 
   return (
     <div className="timing">
@@ -140,6 +155,7 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
           style={prompter ? { order: -1 } : undefined}
         />
         <ScriptPanel
+          voiceNow={voiceNow}
           width={prompter ? scriptWPrompter.value : scriptWTiming.value}
           recording={recording}
           recPaused={recPaused}
@@ -147,6 +163,9 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
           np={np}
           notes={notes}
         />
+        {openBeat && (
+          <BeatDrawer doc={doc} presentation={presentation} scene={openBeat.scene} beat={openBeat.beat} onBeat={onBeat} onEditBeat={onEditBeat} onClose={() => setOpenBeat(null)} />
+        )}
       </div>
       <TimingControls
         recording={recording}

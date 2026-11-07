@@ -23,6 +23,7 @@ export function VideoPanel({ presentation, presentationId, refreshKey, select }:
   const [busy, setBusy] = useState<string | null>(null);
   const [fps, setFps] = useState(30);
   const [scale, setScale] = useState(1);
+  const [evenOut, setEvenOut] = useState(true);
   const [gap, setGap] = useState(1.5);
   const [asRecorded, setAsRecorded] = useState(true);
   const [job, setJob] = useState<Job | null>(null);
@@ -65,7 +66,7 @@ export function VideoPanel({ presentation, presentationId, refreshKey, select }:
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({
-          presentation: JSON.parse(presentation), takeId: take?.id, useTakePresentation: asRecorded, fps, scale,
+          presentation: JSON.parse(presentation), takeId: take?.id, useTakePresentation: asRecorded, fps, scale, normalizeAudio: evenOut,
           timing: { lead: 0.8, gap, tail: 2 },
         }),
       });
@@ -155,6 +156,9 @@ export function VideoPanel({ presentation, presentationId, refreshKey, select }:
             <option value={30}>30 fps</option>
             <option value={60}>60 fps</option>
           </select>
+          <label className="check" title="Brings the sound to a standard loudness (-16 LUFS, as online videos use): a quiet recording comes up, a loud one doesn't clip. Untick to keep it exactly as recorded.">
+            <input type="checkbox" checked={evenOut} onChange={(e) => setEvenOut(e.target.checked)} /> even out volume
+          </label>
           <button className="primary" disabled={running || !!busy || takes === null} onClick={exportVideo}>{running ? 'Exporting…' : 'Export MP4'}</button>
         </div>
         {job && (

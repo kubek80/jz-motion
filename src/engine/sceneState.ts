@@ -30,7 +30,15 @@ export function applyState(nodes: Map<string, ElementNodes>, flows: Map<string, 
 
 /** Pictures, charts, 3D (spinning by `dt` seconds) and flows (at `ambient` seconds on the clock). */
 export function redrawComputed(nodes: Map<string, ElementNodes>, flows: Map<string, FlowState>, dt: number, ambient: number) {
-  for (const n of nodes.values()) if (n.image) renderImage(n);
+  for (const n of nodes.values()) {
+    if (n.image) renderImage(n);
+    if (n.idle) {
+      // 0 → 1 → 0 on a smooth curve (like a sine yoyo), from the clock, so exports land on exact positions.
+      const k = 0.5 - 0.5 * Math.cos(2 * Math.PI * (ambient / n.idle.period + n.idle.phase));
+      const i = n.idle;
+      i.g.setAttribute('transform', `translate(0 ${(-i.rise * k).toFixed(3)}) rotate(${(i.turn * k).toFixed(3)} ${i.cx} ${i.cy})`);
+    }
+  }
   for (const n of nodes.values()) {
     if (n.chart) renderChart(n.chart);
     if (!n.iso) continue;
