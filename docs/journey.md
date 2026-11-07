@@ -805,3 +805,10 @@ Jakub didn't see the generated voice, and the timing was off. Both were right: t
 ![The B versions in Timing: generated voice where each B scene plays](journey/106-b-versions-timing.jpg)
 
 **Checked by:** a new test (left-out scenes take no clicks, and the first event is the first scene that plays); the click times of his presentation before and after (identical); Timing on the copy opening at the first B scene with its generated voice under the playhead; Play mode stepping from scene 6 straight to "Edit like a whiteboard"; typecheck, tests, build.
+
+## Step 62: Both versions on one timeline
+
+Jakub wanted to see the timeline with both A and B, the B scenes with their generated voice, not a separate copy. In his presentation each B scene now plays right after its original (no longer left out): the timeline opens a gap where the next scene started, the B scene's generated narration goes there (lane 1), its beats are cued where its sentences start, and every later clip and cue moves on by the gap (37–43 s per B scene). His clips that ran across a cut are split there. The "B versions" copy is gone.
+
+**Checked by:** 0 cues ignored; each original scene's beats keep their spacing (e.g. Edit like a whiteboard: 5.4, 2.2, 1.5, 1.5 s apart, as before); no clips overlap on either lane; `npm run check`.
+
