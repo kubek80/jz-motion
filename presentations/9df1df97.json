@@ -61,7 +61,7 @@
             }
           ],
           "notes": "LLM first - explainer video creator.\n\nEverything you'll see here was produced by it including a glowing marker board, animations, text, and charts.\n\nNo Photoshop, After Effect or Premire - just me Claude Code & my app",
-          "cue": 5.8
+          "cue": 5.9
         }
       ]
     },
@@ -3560,8 +3560,8 @@
               "stagger": 0.4
             }
           ],
-          "cue": 392.35,
-          "notes": "And the last mile: I click Record and adjusting the timeing, like I'm doing now. My script, my voice, and every click are saved as a take.\n\nThank you for watching"
+          "notes": "And the last mile: I click Record and adjusting the timeing, like I'm doing now. My script, my voice, and every click are saved as a take.\n\nThank you for watching",
+          "cue": 392.35
         },
         {
           "title": "Export",
