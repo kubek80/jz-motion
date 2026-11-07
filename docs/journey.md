@@ -705,3 +705,15 @@ Jakub found it hard to put the mouse exactly on a beat to move it, and asked for
 **Checked by:** in the browser on a copy of "about this app, with edit demo" with three voice clips (starting 0 s, 30 s, 100 s): grabbing 6 pixels beside beat 2.2's line worked; the hint showed on press and while dragging with Ctrl lit; Ctrl + drag 2 s moved the beat 26.35 → 28.35 and the clips at 30 s and 100 s to 32 s and 102 s, left the clip at 0 s and beat 2.3 where they were, and both changes were saved. Typecheck, tests, build.
 
 ![Dragging a beat with Ctrl: the hint, and the later clips moving with it](journey/94-beat-drag-hint.jpg)
+
+## Step 54: "Go to frame" and "Play to frame" as actions of their own
+
+Jakub wanted "go to frame" to be an action in the beat, not only a setting hidden inside Play.
+
+- **+ action → Move and play** now has **Go to frame** and **Play to frame** next to Play (for recordings). They are still a `play` with `goto` or `until` underneath, so the format and the models are unchanged; the app shows them as what they do: "Go to frame 4, fading", "Play to frame 9", in the storyboard, the beat drawer and the action's properties (which can also change one into the other).
+- Each shows only its own settings: Go to frame the frame and the fade; Play to frame the frame to stop on (and an optional one to start from) and speed; Play on/off, jump to and speed.
+- **Bug found:** whole-number settings ("go to frame", "until", Pulse's "how many times") were shown as raw JSON boxes; they get number boxes now.
+
+**Checked by:** in the browser on a copy of "about this app, with edit demo": with the recording selected, + action listed Go to frame and Play to frame; choosing Go to frame added "Go to frame 1"; its properties showed only acts on, go to frame and fade; setting 4 with fade read "Go to frame 4, fading" and saved `{"do":"play","target":"clip","goto":4,"fade":true}`. Typecheck, tests, build.
+
+![A Go to frame action's properties](journey/95-go-to-frame-action.jpg)

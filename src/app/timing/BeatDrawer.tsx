@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { CompiledPresentation } from '../../engine/compile';
 import { ActionEditor } from '../editor/ActionEditor';
-import { actionInfo } from '../editor/actionInfo';
+import { describeAction } from '../editor/actionInfo';
 import type { Raw, RawBeat, RawDoc } from '../editor/doc';
 import { Fields } from '../editor/Fields';
 import { beatSchema } from '../editor/schemas';
@@ -64,7 +64,7 @@ export function BeatDrawer({ doc, presentation, scene, beat, onBeat, onEditBeat,
         <h4>Actions</h4>
         <ol className="drawer-actions">
           {raw.actions.map((a, ai) => {
-            const v = actionInfo(a.do);
+            const v = describeAction(a);
             const t = compiled?.actions[ai];
             const who = [a.target ?? a.focus ?? []].flat().join(', ');
             return (

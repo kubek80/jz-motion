@@ -175,7 +175,8 @@ function Field({ name, prop, value, ids, onChange }: { name: string; prop: Prop;
   if (name === 'focus') return <IdList value={value} ids={ids} allowAll onChange={onChange} />;
 
   if (prop.enum) return <Select value={value} options={prop.enum} empty={placeholder ? `(${placeholder})` : '—'} onChange={onChange} />;
-  if (prop.type === 'number') return <NumberField value={value as number | undefined} placeholder={placeholder} onChange={onChange} />;
+  // Whole numbers ("integer" in the schema: frames, times, lanes) get the same number box.
+  if (prop.type === 'number' || prop.type === 'integer') return <NumberField value={value as number | undefined} placeholder={placeholder} onChange={onChange} />;
   if (prop.type === 'boolean') {
     // Unset means the default; setting it back to the default removes it from the JSON.
     const checked = value === undefined ? prop.default === true : value === true;

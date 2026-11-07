@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { actionInfo as verb, newAction } from './actionInfo';
+import { describeAction, newAction } from './actionInfo';
 import { AddActionMenu } from './AddActionMenu';
 import { moveItem, type Raw, type RawBeat } from './doc';
 import type { Selection } from './types';
@@ -117,7 +117,7 @@ export function Beats({ beats, selection, picked, timing, colors, types, chartDa
                 {beat.actions.length === 0 && <li className="empty muted">No actions yet</li>}
                 {beat.actions.map((a, ai) => {
                   const sel = selection?.kind === 'action' && selection.beat === bi && selection.action === ai;
-                  const v = verb(a.do);
+                  const v = describeAction(a);
                   const t = times[ai];
                   const run = into === null || !t ? '' : into >= t.end - 1e-6 ? 'run-done' : into >= t.start - 1e-6 ? 'running' : '';
                   return (
