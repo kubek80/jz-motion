@@ -26,6 +26,8 @@ interface Props {
   onSceneAdded: (index: number) => void;
   /** From Timing: close it and edit this beat. */
   onEditBeat: (scene: number, beat: number) => void;
+  /** Timing closed with this scene at its playhead: show it. */
+  onTimingClosed: (scene: number) => void;
   settingsOpen: boolean;
   setSettingsOpen: (open: boolean) => void;
   timingOpen: boolean;
@@ -43,7 +45,7 @@ interface Props {
 }
 
 export function EditorWindows({
-  id, text, doc, result, sceneIndex, update, latest, add, onSceneAdded, onEditBeat,
+  id, text, doc, result, sceneIndex, update, latest, add, onSceneAdded, onEditBeat, onTimingClosed,
   settingsOpen, setSettingsOpen, timingOpen, setTimingOpen, scriptOpen, setScriptOpen, libraryOpen, setLibraryOpen,
   creating, setCreating, libraryVersion, setLibraryVersion, onTake,
 }: Props) {
@@ -95,7 +97,7 @@ export function EditorWindows({
           doc={doc}
           onBeat={(si, bi, next) => update(updateBeats(latest(), si, (beats) => beats.map((b, i) => (i === bi ? next : b))))}
           startScene={sceneIndex}
-          onClose={() => setTimingOpen(false)}
+          onClose={(scene) => { setTimingOpen(false); onTimingClosed(scene); }}
         />
       )}
       {scriptOpen && doc && result.ok && (

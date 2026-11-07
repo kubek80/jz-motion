@@ -51,7 +51,8 @@ interface Props {
   onBeat: (scene: number, beat: number, next: RawBeat) => void;
   /** The scene being looked at in the editor: Timing opens with the playhead at its start. */
   startScene?: number;
-  onClose: () => void;
+  /** Closes Timing; `scene` is the one at the playhead, for the editor to show. */
+  onClose: (scene: number) => void;
 }
 
 /**
@@ -119,7 +120,9 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
   const { recording, recPaused, startRecording, nextLine, previousLine, togglePauseRecording, stopRecording } =
     useNarrationRecording({ clock, clips, clicks, setClips, onCue, onCues, setBusy, setError });
 
-  useTimingKeys({ playing, tapping, tap, play, pause, seek, now, onClose, recording, nextLine, previousLine, stopRecording, togglePauseRecording, splitAtPlayhead });
+  // Closing goes back to the editor on the scene at the playhead.
+  const close = () => onClose(clicks.reduce((at, c) => (c.t <= now() + 1e-3 ? c.scene : at), clicks[0]?.scene ?? startScene));
+  useTimingKeys({ playing, tapping, tap, play, pause, seek, now, onClose: close, recording, nextLine, previousLine, stopRecording, togglePauseRecording, splitAtPlayhead });
 
   const { loadVoiceover, makeTake } = useVoiceoverFile({ clips, perf, text, presentationId, onVoiceover, onTake, seek, setPps, setBusy, setError });
 
@@ -154,7 +157,7 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
         missingCount={clips.filter((c) => missing.has(c.upload)).length}
         removeMissing={() => setClips(clips.filter((c) => !missing.has(c.upload)))}
         onTranscript={() => setTranscribing(clips.filter((c) => !missing.has(c.upload)))}
-        onClose={onClose}
+        onClose={close}
       />
       <div className="timing-body prompter">
         <div className="timing-board" ref={host} />

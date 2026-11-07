@@ -746,3 +746,11 @@ Jakub asked for the Edit / Play buttons to sit just above the beats (in the AI r
 
 **Checked by:** Playwright on a copy of a presentation: P → Play, Esc → Edit, P P → Edit; typing "p" in the AI box stays in the box; opening Timing from scene 3 put the playhead at 0:54.0, no Prompter button, and P inside Timing did nothing; no page errors. Typecheck, tests, build.
 
+## Step 57: Closing Timing goes to the scene you were on
+
+Jakub asked that closing Timing should land on the scene being looked at there. Closing (Esc or ✕) now tells the editor which scene the playhead is in, and the editor switches to it; the scene list scrolls so the current scene is always in view (it could be off the bottom of the list).
+
+![Closed Timing at 5:32: the editor shows scene 14, listed in view](journey/99-timing-close-to-scene.jpg)
+
+**Checked by:** Playwright on a copy of a presentation: opened Timing from scene 3, moved the playhead to 3:59 and pressed Esc → scene 10; reopened, moved to 5:32 and clicked ✕ → scene 14; reopened (at 5:22, scene 14's start) and closed without moving → stays on 14; no page errors. Typecheck, tests, build.
+
