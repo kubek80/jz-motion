@@ -96,6 +96,8 @@ export interface VideoNodes {
   fades: { t: number; dur: number; from: number }[];
   /** The second video that shows what a cross-fade starts from (made when a play first fades). */
   fade?: { video: HTMLVideoElement; target: number; busy: Promise<void> | null; ready: Promise<boolean> };
+  /** Timeline time this board first saw it standing at its stop or end (undefined while it moves). */
+  stillSince?: number;
   /** Export: the time last asked of the video, and the wait until that frame is shown. */
   target: number;
   busy: Promise<void> | null;

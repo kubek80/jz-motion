@@ -630,3 +630,14 @@ Jakub found that slightly moving cliparts shook in the MP4, his recording came o
 ![Timing: beats spread over more rows, the lane tag in the Now card](journey/88-timing-rows-lane.jpg)
 ![The beat drawer](journey/89-beat-drawer.jpg)
 ![Even out volume in the Video tab](journey/90-even-volume.jpg)
+
+## Step 47: Faster MP4 export
+
+Jakub found exporting slow and asked whether writing MKV first and converting would help. Measured on the "Why I built it" scene: drawing a frame takes 2 ms, photographing it 217 ms, while FFmpeg encodes 69 frames a second (15 times faster than one page supplies them). So the container and the encoder are not the problem, and MKV-then-convert would not help. The time is Chromium painting the glowing board without a graphics card: without the glow a frame takes 36 ms instead of 158 ms, and a frame where nothing moved costs as much as one where everything did (202 ms).
+
+- **Frames where nothing moves are reused.** The export page now says whether anything can have changed since the frame before: a tween touching that span, a flow or spin that is on, swaying clipart, a recording playing (until it has stood at its stop or end since before the previous frame) or cross-fading, or a new scene. If not, the exporter sends the previous picture again without drawing or photographing it. It errs towards "it moved".
+- **More pages in parallel:** one per processor core minus one, up to 8 (4 for 4K) instead of at most 4; `JZM_EXPORT_WORKERS` still overrides.
+- The command line says how many frames were reused.
+- Not done: using the graphics card for the glow. Headless Chromium can, but it depends on the computer and couldn't be tested here.
+
+**Checked by:** every frame of two scenes drawn and photographed in order as a reference, then the export's way with 4 pages: of the frames called still (273 of 415 in the go-to/fade/until test, 83 of 824 in "Edit text, change colour", which plays its recording most of the time), none differed from the frame before. A real export of "Why I built it": 74 s instead of 128 s on this 4-core machine (259 of 633 frames reused), and the video matches the earlier one (PSNR 65 dB; the only difference is the clipart sway, now steady). Typecheck, tests, build.
