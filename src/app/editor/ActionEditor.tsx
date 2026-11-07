@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ACTIONS, actionInfo, GROUPS } from './actionInfo';
+import { ACTIONS, describeAction, GROUPS, kindOf, newAction } from './actionInfo';
 import type { Raw } from './doc';
 import { Fields } from './Fields';
 import { actionSchemas } from './schemas';
@@ -17,10 +17,17 @@ interface Props {
   onChange: (next: Raw) => void;
 }
 
+/** The play kinds show only their own settings (Go to frame: which frame and the fade; Play to frame: where it stops). */
+const PLAY_HIDES: Record<string, string[]> = {
+  play: ['goto', 'until', 'fade'],
+  'goto-frame': ['on', 'from', 'until', 'speed'],
+  'play-to-frame': ['on', 'from', 'fade'],
+};
+
 const secs = (s: number) => `${Math.round(s * 100) / 100} s`;
 
 export function ActionEditor({ action: a, beat, index, ids, time, onChange }: Props) {
-  const v = actionInfo(a.do);
+  const v = describeAction(a);
   const set = (key: string, value: unknown) => {
     const next = { ...a, [key]: value };
     if (value === undefined) delete next[key];
@@ -42,11 +49,14 @@ export function ActionEditor({ action: a, beat, index, ids, time, onChange }: Pr
       <label className="field" title="Turn it into another kind of action; who it acts on and its timing are kept where they still make sense">
         <span>change to</span>
         <select
-          value={a.do}
+          value={kindOf(a)}
           onChange={(e) => {
             const kind = e.target.value;
-            const keep = Object.fromEntries(Object.entries(a).filter(([k]) => ['target', 'start', 'delay', 'duration'].includes(k) && k in actionSchemas[kind].properties));
-            onChange({ do: kind, ...keep });
+            const made = newAction(kind, []);
+            // Keep what makes sense across kinds: who it targets and when it runs.
+            const keep = Object.fromEntries(Object.entries(a).filter(([k]) => ['target', 'start', 'delay', 'duration'].includes(k) && k in actionSchemas[String(made.do)].properties));
+            const { target: _t, ...defaults } = made;
+            onChange({ ...defaults, ...keep });
           }}
         >
           {GROUPS.map((g) => (
@@ -81,7 +91,7 @@ export function ActionEditor({ action: a, beat, index, ids, time, onChange }: Pr
         )}
       </fieldset>
 
-      <Fields schema={actionSchemas[a.do]} value={a} ids={ids} hide={['start', 'delay', 'duration']} onChange={set} />
+      <Fields schema={actionSchemas[a.do]} value={a} ids={ids} hide={['start', 'delay', 'duration', ...(PLAY_HIDES[kindOf(a)] ?? [])]} onChange={set} />
     </div>
   );
 }

@@ -31,6 +31,9 @@ export const ACTIONS: Record<string, ActionInfo> = {
   camera: { icon: '⌖', label: 'Camera', family: 'camera', on: undefined, does: 'Moves the view to frame it (or everything)' },
   move: { icon: '➜', label: 'Move', family: 'motion', does: 'Slides it to another place on the board' },
   flow: { icon: '⇢', label: 'Flow', family: 'motion', on: ['arrow'], onNote: 'arrows', does: 'Sends dots along an arrow until turned off' },
+  // "Go to frame" and "Play to frame" are a play with `goto` or `until`; offered (and shown) as actions of their own.
+  'goto-frame': { icon: '⏭', label: 'Go to frame', family: 'motion', on: ['image'], onNote: 'recordings', does: 'Jumps to one frame of a recording and holds it, with a cross-fade if you like' },
+  'play-to-frame': { icon: '⏩', label: 'Play to frame', family: 'motion', on: ['image'], onNote: 'recordings', does: 'Plays a recording on from where it is and stops on a frame' },
   play: { icon: '▶', label: 'Play', family: 'motion', on: ['image'], onNote: 'recordings', does: 'Plays a recording, goes to one of its frames (with a fade if you like), or plays on to a frame and stops' },
   rotate: { icon: '↻', label: 'Rotate', family: 'motion', on: ['iso'], onNote: '3D models', does: 'Turns a 3D model' },
   spin: { icon: '⟳', label: 'Spin', family: 'motion', on: ['iso'], onNote: '3D models', does: 'Keeps a 3D model turning until stopped' },
@@ -45,11 +48,23 @@ export const GROUPS: { title: string; kinds: string[] }[] = [
   { title: 'Take away', kinds: ['fade-out', 'erase'] },
   { title: 'Point at', kinds: ['circle', 'pulse', 'recolor', 'spotlight'] },
   { title: 'View', kinds: ['camera'] },
-  { title: 'Move and play', kinds: ['move', 'play', 'flow', 'rotate', 'spin', 'explode'] },
+  { title: 'Move and play', kinds: ['move', 'play', 'goto-frame', 'play-to-frame', 'flow', 'rotate', 'spin', 'explode'] },
   { title: 'Data and timing', kinds: ['set-values', 'wait'] },
 ];
 
 export const actionInfo = (kind: string): ActionInfo => ACTIONS[kind] ?? { icon: '•', label: kind, family: 'wait', does: '' };
+
+/** The kind an action is shown as: a play with `goto` (and no `until`) is "Go to frame", with `until` "Play to frame". */
+export const kindOf = (a: Raw): string => (a.do !== 'play' ? String(a.do) : a.until !== undefined ? 'play-to-frame' : a.goto !== undefined ? 'goto-frame' : 'play');
+
+/** How an action reads in the storyboard and its properties: "Go to frame 4", "Play to frame 9", or the kind's name. */
+export function describeAction(a: Raw): ActionInfo {
+  const kind = kindOf(a);
+  const info = actionInfo(kind);
+  if (kind === 'goto-frame') return { ...info, label: `Go to frame ${a.goto}${a.fade ? ', fading' : ''}` };
+  if (kind === 'play-to-frame') return { ...info, label: `Play to frame ${a.until}` };
+  return info;
+}
 
 /** Actions that need something chosen on the board (camera and spotlight work without). */
 export const needsTarget = (kind: string) => actionInfo(kind).on !== null && kind !== 'camera' && kind !== 'spotlight';
@@ -78,6 +93,8 @@ export function newAction(kind: string, picked: string[], data?: (id: string) =>
     case 'recolor': return { do: 'recolor', target, color: 'yellow' };
     case 'rotate': return { do: 'rotate', target, by: 90 };
     case 'set-values': return { do: 'set-values', target, values: (data?.(picked[0]) ?? [1]).map((v) => Math.round(v * 1.5 * 100) / 100) };
+    case 'goto-frame': return { do: 'play', target, goto: 1 };
+    case 'play-to-frame': return { do: 'play', target, until: 2 };
     default: return { do: kind, target };
   }
 }
