@@ -767,3 +767,11 @@ Jakub noticed that camera moves into screenshots pixelate the interface, and ask
 
 **Checked by:** `snap` of a presentation: 2560×1600 PNG, 183 KB as WebP. `record` of a scenario switching scenes twice: 20 frames over 3.2 s at 2560×1600, 351 KB as WebM, `frames` lists its 6 distinct pictures, and a frame from it is as sharp as a still screenshot. The test captures were removed from the media library afterwards. Typecheck, tests, build.
 
+## Step 59: Full screen for the whole app
+
+Jakub asked for a full screen button in the top bar. **⛶** (next to Settings) puts the whole app full screen and is lit while it is; click it (or Esc) to leave. **Present** still makes the board alone full screen, on top of the full-screen app, and leaving it comes back to the app still full screen. The places that asked "is anything full screen?" to mean "is the board being presented?" (Present's toggle, Esc in Play, the outline of what is animating) now ask exactly that (`src/app/fullscreen.ts`), so the app's full screen doesn't hide the outline or stop Present from starting.
+
+![⛶ in the top bar, lit while the app is full screen](journey/101-app-fullscreen-button.jpg)
+
+**Checked by:** Playwright: ⛶ → the app is full screen and the button pressed; Present → the board is full screen; leaving it → back to the full-screen app; ⛶ → out of full screen, button released; no page errors. Typecheck, tests, build.
+

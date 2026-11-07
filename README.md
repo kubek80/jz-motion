@@ -85,6 +85,8 @@ Then the **Video** tab: pick the take, add a friend's recording (with **Auto-syn
 
 **In Play mode** the storyboard stays under the board and follows the playback: the running beat is lit, each action glows while it runs (with a playhead) and gets a tick when done, and what it animates is outlined on the board (not in full screen). Click an action or beat to change it in Properties while you watch; ⏮ on a beat goes to just before it.
 
+**⛶** (top bar) puts the whole app full screen, and back; **Present** still shows the board alone, and leaving it returns to the full-screen app.
+
 **Edit / Play** sits just above the beats: beside the AI box in Edit mode, beside the play controls in Play mode. **P** switches between them (not while typing or with a window like Timing open); Esc in Play goes back to Edit.
 
 **Play mode keys:** → / Space / Page Down / click: next beat (finishes a running one first) · ← / Page Up: previous · F: full screen.
