@@ -18,7 +18,7 @@ description: Time a jz-motion presentation to a narration and export it as an MP
 3. **An existing narration file:** **Timing** → **Load a voice-over…**, then drag beats onto the waveform, or **Tap to place** and press T as each line starts.
 4. **Present live:** Play mode → **● Record** (optionally with camera); your clicks are the timing.
 
-From 1 or 3: **Make a take for export** in the Timing window. Then the **Video** tab → choose the take, layouts per beat or scene (`layout`: board, pip, pip-left, camera, side), **Export MP4** (files in `exports/`). The sound is evened out to a standard loudness (-16 LUFS) by default, so a quiet recording comes up; untick *even out volume* to keep it exactly as recorded. Export time goes into painting frames: frames where nothing moves are reused, so long still stretches are cheap, and constant motion (flows left on, swaying clipart, recordings playing) makes every frame cost.
+From 1 or 3: **Make a take for export** in the Timing window. Then the **Video** tab → choose the take, layouts per beat or scene (`layout`: board, pip, pip-left, camera, side), **Export MP4** (files in `exports/`). Noisy narration can be cleaned per clip first (Timing → right-click a clip → Clean up voice; local RNNoise, the original is kept). The sound is evened out to a standard loudness (-16 LUFS) by default, so a quiet recording comes up; untick *even out volume* to keep it exactly as recorded. Export time goes into painting frames: frames where nothing moves are reused, so long still stretches are cheap, and constant motion (flows left on, swaying clipart, recordings playing) makes every frame cost.
 
 ## Your part as the assistant
 

@@ -307,6 +307,8 @@ const Clip = z.object({
   trimStart: z.number().min(0).default(0),
   trimEnd: z.number().positive(),
   name: z.string().optional(),
+  /** The original recording, when `upload` is a cleaned-up copy of it (Clean up voice). */
+  cleanedFrom: z.string().optional(),
 });
 
 export const Presentation = z.object({

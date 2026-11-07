@@ -641,3 +641,14 @@ Jakub found exporting slow and asked whether writing MKV first and converting wo
 - Not done: using the graphics card for the glow. Headless Chromium can, but it depends on the computer and couldn't be tested here.
 
 **Checked by:** every frame of two scenes drawn and photographed in order as a reference, then the export's way with 4 pages: of the frames called still (273 of 415 in the go-to/fade/until test, 83 of 824 in "Edit text, change colour", which plays its recording most of the time), none differed from the frame before. A real export of "Why I built it": 74 s instead of 128 s on this 4-core machine (259 of 633 frames reused), and the video matches the earlier one (PSNR 65 dB; the only difference is the clipart sway, now steady). Typecheck, tests, build.
+
+## Step 48: Clean up voice
+
+Jakub asked whether a model could clean a whole recording; of the options (Adobe Podcast Enhance, Auphonic, ElevenLabs' Voice Isolator, DeepFilterNet, FFmpeg's RNNoise) he chose **RNNoise**: local, free and private, and built into the FFmpeg the app already needs.
+
+- **Right-click a clip in Timing → ✨ Clean up voice.** The server (`server/cleanVoice.ts`) makes a copy with a gentle low cut (rumble under 70 Hz) and FFmpeg's `arnndn` filter with an RNNoise model trained for recorded speech ("somnolent-hogwash" from GregorR/rnnoise-models, not subject to copyright; in `server/models/`). The clip switches to the copy with its place and trims unchanged and remembers the original (`cleanedFrom`, in format.md); its name gets a ✨, and **Back to the original recording** undoes it. Cleaning a recording twice reuses the copy.
+- It pairs with *even out volume* on export: clean first, then level.
+
+**Checked by:** a spoken test sentence (FFmpeg's own speech synthesizer) mixed with pink noise and 50 Hz hum: after cleaning, the speech kept its level (-18.7 → -19.0 dB overall, loudest moment -11.4 → -11.8 dB) while the background between words dropped from -42.7 to -59.0 dB. (A plain tone is removed almost entirely: RNNoise keeps speech, not any sound.) In the browser on a copy of "about this app, with edit demo": the menu item, the clip switching to the cleaned copy (saved with `cleanedFrom`, the ✨ shown) and back to the original. Typecheck, tests, build.
+
+![Clean up voice, and back to the original](journey/91-clean-up-voice.jpg)

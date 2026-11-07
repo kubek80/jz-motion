@@ -8,6 +8,7 @@ import type { Plugin, PreviewServer, ViteDevServer } from 'vite';
 import { exportVideo } from './export';
 import { deleteIcon, readLibrary, saveIcon } from './library';
 import { findOffset } from './media';
+import { cleanVoice } from './cleanVoice';
 import { saveUpload, transcribe, transcribeKept, uploadPath } from './transcribe';
 import { saveImage, serveImage } from './images';
 import { addMedia, deleteMedia, listMedia, mediaFrames, readUpload, renameMedia, serveMedia } from './mediaStore';
@@ -20,6 +21,7 @@ import { generateTts, readSidecar as readTtsSidecar, serveTts } from './tts';
 // The local server side of the app, mounted into the Vite dev and preview servers:
 //   /api/presentations  list, create, read, save, delete presentations (presentations/<id>.json)
 //   /api/library  icons and clipart made in the app (library/<name>.json)
+//   /api/uploads/<file>/clean  a cleaned copy of a narration clip (background noise removed with RNNoise)
 //   /api/transcribe  upload a recording and transcribe it (to make a presentation from it), or transcribe a narration clip already in uploads/ (?upload=)
 //   /api/llm      proxy to OpenAI-compatible model APIs (browsers can't call most of them directly)
 //   /api/takes    recordings: create, upload tracks, set offsets, auto-sync, delete
@@ -229,6 +231,7 @@ export function jzmServer(): Plugin {
           return send(res, 200, await transcribe(upload, service));
         }
         if (url.pathname === '/api/uploads' && req.method === 'POST') return send(res, 200, { upload: await saveUpload(req, url.searchParams.get('ext') ?? 'mp3') });
+        if (parts[0] === 'api' && parts[1] === 'uploads' && parts[2] && parts[3] === 'clean' && req.method === 'POST') return send(res, 200, await cleanVoice(parts[2]));
         if (parts[0] === 'uploads' && parts[1] && req.method === 'GET') return await serveUpload(req, res, parts[1]);
         if (parts[0] === 'api' && parts[1] === 'media') {
           const q = url.searchParams;
