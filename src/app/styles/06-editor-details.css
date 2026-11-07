@@ -30,6 +30,7 @@ body.dragging { user-select: none; -webkit-user-select: none; }
 .quick-beats { display: flex; flex-direction: column; gap: 6px; padding: 8px 0; border-top: 1px solid var(--line); font-size: 12px; }
 .row.wrap { flex-wrap: wrap; }
 .quick-beats button { font-size: 12px; }
+.prose-input { font: inherit; font-size: 13px; line-height: 1.45; resize: vertical; white-space: pre-wrap; }
 .code-input { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12px; line-height: 1.45; resize: vertical; white-space: pre; tab-size: 2; }
 .inline-edit.multiline { white-space: pre; resize: none; line-height: 1.25; text-align: left !important; overflow: hidden; height: auto; padding: 0.2em 0.4em; }
 .view-tools { position: absolute; right: 10px; bottom: 10px; z-index: 4; display: flex; gap: 4px; opacity: .55; transition: opacity .15s; }

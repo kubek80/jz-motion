@@ -17,7 +17,7 @@
 .timing-script .prev { opacity: .5; cursor: text; padding: 8px 12px; border-style: dashed; }
 .timing-script .prev:hover { opacity: .75; }
 .timing-script .prev.editing { opacity: 1; cursor: auto; }
-.timing-script .prev p { font-size: 13px; line-height: 1.4; margin: 2px 0 0; }
+.timing-script .prev p { font-size: 13px; line-height: 1.4; margin: 2px 0 0; white-space: pre-line; }
 .timing-body.prompter .timing-script .prev p { font-size: clamp(14px, 1.3vw, 20px); }
 .timing-script .line.said { opacity: .5; }
 .timing-script .next p { font-size: 14px; line-height: 1.4; margin: 4px 0 0; }

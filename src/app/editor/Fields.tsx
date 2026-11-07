@@ -3,7 +3,7 @@ import { isoModels } from '../../engine/iso';
 import { palette } from '../../engine/palette';
 import type { Raw } from './doc';
 import { GeoField } from './fields/GeoField';
-import { IdList, Json, NumberField, RefField, Select, TextAreaField, TextField } from './fields/inputs';
+import { IdList, Json, NumberField, ProseField, RefField, Select, TextAreaField, TextField } from './fields/inputs';
 import { CHOICE_ICONS, IconChoice, Swatches } from './fields/pickers';
 
 // A form generated from the JSON Schema of an element or action (z.toJSONSchema), so new fields in
@@ -79,6 +79,8 @@ export function Fields({ schema, value, ids, onChange, hide = [], currentView, a
           ? <StartView value={value[key] as Raw | undefined} currentView={currentView} onChange={(v) => onChange(key, v)} />
           : key === 'text' && value.type === 'text' && (value.style === 'code' || String(value.text ?? '').includes('\n'))
             ? <TextAreaField value={value[key] as string | undefined} onChange={(v) => onChange(key, v)} />
+          : key === 'notes'
+            ? <ProseField value={value[key] as string | undefined} placeholder="What you say over this beat. Each sentence gets its own prompter line; your line breaks are kept." onChange={(v) => onChange(key, v)} />
           : key === 'track'
             ? <TrackField value={value[key] as string | undefined} onChange={(v) => onChange(key, v)} />
             : <Field name={key} prop={p} value={key === 'line' ? value.line ?? (value.dashed ? 'dashed' : undefined) : value[key]} ids={ids} onChange={(v) => onChange(key, v)} />}
