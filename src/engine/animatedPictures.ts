@@ -104,6 +104,11 @@ export class AnimatedPictures {
     if (v?.frames) v.clip = frameAt(v, index);
   }
 
+  /** Whether any recording can change between two timeline moments (playing, or cross-fading). */
+  moving(from: number, to: number): boolean {
+    return this.videos.moving(from, to) || this.queued.size > 0;
+  }
+
   /** Resolves when every recording has loaded and shows the frame asked for (export waits for this). */
   async settled() {
     while (this.loading.size) await Promise.all([...this.loading]);

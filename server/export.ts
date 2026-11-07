@@ -25,7 +25,7 @@ export interface ExportOptions {
   signal?: AbortSignal;
   /** Even out the sound's loudness (default on). */
   normalizeAudio?: boolean;
-  /** Browser pages rendering frames in parallel. Default: number of CPUs − 1, at most 4 (or JZM_EXPORT_WORKERS). */
+  /** Browser pages rendering frames in parallel. Default: number of CPUs − 1, at most 8 (4 for 4K) (or JZM_EXPORT_WORKERS). */
   workers?: number;
 }
 
@@ -33,7 +33,7 @@ export interface ExportOptions {
  * Renders a presentation to MP4: a headless browser draws every frame exactly (no screen recording),
  * FFmpeg encodes them and lays recorded camera tracks out according to each beat's layout.
  */
-export async function exportVideo(opts: ExportOptions): Promise<{ file: string; duration: number }> {
+export async function exportVideo(opts: ExportOptions): Promise<{ file: string; duration: number; frames: number; repeated: number }> {
   const source = opts.take && opts.useTakePresentation !== false ? opts.take.presentation : opts.presentation;
   // Icons and models made in the app are checked like built-in ones (the render page loads them too).
   await registerLibrary();
@@ -62,16 +62,22 @@ export async function exportVideo(opts: ExportOptions): Promise<{ file: string; 
 
   const { chromium } = await import('playwright');
   const browser = await chromium.launch(process.env.JZM_CHROMIUM ? { executablePath: process.env.JZM_CHROMIUM } : {});
-  const workers = Math.max(1, Math.min(frames, opts.workers ?? (Number(process.env.JZM_EXPORT_WORKERS) || Math.min(4, Math.max(1, cpus().length - 1)))));
-  // Frames finish out of order across workers; FFmpeg needs them in order.
-  const pending = new Map<number, Buffer>();
+  // Each page paints frames on its own processor core; 4K pages use a lot of memory, so fewer of them.
+  const workers = Math.max(1, Math.min(frames, opts.workers ?? (Number(process.env.JZM_EXPORT_WORKERS) || Math.min(opts.scale === 2 ? 4 : 8, Math.max(1, cpus().length - 1)))));
+  // Frames finish out of order across workers; FFmpeg needs them in order. `null`: the same as the frame before
+  // (nothing on the board moved), which costs no drawing or screenshot: the last picture is sent again.
+  const pending = new Map<number, Buffer | null>();
   let nextToWrite = 0;
+  let last: Buffer | undefined;
+  let repeated = 0;
   let writing = Promise.resolve();
   const flush = () => {
     writing = writing.then(async () => {
       while (pending.has(nextToWrite)) {
-        const jpeg = pending.get(nextToWrite)!;
+        const frame = pending.get(nextToWrite);
         pending.delete(nextToWrite++);
+        const jpeg = frame ?? last!;
+        last = jpeg;
         if (!ffmpeg.stdin.write(jpeg)) await new Promise((r) => ffmpeg.stdin.once('drain', r));
         opts.onProgress?.(nextToWrite, frames);
       }
@@ -89,9 +95,14 @@ export async function exportVideo(opts: ExportOptions): Promise<{ file: string; 
       // Interleaved frames (w, w + workers, ...) keep the workers close together, so little waits in memory.
       for (let f = w; f < frames; f += workers) {
         if (opts.signal?.aborted || ffmpeg.exitCode !== null) throw new Error(ffmpeg.exitCode !== null ? `FFmpeg stopped: ${ffmpegError.slice(-800)}` : 'cancelled');
-        await page.evaluate((t) => window.jzmRender!.frame(t), f / fps);
-        const shot = await cdp.send('Page.captureScreenshot', { format: 'jpeg', quality: 92, optimizeForSpeed: true });
-        pending.set(f, Buffer.from(shot.data, 'base64'));
+        const same = await page.evaluate(([t, before]) => window.jzmRender!.frame(t, before), [f / fps, f > 0 ? (f - 1) / fps : undefined] as const);
+        if (same) {
+          pending.set(f, null);
+          repeated++;
+        } else {
+          const shot = await cdp.send('Page.captureScreenshot', { format: 'jpeg', quality: 92, optimizeForSpeed: true });
+          pending.set(f, Buffer.from(shot.data, 'base64'));
+        }
         // Don't let one worker run far ahead of the writer.
         while (f - nextToWrite > workers * 8) await new Promise((r) => setTimeout(r, 10));
         void flush();
@@ -107,5 +118,5 @@ export async function exportVideo(opts: ExportOptions): Promise<{ file: string; 
   }
   ffmpeg.stdin.end();
   await finished;
-  return { file: opts.out, duration: frames / fps };
+  return { file: opts.out, duration: frames / fps, frames, repeated };
 }

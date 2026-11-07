@@ -114,6 +114,9 @@ export class VideoPictures {
       else this.follow(v, jumped, speed);
       if (v.stopAt >= 0) v.clip = Math.min(v.clip, v.stopAt);
       this.crossFade(v, now, manual);
+      // When this board first saw it standing at its stop or end (for the exporter's "nothing moved" check).
+      const standing = (v.stopAt >= 0 && v.clip >= v.stopAt - 1e-6) || (!v.loop && v.clip >= v.duration - 1e-6);
+      v.stillSince = standing ? Math.min(v.stillSince ?? now, now) : undefined;
     }
   }
 
@@ -186,6 +189,16 @@ export class VideoPictures {
     const job: Promise<void> = before.then(() => (v.target === t ? shown(v.video, () => { v.video.currentTime = t; }) : undefined));
     v.busy = job;
     void job.finally(() => { if (v.busy === job) v.busy = null; });
+  }
+
+  /** Whether any recording can change between two timeline moments: playing (and not yet at its stop), or cross-fading. */
+  moving(from: number, to: number): boolean {
+    for (const v of this.videos) {
+      // Playing counts as moving until it has stood at its stop (or end) since before `from`.
+      if ((v.speedTo ?? v.state.speed) > 0 && !(v.stillSince !== undefined && v.stillSince < from - 1e-6)) return true;
+      if (v.fades.some((f) => f.t < to + 1e-6 && f.t + f.dur > from - 1e-6)) return true;
+    }
+    return false;
   }
 
   /** Resolves when every video shows the frame asked for (export waits for this). */

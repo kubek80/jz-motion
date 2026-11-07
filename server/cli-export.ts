@@ -26,7 +26,7 @@ const server = await createServer({ server: { port: 0 }, logLevel: 'error' });
 await server.listen();
 const started = Date.now();
 try {
-  const { duration } = await exportVideo({
+  const { duration, frames, repeated } = await exportVideo({
     presentation, take, useTakePresentation: !flag('current'),
     fps: value('fps') === '60' ? 60 : 30, scale: flag('4k') ? 2 : 1, normalizeAudio: !flag('raw-audio'),
     timing: { ...DEFAULT_TIMING, ...(value('gap') ? { gap: Number(value('gap')) } : {}) },
@@ -35,7 +35,7 @@ try {
       if (done % 30 === 0 || done === total) process.stdout.write(`\rframe ${done}/${total}`);
     },
   });
-  console.log(`\nwrote ${out} (${duration.toFixed(1)}s of video in ${((Date.now() - started) / 1000).toFixed(0)}s)`);
+  console.log(`\nwrote ${out} (${duration.toFixed(1)}s of video in ${((Date.now() - started) / 1000).toFixed(0)}s; ${repeated} of ${frames} frames were still and reused)`);
 } finally {
   await server.close();
 }

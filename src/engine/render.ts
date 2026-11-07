@@ -3,6 +3,7 @@
 // work is done in editing.ts.
 import gsap from 'gsap';
 import { BoardEditing } from './editing';
+import { changesBetween } from './stillness';
 import { StagePlayer } from './player';
 import type { Camera } from './schema';
 import { partState, renderImage } from './stageNodes';
@@ -55,6 +56,11 @@ export class Stage extends StagePlayer {
   /** Whether an element is fixed on the screen. */
   isPinned(id: string): boolean {
     return !!this.nodes.get(id)?.pinned;
+  }
+
+  /** Export: whether anything on the board can change between timeline times `from` and `to` of the current scene. */
+  changesBetween(from: number, to: number): boolean {
+    return changesBetween(this.tl, this.nodes, this.flows, (a, b) => this.animations.moving(a, b), from, to);
   }
 
   /** Where an element is in the window (client pixels), to put a tool next to it. */

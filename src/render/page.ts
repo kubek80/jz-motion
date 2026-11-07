@@ -10,7 +10,11 @@ import { stateAt, type Performance } from '../video/performance';
 
 export interface RenderApi {
   load(presentation: unknown, performance: Performance): Promise<void>;
-  frame(time: number): Promise<void>;
+  /**
+   * Draws the frame at export time `time`. With `previous` (the export time of the frame before), resolves to
+   * true when nothing on the board can have changed since then, so the exporter can repeat that frame.
+   */
+  frame(time: number, previous?: number): Promise<boolean>;
 }
 
 declare global {
@@ -35,10 +39,13 @@ window.jzmRender = {
     await new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(() => r())));
     perf = performance;
   },
-  async frame(time) {
+  async frame(time, previous) {
     const st = stateAt(perf, time);
     stage.renderAt(st.scene, st.time, time);
-    // Animated pictures decode their frame asynchronously; wait so the capture shows the right one.
+    // Recordings seek asynchronously; wait so the capture shows the right frame.
     await stage.settled();
+    if (previous === undefined) return false;
+    const before = stateAt(perf, previous);
+    return before.scene === st.scene && !stage.changesBetween(before.time, st.time);
   },
 };
