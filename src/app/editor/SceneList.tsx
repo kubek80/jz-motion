@@ -1,6 +1,6 @@
 // The list of scenes on the left: switch scene, move one up, delete one, add a new one (empty or made by AI).
 // Right-click a scene for more: a new scene before or after it (empty or with AI), move it up or down, delete.
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ContextMenu, menuAt, type MenuAt } from '../ContextMenu';
 import { moveItem, type RawDoc } from './doc';
 import { TOOL_ICONS } from './Library';
@@ -21,9 +21,12 @@ export function SceneList({ doc, sceneIndex, mode, onGo, onRemove, onAdd, update
 
   const editing = mode === 'edit' && !!doc;
   const count = doc?.scenes.length ?? 0;
+  // Keep the current scene in view when it changes from elsewhere (closing Timing, playing on).
+  const list = useRef<HTMLDivElement>(null);
+  useEffect(() => { list.current?.querySelector('.scene.active')?.scrollIntoView({ block: 'nearest' }); }, [sceneIndex]);
 
   return (
-    <div className="scenes">
+    <div className="scenes" ref={list}>
       {(doc?.scenes ?? []).map((s, i) => (
         <div
           key={i}

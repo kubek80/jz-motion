@@ -267,6 +267,7 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
         scriptOpen={scriptOpen} setScriptOpen={setScriptOpen} libraryOpen={libraryOpen} setLibraryOpen={setLibraryOpen}
         creating={creating} setCreating={setCreating} libraryVersion={libraryVersion} setLibraryVersion={setLibraryVersion}
         onTake={(takeId) => { setTimingOpen(false); setMadeTake(takeId); setPanel('video'); }}
+        onTimingClosed={(si) => { if (si !== sceneIndex) goToScene(si); }}
         onEditBeat={(si, beat) => { setTimingOpen(false); openScene.current = si; if (mode === 'edit') goToScene(si); else setMode('edit'); setSelection({ kind: 'beat', beat }); setPanel('props'); }}
       />
       <TopBar
