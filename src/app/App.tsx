@@ -125,6 +125,8 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
   const ids = useMemo(() => (doc ? [...idsInScope(doc, sceneIndex)] : []), [doc, sceneIndex]);
 
   const update = useCallback((next: RawDoc) => {
+    // Known straight away, so a second edit in the same moment builds on this one.
+    docRef.current = next;
     log('update', { voiceover: voiceoverSummary(next.voiceover), cuedBeats: cuedBeatCount(next), scenes: next.scenes.length });
     history.set(JSON.stringify(next, null, 2));
   }, [history]);
@@ -258,7 +260,7 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
   return (
     <div className={`app mode-${mode}`}>
       <EditorWindows
-        id={id} text={text} doc={doc} result={result} sceneIndex={sceneIndex} update={update} add={add}
+        id={id} text={text} doc={doc} result={result} sceneIndex={sceneIndex} update={update} latest={() => docRef.current!} add={add}
         onSceneAdded={(index) => { openScene.current = index; setPicked([]); setSelection(null); }}
         settingsOpen={settingsOpen} setSettingsOpen={setSettingsOpen} timingOpen={timingOpen} setTimingOpen={setTimingOpen}
         scriptOpen={scriptOpen} setScriptOpen={setScriptOpen} libraryOpen={libraryOpen} setLibraryOpen={setLibraryOpen}

@@ -19,6 +19,8 @@ interface Props {
   result: CompileResult | { ok: false; errors: string[] };
   sceneIndex: number;
   update: (next: RawDoc) => void;
+  /** The presentation with every edit so far, even ones made a moment ago (two edits in a row build on each other). */
+  latest: () => RawDoc;
   add: (r: AddRequest) => void;
   /** A new scene from the Creator was inserted at this index: open it and clear the selection. */
   onSceneAdded: (index: number) => void;
@@ -41,7 +43,7 @@ interface Props {
 }
 
 export function EditorWindows({
-  id, text, doc, result, sceneIndex, update, add, onSceneAdded, onEditBeat,
+  id, text, doc, result, sceneIndex, update, latest, add, onSceneAdded, onEditBeat,
   settingsOpen, setSettingsOpen, timingOpen, setTimingOpen, scriptOpen, setScriptOpen, libraryOpen, setLibraryOpen,
   creating, setCreating, libraryVersion, setLibraryVersion, onTake,
 }: Props) {
@@ -55,12 +57,14 @@ export function EditorWindows({
           presentationId={id}
           voiceover={doc.voiceover}
           onVoiceover={(v) => {
+            const doc = latest();
             log('onVoiceover', { before: voiceoverSummary(doc.voiceover), after: voiceoverSummary(v) });
             const next = { ...doc };
             if (v) next.voiceover = v; else delete next.voiceover;
             update(next);
           }}
           onCues={(changes, clearOthers) => {
+            const doc = latest();
             log('onCues', { count: changes.length, clearOthers: !!clearOthers, changes, cuedBefore: cuedBeatCount(doc) });
             return update({
             ...doc,
@@ -76,8 +80,8 @@ export function EditorWindows({
           });
           }}
           onNotes={(scene, beat, notes) => update({
-            ...doc,
-            scenes: doc.scenes.map((s, si) => si !== scene ? s : ({
+            ...latest(),
+            scenes: latest().scenes.map((s, si) => si !== scene ? s : ({
               ...s,
               beats: s.beats?.map((b, bi) => {
                 if (bi !== beat) return b;
@@ -89,7 +93,7 @@ export function EditorWindows({
           onTake={onTake}
           onEditBeat={onEditBeat}
           doc={doc}
-          onBeat={(si, bi, next) => update(updateBeats(doc, si, (beats) => beats.map((b, i) => (i === bi ? next : b))))}
+          onBeat={(si, bi, next) => update(updateBeats(latest(), si, (beats) => beats.map((b, i) => (i === bi ? next : b))))}
           onClose={() => setTimingOpen(false)}
         />
       )}

@@ -10,7 +10,7 @@ import type { Voicer } from '../settingsStore';
 interface Options {
   presentation: CompiledPresentation;
   clicks: Click[];
-  drag: { index: number; t: number; ripple?: boolean } | null;
+  drag: { index: number; t0: number; t: number; ripple?: boolean } | null;
   time: number;
   total: number;
   now: () => number;
@@ -21,7 +21,7 @@ interface Options {
 export function useNowPlaying({ presentation, clicks, drag, time, total, now, tts, voicer }: Options) {
   // ---------------------------------------------------------------- what's playing
   // While a beat is dragged it shows where it goes (and, with Shift, every beat after it too).
-  const shift = drag ? drag.t - clicks[drag.index].t : 0;
+  const shift = drag ? drag.t - drag.t0 : 0;
   const shown = clicks.map((c, i) => (drag && (i === drag.index || (drag.ripple && i > drag.index)) ? { ...c, t: c.t + shift } : c));
   const currentIndex = Math.max(0, shown.reduce((found, c, i) => (c.t <= time + 1e-3 ? i : found), -1));
   const current = shown[currentIndex];

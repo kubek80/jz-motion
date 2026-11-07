@@ -692,3 +692,16 @@ The logos Claude Code drew while answering Jakub's "No Photoshop" request (step 
 **Checked by:** `npm run check` on each, and a snapshot of the four side by side.
 
 ![The four logos on the board](journey/93-adobe-logos.jpg)
+
+## Step 53: Beats easier to grab, a hint while dragging, and Ctrl to bring the voice along
+
+Jakub found it hard to put the mouse exactly on a beat to move it, and asked for a hint once he presses a beat: hold Ctrl to also move the voice clips, only those that start after the beat.
+
+- **Easier to grab:** each beat's 2-pixel line has an invisible 16-pixel strip along it in the beats area (not over the voice clips, which stay easy to grab).
+- **A hint as soon as a beat is pressed**, staying in view while the timeline scrolls: where it goes ("2.2 → 0:28.4, +2.00 s"), and the keys, lit while held: **Shift** later beats too, **Ctrl** voice clips that start after it too. Pressing or letting go of a key mid-drag changes it at once, without moving the mouse.
+- **Ctrl + drag** moves the voice clips that start at or after the beat's old place by the same amount (shown moving while dragging); clips that start earlier stay. They can't be moved before 0. Shift and Ctrl combine.
+- **Bug found:** the clips and the beat's cue were saved as two edits built from the same, older copy of the presentation, so the second undid the first. The editor now always builds an edit on the very latest version (`update` keeps it, and Timing's handlers use it), which also makes other quick edits in a row safe.
+
+**Checked by:** in the browser on a copy of "about this app, with edit demo" with three voice clips (starting 0 s, 30 s, 100 s): grabbing 6 pixels beside beat 2.2's line worked; the hint showed on press and while dragging with Ctrl lit; Ctrl + drag 2 s moved the beat 26.35 → 28.35 and the clips at 30 s and 100 s to 32 s and 102 s, left the clip at 0 s and beat 2.3 where they were, and both changes were saved. Typecheck, tests, build.
+
+![Dragging a beat with Ctrl: the hint, and the later clips moving with it](journey/94-beat-drag-hint.jpg)
