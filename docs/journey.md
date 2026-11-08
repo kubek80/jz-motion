@@ -839,3 +839,16 @@ Jakub asked that double-clicking a voice clip open its details: whether it is to
 
 **Checked by:** Playwright with Chromium's stand-in microphone on a copy: a generated clip measured at −27.5 LUFS ("12 dB under"), Even it out → +8.9 dB, −18.6 LUFS; the microphone check showed the stand-in's full-scale tone as distorting; a 5 s re-take of a 42.6 s clip with one → moved the next scene from 136.5 s to 99.2 s, the beats inside in order, other lanes untouched; tests for the export's volume and for fitting a take; typecheck, tests, build.
 
+## Step 65: Your own voice, and better voices, through OpenRouter
+
+Jakub chose OpenRouter for cloning his voice, and better models for generated speech.
+
+- **Your voice**: in a clip's window, **Use as my voice** takes up to 30 s of it as the voice sample (and switches to a cloning model if needed). The server cuts that part to MP3 (kept in `tts/samples/`), adds what is said in it when the clip has been transcribed, and sends it with each sentence as OpenRouter's `input_references`, instead of a voice name. Fish Audio S2.1 Pro and HeyGen Voice 1 clone (about 1.5¢ per 1,000 characters). `npm run voice` takes it as `TTS_SAMPLE=<upload>@start-end`.
+- **Better voices**: presets for ElevenLabs v4 (the most natural), Microsoft MAI-Voice 2.1, Gemini 3.8 Flash TTS (follows a style), MiniMax Speech 2.8 HD and Voxtral; the voice field lists the voices the chosen model takes (OpenRouter's models list), and **how to speak** gives a style to the models that use one (`TTS_INSTRUCTIONS` on the command line).
+- Generated clips are kept apart by what made them (voice or sample, and style), so changing the voice never mixes lines up; Timing and Script pick up a new voice at once.
+- **Found while testing every preset**: HeyGen and Gemini only return raw PCM, so the server asks for that and converts it; HeyGen's is 44.1 kHz and Gemini's 24 kHz (the first conversion assumed 24 kHz and made HeyGen speak at half speed, an octave low: caught by measuring the pitch, 64–73 Hz for voices that should be 120–140), now read from the response's content type. HeyGen sometimes answers "busy, retry in 2 s": retried.
+
+![Voice generation in Settings: your voice with a cloning model, and Gemini with a style](journey/109-voice-settings.jpg)
+
+**Checked by:** a sentence through every preset (Fish and HeyGen cloning the same sample land at the same pitch, 134 Hz; ElevenLabs, Microsoft, Gemini with a style, MiniMax, HeyGen's own voice); `npm run voice -- time` with a sample; Use as my voice in the clip window and the Settings section in a browser; typecheck, tests, build.
+

@@ -2,12 +2,12 @@
 // presentation's sidecar, so the prompter knows how long each line should take.
 import { useEffect, useMemo, useState } from 'react';
 import type { CompiledPresentation } from '../../engine/compile';
-import { loadVoicer } from '../settingsStore';
+import { useVoicer } from '../settingsStore';
 import { entryFor, loadSidecar, requestTts, splitSentences, type TtsSidecar } from '../tts';
 
 export function useVoiceGeneration(presentation: CompiledPresentation, presentationId: string, setError: (e: string | null) => void) {
   // ---------------------------------------------------------------- generated voice: a clip per sentence of each beat's notes
-  const voicer = useMemo(() => loadVoicer(), []);
+  const voicer = useVoicer();
   const [tts, setTts] = useState<TtsSidecar>({});
   const [generating, setGenerating] = useState<{ done: number; total: number } | null>(null);
   useEffect(() => {
