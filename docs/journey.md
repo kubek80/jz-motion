@@ -825,3 +825,17 @@ Jakub asked to update the skills so that next time it is done exactly this way. 
 
 **Checked by:** `place` run on his presentation as it was before step 62 gives the same clips and cues as the version built by hand (to the hundredth of a second); `time` on a scene, and without a key (says what to set); a test for making room on the timeline; typecheck, tests, build.
 
+## Step 64: A window for each voice clip: volume, microphone, record it again
+
+Jakub asked that double-clicking a voice clip open its details: whether it is too loud or too quiet, recording it again there (with the timing following a longer take), testing the microphone while turning the dials on the device, and every other option.
+
+- **Volume**: the clip's loudness over the part it plays (FFmpeg loudnorm in analysis mode, `/api/uploads/<file>/loudness`) against the −16 LUFS the export evens the video to, its loudest moment, and a verdict (quiet, about right, loud). A clip now has a **volume** (`gain`, dB, in the format): the Timing mixer plays it and the export applies it (`volume=…dB` per track, carried by the take). **Even it out** sets it to the video's level, held back so the loudest moment stays under −1 dB.
+- **Everything else**: play, clean up voice (or back to the original), transcribe, move lane, rename, remove; the right-click menu also opens the window.
+- **Check the microphone**: choose the input (kept in this browser, and now used by every recording: narration, Play mode recording, re-takes), a live meter with zones (peaks between −18 and −6 dBFS are good, red near 0 and a warning when it distorts), what to do in words ("turn the gain up a little"), and a five-second test to listen to.
+- **Record it again**: the lines of the beats inside the clip as a prompter, the meter while recording, → marks the next line; listen, then **Use this take** or **Discard**. The new take replaces the clip; later clips and cues move by the difference; beats inside go where → was pressed, and unmarked ones are spread between the marks (first try spread them over the whole take, so a beat after a mark could come before it: fixed, tested).
+
+![The clip window: volume, actions, the microphone check](journey/107-clip-window.jpg)
+![Recording a clip again: its lines, the meter, Stop](journey/108-clip-record-again.jpg)
+
+**Checked by:** Playwright with Chromium's stand-in microphone on a copy: a generated clip measured at −27.5 LUFS ("12 dB under"), Even it out → +8.9 dB, −18.6 LUFS; the microphone check showed the stand-in's full-scale tone as distorting; a 5 s re-take of a 42.6 s clip with one → moved the next scene from 136.5 s to 99.2 s, the beats inside in order, other lanes untouched; tests for the export's volume and for fitting a take; typecheck, tests, build.
+

@@ -150,6 +150,13 @@ describe('ffmpeg', () => {
     expect(graphOf(buildFfmpegArgs({ ...job, normalizeAudio: false }))).toContain('[a0]anull[aout]');
   });
 
+  it('applies the volume set on a voice clip', () => {
+    const job = { width: 1920, height: 1080, fps: 30, duration: 5, out: 'o.mp4', segments: [],
+      tracks: [{ name: 'voice-0', path: 'v.webm', offset: 2, hasVideo: false, hasAudio: true, trimStart: 1, trimEnd: 3, gain: 4.5 }] };
+    const graph = buildFfmpegArgs(job)[buildFfmpegArgs(job).indexOf('-filter_complex') + 1];
+    expect(graph).toContain('adelay=2000:all=1,aresample=48000:async=1:first_pts=0,volume=4.5dB[a0]');
+  });
+
   it('makes a board-only video without tracks', () => {
     const args = buildFfmpegArgs({ width: 1280, height: 720, fps: 30, duration: 5, out: 'o.mp4', tracks: [], segments: [{ layout: 'pip', track: 'me', start: 0, end: 5 }] });
     const graph = args[args.indexOf('-filter_complex') + 1];

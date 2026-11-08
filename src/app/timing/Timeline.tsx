@@ -34,6 +34,8 @@ interface Props {
   playFrom: (t: number) => void;
   /** Opens the transcript of one clip. */
   onTranscribe: (index: number) => void;
+  /** Opens the clip window (double-click a clip). */
+  onOpenClip: (index: number) => void;
   /** Removes a clip's background noise (a cleaned copy), or goes back to the original recording. */
   onClean: (index: number) => void;
   onRestore: (index: number) => void;
@@ -53,7 +55,7 @@ interface Props {
 const FLAG_ROW = 24;
 const FLAG_MAX = 160;
 
-export function Timeline({ laneRef, missing, height, rec, seek, time, total, pps, width, clips, primary, clipDrag, startDragClip, startTrimClip, deleteClip, splitClipAt, canSplitAt, setClipLane, playFrom, onTranscribe, onClean, onRestore, onEditBeat, drawClipPeaks, np, tapping, tapIndex, startDrag, onCue, beatDrag }: Props) {
+export function Timeline({ laneRef, missing, height, rec, seek, time, total, pps, width, clips, primary, clipDrag, startDragClip, startTrimClip, deleteClip, splitClipAt, canSplitAt, setClipLane, playFrom, onTranscribe, onOpenClip, onClean, onRestore, onEditBeat, drawClipPeaks, np, tapping, tapIndex, startDrag, onCue, beatDrag }: Props) {
   const { shown, currentIndex, beatOf, sceneTitle } = np;
   // Beat labels go in rows above their lines: as many rows as the timeline's height allows, each label in the
   // lowest row where it doesn't run into the label before it (a short timeline keeps two rows).
@@ -128,8 +130,9 @@ export function Timeline({ laneRef, missing, height, rec, seek, time, total, pps
                 className={['clip-block', `lane-${lane}`, dragging ? 'dragging' : '', gone ? 'missing' : '', sounding ? 'sounding' : ''].join(' ')}
                 style={{ left: 20 + offset * pps, width: w }}
                 onPointerDown={(e) => startDragClip(e, i)}
+                onDoubleClick={() => !rec.current && onOpenClip(i)}
                 onContextMenu={(e) => { e.preventDefault(); e.stopPropagation(); if (!rec.current) setMenu({ kind: 'clip', index: i, t: timeAt(e), ...menuAt(e, 240) }); }}
-                title={`${gone ? `The recording ${c.upload} isn't on this computer; × removes the clip. ` : ''}${c.name ?? 'clip'} (${(trimEnd - trimStart).toFixed(1)} s) · drag body to move/swap lane · drag edges to trim · S splits at playhead`}
+                title={`${gone ? `The recording ${c.upload} isn't on this computer; × removes the clip. ` : ''}${c.name ?? 'clip'} (${(trimEnd - trimStart).toFixed(1)} s) · drag body to move/swap lane · drag edges to trim · S splits at playhead · double-click for its volume, the microphone check and recording it again`}
               >
                 <canvas className="clip-peaks" ref={(el) => drawClipPeaks(el, previewClip)} />
                 <span className="clip-name">{gone ? '⚠ missing · ' : ''}{c.cleanedFrom ? '✨ ' : ''}{c.name ?? `clip ${i + 1}`}</span>
@@ -190,6 +193,7 @@ export function Timeline({ laneRef, missing, height, rec, seek, time, total, pps
             onClose={() => setMenu(null)}
             title={`${c.name ?? `clip ${menu.index + 1}`} · ${fmt(c.trimEnd - c.trimStart)}${missing.has(c.upload) ? ' · recording missing' : ''}`}
             items={[
+              { label: '⚙ Details: volume, microphone, record again…', onClick: () => onOpenClip(menu.index) },
               { label: '▶ Play from here', onClick: () => playFrom(menu.t), disabled: missing.has(c.upload) },
               c.cleanedFrom
                 ? { label: '↺ Back to the original recording', onClick: () => onRestore(menu.index), hint: 'Use the recording as it was, with its background noise (the cleaned copy stays on disk)' }
