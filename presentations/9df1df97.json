@@ -64,7 +64,7 @@
           "cue": 5.68
         }
       ],
-      "layout": "camera"
+      "layout": "pip"
     },
     {
       "id": "no-photoshop",
@@ -215,7 +215,8 @@
           "actions": [
             {
               "do": "draw",
-              "target": "h"
+              "target": "h",
+              "duration": 0.6
             },
             {
               "do": "draw",
@@ -224,11 +225,13 @@
                 "ae",
                 "pr"
               ],
-              "stagger": 0.5
+              "stagger": 0.2,
+              "duration": 0.7,
+              "start": "with"
             }
           ],
           "notes": "No Photoshop, After Effects or Premiere.",
-          "cue": 17.88
+          "cue": 17.1
         },
         {
           "title": "Crossed out",
@@ -240,7 +243,8 @@
                 "x-ae",
                 "x-pr"
               ],
-              "stagger": 0.6
+              "stagger": 0.2,
+              "duration": 0.4
             }
           ],
           "auto": true
@@ -257,15 +261,19 @@
                 "plus2",
                 "app"
               ],
-              "stagger": 0.4
+              "stagger": 0.2,
+              "duration": 0.7
             },
             {
               "do": "draw",
-              "target": "note"
+              "target": "note",
+              "duration": 0.7,
+              "start": "with",
+              "delay": 0.8
             }
           ],
           "notes": "Just me, Claude Code and my application.",
-          "cue": 23.34
+          "cue": 20.15
         }
       ]
     },
@@ -390,7 +398,7 @@
             }
           ],
           "notes": "Why did I build it? I usually have far more ideas than videos.",
-          "cue": 28.72
+          "cue": 23.6
         },
         {
           "title": "A video, planned",
@@ -409,7 +417,7 @@
             }
           ],
           "notes": "I write notes, sometimes even a full script. Then I plan a video to go with the script,",
-          "cue": 33.54
+          "cue": 28.42
         },
         {
           "title": "Beat 5",
@@ -428,7 +436,7 @@
             }
           ],
           "notes": "and this is when it usually stops.",
-          "cue": 40.11
+          "cue": 34.99
         },
         {
           "title": "No time",
@@ -439,7 +447,7 @@
             }
           ],
           "notes": "Recording, drawing, editing, publishing: between my work and family, I never have enough time to do it.",
-          "cue": 42.91
+          "cue": 37.79
         },
         {
           "title": "What if the board drew itself?",
@@ -462,7 +470,7 @@
             }
           ],
           "notes": "So the question became: what if the board could draw itself, and a model could help me do it?",
-          "cue": 50.67
+          "cue": 45.55
         }
       ]
     },
@@ -576,7 +584,7 @@
             }
           ],
           "notes": "What if I could have my own dedicated video creation assistant? As you would have guessed, I gave it a try.",
-          "cue": 58.07
+          "cue": 52.6
         }
       ],
       "layout": "pip"
@@ -647,7 +655,7 @@
             }
           ],
           "notes": "I started from basics: I defined the style.",
-          "cue": 65.81
+          "cue": 60.34
         },
         {
           "title": "The reference",
@@ -664,7 +672,7 @@
             }
           ],
           "notes": "I took inspiration from IBM lightboard explainers. I enjoyed their aesthetics: a glass board and neon diagrams.",
-          "cue": 69.57
+          "cue": 64.1
         },
         {
           "title": "Clear, calm, fast to follow",
@@ -683,212 +691,6 @@
           "auto": true
         }
       ]
-    },
-    {
-      "id": "start",
-      "title": "Start with a sentence",
-      "elements": [
-        {
-          "id": "h",
-          "type": "text",
-          "text": "START WITH A SENTENCE",
-          "x": 960,
-          "y": 70,
-          "size": 56,
-          "color": "cyan",
-          "style": "bold",
-          "pinned": true
-        },
-        {
-          "id": "home",
-          "type": "image",
-          "src": "/examples/about/home.jpg",
-          "x": 960,
-          "y": 580,
-          "width": 1300,
-          "height": 812,
-          "frame": "browser",
-          "url": "localhost:5173",
-          "color": "cyan"
-        },
-        {
-          "id": "prompt",
-          "type": "area",
-          "x": 960,
-          "y": 490,
-          "width": 635,
-          "height": 120,
-          "shape": "rect",
-          "color": "yellow"
-        },
-        {
-          "id": "modes",
-          "type": "area",
-          "x": 751,
-          "y": 528,
-          "width": 198,
-          "height": 26,
-          "shape": "rect",
-          "color": "pink"
-        },
-        {
-          "id": "model",
-          "type": "area",
-          "x": 1174,
-          "y": 528,
-          "width": 219,
-          "height": 29,
-          "shape": "rect",
-          "color": "green"
-        },
-        {
-          "id": "cap-prompt",
-          "type": "text",
-          "text": "say what\nyou want\nto explain",
-          "x": 180,
-          "y": 460,
-          "size": 42,
-          "color": "yellow",
-          "align": "start",
-          "pinned": true
-        },
-        {
-          "id": "cap-modes",
-          "type": "text",
-          "text": "topic, script,\nor a recording\nof you talking",
-          "x": 180,
-          "y": 460,
-          "size": 40,
-          "color": "pink",
-          "align": "start",
-          "pinned": true
-        },
-        {
-          "id": "cap-model",
-          "type": "text",
-          "text": "a different model\nfor each way,\nif you like",
-          "x": 180,
-          "y": 460,
-          "size": 40,
-          "color": "green",
-          "align": "start",
-          "pinned": true
-        }
-      ],
-      "beats": [
-        {
-          "title": "Home",
-          "actions": [
-            {
-              "do": "draw",
-              "target": "h"
-            },
-            {
-              "do": "draw",
-              "target": "home"
-            }
-          ],
-          "notes": "Creating explainer videos starts like a chat. One box in the middle of the screen."
-        },
-        {
-          "title": "Just a sentence",
-          "notes": "I type what I want to explain, one sentence is enough, and a model drafts the whole presentation: scenes, drawings, beats and speaker notes.",
-          "actions": [
-            {
-              "do": "camera",
-              "focus": "prompt",
-              "padding": 200
-            },
-            {
-              "do": "circle",
-              "target": "prompt",
-              "color": "yellow",
-              "start": "with",
-              "delay": 0.6
-            },
-            {
-              "do": "draw",
-              "target": "cap-prompt",
-              "start": "with"
-            }
-          ]
-        },
-        {
-          "title": "Three ways in",
-          "notes": "I can start from a topic, from a script I already wrote, or from a recording: then it transcribes me and cues every beat to the moment I say it.",
-          "actions": [
-            {
-              "do": "camera",
-              "focus": "modes",
-              "padding": 220
-            },
-            {
-              "do": "fade-out",
-              "target": "cap-prompt",
-              "start": "with"
-            },
-            {
-              "do": "circle",
-              "target": "modes",
-              "color": "pink",
-              "start": "with",
-              "delay": 0.5
-            },
-            {
-              "do": "draw",
-              "target": "cap-modes",
-              "start": "with"
-            }
-          ]
-        },
-        {
-          "title": "A model per job",
-          "notes": "And each way of starting can use a different model. More on why that matters in a minute.",
-          "actions": [
-            {
-              "do": "camera",
-              "focus": "model",
-              "padding": 220
-            },
-            {
-              "do": "fade-out",
-              "target": "cap-modes",
-              "start": "with"
-            },
-            {
-              "do": "circle",
-              "target": "model",
-              "color": "green",
-              "start": "with",
-              "delay": 0.5
-            },
-            {
-              "do": "draw",
-              "target": "cap-model",
-              "start": "with"
-            }
-          ]
-        },
-        {
-          "title": "Back out",
-          "notes": "",
-          "actions": [
-            {
-              "do": "camera",
-              "x": 960,
-              "y": 540,
-              "zoom": 1
-            },
-            {
-              "do": "fade-out",
-              "target": "cap-model",
-              "start": "with"
-            }
-          ],
-          "auto": true
-        }
-      ],
-      "skip": true
     },
     {
       "id": "start-b",
@@ -936,16 +738,6 @@
           "height": 294,
           "shape": "rect",
           "color": "pink"
-        },
-        {
-          "id": "a-chat",
-          "type": "area",
-          "x": 683,
-          "y": 441,
-          "width": 609,
-          "height": 305,
-          "shape": "rect",
-          "color": "green"
         },
         {
           "id": "cap-box",
@@ -1008,7 +800,7 @@
               "delay": 0.8
             }
           ],
-          "cue": 78.92
+          "cue": 71.55
         },
         {
           "title": "A sentence",
@@ -1033,7 +825,7 @@
               "start": "with"
             }
           ],
-          "cue": 85.46
+          "cue": 78.09
         },
         {
           "title": "Three ways in",
@@ -1069,7 +861,7 @@
               "delay": 0.6
             }
           ],
-          "cue": 91.34
+          "cue": 83.97
         },
         {
           "title": "Watch it work",
@@ -1087,23 +879,13 @@
               "start": "with"
             },
             {
-              "do": "camera",
-              "focus": "a-chat",
-              "zoom": 1.8
-            },
-            {
-              "do": "spotlight",
-              "target": "a-chat",
-              "start": "with"
-            },
-            {
               "do": "draw",
               "target": "cap-steps",
               "start": "with",
               "delay": 0.3
             }
           ],
-          "cue": 102.48
+          "cue": 95.1
         },
         {
           "title": "A first draft",
@@ -1136,240 +918,9 @@
               "delay": 0.3
             }
           ],
-          "cue": 110.89
+          "cue": 103.52
         }
       ]
-    },
-    {
-      "id": "editor",
-      "title": "Edit like a whiteboard",
-      "elements": [
-        {
-          "id": "h",
-          "type": "text",
-          "text": "EDIT LIKE A WHITEBOARD",
-          "x": 960,
-          "y": 70,
-          "size": 60,
-          "color": "yellow",
-          "style": "bold",
-          "pinned": true
-        },
-        {
-          "id": "editor",
-          "type": "image",
-          "src": "/media/663ada056a14651d.webp",
-          "x": 960,
-          "y": 540,
-          "width": 1280,
-          "height": 800,
-          "frame": "browser",
-          "url": "localhost:5173",
-          "color": "cyan"
-        },
-        {
-          "id": "a-board",
-          "type": "area",
-          "x": 885,
-          "y": 420,
-          "width": 791,
-          "height": 471,
-          "shape": "rect",
-          "color": "cyan"
-        },
-        {
-          "id": "a-storyboard",
-          "type": "area",
-          "x": 885,
-          "y": 753,
-          "width": 791,
-          "height": 196,
-          "shape": "rect",
-          "color": "green"
-        },
-        {
-          "id": "a-props",
-          "type": "area",
-          "x": 1451,
-          "y": 518,
-          "width": 298,
-          "height": 667,
-          "shape": "rect",
-          "color": "pink"
-        },
-        {
-          "id": "a-library",
-          "type": "area",
-          "x": 396,
-          "y": 518,
-          "width": 151,
-          "height": 667,
-          "shape": "rect",
-          "color": "orange"
-        },
-        {
-          "id": "cap-board",
-          "type": "text",
-          "text": "the board\nin the middle",
-          "x": 180,
-          "y": 180,
-          "size": 36,
-          "color": "cyan",
-          "align": "start",
-          "pinned": true
-        },
-        {
-          "id": "cap-storyboard",
-          "type": "text",
-          "text": "beats = clicks\none card each",
-          "x": 180,
-          "y": 180,
-          "size": 36,
-          "color": "green",
-          "align": "start",
-          "pinned": true
-        },
-        {
-          "id": "cap-props",
-          "type": "text",
-          "text": "properties:\ncolour, size, style —\nlike a drawing app",
-          "x": 180,
-          "y": 180,
-          "size": 32,
-          "color": "pink",
-          "align": "start",
-          "pinned": true
-        },
-        {
-          "id": "cap-library",
-          "type": "text",
-          "text": "scenes and the library\non the left",
-          "x": 180,
-          "y": 180,
-          "size": 32,
-          "color": "orange",
-          "align": "start",
-          "pinned": true
-        }
-      ],
-      "beats": [
-        {
-          "title": "The editor",
-          "notes": "The draft opens in the editor. One window: the board in the middle, scenes and the library on the left, properties on the right.",
-          "actions": [
-            {
-              "do": "draw",
-              "target": "h"
-            },
-            {
-              "do": "draw",
-              "target": "editor"
-            }
-          ]
-        },
-        {
-          "title": "The board",
-          "notes": "The board itself is the drawing surface. Everything on it is written, drawn, or placed by me or by the AI.",
-          "actions": [
-            {
-              "do": "camera",
-              "focus": "a-board",
-              "padding": 120
-            },
-            {
-              "do": "draw",
-              "target": "cap-board",
-              "start": "with",
-              "delay": 0.4
-            }
-          ]
-        },
-        {
-          "title": "Beats under it",
-          "notes": "Under the board is the storyboard. Each card is a beat: one click while I present, with its actions laid out on a small timeline.",
-          "actions": [
-            {
-              "do": "camera",
-              "focus": "a-storyboard",
-              "padding": 100
-            },
-            {
-              "do": "fade-out",
-              "target": "cap-board",
-              "start": "with"
-            },
-            {
-              "do": "draw",
-              "target": "cap-storyboard",
-              "start": "with",
-              "delay": 0.4
-            }
-          ]
-        },
-        {
-          "title": "Properties on the right",
-          "notes": "Everything has properties — positions and sizes like a drawing program, colours as marker tips, styles as little pictures.",
-          "actions": [
-            {
-              "do": "camera",
-              "focus": "a-props",
-              "padding": 100
-            },
-            {
-              "do": "fade-out",
-              "target": "cap-storyboard",
-              "start": "with"
-            },
-            {
-              "do": "draw",
-              "target": "cap-props",
-              "start": "with",
-              "delay": 0.4
-            }
-          ]
-        },
-        {
-          "title": "Scenes and library on the left",
-          "actions": [
-            {
-              "do": "camera",
-              "focus": "a-library",
-              "padding": 120
-            },
-            {
-              "do": "fade-out",
-              "target": "cap-props",
-              "start": "with"
-            },
-            {
-              "do": "draw",
-              "target": "cap-library",
-              "start": "with",
-              "delay": 0.4
-            }
-          ],
-          "notes": "I am able to inspect the list of scenes, and under it the library — icons, clipart, 3D models I can drop onto the board."
-        },
-        {
-          "title": "Back out",
-          "notes": "",
-          "actions": [
-            {
-              "do": "camera",
-              "x": 960,
-              "y": 540,
-              "zoom": 1
-            },
-            {
-              "do": "fade-out",
-              "target": "cap-library",
-              "start": "with"
-            }
-          ],
-          "auto": true
-        }
-      ],
-      "skip": true
     },
     {
       "id": "editor-b",
@@ -1509,7 +1060,7 @@
               "delay": 0.8
             }
           ],
-          "cue": 122.67
+          "cue": 115.3
         },
         {
           "title": "Click to select",
@@ -1549,7 +1100,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 129.37
+          "cue": 122
         },
         {
           "title": "The beats",
@@ -1585,7 +1136,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 137.34
+          "cue": 129.97
         },
         {
           "title": "From the library",
@@ -1627,7 +1178,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 145.16
+          "cue": 137.79
         },
         {
           "title": "P to play",
@@ -1662,230 +1213,9 @@
               "delay": 0.5
             }
           ],
-          "cue": 155.16
+          "cue": 147.79
         }
       ]
-    },
-    {
-      "id": "edit-colour",
-      "title": "Edit text, change colour",
-      "elements": [
-        {
-          "id": "h",
-          "type": "text",
-          "text": "EDIT AND RECOLOUR, LIVE",
-          "x": 960,
-          "y": 70,
-          "size": 60,
-          "color": "cyan",
-          "style": "bold",
-          "pinned": true
-        },
-        {
-          "id": "clip",
-          "type": "image",
-          "src": "/media/1d393ff1793636be.webm",
-          "x": 1080,
-          "y": 580,
-          "width": 1200,
-          "height": 750,
-          "frame": "browser",
-          "url": "localhost:5173/#/p/sandbox",
-          "color": "cyan"
-        },
-        {
-          "id": "a-headline",
-          "type": "area",
-          "x": 1007,
-          "y": 490,
-          "width": 663,
-          "height": 184,
-          "shape": "ellipse",
-          "color": "yellow"
-        },
-        {
-          "id": "a-markers",
-          "type": "area",
-          "x": 1530,
-          "y": 454,
-          "width": 248,
-          "height": 98,
-          "shape": "ellipse",
-          "color": "pink"
-        },
-        {
-          "id": "cap-select",
-          "type": "text",
-          "text": "click an element\non the board",
-          "x": 220,
-          "y": 460,
-          "size": 40,
-          "color": "yellow",
-          "align": "start",
-          "pinned": true
-        },
-        {
-          "id": "cap-colour",
-          "type": "text",
-          "text": "pick a marker:\nit recolours\nin place",
-          "x": 220,
-          "y": 460,
-          "size": 40,
-          "color": "pink",
-          "align": "start",
-          "pinned": true
-        },
-        {
-          "id": "cap-edit",
-          "type": "text",
-          "text": "double-click text\nto rewrite it",
-          "x": 220,
-          "y": 460,
-          "size": 40,
-          "color": "green",
-          "align": "start",
-          "pinned": true
-        },
-        {
-          "id": "cap-meta",
-          "type": "text",
-          "text": "and yes — this clip\nis jz-motion itself",
-          "x": 220,
-          "y": 460,
-          "size": 36,
-          "color": "orange",
-          "align": "start",
-          "pinned": true
-        }
-      ],
-      "beats": [
-        {
-          "title": "A real editor",
-          "notes": "This is the editor you just saw, running on my laptop. Nothing drawn by hand here — it's a recording of a scratch board.",
-          "actions": [
-            {
-              "do": "draw",
-              "target": "h"
-            },
-            {
-              "do": "draw",
-              "target": "clip"
-            },
-            {
-              "do": "draw",
-              "target": "cap-select",
-              "start": "with",
-              "delay": 1.2
-            }
-          ]
-        },
-        {
-          "title": "Watch the headline",
-          "notes": "Watch the headline — I'll click on it and the properties panel on the right will pick up a marker.",
-          "actions": [
-            {
-              "do": "circle",
-              "target": "a-headline",
-              "color": "yellow"
-            }
-          ]
-        },
-        {
-          "title": "Click, pick a marker",
-          "notes": "A click selects it. Hover a colour in the marker tray and the text redraws itself in that ink.",
-          "actions": [
-            {
-              "do": "fade-out",
-              "target": "cap-select"
-            },
-            {
-              "do": "fade-out",
-              "target": "a-headline",
-              "start": "with"
-            },
-            {
-              "do": "draw",
-              "target": "cap-colour",
-              "start": "with",
-              "delay": 0.6
-            },
-            {
-              "do": "circle",
-              "target": "a-markers",
-              "color": "pink"
-            },
-            {
-              "do": "play",
-              "target": "clip",
-              "goto": 7
-            }
-          ]
-        },
-        {
-          "title": "Then double-click to edit",
-          "notes": "The same element: a double-click opens it for editing, same handwriting, same position. Type what you want and press Enter.",
-          "actions": [
-            {
-              "do": "fade-out",
-              "target": "cap-colour"
-            },
-            {
-              "do": "draw",
-              "target": "cap-edit",
-              "start": "with",
-              "delay": 0.4
-            },
-            {
-              "do": "camera",
-              "focus": "a-markers",
-              "zoom": 2,
-              "duration": 3
-            },
-            {
-              "do": "fade-out",
-              "target": "a-markers"
-            }
-          ]
-        },
-        {
-          "title": "Hold the frame",
-          "notes": "Set play to off and the clip holds its last frame. That's how I keep talking without the UI moving behind me.",
-          "actions": [
-            {
-              "do": "camera",
-              "focus": "all",
-              "start": "with",
-              "zoom": 1
-            },
-            {
-              "do": "fade-out",
-              "target": "cap-edit"
-            },
-            {
-              "do": "draw",
-              "target": "cap-meta",
-              "start": "with",
-              "delay": 0.4
-            },
-            {
-              "do": "pulse",
-              "target": "clip",
-              "start": "after"
-            }
-          ]
-        },
-        {
-          "title": "Frame 5",
-          "actions": [
-            {
-              "do": "play",
-              "target": "clip",
-              "goto": 5
-            }
-          ]
-        }
-      ],
-      "skip": true
     },
     {
       "id": "edit-colour-b",
@@ -2005,7 +1335,7 @@
               "delay": 0.8
             }
           ],
-          "cue": 161.04
+          "cue": 153.67
         },
         {
           "title": "Select",
@@ -2047,7 +1377,7 @@
               "start": "with"
             }
           ],
-          "cue": 170.15
+          "cue": 162.78
         },
         {
           "title": "Recolour",
@@ -2079,7 +1409,7 @@
               "delay": 0.4
             }
           ],
-          "cue": 176.99
+          "cue": 169.62
         },
         {
           "title": "Rewrite",
@@ -2122,7 +1452,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 183.21
+          "cue": 175.84
         },
         {
           "title": "Made by the app",
@@ -2149,7 +1479,7 @@
               "delay": 0.5
             }
           ],
-          "cue": 191.64
+          "cue": 184.27
         }
       ]
     },
@@ -2297,7 +1627,7 @@
             }
           ],
           "notes": "Under the hood, jz-motion is designed to be LLM first. A presentation is not pixels: it's simply a JSON document.",
-          "cue": 203.14
+          "cue": 195.77
         },
         {
           "title": "Context",
@@ -2321,7 +1651,7 @@
             }
           ],
           "notes": "Every request sends the model the format reference, the drawing rules and the whole library: every icon, logo, clipart and 3D model it may use. So in reality, the LLM generates pure JSON.",
-          "cue": 211.91
+          "cue": 204.54
         },
         {
           "title": "Schema check",
@@ -2336,7 +1666,7 @@
             }
           ],
           "notes": "The JSON is then sent to a schema checker, to make sure the result is correct.",
-          "cue": 226.37
+          "cue": 219
         },
         {
           "title": "Repair",
@@ -2351,7 +1681,7 @@
               "target": "repair"
             }
           ],
-          "cue": 232.03
+          "cue": 224.66
         },
         {
           "title": "Board",
@@ -2369,7 +1699,7 @@
               "target": "web-search"
             }
           ],
-          "cue": 237.15
+          "cue": 229.78
         },
         {
           "title": "The JSON",
@@ -2387,7 +1717,7 @@
               "padding": 260
             }
           ],
-          "cue": 242.74
+          "cue": 235.37
         },
         {
           "title": "Beat 7",
@@ -2564,7 +1894,7 @@
               "delay": 0.4
             }
           ],
-          "cue": 250.12
+          "cue": 242.75
         },
         {
           "title": "Captured larger",
@@ -2587,7 +1917,7 @@
               "delay": 0.4
             }
           ],
-          "cue": 256.85
+          "cue": 249.48
         },
         {
           "title": "Frame by frame",
@@ -2641,7 +1971,7 @@
               "delay": 0.5
             }
           ],
-          "cue": 264.18
+          "cue": 256.81
         },
         {
           "title": "Pick a moment",
@@ -2665,7 +1995,7 @@
               "start": "with"
             }
           ],
-          "cue": 271.5
+          "cue": 264.13
         },
         {
           "title": "A beat goes there",
@@ -2700,7 +2030,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 275.42
+          "cue": 268.05
         },
         {
           "title": "Back out",
@@ -2940,7 +2270,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 283.81
+          "cue": 276.44
         },
         {
           "title": "A closer look",
@@ -2992,7 +2322,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 291.32
+          "cue": 283.95
         },
         {
           "title": "Fix a part",
@@ -3027,7 +2357,7 @@
               "delay": 0.5
             }
           ],
-          "cue": 298.48
+          "cue": 291.11
         },
         {
           "title": "The microphone",
@@ -3064,7 +2394,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 304.54
+          "cue": 297.17
         },
         {
           "title": "Record or generate",
@@ -3108,7 +2438,7 @@
               "delay": 0.5
             }
           ],
-          "cue": 311.51
+          "cue": 304.14
         },
         {
           "title": "My cloned voice",
@@ -3145,7 +2475,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 317.6
+          "cue": 310.23
         },
         {
           "title": "A softer accent",
@@ -3180,7 +2510,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 325.94
+          "cue": 318.57
         },
         {
           "title": "Back out",
@@ -3400,7 +2730,7 @@
             }
           ],
           "notes": "The other goal is consistency: whatever a model makes has to look like it came from the same set of markers.",
-          "cue": 331.46
+          "cue": 324.09
         },
         {
           "title": "Everything",
@@ -3422,7 +2752,7 @@
               "target": "rule"
             }
           ],
-          "cue": 339.14
+          "cue": 331.77
         },
         {
           "title": "Six marker colours",
@@ -3441,7 +2771,7 @@
               "stagger": 0.15
             }
           ],
-          "cue": 344.84
+          "cue": 337.47
         },
         {
           "title": "Make your own",
@@ -3459,7 +2789,7 @@
               "delay": 0.6
             }
           ],
-          "cue": 350.73
+          "cue": 343.36
         },
         {
           "title": "Versions",
@@ -3471,7 +2801,7 @@
               "padding": 10
             }
           ],
-          "cue": 356.92
+          "cue": 349.55
         },
         {
           "title": "Keep it",
@@ -3670,7 +3000,7 @@
               "start": "with"
             }
           ],
-          "cue": 361.61
+          "cue": 354.24
         },
         {
           "title": "Both AIs follow them",
@@ -3693,7 +3023,7 @@
               "stagger": 0.4
             }
           ],
-          "cue": 373.61
+          "cue": 366.24
         },
         {
           "title": "One source of truth",
@@ -3708,7 +3038,7 @@
               "target": "folder"
             }
           ],
-          "cue": 380.41
+          "cue": 373.04
         }
       ]
     },
@@ -3912,7 +3242,7 @@
               "target": "server-stack"
             }
           ],
-          "cue": 385.73
+          "cue": 378.36
         },
         {
           "title": "Each explainer adds one",
@@ -3927,7 +3257,7 @@
               "target": "it-new"
             }
           ],
-          "cue": 397.06
+          "cue": 389.69
         },
         {
           "title": "So each one costs less",
@@ -3948,7 +3278,7 @@
               ]
             }
           ],
-          "cue": 401.63
+          "cue": 394.26
         }
       ]
     },
@@ -4163,7 +3493,7 @@
               "target": "h"
             }
           ],
-          "cue": 409.56
+          "cue": 402.19
         },
         {
           "title": "In the browser",
@@ -4183,7 +3513,7 @@
             }
           ],
           "notes": "In the browser, we have a frontend application made with React. SVG animations are made with GSAP, and 3D coordinates are calculated with Three.js.",
-          "cue": 411.86
+          "cue": 404.49
         },
         {
           "title": "A small local server",
@@ -4219,7 +3549,7 @@
             }
           ],
           "notes": "It's paired with a local server responsible for keeping the files, proxying LLM calls, transcription of recordings and export of videos.",
-          "cue": 423.52
+          "cue": 416.15
         },
         {
           "title": "Swappable models",
@@ -4243,7 +3573,7 @@
               ]
             }
           ],
-          "cue": 433.23
+          "cue": 425.86
         },
         {
           "title": "Voice both ways",
@@ -4505,7 +3835,7 @@
             }
           ],
           "notes": "Because every request is checked and repaired, I can experiment with smaller models.",
-          "cue": 439.81
+          "cue": 432.44
         },
         {
           "title": "Story",
@@ -4522,7 +3852,7 @@
               "stagger": 0.25
             }
           ],
-          "cue": 445.76
+          "cue": 438.39
         },
         {
           "title": "Small edits",
@@ -4539,7 +3869,7 @@
             }
           ],
           "notes": "Small edits, like changing a beat, work fine with fast, cheap models like Haiku.",
-          "cue": 452.89
+          "cue": 445.52
         },
         {
           "title": "Drawings",
@@ -4556,7 +3886,7 @@
               "stagger": 0.25
             }
           ],
-          "cue": 458.98
+          "cue": 451.61
         },
         {
           "title": "Voice",
@@ -4573,7 +3903,7 @@
             }
           ],
           "notes": "For transcription I use a small OpenAI model. At first I recorded the voice-over myself, but as I kept updating the script, I switched to AI: a clone of my own voice, so a changed sentence doesn't mean recording it again.",
-          "cue": 465.95
+          "cue": 458.58
         },
         {
           "title": "Transcription",
@@ -4707,7 +4037,7 @@
               "target": "script-ico"
             }
           ],
-          "cue": 482.23
+          "cue": 474.86
         },
         {
           "title": "Three ways to touch it",
@@ -4726,7 +4056,7 @@
             }
           ],
           "notes": "I can read and edit the whole thing in the Script view, inline in the Timing prompter,",
-          "cue": 490.5
+          "cue": 483.13
         },
         {
           "title": "Same text, three lenses",
@@ -4745,245 +4075,9 @@
             }
           ],
           "notes": "or in the raw JSON tab if I want to see the shape.",
-          "cue": 496.03
+          "cue": 488.66
         }
       ]
-    },
-    {
-      "id": "timing",
-      "title": "Timing, prompter and voice-over",
-      "elements": [
-        {
-          "id": "h",
-          "type": "text",
-          "text": "RECORDING, MADE EASY",
-          "x": 960,
-          "y": 70,
-          "size": 56,
-          "color": "yellow",
-          "style": "bold",
-          "pinned": true
-        },
-        {
-          "id": "prompter",
-          "type": "image",
-          "src": "/media/82bbdbbedef4ff3a.webp",
-          "x": 960,
-          "y": 580,
-          "width": 1440,
-          "height": 900,
-          "frame": "browser",
-          "url": "localhost:5173 · Timing + Prompter",
-          "color": "cyan"
-        },
-        {
-          "id": "a-sentences",
-          "type": "area",
-          "x": 580,
-          "y": 440,
-          "width": 617,
-          "height": 350,
-          "shape": "rect",
-          "color": "yellow"
-        },
-        {
-          "id": "a-durations",
-          "type": "area",
-          "x": 1303,
-          "y": 400,
-          "width": 300,
-          "height": 267,
-          "shape": "rect",
-          "color": "pink"
-        },
-        {
-          "id": "a-timeline",
-          "type": "area",
-          "x": 960,
-          "y": 860,
-          "width": 1400,
-          "height": 160,
-          "shape": "rect",
-          "color": "green"
-        },
-        {
-          "id": "cap-sentences",
-          "type": "text",
-          "text": "each sentence on its own line, huge and readable",
-          "x": 960,
-          "y": 955,
-          "size": 34,
-          "color": "yellow",
-          "pinned": true
-        },
-        {
-          "id": "cap-durations",
-          "type": "text",
-          "text": "its target time, from the voice clip",
-          "x": 960,
-          "y": 955,
-          "size": 34,
-          "color": "pink",
-          "pinned": true
-        },
-        {
-          "id": "cap-timeline",
-          "type": "text",
-          "text": "timeline + playhead keep you honest as you read",
-          "x": 960,
-          "y": 955,
-          "size": 34,
-          "color": "green",
-          "pinned": true
-        },
-        {
-          "id": "cap-payoff",
-          "type": "text",
-          "text": "no guessing the pace — I just read",
-          "x": 960,
-          "y": 955,
-          "size": 36,
-          "color": "white",
-          "pinned": true
-        }
-      ],
-      "beats": [
-        {
-          "title": "The prompter",
-          "actions": [
-            {
-              "do": "draw",
-              "target": "h"
-            },
-            {
-              "do": "draw",
-              "target": "prompter"
-            }
-          ],
-          "notes": "Once presentation is ready I can move to the Timing window in prompter mode. \n"
-        },
-        {
-          "title": "Each sentence, its own line",
-          "actions": [
-            {
-              "do": "camera",
-              "focus": "a-sentences",
-              "padding": 160
-            },
-            {
-              "do": "circle",
-              "target": "a-sentences",
-              "color": "yellow",
-              "id": "ring-sentences",
-              "start": "with",
-              "delay": 0.6
-            },
-            {
-              "do": "draw",
-              "target": "cap-sentences",
-              "start": "with"
-            }
-          ],
-          "notes": "Every sentence of the beat shows on its own line, big and readable from a distance. \n\nI don't lose my pace when I look up at the camera."
-        },
-        {
-          "title": "A target time per line",
-          "notes": "Next to each sentence, its target duration — pulled from a short voice clip the text-to-speech model generates. I know exactly how long each line should take.",
-          "actions": [
-            {
-              "do": "erase",
-              "target": "ring-sentences"
-            },
-            {
-              "do": "fade-out",
-              "target": "cap-sentences",
-              "start": "with"
-            },
-            {
-              "do": "camera",
-              "focus": "a-durations",
-              "padding": 220,
-              "start": "with"
-            },
-            {
-              "do": "circle",
-              "target": "a-durations",
-              "color": "pink",
-              "id": "ring-durations",
-              "start": "with",
-              "delay": 0.6
-            },
-            {
-              "do": "draw",
-              "target": "cap-durations",
-              "start": "with"
-            }
-          ]
-        },
-        {
-          "title": "A clock that keeps me honest",
-          "notes": "At the bottom, a timeline shows where I am in the whole thing. The playhead moves as I read; a glance tells me if I'm fast, slow, or on it.",
-          "actions": [
-            {
-              "do": "erase",
-              "target": "ring-durations"
-            },
-            {
-              "do": "fade-out",
-              "target": "cap-durations",
-              "start": "with"
-            },
-            {
-              "do": "camera",
-              "focus": "a-timeline",
-              "padding": 120,
-              "start": "with"
-            },
-            {
-              "do": "circle",
-              "target": "a-timeline",
-              "color": "green",
-              "id": "ring-timeline",
-              "start": "with",
-              "delay": 0.6
-            },
-            {
-              "do": "draw",
-              "target": "cap-timeline",
-              "start": "with"
-            }
-          ]
-        },
-        {
-          "title": "Just read",
-          "notes": "Pull back and press record. No guessing the pace, no re-doing takes because I rushed one beat — I just read.",
-          "actions": [
-            {
-              "do": "erase",
-              "target": "ring-timeline"
-            },
-            {
-              "do": "fade-out",
-              "target": "cap-timeline",
-              "start": "with"
-            },
-            {
-              "do": "camera",
-              "x": 960,
-              "y": 540,
-              "zoom": 1,
-              "start": "with"
-            },
-            {
-              "do": "draw",
-              "target": "cap-payoff",
-              "start": "with",
-              "delay": 0.4
-            }
-          ]
-        }
-      ],
-      "skip": true
     },
     {
       "id": "timing-b",
@@ -5130,7 +4224,7 @@
               "delay": 0.5
             }
           ],
-          "cue": 501.31
+          "cue": 493.94
         },
         {
           "title": "One line at a time",
@@ -5166,7 +4260,7 @@
               "delay": 0.8
             }
           ],
-          "cue": 509.63
+          "cue": 502.26
         },
         {
           "title": "The timeline",
@@ -5194,7 +4288,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 517.08
+          "cue": 509.71
         },
         {
           "title": "Just read",
@@ -5228,7 +4322,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 526.65
+          "cue": 519.28
         },
         {
           "title": "Tidy up",
@@ -5264,7 +4358,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 535.6
+          "cue": 528.23
         },
         {
           "title": "Back out",
@@ -5288,278 +4382,6 @@
           ]
         }
       ]
-    },
-    {
-      "id": "ai-helpers",
-      "title": "AI helpers across the app",
-      "elements": [
-        {
-          "id": "h",
-          "type": "text",
-          "text": "AI, WHEREVER I AM",
-          "x": 960,
-          "y": 70,
-          "size": 56,
-          "color": "pink",
-          "style": "bold",
-          "pinned": true
-        },
-        {
-          "id": "home-full",
-          "type": "image",
-          "src": "/media/8813533b5b0410e4.webp",
-          "x": 500,
-          "y": 540,
-          "width": 900,
-          "height": 562,
-          "frame": "browser",
-          "url": "localhost:5173 · home",
-          "color": "cyan"
-        },
-        {
-          "id": "editor-full",
-          "type": "image",
-          "src": "/media/4b9030113ac6f590.webp",
-          "x": 1420,
-          "y": 540,
-          "width": 900,
-          "height": 562,
-          "frame": "browser",
-          "url": "localhost:5173 · editor · AI tab",
-          "color": "pink"
-        },
-        {
-          "id": "a-home-chat",
-          "type": "area",
-          "x": 504,
-          "y": 468,
-          "width": 450,
-          "height": 85,
-          "shape": "rect",
-          "color": "cyan"
-        },
-        {
-          "id": "a-ask-bar",
-          "type": "area",
-          "x": 1332,
-          "y": 653,
-          "width": 450,
-          "height": 50,
-          "shape": "rect",
-          "color": "yellow"
-        },
-        {
-          "id": "a-ai-panel",
-          "type": "area",
-          "x": 1750,
-          "y": 502,
-          "width": 170,
-          "height": 400,
-          "shape": "rect",
-          "color": "pink"
-        },
-        {
-          "id": "cap-home",
-          "type": "text",
-          "text": "home chat: a sentence to a whole first draft",
-          "x": 960,
-          "y": 955,
-          "size": 34,
-          "color": "cyan",
-          "pinned": true
-        },
-        {
-          "id": "cap-ask",
-          "type": "text",
-          "text": "scene-ask bar: 'change THIS scene', keep the rest",
-          "x": 960,
-          "y": 955,
-          "size": 34,
-          "color": "yellow",
-          "pinned": true
-        },
-        {
-          "id": "cap-panel",
-          "type": "text",
-          "text": "AI tab: chat about the whole presentation",
-          "x": 960,
-          "y": 955,
-          "size": 34,
-          "color": "pink",
-          "pinned": true
-        },
-        {
-          "id": "payoff-tile",
-          "type": "icon",
-          "x": 963,
-          "y": 323,
-          "color": "cyan",
-          "icon": "designer",
-          "size": 640
-        },
-        {
-          "id": "cap-same",
-          "type": "text",
-          "text": "same skills everywhere — the style stays the same",
-          "x": 960,
-          "y": 955,
-          "size": 36,
-          "color": "white",
-          "pinned": true
-        }
-      ],
-      "beats": [
-        {
-          "title": "AI, wherever I am",
-          "actions": [
-            {
-              "do": "draw",
-              "target": "h"
-            },
-            {
-              "do": "draw",
-              "target": [
-                "home-full",
-                "editor-full"
-              ],
-              "stagger": 0.6
-            }
-          ],
-          "notes": "The AI isn't a single feature here — it's everywhere in the app. It's in the home screen, inside the editor, in the library & in timing screen"
-        },
-        {
-          "title": "A sentence to a draft",
-          "notes": "From the home screen I pick a mode — topic, script, or recording — and a model, and go from one sentence to a whole first draft.",
-          "actions": [
-            {
-              "do": "camera",
-              "focus": "a-home-chat",
-              "padding": 160
-            },
-            {
-              "do": "circle",
-              "target": "a-home-chat",
-              "color": "cyan",
-              "id": "ring-home",
-              "start": "with",
-              "delay": 0.6
-            },
-            {
-              "do": "draw",
-              "target": "cap-home",
-              "start": "with"
-            }
-          ]
-        },
-        {
-          "title": "Change THIS scene",
-          "notes": "Inside the editor, every scene has an ask bar above the storyboard. Describe one change — 'split this beat', 'add a database' — and only that scene changes.",
-          "actions": [
-            {
-              "do": "erase",
-              "target": "ring-home"
-            },
-            {
-              "do": "fade-out",
-              "target": "cap-home",
-              "start": "with"
-            },
-            {
-              "do": "camera",
-              "focus": "a-ask-bar",
-              "padding": 160,
-              "start": "with"
-            },
-            {
-              "do": "circle",
-              "target": "a-ask-bar",
-              "color": "yellow",
-              "id": "ring-ask",
-              "start": "with",
-              "delay": 0.6
-            },
-            {
-              "do": "draw",
-              "target": "cap-ask",
-              "start": "with"
-            }
-          ]
-        },
-        {
-          "title": "Chat about the whole thing",
-          "notes": "And on the AI tab in the right panel, a chat for bigger changes — picking models, running agent mode, watching every step land in the file.",
-          "actions": [
-            {
-              "do": "erase",
-              "target": "ring-ask"
-            },
-            {
-              "do": "fade-out",
-              "target": "cap-ask",
-              "start": "with"
-            },
-            {
-              "do": "camera",
-              "focus": "a-ai-panel",
-              "padding": 180,
-              "start": "with"
-            },
-            {
-              "do": "circle",
-              "target": "a-ai-panel",
-              "color": "pink",
-              "id": "ring-panel",
-              "start": "with",
-              "delay": 0.6
-            },
-            {
-              "do": "draw",
-              "target": "cap-panel",
-              "start": "with"
-            }
-          ]
-        },
-        {
-          "title": "Same skills everywhere",
-          "actions": [
-            {
-              "do": "erase",
-              "target": "ring-panel"
-            },
-            {
-              "do": "fade-out",
-              "target": [
-                "cap-panel",
-                "home-full",
-                "editor-full"
-              ],
-              "start": "with"
-            },
-            {
-              "do": "camera",
-              "x": 960,
-              "y": 540,
-              "zoom": 1,
-              "start": "with"
-            },
-            {
-              "do": "draw",
-              "target": "payoff-tile",
-              "start": "with",
-              "delay": 0.6,
-              "duration": 1.6
-            },
-            {
-              "do": "draw",
-              "target": "cap-same",
-              "start": "with",
-              "delay": 1
-            }
-          ],
-          "notes": "All of them have access to the same skills. Pick the place that fits the move — the house style follows."
-        }
-      ],
-      "skip": true
     },
     {
       "id": "ai-helpers-b",
@@ -5715,7 +4537,7 @@
               "delay": 0.8
             }
           ],
-          "cue": 543.98
+          "cue": 536.61
         },
         {
           "title": "Home",
@@ -5751,7 +4573,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 549.69
+          "cue": 542.32
         },
         {
           "title": "This scene",
@@ -5793,7 +4615,7 @@
               "delay": 1
             }
           ],
-          "cue": 553.79
+          "cue": 546.42
         },
         {
           "title": "The AI tab",
@@ -5829,7 +4651,7 @@
               "delay": 0.5
             }
           ],
-          "cue": 564.27
+          "cue": 556.9
         },
         {
           "title": "The library",
@@ -5865,7 +4687,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 572.03
+          "cue": 564.66
         },
         {
           "title": "Same skills",
@@ -5887,7 +4709,7 @@
               "delay": 0.4
             }
           ],
-          "cue": 578.32
+          "cue": 570.95
         }
       ]
     },
@@ -5975,7 +4797,7 @@
             }
           ],
           "notes": "One of my main goals was to create an app that would let me make a ten-minute explainer video for under five dollars. I'm happy to share that I was successful.",
-          "cue": 586.38
+          "cue": 579.01
         },
         {
           "title": "Why it works",
@@ -5987,7 +4809,7 @@
             }
           ],
           "notes": "If I had to name three main contributors to that success: a presentation is pure JSON, so tokens are cheap;",
-          "cue": 596.79
+          "cue": 589.42
         },
         {
           "title": "Beat 3",
@@ -5998,7 +4820,7 @@
             }
           ],
           "notes": "the library grows, so most drawings are reused;",
-          "cue": 604.47
+          "cue": 597.1
         },
         {
           "title": "Beat 4",
@@ -6009,7 +4831,7 @@
             }
           ],
           "notes": "and the repair loop lets me use small, fast models.",
-          "cue": 608.46
+          "cue": 601.09
         }
       ],
       "layout": "pip"
@@ -6127,7 +4949,7 @@
             }
           ],
           "notes": "And now the last mile: I click Record and adjust the timing, like I'm doing right now.",
-          "cue": 613.1
+          "cue": 605.73
         },
         {
           "title": "Export",
@@ -6152,7 +4974,7 @@
               ]
             }
           ],
-          "cue": 619.47
+          "cue": 612.1
         },
         {
           "title": "Thanks",
@@ -6167,7 +4989,7 @@
               "stagger": 1.2
             }
           ],
-          "cue": 623.87
+          "cue": 616.5
         }
       ],
       "layout": "camera"
@@ -6196,18 +5018,29 @@
         "scene": "no-photoshop",
         "upload": "generated-no-photoshop.webm",
         "sourceDuration": 10.007,
-        "offset": 17.881,
+        "offset": 17.101,
         "lane": 0,
         "trimStart": 0,
-        "trimEnd": 10.007,
+        "trimEnd": 2.9,
         "name": "generated voice · No Photoshop needed"
+      },
+      {
+        "id": "gen-no-photoshop-2",
+        "scene": "no-photoshop",
+        "upload": "generated-no-photoshop.webm",
+        "sourceDuration": 10.007,
+        "offset": 20.151,
+        "lane": 0,
+        "trimStart": 5.459,
+        "trimEnd": 8.8,
+        "name": "generated voice · No Photoshop needed (2)"
       },
       {
         "id": "gen-why",
         "scene": "why",
         "upload": "generated-why.webm",
         "sourceDuration": 28.507,
-        "offset": 28.721,
+        "offset": 23.601,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 28.507,
@@ -6218,7 +5051,7 @@
         "scene": "assistant",
         "upload": "generated-assistant.webm",
         "sourceDuration": 6.907,
-        "offset": 58.073,
+        "offset": 52.6,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 6.907,
@@ -6234,10 +5067,10 @@
         "scene": "inspiration",
         "upload": "generated-inspiration.webm",
         "sourceDuration": 12.307,
-        "offset": 65.805,
+        "offset": 59.585,
         "lane": 0,
         "trimStart": 0,
-        "trimEnd": 12.307,
+        "trimEnd": 11.7,
         "name": "generated voice · Inspiration"
       },
       {
@@ -6245,7 +5078,7 @@
         "scene": "start-b",
         "upload": "generated-start-b.webm",
         "sourceDuration": 42.907,
-        "offset": 78.916,
+        "offset": 71.75,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 42.907,
@@ -6256,7 +5089,7 @@
         "scene": "editor-b",
         "upload": "generated-editor-b.webm",
         "sourceDuration": 37.507,
-        "offset": 122.671,
+        "offset": 114.551,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 37.507,
@@ -6267,7 +5100,7 @@
         "scene": "edit-colour-b",
         "upload": "generated-edit-colour-b.webm",
         "sourceDuration": 41.207,
-        "offset": 161.044,
+        "offset": 152.924,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 41.207,
@@ -6278,7 +5111,7 @@
         "scene": "llm-first",
         "upload": "generated-llm-first.webm",
         "sourceDuration": 46.107,
-        "offset": 203.142,
+        "offset": 195.022,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 46.107,
@@ -6289,7 +5122,7 @@
         "scene": "recordings",
         "upload": "generated-recordings.webm",
         "sourceDuration": 32.807,
-        "offset": 250.12,
+        "offset": 242,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 32.807,
@@ -6300,7 +5133,7 @@
         "scene": "voice-tools",
         "upload": "generated-voice-tools.webm",
         "sourceDuration": 46.807,
-        "offset": 283.806,
+        "offset": 275.686,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 46.807,
@@ -6311,7 +5144,7 @@
         "scene": "style",
         "upload": "generated-style.webm",
         "sourceDuration": 29.307,
-        "offset": 331.451,
+        "offset": 323.331,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 29.307,
@@ -6322,7 +5155,7 @@
         "scene": "skills-guide",
         "upload": "generated-skills-guide.webm",
         "sourceDuration": 23.307,
-        "offset": 361.61,
+        "offset": 353.49,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 23.307,
@@ -6333,7 +5166,7 @@
         "scene": "library",
         "upload": "generated-library.webm",
         "sourceDuration": 23.007,
-        "offset": 385.719,
+        "offset": 377.599,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 23.007,
@@ -6344,7 +5177,7 @@
         "scene": "architecture",
         "upload": "generated-architecture.webm",
         "sourceDuration": 29.407,
-        "offset": 409.552,
+        "offset": 401.432,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 29.407,
@@ -6355,7 +5188,7 @@
         "scene": "models",
         "upload": "generated-models.webm",
         "sourceDuration": 41.607,
-        "offset": 439.799,
+        "offset": 431.679,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 41.607,
@@ -6366,7 +5199,7 @@
         "scene": "script",
         "upload": "generated-script.webm",
         "sourceDuration": 18.207,
-        "offset": 482.218,
+        "offset": 474.098,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 18.207,
@@ -6377,7 +5210,7 @@
         "scene": "timing-b",
         "upload": "generated-timing-b.webm",
         "sourceDuration": 41.807,
-        "offset": 501.304,
+        "offset": 493.184,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 41.807,
@@ -6388,7 +5221,7 @@
         "scene": "ai-helpers-b",
         "upload": "generated-ai-helpers-b.webm",
         "sourceDuration": 41.507,
-        "offset": 543.976,
+        "offset": 535.856,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 41.507,
@@ -6399,7 +5232,7 @@
         "scene": "cost",
         "upload": "generated-cost.webm",
         "sourceDuration": 25.907,
-        "offset": 586.368,
+        "offset": 578.248,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 25.907,
@@ -6415,7 +5248,7 @@
         "scene": "publish",
         "upload": "generated-publish.webm",
         "sourceDuration": 13.507,
-        "offset": 613.088,
+        "offset": 604.968,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 13.507,
