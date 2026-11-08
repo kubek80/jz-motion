@@ -20,6 +20,7 @@ import { Timeline } from './Timeline';
 import { TimingControls } from './TimingControls';
 import { TimingHeader } from './TimingHeader';
 import { useBoardFollowsClock } from './useBoardFollowsClock';
+import { AvatarBoard } from './AvatarBoard';
 import { useClipEditing } from './useClipEditing';
 import { useClock } from './useClock';
 import { useCueDragging } from './useCueDragging';
@@ -181,7 +182,7 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
         onClose={close}
       />
       <div className="timing-body prompter">
-        <div className="timing-board" ref={host} />
+        <AvatarBoard host={host} clips={clips} presentation={presentation} perf={perf} now={now} playing={playing} />
         <Resizer orientation="vertical" value={scriptW.value} onChange={scriptW.setValue} onReset={scriptW.reset} min={320} max={1600} style={{ order: -1 }} />
         <ScriptPanel
           voiceNow={voiceNow}
