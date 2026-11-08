@@ -6,7 +6,7 @@ import { splitSentences } from '../tts';
 import { fmt } from './format';
 import { MicCheck, LevelMeter, advice } from './MicCheck';
 import { micDevice } from './micDevice';
-import { clones, keepVoiceInProject, loadVoicer, saveVoicer, useVoicer, VOICERS } from '../settingsStore';
+import { clones, useVoicer, VOICERS } from '../settingsStore';
 import { useMicLevel } from './useMicLevel';
 import { beatsIn, replaceTake, useRerecord } from './useRerecord';
 import { ClipWave } from './ClipWave';
@@ -38,7 +38,6 @@ interface Props {
   onClean: (i: number) => void;
   onRestore: (i: number) => void;
   onTranscribe: (i: number) => void;
-  setClipLane: (i: number, lane: 0 | 1) => void;
   deleteClip: (i: number) => void;
   onClose: () => void;
 }
@@ -100,18 +99,6 @@ export function ClipDetail(p: Props) {
     const room = loud.peak !== null ? -1 - loud.peak : 24;
     const g = Math.max(-24, Math.min(24, room, Math.round((loud.target - loud.lufs) * 2) / 2));
     update({ gain: g || undefined });
-  };
-
-  const [voiceNote, setVoiceNote] = useState<string | null>(null);
-  const takeAsMyVoice = () => {
-    const v = loadVoicer();
-    const sample = { upload: c.upload, start: c.trimStart, end: Math.min(c.trimEnd, c.trimStart + 30), name: c.name };
-    const clone = VOICERS.find((x) => x.clones)!;
-    const next = clones(v) ? { ...v, sample } : { ...v, baseURL: clone.baseURL, model: clone.model, sample };
-    saveVoicer(next);
-    void keepVoiceInProject(next).catch(() => undefined);
-    const model = VOICERS.find((x) => x.baseURL === next.baseURL && x.model === next.model)?.label ?? next.model;
-    setVoiceNote(`Generated voice now copies your voice from this clip (${(sample.end - sample.start).toFixed(0)} s, ${model}).${len < 10 ? ' A clip of 10–30 s copies it more closely.' : ''} Lines already generated in another voice stay until you generate again; Settings → Voice generation to change it. It uses your OpenRouter key there.`);
   };
 
   const inside = beatsIn(whole, p.clicks);
@@ -246,11 +233,8 @@ export function ClipDetail(p: Props) {
               ? <button onClick={() => p.onRestore(index)} title="Use the recording as it was, with its background noise">↺ Back to the original recording</button>
               : <button onClick={() => p.onClean(index)} disabled={p.missing} title="Remove background noise (fan, hum, room, keyboard) with RNNoise, on this computer; the original is kept">✨ Clean up voice</button>}
             <button onClick={() => p.onTranscribe(index)} disabled={p.missing}>✎ Transcribe…</button>
-            <button onClick={takeAsMyVoice} disabled={p.missing} title="Generated voice will copy your voice from this clip (a cloning model through OpenRouter). Transcribe the clip first for a closer copy.">🎙 Use as my voice</button>
-            <button onClick={() => p.setClipLane(index, c.lane === 0 ? 1 : 0)}>{c.lane === 0 ? '↓ Move to the lower lane' : '↑ Move to the upper lane'}</button>
             <button className="danger" onClick={() => { p.deleteClip(index); p.onClose(); }} title="Takes the clip off the timeline; the recording file stays">✕ Remove clip</button>
           </div>
-          {voiceNote && <p className="muted hint">{voiceNote}</p>}
         </section>
 
         <section>

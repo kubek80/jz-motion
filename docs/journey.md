@@ -952,3 +952,11 @@ Jakub's clip window only offered **Record again**; with narration made by genera
 ![Generate again in a clip's window](journey/116-generate-again.jpg)
 
 **Checked by:** Playwright on a copy: Generate again on "My own video assistant" replaced the clip (new file, same scene and name), moved the following clips and cues by the difference, and the clip measured "About right"; fresh readings differ from the cached ones; the rebuilt presentation: 74 cued beats, 0 ignored, 0 cut short; typecheck, tests, build.
+
+## Step 77: Fewer buttons in the clip window
+
+Jakub didn't want **Use as my voice** in the clip window (his voice has its own place, **🎙 My voice**, on the home screen and in Timing) nor **Move to the lower lane** there. Both are gone; moving a clip to the other lane is still in the timeline's right-click menu and by dragging. The hints that pointed to Use as my voice (Settings, My voice) now point to My voice.
+
+![The clip's actions](journey/117-clip-actions.jpg)
+
+**Checked by:** Playwright: the clip window's actions are Play in the timeline, Clean up voice, Transcribe, Remove clip; typecheck, tests, build.

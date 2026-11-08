@@ -81,7 +81,7 @@ export const sharedKey = (v: Pick<Voicer, 'baseURL'>) => loadProfiles().find((p)
 /** The voice settings with a key: their own, or the same service's key from Models. */
 export const withKey = (v: Voicer): Voicer => (v.apiKey ? v : { ...v, apiKey: sharedKey(v) ?? '' });
 
-/** The voice settings (with a key, see withKey), kept up to date when they change (Settings, or "Use as my voice"). */
+/** The voice settings (with a key, see withKey), kept up to date when they change (Settings, or My voice). */
 export function useVoicer(): Voicer {
   const [v, setV] = useState(() => withKey(loadVoicer()));
   useEffect(() => {

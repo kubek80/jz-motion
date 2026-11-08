@@ -286,7 +286,6 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
           onClean={(i) => void cleanClip(i)}
           onRestore={restoreClip}
           onTranscribe={(i) => setTranscribing([clips[i]])}
-          setClipLane={setClipLane}
           deleteClip={deleteClip}
           onClose={() => setOpenClipId(null)}
         />
