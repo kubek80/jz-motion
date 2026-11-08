@@ -1,5 +1,6 @@
 // The editor for one open presentation: owns its state (text and undo history, mode, selection, open
 // windows) and lays out the board, panels and controls. The parts live in ./editor/.
+import { hasBoundClips, layoutScenes, type TimedDoc } from '../video/sceneTimeline';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { compile, Stage, type StagePosition } from '../engine';
 import type { Camera } from '../engine/schema';
@@ -126,7 +127,13 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
   const editable = useMemo(() => new Set((scene?.elements ?? []).map((e) => e.id)), [scene]);
   const ids = useMemo(() => (doc ? [...idsInScope(doc, sceneIndex)] : []), [doc, sceneIndex]);
 
-  const update = useCallback((next: RawDoc) => {
+  /** How long each scene's animation runs (for laying out a scene without narration). */
+  const durations = useRef(new Map<string, number>());
+  useEffect(() => { if (result.ok) durations.current = new Map(result.presentation.scenes.map((sc) => [sc.id, sc.duration])); }, [result]);
+  const update = useCallback((given: RawDoc) => {
+    // Narration that belongs to scenes moves with them: when the scenes that play change, lay them out again.
+    const prev = docRef.current;
+    const next = prev && hasBoundClips(given as unknown as TimedDoc) ? (layoutScenes(prev as unknown as TimedDoc, given as unknown as TimedDoc, (id) => durations.current.get(id) ?? 0) as unknown as RawDoc) : given;
     // Known straight away, so a second edit in the same moment builds on this one.
     docRef.current = next;
     log('update', { voiceover: voiceoverSummary(next.voiceover), cuedBeats: cuedBeatCount(next), scenes: next.scenes.length });

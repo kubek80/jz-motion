@@ -17,9 +17,11 @@ interface Options {
   onCues: (changes: { scene: number; beat: number; cue: number | undefined }[], clearOthers?: boolean) => void;
   setBusy: (b: string | null) => void;
   setError: (e: string | null) => void;
+  /** The scene playing at a moment (its id): new narration belongs to the scene where it starts. */
+  sceneIdAt: (t: number) => string | undefined;
 }
 
-export function useNarrationRecording({ clock, clips, clicks, setClips, onCue, onCues, setBusy, setError }: Options) {
+export function useNarrationRecording({ clock, clips, clicks, setClips, onCue, onCues, setBusy, setError, sceneIdAt }: Options) {
   const { rec, now, realNow, pause, mixer, silent, setTime } = clock;
   const [recPaused, setRecPaused] = useState(false);
   // ---------------------------------------------------------------- recording narration, with the script as a prompter
@@ -134,6 +136,7 @@ export function useNarrationRecording({ clock, clips, clicks, setClips, onCue, o
         trimStart: 0,
         trimEnd: sourceDuration,
         name: `narration ${new Date().toLocaleString()}`,
+        ...(sceneIdAt(r.clipOffset) ? { scene: sceneIdAt(r.clipOffset) } : {}),
       };
       setClips([...clips, newClip]);
       // Park the playhead at the end of the just-finished recording so pressing Play picks up

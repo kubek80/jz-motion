@@ -25,7 +25,7 @@ npm run record -- <url> <name> <scenario.mjs>     # scripts/record.mjs: record a
 npm run media -- import <file…>                   # add any picture, recording or sound to the media library (converted); prints its /media/… src
 npm run media -- frames <file>                    # a recording's frames (its distinct pictures), for play's goto / until
 npm run assets                                    # what's in media/, images/ and uploads/, how big, and which presentations use it
-npm run voice -- time|place <presentation> --scenes id,…  # generated speech: time the words per beat; put new scenes' voice on the timeline
+npm run voice -- time|place|rebuild <presentation> [--scenes id,…]  # generated speech: time the words per beat; put new scenes' voice on the timeline; one clip per scene for all
 ```
 
 Explainers about *any* app (including jz-motion itself) use `snap` and `record` to pull real UI into the media library, rather than hand-drawing boxes. The target app can be anywhere reachable (local dev, staging URL, public site); scenario files live in `scripts/scenarios/`. See the `demo-interactions` skill for the shape of a scenario and when to snap vs. record. The raw captures stay in `scratch/captures/` (not in git); the media library keeps converted copies.

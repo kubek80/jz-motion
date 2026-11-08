@@ -138,7 +138,7 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
   const notes = useNotesEditing(pause, onNotes);
   const { voicer, tts, generating, missingSentences, generateVoice } = useVoiceGeneration(presentation, presentationId, setError);
   const { recording, recPaused, startRecording, nextLine, previousLine, togglePauseRecording, stopRecording } =
-    useNarrationRecording({ clock, clips, clicks, setClips, onCue, onCues, setBusy, setError });
+    useNarrationRecording({ clock, clips, clicks, setClips, onCue, onCues, setBusy, setError, sceneIdAt: (t) => presentation.scenes[clicks.filter((c) => c.t <= t + 0.05).at(-1)?.scene ?? clicks[0]?.scene ?? 0]?.id });
 
   // Closing goes back to the editor on the scene at the playhead.
   const close = () => onClose(clicks.reduce((at, c) => (c.t <= now() + 1e-3 ? c.scene : at), clicks[0]?.scene ?? startScene));

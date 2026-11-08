@@ -61,7 +61,7 @@ export function replaceTake(clips: Clip[], index: number, upload: string, durati
   const delta = duration - oldLen;
   const r2 = (n: number) => Math.round(n * 100) / 100;
   const next: Clip[] = clips.map((c, i) => {
-    if (i === index) return { id: `rec-${Date.now().toString(36)}`, upload, sourceDuration: duration, offset: old.offset, lane: old.lane, trimStart: 0, trimEnd: duration, name: `re-recorded · ${old.name ?? 'clip'}` };
+    if (i === index) return { id: `rec-${Date.now().toString(36)}`, upload, sourceDuration: duration, offset: old.offset, lane: old.lane, trimStart: 0, trimEnd: duration, name: `re-recorded · ${old.name ?? 'clip'}`, ...(old.scene ? { scene: old.scene } : {}) };
     return c.offset >= oldEnd - 1e-3 ? { ...c, offset: Math.max(0, r2(c.offset + delta)) } : c;
   });
   const inside = beatsIn(old, clicks).filter((c) => c.cued);
