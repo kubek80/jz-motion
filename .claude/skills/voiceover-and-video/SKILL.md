@@ -35,6 +35,17 @@ npm run voice -- rebuild presentations/<id>.json                  # the whole vo
 
 In the app, a clip's window (double-click it in Timing) has **✨ Generate again**: the same thing for that one clip, from the current notes, as a new file (`uploads/generated-<scene>-<id>.webm`, so Undo still has the old one). Joined clips are levelled to -16 LUFS, the level the video aims for.
 
+## Your avatar
+
+`voice/my-avatar.json` holds the person's avatar: a photo (`uploads/avatar-photo-*`, a 16:9 picture of them) that says voice clips, made on fal.ai (Kling AI Avatar v2, about 6¢ a second; a calmer copy of the voice drives the face and the prompt asks for subtle mouth movements, which is how they want it). Each video is `uploads/avatar-*.mp4`, named on its clip (`avatar`), and the export shows it where the scene's or beat's `layout` shows the camera: `camera` (full screen) for an intro or ending, `pip` in a corner elsewhere.
+
+```sh
+npm run avatar -- photo <picture> [--top 0.4]                                  # set the photo (a 16:9 band, `top` of the way down)
+npm run avatar -- make presentations/<id>.json --scenes id,id --layout camera  # each scene's clip said by the avatar
+```
+
+Use it only for the scenes the person names (it costs money). After the voice of such a scene changes, make its avatar again (the clip window does this itself after Generate again). In a Claude cloud session: `FAL_KEY=proxy-injected NODE_USE_ENV_PROXY=1 npm run avatar -- …`. Run one `make` at a time on a presentation: each writes the file when it finishes.
+
 ## Recordings belong to scenes
 
 Every clip names its scene (`scene` on the clip): recording in Timing tags it with the scene playing at that moment, re-recording keeps it, `place` and `rebuild` set it. When scenes are moved, added, deleted, left out or put back, the app lays the playing scenes out again in their order, each keeping its own timing inside and the pauses between them, and moves each scene's clips and cues with it; the clips of a left-out scene stay in the file but are not on the timeline. Prefer one clip per scene: a clip that runs across two scenes moves with the first. Older presentations without `scene` on their clips keep the absolute timeline (nothing moves by itself).

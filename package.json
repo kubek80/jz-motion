@@ -19,7 +19,8 @@
     "record": "node scripts/record.mjs",
     "assets": "tsx server/cli-assets.ts",
     "media": "tsx server/cli-media.ts",
-    "voice": "tsx server/cli-voice.ts"
+    "voice": "tsx server/cli-voice.ts",
+    "avatar": "tsx server/cli-avatar.ts"
   },
   "dependencies": {
     "@codemirror/lang-json": "^6.0.2",

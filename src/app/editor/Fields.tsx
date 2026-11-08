@@ -20,7 +20,7 @@ const FIELD_INFO: Record<string, FieldInfo> = {
   skip: { label: 'leave out of the video', help: 'Timing, Play all, presenting and the exported video pass over this scene; it stays here to edit. For trying another version of a scene next to the one you have.' },
   inherit: { label: 'continue from previous scene', help: 'Start with the previous scene\'s board (what is still visible, and its view), to keep building the same drawing.' },
   camera: { label: 'start view', help: 'Where the view is when the scene starts. Empty: the whole board.' },
-  layout: { label: 'layout', help: 'Where your camera recording appears while this plays (video export only).', group: 'video' },
+  layout: { label: 'layout', help: 'Where your camera recording, or your avatar, appears while this plays (video export only).', group: 'video' },
   track: { label: 'recording', help: 'Which recording that layout shows: "me" is yours, others are recordings added to a take.', group: 'video' },
   cue: { label: 'starts at (s)', help: 'Seconds into the recording where this beat plays (presentations made from a recording).', group: 'advanced' },
   auto: { label: 'play automatically', help: 'Plays right after the previous beat instead of waiting for a click.' },

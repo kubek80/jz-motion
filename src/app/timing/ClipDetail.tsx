@@ -10,6 +10,7 @@ import { clones, useVoicer, VOICERS } from '../settingsStore';
 import { useMicLevel } from './useMicLevel';
 import { beatsIn, replaceTake, useRerecord } from './useRerecord';
 import { ClipWave } from './ClipWave';
+import { AvatarSection, startAvatar } from './AvatarSection';
 import { chainOf, removeSpan } from './clipChain';
 
 // One voice clip in detail (double-click it on the timeline): how loud it is and its volume, everything you can
@@ -128,6 +129,8 @@ export function ClipDetail(p: Props) {
       const r = replaceTake([...others, whole], others.length, g.upload, g.duration, g.starts.slice(1), p.clicks, p.allCued);
       const made = { ...r.clips[others.length], name: `generated voice · ${(c.name ?? 'clip').replace(/^(generated voice|re-recorded) · /, '')}` };
       p.setTimeline(r.clips.map((x, i) => (i === others.length ? made : x)), r.cues);
+      // An avatar saying the old words is made again for the new ones (the new clip's window picks it up).
+      if (c.avatar) await startAvatar(made.id, { upload: g.upload, trimStart: 0, trimEnd: g.duration, name: c.scene ?? c.name }).catch((e) => setError(`Avatar: ${(e as Error).message}`));
       p.onReplaced(made.id);
     } catch (e) {
       setError((e as Error).message);
@@ -236,6 +239,8 @@ export function ClipDetail(p: Props) {
             <button className="danger" onClick={() => { p.deleteClip(index); p.onClose(); }} title="Takes the clip off the timeline; the recording file stays">✕ Remove clip</button>
           </div>
         </section>
+
+        <AvatarSection clip={c} from={srcFrom} to={srcTo} onAvatar={(a) => update({ avatar: a })} />
 
         <section>
           <h4><button className={`fold ${micOpen ? 'open' : ''}`} onClick={() => setMicOpen(!micOpen)} aria-expanded={micOpen}>Check the microphone</button></h4>

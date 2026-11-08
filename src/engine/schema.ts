@@ -315,6 +315,11 @@ const Clip = z.object({
   gain: z.number().min(-24).max(24).optional(),
   /** The scene this narration belongs to (its id): it moves with the scene, and is left out with it. */
   scene: z.string().optional(),
+  /**
+   * Your avatar saying this clip: a talking-head video in uploads/ made from the clip's `trimStart`–`trimEnd` (those
+   * at the time), shown in the video wherever a layout shows the camera.
+   */
+  avatar: z.object({ video: z.string(), trimStart: z.number().min(0), trimEnd: z.number().positive() }).optional(),
 });
 
 export const Presentation = z.object({

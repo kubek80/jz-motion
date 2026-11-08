@@ -10,6 +10,8 @@ uploads/*.mov
 uploads/*.mkv
 uploads/*.m4v
 uploads/*.avi
+# …except your avatar's talking-head videos (uploads/avatar-*.mp4), which go with the voice clips they were made from.
+!uploads/avatar-*.mp4
 snapshots
 tts
 presentations/.drafts

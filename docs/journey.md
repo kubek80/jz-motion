@@ -969,3 +969,15 @@ Jakub tried his intro in four speaking styles of his cloned voice (as recorded, 
 - Changing the style (or model) of the project's voice in Settings saves it to the project too, so the next start doesn't bring the old one back.
 
 **Checked by:** Playwright: a browser with the project's sample but no style took the new style on start, one with another voice kept it; typing a style in Settings wrote it to `voice/my-voice.json` (restored afterwards); the rebuilt presentation: every cue in order, none cut short; typecheck, tests, build.
+
+## Step 79: My avatar
+
+Jakub wanted his avatar in the video: the intro, the end and a couple of times in between. After trying a talking photo and a lip-synced real video (both on fal.ai), he chose the talking photo, from a selfie he took for it, with smaller mouth movements than the first try (he speaks with subtle ones).
+
+- **`voice/my-avatar.json`**: the photo (`uploads/avatar-photo-*`, a 16:9 band of the picture), the model (Kling AI Avatar v2 Standard on fal.ai, about 6¢ a second) and how it moves: a calmer copy of the voice (quieter, peaks evened out) drives the face, and the prompt asks for subtle mouth movements.
+- **A clip names its avatar** (`avatar` on the clip: the video and the part of the recording it says). The clip window has **My avatar**: the video, **Make my avatar** / **Make it again** with what it costs; it runs as a job the window follows, remembered per clip, so closing the window doesn't lose it. **Generate again** makes the avatar again for the new words. Settings has the fal.ai key.
+- **In the video**: making a take turns the clips' avatars into one camera track, so the existing layouts show it: `camera` (full screen, the board small) for the intro and the end, `pip` (a corner) for scenes 4 and 23.
+- **`npm run avatar -- photo <picture>` / `make <presentation> --scenes … --layout …`** does the same from the command line.
+- **Bug found:** two `make` runs at once on one presentation each wrote the file they had read at the start, so the second dropped the first's avatars. `make` now reads the file again before writing and changes only its own clips and scenes.
+
+**Checked by:** the four avatars made with the command (63 s, about $3.55); the clip window showing one; a take made in Timing got a 545 s camera track; the exported video shows Jakub full screen in the intro and the end and in a corner in scenes 4 and 23 (frames below); typecheck, tests, build.

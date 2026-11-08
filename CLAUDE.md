@@ -26,6 +26,7 @@ npm run media -- import <file…>                   # add any picture, recording
 npm run media -- frames <file>                    # a recording's frames (its distinct pictures), for play's goto / until
 npm run assets                                    # what's in media/, images/ and uploads/, how big, and which presentations use it
 npm run voice -- time|place|rebuild <presentation> [--scenes id,…]  # generated speech: time the words per beat; put new scenes' voice on the timeline; one clip per scene for all
+npm run avatar -- photo <picture> | make <presentation> --scenes id,… [--layout camera|pip]  # your avatar: its photo; talking-head videos of scenes' voice clips
 ```
 
 Explainers about *any* app (including jz-motion itself) use `snap` and `record` to pull real UI into the media library, rather than hand-drawing boxes. The target app can be anywhere reachable (local dev, staging URL, public site); scenario files live in `scripts/scenarios/`. See the `demo-interactions` skill for the shape of a scenario and when to snap vs. record. The raw captures stay in `scratch/captures/` (not in git); the media library keeps converted copies.
@@ -39,9 +40,9 @@ Explainers about *any* app (including jz-motion itself) use `snap` and `record` 
 | `media/` | The media library: pictures (WebP), screen recordings (WebM video + poster), sounds, with `index.json` (names, sizes) | yes, with Git LFS (`git lfs install` once per computer; `index.json` is plain text) |
 | `images/` | Older pictures, from before the media library (migrated; `npm run media -- migrate` moves any new ones in) | yes |
 | `scratch/` | Raw captures and files moved out of the way (`migrate` puts unused pictures here); safe to delete | no |
-| `uploads/` | Voice recordings: narration, re-takes, generated narration (`generated-*`), Jakub's voice sample (`voice-sample-*`), with their transcripts | yes, with Git LFS (transcripts plain text); video uploaded to start a presentation is not |
+| `uploads/` | Voice recordings: narration, re-takes, generated narration (`generated-*`), Jakub's voice sample (`voice-sample-*`), with their transcripts; his avatar's photo and talking-head videos (`avatar-*`) | yes, with Git LFS (transcripts plain text); video uploaded to start a presentation is not |
 | `takes/`, `exports/`, `snapshots/` | Takes, videos, previews | no |
-| `voice/` | `my-voice.json`: Jakub's own voice for generated speech (the sample, which part, what is said in it, the cloning model, how to speak: a neutral British accent; never a key). `npm run voice` speaks in it by default | yes |
+| `voice/` | `my-voice.json`: Jakub's own voice for generated speech (the sample, which part, what is said in it, the cloning model, how to speak: a neutral British accent; never a key). `npm run voice` speaks in it by default. `my-avatar.json`: his avatar (the photo, the fal.ai model, how it moves) | yes |
 | `logs/` | `ai.jsonl`: every AI request, its reply and what came of it (read it when an AI change didn't do what was asked) | no |
 | `src/examples/` | Example presentations shipped with the app (`public/examples/` holds their pictures) | yes |
 
