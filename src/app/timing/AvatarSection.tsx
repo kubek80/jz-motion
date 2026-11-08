@@ -1,3 +1,4 @@
+import { AvatarVideo } from '../AvatarVideo';
 import { useEffect, useState } from 'react';
 import type { Clip } from '../../engine/schema';
 import { clearAvatarJob, startAvatar, useAvatarJobs } from './avatarJobs';
@@ -29,7 +30,7 @@ export function AvatarSection({ clip, from, to, onMyAvatar }: { clip: Clip; from
   return (
     <section className="avatar-section">
       <h4>My avatar</h4>
-      {a && <video className="avatar-preview" src={`/uploads/${a.video}`} muted loop autoPlay playsInline />}
+      {a && <AvatarVideo key={a.video} className="avatar-preview" file={a.video} loop autoPlay />}
       <div className="row wrap">
         <button onClick={() => void make()} disabled={busy || !info?.avatar} title="Your avatar says this clip (on fal.ai); shown in the video where the scene's layout shows the camera">
           {busy ? 'Making…' : a ? '🧑 Make it again' : '🧑 Make my avatar'}
