@@ -1,3 +1,4 @@
+import { AvatarVideo } from '../AvatarVideo';
 import { useEffect, useRef, useState, type Ref } from 'react';
 import type { Clip } from '../../engine/schema';
 import type { CompiledPresentation } from '../../engine/compile';
@@ -55,7 +56,7 @@ export function AvatarBoard({ host, clips, presentation, perf, now, playing }: {
   return (
     <div className={`timing-board${shown ? ` avatar-${shown.layout}` : ''}`}>
       <div className="board-host" ref={host} />
-      {shown && <video ref={video} className="avatar-live" src={`/uploads/${shown.video}`} muted playsInline preload="auto" />}
+      {shown && <AvatarVideo key={shown.video} ref={video} className="avatar-live" file={shown.video} />}
     </div>
   );
 }

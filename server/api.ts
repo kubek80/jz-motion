@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { createReadStream, createWriteStream } from 'node:fs';
-import { copyFile, rename, stat } from 'node:fs/promises';
+import { copyFile, readFile, rename, stat } from 'node:fs/promises';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { basename, join, resolve } from 'node:path';
 import { pipeline } from 'node:stream/promises';
@@ -201,13 +201,17 @@ function startExport(body: any, appUrl: string): Job { // eslint-disable-line @t
 // `webm` is served as `audio/webm` here: the app records voice as audio-only webm/opus via
 // MediaRecorder; labeling that `video/webm` made Chrome's <audio> refuse to decode the recording.
 // Video uploads use `.mp4`/`.mov`, which keep their video MIME labels.
-const MEDIA_TYPES: Record<string, string> = { mp3: 'audio/mpeg', m4a: 'audio/mp4', wav: 'audio/wav', ogg: 'audio/ogg', webm: 'audio/webm', mp4: 'video/mp4', mov: 'video/quicktime', aac: 'audio/aac', flac: 'audio/flac' };
+const MEDIA_TYPES: Record<string, string> = { mp3: 'audio/mpeg', m4a: 'audio/mp4', wav: 'audio/wav', ogg: 'audio/ogg', webm: 'audio/webm', mp4: 'video/mp4', mov: 'video/quicktime', aac: 'audio/aac', flac: 'audio/flac', jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp' };
 
 /** An uploaded recording or voice-over, with range requests so players can seek. */
 async function serveUpload(req: IncomingMessage, res: ServerResponse, file: string) {
   const path = uploadPath(file);
   const info = await stat(path).catch(() => null);
   if (!info) return send(res, 404, { error: 'not found' });
+  // A Git LFS placeholder (the repository was pulled without its files): not the recording, so as good as missing.
+  if (info.size < 400 && (await readFile(path, 'utf8')).startsWith('version https://git-lfs')) {
+    return send(res, 404, { error: 'Only a Git LFS placeholder is on this computer: run git lfs pull (git lfs install once per computer).', lfs: true });
+  }
   res.setHeader('content-type', MEDIA_TYPES[file.split('.').pop()!.toLowerCase()] ?? 'application/octet-stream');
   res.setHeader('accept-ranges', 'bytes');
   const range = /^bytes=(\d*)-(\d*)$/.exec(String(req.headers.range ?? ''));

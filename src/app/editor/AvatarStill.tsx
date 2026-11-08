@@ -1,3 +1,4 @@
+import { AvatarVideo } from '../AvatarVideo';
 import type { RawDoc } from './doc';
 
 // Your avatar on the editor's board: where the scene's video layout shows the camera, a still of the avatar made for
@@ -18,7 +19,7 @@ export function AvatarStill({ doc, sceneIndex }: { doc: RawDoc; sceneIndex: numb
   const where = layout === 'camera' ? 'Full frame in the video, the board small' : 'In this corner in the video';
   return (
     <div className={`avatar-still ${layout}${avatar ? '' : ' empty'}`} title={avatar ? `Your avatar · ${where}` : 'The camera goes here in the video: no avatar for this scene yet (make one in Timing: double-click its clip)'}>
-      {avatar && <video src={`/uploads/${avatar.video}#t=1`} muted playsInline preload="metadata" />}
+      {avatar && <AvatarVideo file={avatar.video} still />}
       <span className="tag">{avatar ? (layout === 'camera' ? '🎥 full frame in the video' : '🎥 avatar') : 'camera / avatar'}</span>
     </div>
   );

@@ -297,3 +297,9 @@
 .my-avatar .avatar-source { height: 54px; border-radius: 6px; border: 1px solid var(--line); }
 .my-avatar .button-like { display: inline-flex; align-items: center; padding: 6px 12px; border: 1px solid var(--line); border-radius: 8px; cursor: pointer; background: var(--panel); }
 .my-avatar .button-like:hover { border-color: var(--accent); }
+
+/* An avatar video that can't play: why, instead of a black box. */
+.avatar-video-problem { display: flex; align-items: center; justify-content: center; text-align: center; padding: 4px 8px; background: #2a1d05; color: #ffd27a; font-size: 12px; line-height: 1.3; border: 1px dashed #ffb020; box-sizing: border-box; }
+.avatar-still .avatar-video-problem { width: 100%; height: 100%; }
+.avatar-block .avatar-video-problem { height: 100%; padding: 0 6px; font-size: 10px; white-space: nowrap; }
+.timing-board .avatar-video-problem.avatar-live { font-size: 14px; }

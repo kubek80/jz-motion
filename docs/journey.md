@@ -1033,3 +1033,15 @@ Jakub found the photo avatar too expressive and wanted something more casual: hi
 ![Three versions, My avatar, and the clip menu](journey/122-my-avatar.jpg)
 
 **Checked by:** the four avatars looked at frame by frame; Playwright: My avatar opened from the home screen, a picture chosen and framed (not saved; the test file removed); in Timing on a copy, right-clicking a clip made its avatar on fal.ai (⏳ in the lane, then on the clip in the file, no window open; removed afterwards); scenes 15 and 16 snapshotted; the presentation: every cue in order, none cut short (a 0.1 s overlap between scenes 6 and 7 was already in Jakub's version); typecheck, tests, build.
+
+## Step 84: Why an avatar video doesn't play
+
+After pulling, Jakub saw only black boxes where his avatar should be. The files are on GitHub (checked by downloading them into a fresh copy), so on his computer they were most likely only Git LFS placeholders (pulled without `git lfs pull`), or the app had saved its older copy of the presentation over the pulled one, naming avatar videos that were since removed. A black box says neither.
+
+- The local server now treats a Git LFS placeholder in `uploads/` as missing, and says so (voice clips too: Timing marks them missing).
+- Wherever an avatar video can't play (the editor's still, the video lane, the clip window, Timing's board) it says why instead: "not downloaded: run git lfs pull", or "not on this computer".
+- Pictures in `uploads/` (the avatar's photo) are sent as pictures.
+
+![Timing with an avatar that is only a placeholder](journey/123-avatar-video-missing.jpg)
+
+**Checked by:** Playwright on a copy whose intro avatar was a placeholder file and scene 4's was gone: the editor, the lane and Timing's board said so; test files removed; typecheck, tests, build.

@@ -1,3 +1,4 @@
+import { AvatarVideo } from '../AvatarVideo';
 import type { Clip } from '../../engine/schema';
 import type { RawDoc } from '../editor/doc';
 
@@ -51,7 +52,7 @@ export function AvatarLane({ rows, pps, time, onOpen }: { rows: AvatarRow[]; pps
               ? `Your avatar saying this clip (${r.length.toFixed(1)} s)${r.stale ? ': made for an earlier cut of the clip, make it again' : ''} · double-click to see it or make it again`
               : 'This scene shows the camera, but its clip has no avatar yet · double-click to make one'}
           >
-            {r.video && <video src={`/uploads/${r.video}#t=1`} muted playsInline preload="metadata" />}
+            {r.video && <AvatarVideo file={r.video} still short />}
             <span className="avatar-name">{r.making !== undefined ? `⏳ making… ${r.making}` : r.video ? `${r.stale ? '⚠ ' : ''}🎥 avatar` : '🎥 no avatar yet'}</span>
           </div>
         );
