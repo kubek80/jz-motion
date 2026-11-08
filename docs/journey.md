@@ -812,3 +812,43 @@ Jakub wanted to see the timeline with both A and B, the B scenes with their gene
 
 **Checked by:** 0 cues ignored; each original scene's beats keep their spacing (e.g. Edit like a whiteboard: 5.4, 2.2, 1.5, 1.5 s apart, as before); no clips overlap on either lane; `npm run check`.
 
+## Step 63: The skills now say how to do it next time
+
+Jakub asked to update the skills so that next time it is done exactly this way. What had been one-off scripts became a command, and the skills say when to use it:
+
+- **`npm run voice -- time <presentation> [--scenes …]`**: per beat, how long the animation runs and how long its words take in generated speech (cached per sentence in `tts/`, shared with the app's Generate voice).
+- **`npm run voice -- place <presentation> --scenes …`**: gives new scenes in a timed presentation their generated voice on the timeline: one clip per scene (`uploads/generated-<scene>.webm`, in git), a gap opened where the scene plays, its beats cued to its sentences, later clips and cues moved on (`src/video/makeRoom.ts`, tested). The speech service comes from `OPENROUTER_API_KEY`, `OPENAI_API_KEY` or `TTS_*` variables.
+- **edit-presentation**: new scenes in a timed presentation are never left without cues (that is what pushed everything late); a second version of a scene goes right after the original, both play one after the other with their own voice, compared on one timeline, not in a copy; "leave out of the video" for choosing; how to write the script.
+- **voiceover-and-video**: the voice command and its services.
+- **demo-interactions**: record against copies made for the demo, at 1600×1000 for the editor and Timing; requests that match what the mock model returns; look at a recording's frames and check scenes in an export (snapshots can lag a recording by a frame); only remove takes you made; the layout that worked (picture, title, one caption, zoom plus spotlight per beat, frames and areas from the scenario's notes).
+- The app's own AI (agent mode) may run `npm run voice` too.
+
+**Checked by:** `place` run on his presentation as it was before step 62 gives the same clips and cues as the version built by hand (to the hundredth of a second); `time` on a scene, and without a key (says what to set); a test for making room on the timeline; typecheck, tests, build.
+
+## Step 64: A window for each voice clip: volume, microphone, record it again
+
+Jakub asked that double-clicking a voice clip open its details: whether it is too loud or too quiet, recording it again there (with the timing following a longer take), testing the microphone while turning the dials on the device, and every other option.
+
+- **Volume**: the clip's loudness over the part it plays (FFmpeg loudnorm in analysis mode, `/api/uploads/<file>/loudness`) against the −16 LUFS the export evens the video to, its loudest moment, and a verdict (quiet, about right, loud). A clip now has a **volume** (`gain`, dB, in the format): the Timing mixer plays it and the export applies it (`volume=…dB` per track, carried by the take). **Even it out** sets it to the video's level, held back so the loudest moment stays under −1 dB.
+- **Everything else**: play, clean up voice (or back to the original), transcribe, move lane, rename, remove; the right-click menu also opens the window.
+- **Check the microphone**: choose the input (kept in this browser, and now used by every recording: narration, Play mode recording, re-takes), a live meter with zones (peaks between −18 and −6 dBFS are good, red near 0 and a warning when it distorts), what to do in words ("turn the gain up a little"), and a five-second test to listen to.
+- **Record it again**: the lines of the beats inside the clip as a prompter, the meter while recording, → marks the next line; listen, then **Use this take** or **Discard**. The new take replaces the clip; later clips and cues move by the difference; beats inside go where → was pressed, and unmarked ones are spread between the marks (first try spread them over the whole take, so a beat after a mark could come before it: fixed, tested).
+
+![The clip window: volume, actions, the microphone check](journey/107-clip-window.jpg)
+![Recording a clip again: its lines, the meter, Stop](journey/108-clip-record-again.jpg)
+
+**Checked by:** Playwright with Chromium's stand-in microphone on a copy: a generated clip measured at −27.5 LUFS ("12 dB under"), Even it out → +8.9 dB, −18.6 LUFS; the microphone check showed the stand-in's full-scale tone as distorting; a 5 s re-take of a 42.6 s clip with one → moved the next scene from 136.5 s to 99.2 s, the beats inside in order, other lanes untouched; tests for the export's volume and for fitting a take; typecheck, tests, build.
+
+## Step 65: Your own voice, and better voices, through OpenRouter
+
+Jakub chose OpenRouter for cloning his voice, and better models for generated speech.
+
+- **Your voice**: in a clip's window, **Use as my voice** takes up to 30 s of it as the voice sample (and switches to a cloning model if needed). The server cuts that part to MP3 (kept in `tts/samples/`), adds what is said in it when the clip has been transcribed, and sends it with each sentence as OpenRouter's `input_references`, instead of a voice name. Fish Audio S2.1 Pro and HeyGen Voice 1 clone (about 1.5¢ per 1,000 characters). `npm run voice` takes it as `TTS_SAMPLE=<upload>@start-end`.
+- **Better voices**: presets for ElevenLabs v4 (the most natural), Microsoft MAI-Voice 2.1, Gemini 3.8 Flash TTS (follows a style), MiniMax Speech 2.8 HD and Voxtral; the voice field lists the voices the chosen model takes (OpenRouter's models list), and **how to speak** gives a style to the models that use one (`TTS_INSTRUCTIONS` on the command line).
+- Generated clips are kept apart by what made them (voice or sample, and style), so changing the voice never mixes lines up; Timing and Script pick up a new voice at once.
+- **Found while testing every preset**: HeyGen and Gemini only return raw PCM, so the server asks for that and converts it; HeyGen's is 44.1 kHz and Gemini's 24 kHz (the first conversion assumed 24 kHz and made HeyGen speak at half speed, an octave low: caught by measuring the pitch, 64–73 Hz for voices that should be 120–140), now read from the response's content type. HeyGen sometimes answers "busy, retry in 2 s": retried.
+
+![Voice generation in Settings: your voice with a cloning model, and Gemini with a style](journey/109-voice-settings.jpg)
+
+**Checked by:** a sentence through every preset (Fish and HeyGen cloning the same sample land at the same pitch, 134 Hz; ElevenLabs, Microsoft, Gemini with a style, MiniMax, HeyGen's own voice); `npm run voice -- time` with a sample; Use as my voice in the clip window and the Settings section in a browser; typecheck, tests, build.
+

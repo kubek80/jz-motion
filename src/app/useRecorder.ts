@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { micConstraints } from './timing/micDevice';
 import type { PerformState, Stage } from '../engine';
 import type { PerformEvent } from '../video/performance';
 
@@ -28,7 +29,7 @@ export function useRecorder(stage: React.RefObject<Stage | null>, presentation: 
     let stream: MediaStream;
     try {
       stream = await navigator.mediaDevices.getUserMedia({
-        audio: { echoCancellation: true, noiseSuppression: true },
+        audio: { ...micConstraints(), echoCancellation: true },
         video: camera ? { width: { ideal: 1280 }, height: { ideal: 720 }, frameRate: { ideal: 30 } } : false,
       });
     } catch (e) {

@@ -69,6 +69,7 @@ export function useVoiceoverFile({ clips, perf, text, presentationId, onVoiceove
           offset: String(c.offset),
           trimStart: String(c.trimStart),
           trimEnd: String(c.trimEnd),
+          ...(c.gain ? { gain: String(c.gain) } : {}),
         });
         const res = await fetch(`/api/takes/${take.id}/tracks/${trackName}?${params.toString()}`, { method: 'PUT' });
         if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error ?? res.statusText);

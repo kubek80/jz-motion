@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { CompiledPresentation } from '../engine/compile';
-import { loadVoicer } from './settingsStore';
+import { useVoicer } from './settingsStore';
 import { entryFor, loadSidecar, requestTts, sentencesOf, splitSentences, type TtsSidecar } from './tts';
 
 interface Props {
@@ -17,7 +17,7 @@ const fmtDuration = (s: number) => s >= 60 ? `${Math.floor(s / 60)}:${String(Mat
  * (editable in place) and sentence-level duration estimates (or real lengths once voice is generated).
  */
 export function Script({ presentation, presentationId, onNotes, onClose }: Props) {
-  const voicer = useMemo(() => loadVoicer(), []);
+  const voicer = useVoicer();
   const [tts, setTts] = useState<TtsSidecar>({});
   const [generating, setGenerating] = useState<{ done: number; total: number } | null>(null);
   const [error, setError] = useState<string | null>(null);

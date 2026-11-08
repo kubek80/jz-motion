@@ -25,6 +25,7 @@ npm run record -- <url> <name> <scenario.mjs>     # scripts/record.mjs: record a
 npm run media -- import <file…>                   # add any picture, recording or sound to the media library (converted); prints its /media/… src
 npm run media -- frames <file>                    # a recording's frames (its distinct pictures), for play's goto / until
 npm run assets                                    # what's in media/, images/ and uploads/, how big, and which presentations use it
+npm run voice -- time|place <presentation> --scenes id,…  # generated speech: time the words per beat; put new scenes' voice on the timeline
 ```
 
 Explainers about *any* app (including jz-motion itself) use `snap` and `record` to pull real UI into the media library, rather than hand-drawing boxes. The target app can be anywhere reachable (local dev, staging URL, public site); scenario files live in `scripts/scenarios/`. See the `demo-interactions` skill for the shape of a scenario and when to snap vs. record. The raw captures stay in `scratch/captures/` (not in git); the media library keeps converted copies.
@@ -38,7 +39,7 @@ Explainers about *any* app (including jz-motion itself) use `snap` and `record` 
 | `media/` | The media library: pictures (WebP), screen recordings (WebM video + poster), sounds, with `index.json` (names, sizes) | yes, with Git LFS (`git lfs install` once per computer; `index.json` is plain text) |
 | `images/` | Older pictures, from before the media library (migrated; `npm run media -- migrate` moves any new ones in) | yes |
 | `scratch/` | Raw captures and files moved out of the way (`migrate` puts unused pictures here); safe to delete | no |
-| `uploads/`, `takes/`, `exports/`, `snapshots/` | Recordings, voice-overs, takes, videos, previews | no |
+| `uploads/`, `takes/`, `exports/`, `snapshots/` | Recordings, voice-overs, takes, videos, previews | no (except `uploads/generated-*`, generated narration placed by `npm run voice -- place`: in git, with LFS) |
 | `logs/` | `ai.jsonl`: every AI request, its reply and what came of it (read it when an AI change didn't do what was asked) | no |
 | `src/examples/` | Example presentations shipped with the app (`public/examples/` holds their pictures) | yes |
 

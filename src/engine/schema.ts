@@ -311,6 +311,8 @@ const Clip = z.object({
   name: z.string().optional(),
   /** The original recording, when `upload` is a cleaned-up copy of it (Clean up voice). */
   cleanedFrom: z.string().optional(),
+  /** Volume change in dB, in Timing and in the video (to even out a quiet or loud clip). */
+  gain: z.number().min(-24).max(24).optional(),
 });
 
 export const Presentation = z.object({

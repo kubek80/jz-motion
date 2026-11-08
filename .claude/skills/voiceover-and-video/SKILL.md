@@ -20,6 +20,17 @@ description: Time a jz-motion presentation to a narration and export it as an MP
 
 From 1 or 3: **Make a take for export** in the Timing window. Then the **Video** tab → choose the take, layouts per beat or scene (`layout`: board, pip, pip-left, camera, side), **Export MP4** (files in `exports/`). Noisy narration can be cleaned per clip first (Timing → right-click a clip → Clean up voice; local RNNoise, the original is kept). The sound is evened out to a standard loudness (-16 LUFS) by default, so a quiet recording comes up; untick *even out volume* to keep it exactly as recorded. Export time goes into painting frames: frames where nothing moves are reused, so long still stretches are cheap, and constant motion (flows left on, swaying clipart, recordings playing) makes every frame cost.
 
+## Generated voice from the command line
+
+```sh
+npm run voice -- time  presentations/<id>.json [--scenes id,id]   # per beat: animation vs. how long its words take
+npm run voice -- place presentations/<id>.json --scenes id,id     # new scenes in a timed presentation: their generated voice on the timeline
+```
+
+- One clip per sentence (the prompter's lines), cached in `tts/<id>/` so a sentence is paid for once; the app's **Generate voice** uses the same cache.
+- The service comes from the environment: `OPENROUTER_API_KEY` (OpenRouter, Voxtral, voice `en_paul_neutral`), `OPENAI_API_KEY` (gpt-4o-mini-tts, `alloy`), or `TTS_BASE_URL`, `TTS_MODEL`, `TTS_VOICE`, `TTS_API_KEY`. In the app: Settings → Voice generation has the same presets. `TTS_INSTRUCTIONS` gives a style ("calm, clear narrator") to models that take one; `TTS_SAMPLE=<upload>[@start-end]` with a cloning model (`TTS_MODEL=fish-audio/s2.1-pro` or `heygen/heygen-voice-1`) speaks in the person's voice, copied from that part of one of their recordings (10–30 s of clear speech; transcribe it first for a closer copy). In the app the person picks it with **Use as my voice** on a clip. Prefer their voice when they have set one, so a new scene sounds like the rest until they record it. In a Claude cloud session where the key is a saved credential (the proxy adds it), run `OPENROUTER_API_KEY=proxy-injected NODE_USE_ENV_PROXY=1 npm run voice -- …`.
+- `place` is how new scenes join a timed presentation (see the edit-presentation skill): the scene's narration goes where the scene plays, later clips and cues move on, so nothing else changes timing. Its clips are `uploads/generated-<scene-id>.webm`, kept in git (LFS) so they reach the person's computer; their own recordings stay local.
+
 ## Your part as the assistant
 
 - Good notes make good narration: one or two spoken sentences per beat, in the user's voice. Use the edit-presentation skill to improve them.

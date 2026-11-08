@@ -17,6 +17,8 @@ export interface TrackInput {
   trimEnd?: number;
   /** Full source length (for trimmed tracks: used to clamp `trimEnd` when unset). */
   duration?: number;
+  /** Volume change in dB. */
+  gain?: number;
 }
 
 export interface FfmpegJob {
@@ -131,14 +133,15 @@ export function buildFfmpegArgs(job: FfmpegJob): string[] {
   audio.forEach((t, i) => {
     const input = `[${inputIndex.get(t.name)}:a]`;
     const out = `[a${i}]`;
+    const vol = t.gain ? `,volume=${t.gain.toFixed(1)}dB` : '';
     if (trimmed(t)) {
       const start = (t.trimStart ?? 0).toFixed(3);
       const end = (t.trimEnd ?? t.duration ?? 1e9).toFixed(3);
       const delayMs = Math.max(0, Math.round(t.offset * 1000));
       const delay = delayMs > 0 ? `,adelay=${delayMs}:all=1` : '';
-      graph.push(`${input}atrim=start=${start}:end=${end},asetpts=PTS-STARTPTS${delay},aresample=48000:async=1:first_pts=0${out}`);
+      graph.push(`${input}atrim=start=${start}:end=${end},asetpts=PTS-STARTPTS${delay},aresample=48000:async=1:first_pts=0${vol}${out}`);
     } else {
-      graph.push(`${input}aresample=48000:async=1:first_pts=0${out}`);
+      graph.push(`${input}aresample=48000:async=1:first_pts=0${vol}${out}`);
     }
   });
   // Loudness (EBU R128) to -16 LUFS, peaks under -1.5 dB: the usual level for online video. loudnorm works at
