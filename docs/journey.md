@@ -860,3 +860,19 @@ Jakub asked to see the clip's sound wave in its window and to play only that cli
 
 **Checked by:** Playwright on a copy: the wave drawn with its five beat marks; Play this clip ran 2.0 s in 2 s; clicking the middle went to 0:21.6 of 0:42.6; Space paused it there; typecheck, tests, build.
 
+## Step 67: Select, loop and cut a clip; see its loudness; My voice
+
+Jakub asked to select part of a clip's wave and loop it, remove a selection with or without changing the timing, undo, see the average and target volume on the wave, and a separate place for voice cloning and his sample, which he can re-record, with a text to read for it.
+
+- **Selecting and looping**: drag on the wave to select; **Play the selection**, with **loop** to hear it again and again (Space plays or pauses).
+- **Removing a part**: **Remove, close the gap** (everything after it, clips and cues, moves earlier) or **Remove, keep the timing** (silence, nothing moves). Nothing in the recording is destroyed: the clip is split into pieces, and the window keeps showing the whole recording (`chainOf` finds the pieces that continue the same recording; a red line where a part was cut). Cues of scenes left out of the video move too, so they still fit if put back (found while testing: Jakub had already switched to the B versions, and the left-out originals' cues would have been left behind).
+- **Undo**: clip and cue changes from the window are one change (`onTimeline`), so one Ctrl+Z (or **↶ Undo** in the window) takes back a cut or a new take; the window follows its clip by id, or what is now at its place after an undo.
+- **Loudness on the wave**: drawn on a decibel scale, with how loud it is moment by moment (power over 0.4 s), its average (the measured LUFS plus its volume) and the level the video aims for (−16, dashed), with a legend.
+- **My voice** (Timing header, or Settings → Voice generation): the sample in use (hear it, stop using it), the cloning model, **record a new sample** reading a suggested ~30 s text (a few sentences in his narration style, with a question, numbers and a list; editable), with the microphone check; the text read is sent as the sample's transcript; and **Say it in my voice** to hear a sentence before using it.
+- **Bug found**: the microphone could close for an instant as a take started, so the take died and Stop never finished (hidden in the earlier test because the microphone check was open). The microphone now stays open from the click until the take is ready to hear, in the clip window and in My voice.
+
+![Selecting and looping a part; the loudness lines; a part removed keeping the timing](journey/111-wave-selection-loudness.jpg)
+![My voice: the sample, the text to read, and hearing a sentence in it](journey/112-my-voice.jpg)
+
+**Checked by:** tests for finding a recording's pieces and removing a part both ways; Playwright on a copy: a 5 s selection looped inside 0:10–0:15, closing the gap moved the next scenes' cues 5 s earlier (the left-out original's too), one Undo restored it, keeping the timing moved nothing; My voice with Chromium's stand-in microphone: recorded, used as the sample (switching to Fish Audio), a sentence made in it; re-recording a clip with the microphone check closed; typecheck, tests, build.
+

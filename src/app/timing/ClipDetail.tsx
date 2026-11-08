@@ -10,6 +10,7 @@ import { clones, loadVoicer, saveVoicer, VOICERS } from '../settingsStore';
 import { useMicLevel } from './useMicLevel';
 import { beatsIn, replaceTake, useRerecord } from './useRerecord';
 import { ClipWave } from './ClipWave';
+import { chainOf, removeSpan } from './clipChain';
 
 // One voice clip in detail (double-click it on the timeline): how loud it is and its volume, everything you can
 // do with it, a microphone check, and recording it again with its lines as a prompter.
@@ -20,11 +21,17 @@ interface Props {
   clips: Clip[];
   clicks: Click[];
   beatOf: (c: Click) => RawBeat | undefined;
+  /** Every beat with a cue, scenes left out of the video included. */
+  allCued: { scene: number; beat: number; t: number; cued: boolean }[];
   missing: boolean;
   /** Decoded recordings, shared with the timeline. */
   loadBuffer: (upload: string) => Promise<AudioBuffer>;
   setClips: (next: Clip[]) => void;
-  onCues: (changes: { scene: number; beat: number; cue: number | undefined }[]) => void;
+  /** Clips and cues together, as one change (one undo). */
+  setTimeline: (next: Clip[], cues: { scene: number; beat: number; cue: number | undefined }[]) => void;
+  onUndo: () => void;
+  /** The clip shown was replaced (a new take): show this one. */
+  onReplaced: (id: string) => void;
   playFrom: (t: number) => void;
   pause: () => void;
   onClean: (i: number) => void;
@@ -47,7 +54,14 @@ function verdict(lufs: number | null, target: number) {
 
 export function ClipDetail(p: Props) {
   const { clip: c, index } = p;
-  const len = c.trimEnd - c.trimStart;
+  // The whole recording: this clip and the pieces it was cut into.
+  const chain = chainOf(p.clips, index);
+  const pieces = chain.indices.map((i) => p.clips[i]);
+  const len = chain.end - chain.start;
+  /** The recording as one clip, from its start to its end on the timeline. */
+  const whole: Clip = { ...pieces[0], offset: chain.start, trimEnd: pieces[0].trimStart + len };
+  const srcFrom = Math.min(...pieces.map((x) => x.trimStart));
+  const srcTo = Math.max(...pieces.map((x) => x.trimEnd));
   const [loud, setLoud] = useState<Loudness | null>(null);
   const [loudError, setLoudError] = useState<string | null>(null);
   const [name, setName] = useState(c.name ?? '');
@@ -55,27 +69,27 @@ export function ClipDetail(p: Props) {
   const [device, setDevice] = useState(micDevice());
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const update = (patch: Partial<Clip>) => p.setClips(p.clips.map((x, i) => (i === index ? { ...x, ...patch } : x)));
+  const update = (patch: Partial<Clip>) => p.setClips(p.clips.map((x, i) => (chain.indices.includes(i) ? { ...x, ...patch } : x)));
 
   useEffect(() => {
     if (p.missing) return;
     setLoud(null);
-    fetch(`/api/uploads/${c.upload}/loudness?start=${c.trimStart}&end=${c.trimEnd}`)
+    fetch(`/api/uploads/${c.upload}/loudness?start=${srcFrom}&end=${srcTo}`)
       .then(async (r) => (r.ok ? setLoud(await r.json()) : setLoudError((await r.json().catch(() => ({}))).error ?? r.statusText)))
       .catch((e) => setLoudError(String(e)));
-  }, [c.upload, c.trimStart, c.trimEnd, p.missing]);
+  }, [c.upload, srcFrom, srcTo, p.missing]);
   useEffect(() => p.pause(), []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // "Record again" opens the microphone, starts as soon as it is there, and keeps it open until the take is ready
+  // to hear (it must not close mid-take).
   const [wantRecord, setWantRecord] = useState(false);
-  const [recordingOn, setRecordingOn] = useState(false);
-  const mic = useMicLevel(micOpen || wantRecord || recordingOn, device);
+  const mic = useMicLevel(micOpen || wantRecord, device);
   const rerecord = useRerecord(mic.stream);
   const t = rerecord.take;
-  // "Record again" opens the microphone first, then starts as soon as it is there.
   useEffect(() => {
-    if (wantRecord && mic.stream) { setWantRecord(false); rerecord.start(); }
+    if (wantRecord && mic.stream && t.state === 'idle') rerecord.start();
   }, [wantRecord, mic.stream]); // eslint-disable-line react-hooks/exhaustive-deps
-  useEffect(() => setRecordingOn(t.state === 'recording'), [t.state]);
+  useEffect(() => { if (t.state === 'review') setWantRecord(false); }, [t.state]);
 
   const gain = c.gain ?? 0;
   const heard = loud?.lufs !== null && loud?.lufs !== undefined ? loud.lufs + gain : null;
@@ -98,7 +112,7 @@ export function ClipDetail(p: Props) {
     setVoiceNote(`Generated voice now copies your voice from this clip (${(sample.end - sample.start).toFixed(0)} s, ${model}).${len < 10 ? ' A clip of 10–30 s copies it more closely.' : ''} Lines already generated in another voice stay until you generate again; Settings → Voice generation to change it. It uses your OpenRouter key there.`);
   };
 
-  const inside = beatsIn(c, p.clicks);
+  const inside = beatsIn(whole, p.clicks);
   const marks = t.state === 'recording' || t.state === 'review' ? t.marks : [];
   const current = Math.min(marks.length, Math.max(0, inside.length - 1));
 
@@ -110,14 +124,26 @@ export function ClipDetail(p: Props) {
       const res = await fetch('/api/uploads?ext=webm', { method: 'POST', body: t.blob });
       if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error ?? res.statusText);
       const { upload } = await res.json();
-      const r = replaceTake(p.clips, index, upload, t.duration, t.marks, p.clicks);
-      p.setClips(r.clips);
-      if (r.cues.length) p.onCues(r.cues);
+      // The whole recording (all its pieces) gives way to the new take.
+      const others = p.clips.filter((_, i) => !chain.indices.includes(i));
+      const r = replaceTake([...others, whole], others.length, upload, t.duration, t.marks, p.clicks, p.allCued);
+      p.setTimeline(r.clips, r.cues);
+      p.onReplaced(r.clips[others.length].id);
       rerecord.discard();
     } catch (e) {
       setError((e as Error).message);
     } finally {
       setSaving(false);
+    }
+  };
+
+  /** Cut a part of the recording out (seconds from its start): closing the gap, or leaving silence. */
+  const removePart = (from: number, to: number, close: boolean) => {
+    const r = removeSpan(p.clips, chain, chain.start + from, chain.start + to, close, p.allCued);
+    p.setTimeline(r.clips, r.cues);
+    if (!r.clips.some((x) => x.id === c.id)) {
+      const first = r.clips.find((x) => x.upload === c.upload && x.lane === c.lane && Math.abs(x.offset - chain.start) < 0.01) ?? r.clips.find((x) => x.upload === c.upload && x.lane === c.lane);
+      if (first) p.onReplaced(first.id);
     }
   };
 
@@ -144,13 +170,20 @@ export function ClipDetail(p: Props) {
       <div className="modal wide clip-detail">
         <div className="modal-head">
           <input className="clip-name-input" value={name} placeholder={`clip ${index + 1}`} onChange={(e) => setName(e.target.value)} onBlur={() => name !== (c.name ?? '') && update({ name: name || undefined })} title="The clip's name" />
-          <span className="muted">lane {c.lane + 1} · {fmt(c.offset)} → {fmt(c.offset + len)} · {len.toFixed(1)} s{c.cleanedFrom ? ' · ✨ cleaned' : ''}{c.gain ? ` · ${c.gain > 0 ? '+' : ''}${c.gain} dB` : ''}</span>
+          <span className="muted">lane {c.lane + 1} · {fmt(chain.start)} → {fmt(chain.end)} · {len.toFixed(1)} s{pieces.length > 1 ? ` · ${pieces.length} pieces` : ''}{c.cleanedFrom ? ' · ✨ cleaned' : ''}{c.gain ? ` · ${c.gain > 0 ? '+' : ''}${c.gain} dB` : ''}</span>
           <span className="spacer" />
+          <button onClick={p.onUndo} title="Take back the last change (Ctrl+Z)">↶ Undo</button>
           <button onClick={p.onClose} title="Close (Esc)">✕</button>
         </div>
 
         {p.missing && <p className="note-text">The recording {c.upload} isn't on this computer: it can be recorded again below, or removed.</p>}
-        {!p.missing && <ClipWave clip={c} loadBuffer={p.loadBuffer} enabled={t.state !== 'recording'} marks={inside.map((ck) => ({ t: ck.t - c.offset, label: `${ck.scene + 1}.${ck.beat + 1}` }))} />}
+        {!p.missing && (
+          <ClipWave
+            pieces={pieces} start={chain.start} length={len} gain={c.gain ?? 0} loadBuffer={p.loadBuffer}
+            lufs={loud?.lufs ?? null} target={loud?.target ?? -16} enabled={t.state !== 'recording'} onRemove={removePart}
+            marks={inside.map((ck) => ({ t: ck.t - chain.start, label: `${ck.scene + 1}.${ck.beat + 1}` }))}
+          />
+        )}
 
         <section>
           <h4>Volume</h4>

@@ -244,3 +244,25 @@
 .clip-wave .mark { position: absolute; top: 0; bottom: 0; border-left: 1px dashed #ffffff55; pointer-events: none; }
 .clip-wave .mark b { position: absolute; top: -16px; left: -2px; font-size: 10px; font-weight: 400; color: var(--muted); }
 .clip-wave .play { min-width: 140px; }
+.clip-wave .wave { height: 150px; touch-action: none; }
+.clip-wave .wave-sel { position: absolute; top: 0; bottom: 0; background: #facc1522; border-left: 1px solid #facc15; border-right: 1px solid #facc15; pointer-events: none; }
+.clip-wave .piece-join { position: absolute; top: 0; bottom: 0; border-left: 2px solid #ff5a6e88; pointer-events: none; }
+.clip-wave .loop { display: flex; gap: 4px; align-items: center; }
+.wave-legend { margin: 0; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.wave-legend .k { display: inline-block; width: 18px; height: 0; border-top: 2px solid; vertical-align: middle; }
+.wave-legend .k.loud { border-color: #3ef0ff; }
+.wave-legend .k.avg { border-color: #facc15; }
+.wave-legend .k.target { border-color: #4ade80; border-top-style: dashed; }
+/* My voice: the sample a cloning model copies. */
+.my-voice { width: min(820px, 94vw); max-height: 90vh; overflow: auto; display: flex; flex-direction: column; gap: 12px; }
+.my-voice .modal-head { display: flex; gap: 10px; align-items: baseline; }
+.my-voice h2 { margin: 0; font-size: 18px; }
+.my-voice section { border-top: 1px solid var(--line); padding-top: 10px; display: flex; flex-direction: column; gap: 8px; }
+.my-voice h4 { margin: 0; font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+.my-voice h4 .fold { all: unset; cursor: pointer; }
+.my-voice h4 .fold::before { content: '▸ '; }
+.my-voice h4 .fold.open::before { content: '▾ '; }
+.my-voice .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.my-voice .row audio { height: 32px; }
+.my-voice .grow { flex: 1; min-width: 240px; }
+.my-voice .sample-text { font-size: 17px; line-height: 1.5; padding: 10px 12px; resize: vertical; }

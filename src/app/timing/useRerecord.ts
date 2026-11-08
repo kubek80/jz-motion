@@ -52,9 +52,9 @@ export function beatsIn(clip: Clip, clicks: Click[]): Click[] {
 /**
  * The timeline after replacing `clips[index]` with a new take of `duration` seconds (file `upload`): later clips
  * and cues move by the difference; beats inside go to `marks` (seconds into the take, from the second beat on) or
- * are spread over the new length.
+ * are spread over the new length. `allCued`: every cue in the presentation (scenes left out too), to move later ones.
  */
-export function replaceTake(clips: Clip[], index: number, upload: string, duration: number, marks: number[], clicks: Click[]) {
+export function replaceTake(clips: Clip[], index: number, upload: string, duration: number, marks: number[], clicks: Click[], allCued: { scene: number; beat: number; t: number }[] = clicks.filter((c) => c.cued)) {
   const old = clips[index];
   const oldLen = old.trimEnd - old.trimStart;
   const oldEnd = old.offset + oldLen;
@@ -81,6 +81,8 @@ export function replaceTake(clips: Clip[], index: number, upload: string, durati
     const at = k > 0 && marks[k - 1] !== undefined ? old.offset + Math.min(marks[k - 1], duration) : place(c.t);
     cues.push({ scene: c.scene, beat: c.beat, cue: r2(at) });
   });
-  for (const c of clicks) if (c.cued && c.t >= oldEnd - 0.05 && !inside.includes(c)) cues.push({ scene: c.scene, beat: c.beat, cue: r2(c.t + delta) });
+  // Every cue after it moves, also those of scenes left out of the video (so they still fit if put back).
+  const placed = new Set(cues.map((x) => `${x.scene}.${x.beat}`));
+  for (const c of allCued) if (c.t >= oldEnd - 0.05 && !placed.has(`${c.scene}.${c.beat}`)) cues.push({ scene: c.scene, beat: c.beat, cue: r2(c.t + delta) });
   return { clips: next, cues, delta };
 }

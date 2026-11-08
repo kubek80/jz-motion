@@ -3,6 +3,7 @@
 import { useCleanVoice } from './useCleanVoice';
 import type { RawBeat, RawDoc } from '../editor/doc';
 import { BeatDrawer } from './BeatDrawer';
+import { MyVoice } from '../MyVoice';
 import { ClipDetail } from './ClipDetail';
 import { TranscriptWindow } from './TranscriptWindow';
 import { TimelineMinimap } from './TimelineMinimap';
@@ -41,6 +42,10 @@ interface Props {
   onVoiceover: (v: Voiceover | undefined) => void;
   /** Sets (or with undefined, clears) cues of beats that start clicks; `clearOthers` forgets every other cue first. */
   onCues: (changes: { scene: number; beat: number; cue: number | undefined }[], clearOthers?: boolean) => void;
+  /** Clips and cues changed together (one undo step). */
+  onTimeline: (v: Voiceover | undefined, changes: { scene: number; beat: number; cue: number | undefined }[]) => void;
+  /** Undo the last change. */
+  onUndo: () => void;
   /** Replace the speaker notes of a beat; an empty string removes the field. */
   onNotes: (scene: number, beat: number, notes: string) => void;
   /** A take was made from this timing and voice-over, ready to export. */
@@ -60,7 +65,7 @@ interface Props {
  * Timing a presentation to a voice-over: the narration's waveform with every click placed on it. Drag a click
  * to move it, or play and tap T as each line starts. The board plays along, with the script line beside it.
  */
-export function Timing({ presentation, text, presentationId, voiceover, onVoiceover, onCues, onNotes, onTake, onEditBeat, doc, onBeat, startScene = 0, onClose }: Props) {
+export function Timing({ presentation, text, presentationId, voiceover, onVoiceover, onCues, onTimeline, onUndo, onNotes, onTake, onEditBeat, doc, onBeat, startScene = 0, onClose }: Props) {
   const onCue = (scene: number, beat: number, cue: number | undefined) => onCues([{ scene, beat, cue }]);
   const clicks = useMemo(() => cueClicks(presentation), [presentation]);
   // Voiceover is held either as a legacy single clip or as a multi-clip arrangement; `clipsOf()`
@@ -105,7 +110,19 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
   /** Clips being transcribed in the Transcript window. */
   const [transcribing, setTranscribing] = useState<Clip[] | null>(null);
   /** The clip open in the clip window (double-click a clip). */
-  const [openClip, setOpenClip] = useState<number | null>(null);
+  // Followed by its id; after an undo takes that clip away, the clip now at the same place on the same lane.
+  const [openAt, setOpenAt] = useState<{ id: string; lane: number; t: number } | null>(null);
+  const setOpenClipId = (id: string | null) => {
+    if (id === null) return setOpenAt(null);
+    const c = clips.find((x) => x.id === id);
+    // A clip just made (a new take, a piece) isn't in the list yet: keep the place, take the new id.
+    setOpenAt((was) => (c ? { id: c.id, lane: c.lane, t: c.offset + 0.01 } : was ? { ...was, id } : null));
+  };
+  const openClip = openAt === null ? null : (() => {
+    const i = clips.findIndex((c) => c.id === openAt.id);
+    return i >= 0 ? i : clips.findIndex((c) => c.lane === openAt.lane && openAt.t >= c.offset && openAt.t < c.offset + (c.trimEnd - c.trimStart));
+  })();
+  const [myVoice, setMyVoice] = useState(false);
   /** The beat whose options are open in the drawer. */
   const [openBeat, setOpenBeat] = useState<{ scene: number; beat: number } | null>(null);
   const { clipDrag, startDragClip, deleteClip, startTrimClip, splitAtPlayhead, splitClipAt, canSplitAt, setClipLane } = useClipEditing(clips, setClips, rec, pps, now);
@@ -160,6 +177,7 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
         missingCount={clips.filter((c) => missing.has(c.upload)).length}
         removeMissing={() => setClips(clips.filter((c) => !missing.has(c.upload)))}
         onTranscript={() => setTranscribing(clips.filter((c) => !missing.has(c.upload)))}
+        onMyVoice={() => setMyVoice(true)}
         onClose={close}
       />
       <div className="timing-body prompter">
@@ -238,7 +256,7 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
         onTranscribe={(i) => setTranscribing([clips[i]])}
         onClean={(i) => void cleanClip(i)}
         onRestore={restoreClip}
-        onOpenClip={setOpenClip}
+        onOpenClip={(i) => setOpenClipId(clips[i]?.id ?? null)}
         drawClipPeaks={drawClipPeaks}
         np={np}
         tapping={tapping}
@@ -247,18 +265,21 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
         beatDrag={drag}
         onCue={onCue}
       />
-      {openClip !== null && clips[openClip] && (
+      {openClip !== null && openClip >= 0 && clips[openClip] && (
         <ClipDetail
-          key={clips[openClip].id}
+          key={openAt!.id}
           clip={clips[openClip]}
           index={openClip}
           clips={clips}
           clicks={clicks}
           beatOf={(c) => doc.scenes[c.scene]?.beats?.[c.beat]}
+          allCued={doc.scenes.flatMap((s, si) => (s.beats ?? []).flatMap((b, bi) => (b.cue !== undefined ? [{ scene: si, beat: bi, t: b.cue, cued: true }] : [])))}
           missing={missing.has(clips[openClip].upload)}
           loadBuffer={mixer.loadBuffer}
           setClips={setClips}
-          onCues={(changes) => onCues(changes)}
+          setTimeline={(next, changes) => { if (mixer.isActive()) mixer.hardStop(); onTimeline(next.length ? { clips: next } : undefined, changes); }}
+          onUndo={onUndo}
+          onReplaced={(id) => setOpenClipId(id)}
           playFrom={(t) => { seek(t); play(); }}
           pause={pause}
           onClean={(i) => void cleanClip(i)}
@@ -266,9 +287,10 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
           onTranscribe={(i) => setTranscribing([clips[i]])}
           setClipLane={setClipLane}
           deleteClip={deleteClip}
-          onClose={() => setOpenClip(null)}
+          onClose={() => setOpenClipId(null)}
         />
       )}
+      {myVoice && <MyVoice onClose={() => setMyVoice(false)} />}
       {transcribing && (
         <TranscriptWindow
           clips={transcribing}
