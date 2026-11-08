@@ -1,1 +1,0 @@
-{"model":"openai/whisper-1","result":{"upload":"b4814c07.webm","duration":0,"segments":[{"start":0,"end":2,"text":"And"},{"start":2.640000104904175,"end":8.739999771118164,"text":"because it's plain JSON, I can read it, diff it, keep it in Git or edit by hand."}]}}

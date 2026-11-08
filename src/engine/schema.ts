@@ -313,6 +313,8 @@ const Clip = z.object({
   cleanedFrom: z.string().optional(),
   /** Volume change in dB, in Timing and in the video (to even out a quiet or loud clip). */
   gain: z.number().min(-24).max(24).optional(),
+  /** The scene this narration belongs to (its id): it moves with the scene, and is left out with it. */
+  scene: z.string().optional(),
 });
 
 export const Presentation = z.object({

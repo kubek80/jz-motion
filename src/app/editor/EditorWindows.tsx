@@ -1,5 +1,6 @@
 // The windows that open over the editor: Settings, Timing, Script, the Library and the Creator
 // (new library item or new scene with AI), wired to the open presentation.
+import { splitHidden, type TimedDoc } from '../../video/sceneTimeline';
 import type { CompileResult } from '../../engine';
 import { insertScene } from '../../ai/assistant';
 import { Creator, type CreateRequest } from '../Creator';
@@ -26,6 +27,25 @@ function withCues(doc: RawDoc, changes: { scene: number; beat: number; cue: numb
       }),
     })),
   };
+}
+
+/** The voice-over Timing works on: without the narration of scenes left out of the video (it comes back with them). */
+function shownVoiceover(doc: RawDoc): RawDoc['voiceover'] {
+  if (!doc.voiceover?.clips) return doc.voiceover;
+  const { shown, hidden } = splitHidden(doc as unknown as TimedDoc);
+  return hidden.length ? { ...doc.voiceover, clips: shown as never } : doc.voiceover;
+}
+
+/** The document with Timing's voice-over, keeping the narration of scenes left out. */
+function withVoiceover(doc: RawDoc, v: RawDoc['voiceover'] | undefined): RawDoc {
+  const { hidden } = doc.voiceover?.clips ? splitHidden(doc as unknown as TimedDoc) : { hidden: [] };
+  const next = { ...doc };
+  if (!hidden.length) {
+    if (v) next.voiceover = v; else delete next.voiceover;
+    return next;
+  }
+  next.voiceover = { ...(v ?? {}), clips: [...((v as { clips?: unknown[] } | undefined)?.clips ?? []), ...hidden] } as RawDoc['voiceover'];
+  return next;
 }
 
 interface Props {
@@ -75,13 +95,11 @@ export function EditorWindows({
           presentation={result.presentation}
           text={text}
           presentationId={id}
-          voiceover={doc.voiceover}
+          voiceover={shownVoiceover(doc)}
           onVoiceover={(v) => {
             const doc = latest();
             log('onVoiceover', { before: voiceoverSummary(doc.voiceover), after: voiceoverSummary(v) });
-            const next = { ...doc };
-            if (v) next.voiceover = v; else delete next.voiceover;
-            update(next);
+            update(withVoiceover(doc, v));
           }}
           onCues={(changes, clearOthers) => {
             const doc = latest();
@@ -92,9 +110,7 @@ export function EditorWindows({
             // Clips and cues in one change, so one undo takes back both.
             const doc = withCues(latest(), changes);
             log('onTimeline', { before: voiceoverSummary(doc.voiceover), after: voiceoverSummary(v), cues: changes.length });
-            const next = { ...doc };
-            if (v) next.voiceover = v; else delete next.voiceover;
-            update(next);
+            update(withVoiceover(doc, v));
           }}
           onUndo={onUndo}
           onNotes={(scene, beat, notes) => update({

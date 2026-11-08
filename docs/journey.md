@@ -925,3 +925,16 @@ Jakub wanted his voice at the app's level, reachable from the home screen. The v
 
 Jakub asked Claude to re-make every recording of his presentation, starting from transcripts of his own short recordings, which were only on his computer. Voice recordings in `uploads/` (narration, re-takes, generated narration, his voice sample) and their transcripts are now kept in git, the audio with LFS: 36 clips, 5 min 10 s, a few MB as Opus, so no bloat. Video uploaded to start a presentation from a recording stays out (it can be large).
 
+
+## Step 75: One recording per scene, in Jakub's words
+
+Jakub asked to re-make every recording of "JZ-motion: explainers, fast" from what he had actually said in his short takes (not the script), one recording per scene, and to tie recordings to their scenes from now on.
+
+- **Transcribed** the 15 takes that had no transcript yet, matched every take to its beats and rewrote the playing scenes' notes from his own words, tidied (misheard names fixed: GSAP, Three.js, Claude Code, Haiku, raw JSON). Beats he said nothing for (crossed-out logos, the colour swatches, "voice both ways"…) now follow the beat before (`auto`), with the pause after his words stretched so their animation still fits.
+- **`npm run voice -- rebuild`** makes the whole voice-over again: one clip per playing scene in his cloned voice (`voice/my-voice.json`), one after another, each beat cued where its words start. 19 clips, 9 min 2 s, every cue in order, no beat cut short.
+- **Recordings belong to scenes.** A clip has `scene`: recording in Timing tags it with the scene playing, re-recording keeps it, `place`/`rebuild` set it. Moving, adding, deleting, leaving out or putting back a scene lays the playing scenes out again (`src/video/sceneTimeline.ts`), each with its own clips and cues and the pauses between them kept; a left-out scene's clips stay in the file but leave Timing. Presentations whose clips don't name scenes keep their absolute timeline.
+- **Cleaned `uploads/`**: 206 files (25 MB) no presentation uses were removed, his earlier takes among them (still in git history); the voice sample stayed.
+
+![Timing: one generated clip per scene](journey/115-scenes-own-their-voice.jpg)
+
+**Checked by:** tests for the layout (move, leave out and put back, new scene without a recording); a script over the rebuilt presentation (74 cued beats, 0 ignored, 0 cut short, 19 clips all bound); two clips transcribed back to text; Playwright on a copy: leaving "Why I built it" out moved the next scenes and their clips 28 s earlier and Timing showed 18 clips, putting it back restored them (within 0.1 s); typecheck, tests, build.

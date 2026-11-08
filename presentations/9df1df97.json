@@ -45,7 +45,7 @@
               "duration": 2.4
             }
           ],
-          "notes": "Hi, it's Jakub here\nand today I will share with you my latest app - JZ motion. \n",
+          "notes": "Hi, it's Jakub here. Today I will share with you my latest app, jz-motion.",
           "cue": 0
         },
         {
@@ -60,8 +60,8 @@
               "stagger": 0.8
             }
           ],
-          "notes": "LLM first - explainer video creator.\n\nEverything you'll see here was produced by it including a glowing marker board, animations, text, and charts.",
-          "cue": 5.8
+          "notes": "This is an LLM-first explainer video creator. Everything you will see here was produced by it, including the glowing marker board, animations, text and charts.",
+          "cue": 5.53
         }
       ]
     },
@@ -226,7 +226,8 @@
               "stagger": 0.5
             }
           ],
-          "notes": "No Photoshop, After Effects or Premiere –"
+          "notes": "No Photoshop, After Effects or Premiere.",
+          "cue": 17.65
         },
         {
           "title": "Crossed out",
@@ -241,7 +242,7 @@
               "stagger": 0.6
             }
           ],
-          "notes": ""
+          "auto": true
         },
         {
           "title": "What I use instead",
@@ -262,7 +263,8 @@
               "target": "note"
             }
           ],
-          "notes": "just me, Claude Code and my app."
+          "notes": "Just me, Claude Code and my application.",
+          "cue": 23.11
         }
       ]
     },
@@ -386,8 +388,8 @@
               "stagger": 0.6
             }
           ],
-          "notes": "Why I build it? I usually have far more ideas than videos. ",
-          "cue": 22.45
+          "notes": "Why did I build it? I usually have far more ideas than videos.",
+          "cue": 28.49
         },
         {
           "title": "A video, planned",
@@ -405,8 +407,8 @@
               "target": "video"
             }
           ],
-          "notes": "I write notes, sometimes even a full script.\nThen I plan a video to go with the script and this is when it usually stops.",
-          "cue": 26.8
+          "notes": "I write notes, sometimes even a full script. Then I plan a video to go with the script,",
+          "cue": 33.1
         },
         {
           "title": "Beat 5",
@@ -425,7 +427,7 @@
             }
           ],
           "notes": "and this is when it usually stops.",
-          "cue": 31.85
+          "cue": 39.38
         },
         {
           "title": "No time",
@@ -435,8 +437,8 @@
               "target": "me"
             }
           ],
-          "notes": "Recording, drawing, editing, publishing — between my work and family I never have enough time to do it. ",
-          "cue": 36.4
+          "notes": "Recording, drawing, editing, publishing: between my work and family, I never have enough time to do it.",
+          "cue": 42.18
         },
         {
           "title": "What if the board drew itself?",
@@ -459,7 +461,7 @@
             }
           ],
           "notes": "So the question became: what if the board could draw itself, and a model could help me do it?",
-          "cue": 42.95
+          "cue": 49.15
         }
       ]
     },
@@ -572,7 +574,8 @@
               "target": "bot"
             }
           ],
-          "notes": "What if I can have my dedicated video creation assistant?"
+          "notes": "What if I could have my own dedicated video creation assistant? As you would have guessed, I gave it a try.",
+          "cue": 56.25
         }
       ]
     },
@@ -641,8 +644,8 @@
               "target": "lead"
             }
           ],
-          "notes": "I started from basics - I have defined the style. \nAs keeping a consistent style matters: viewers recognise it, also you spend more time on the idea, not the look.",
-          "cue": 54.4
+          "notes": "I started from basics: I defined the style.",
+          "cue": 64
         },
         {
           "title": "The reference",
@@ -658,8 +661,8 @@
               "delay": 0.6
             }
           ],
-          "notes": "I took inspiration from IBM lightboard explainers, as I enjoy aesthetics of glass board & neon diagrams.",
-          "cue": 60.2
+          "notes": "I took inspiration from IBM lightboard explainers. I enjoyed their aesthetics: a glass board and neon diagrams.",
+          "cue": 67.76
         },
         {
           "title": "Clear, calm, fast to follow",
@@ -675,7 +678,7 @@
               "target": "qualities"
             }
           ],
-          "notes": "Three qualities to copy: clear, calm, fast to follow."
+          "auto": true
         }
       ]
     },
@@ -783,8 +786,7 @@
               "target": "home"
             }
           ],
-          "notes": "Creating explainer videos starts like a chat. One box in the middle of the screen.",
-          "cue": 68.9
+          "notes": "Creating explainer videos starts like a chat. One box in the middle of the screen."
         },
         {
           "title": "Just a sentence",
@@ -835,8 +837,7 @@
               "target": "cap-modes",
               "start": "with"
             }
-          ],
-          "cue": 82.45
+          ]
         },
         {
           "title": "A model per job",
@@ -864,8 +865,7 @@
               "target": "cap-model",
               "start": "with"
             }
-          ],
-          "cue": 87.4
+          ]
         },
         {
           "title": "Back out",
@@ -1006,7 +1006,7 @@
               "delay": 0.8
             }
           ],
-          "cue": 70.45
+          "cue": 77.45
         },
         {
           "title": "A sentence",
@@ -1031,7 +1031,7 @@
               "start": "with"
             }
           ],
-          "cue": 77.49
+          "cue": 83.97
         },
         {
           "title": "Three ways in",
@@ -1067,7 +1067,7 @@
               "delay": 0.6
             }
           ],
-          "cue": 83.4
+          "cue": 90.03
         },
         {
           "title": "Watch it work",
@@ -1101,7 +1101,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 94.11
+          "cue": 101.33
         },
         {
           "title": "A first draft",
@@ -1134,7 +1134,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 101.72
+          "cue": 109.43
         }
       ]
     },
@@ -1263,8 +1263,7 @@
               "do": "draw",
               "target": "editor"
             }
-          ],
-          "cue": 113.43
+          ]
         },
         {
           "title": "The board",
@@ -1281,8 +1280,7 @@
               "start": "with",
               "delay": 0.4
             }
-          ],
-          "cue": 118.83
+          ]
         },
         {
           "title": "Beats under it",
@@ -1304,8 +1302,7 @@
               "start": "with",
               "delay": 0.4
             }
-          ],
-          "cue": 121.03
+          ]
         },
         {
           "title": "Properties on the right",
@@ -1327,8 +1324,7 @@
               "start": "with",
               "delay": 0.4
             }
-          ],
-          "cue": 122.58
+          ]
         },
         {
           "title": "Scenes and library on the left",
@@ -1350,8 +1346,7 @@
               "delay": 0.4
             }
           ],
-          "notes": "I am able to inspect the list of scenes, and under it the library — icons, clipart, 3D models I can drop onto the board.",
-          "cue": 124.03
+          "notes": "I am able to inspect the list of scenes, and under it the library — icons, clipart, 3D models I can drop onto the board."
         },
         {
           "title": "Back out",
@@ -1512,7 +1507,7 @@
               "delay": 0.8
             }
           ],
-          "cue": 113.7
+          "cue": 121.05
         },
         {
           "title": "Click to select",
@@ -1552,7 +1547,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 120.25
+          "cue": 127.75
         },
         {
           "title": "The beats",
@@ -1588,7 +1583,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 127.59
+          "cue": 135.93
         },
         {
           "title": "From the library",
@@ -1630,7 +1625,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 134.95
+          "cue": 143.83
         },
         {
           "title": "P to play",
@@ -1665,7 +1660,7 @@
               "delay": 0.5
             }
           ],
-          "cue": 144.17
+          "cue": 153.59
         }
       ]
     },
@@ -1780,8 +1775,7 @@
               "start": "with",
               "delay": 1.2
             }
-          ],
-          "cue": 167.79
+          ]
         },
         {
           "title": "Watch the headline",
@@ -1792,8 +1786,7 @@
               "target": "a-headline",
               "color": "yellow"
             }
-          ],
-          "cue": 170.14
+          ]
         },
         {
           "title": "Click, pick a marker",
@@ -1824,8 +1817,7 @@
               "target": "clip",
               "goto": 7
             }
-          ],
-          "cue": 170.75
+          ]
         },
         {
           "title": "Then double-click to edit",
@@ -1851,8 +1843,7 @@
               "do": "fade-out",
               "target": "a-markers"
             }
-          ],
-          "cue": 174.6
+          ]
         },
         {
           "title": "Hold the frame",
@@ -1879,8 +1870,7 @@
               "target": "clip",
               "start": "after"
             }
-          ],
-          "cue": 180.94
+          ]
         },
         {
           "title": "Frame 5",
@@ -2013,7 +2003,7 @@
               "delay": 0.8
             }
           ],
-          "cue": 151.3
+          "cue": 159.37
         },
         {
           "title": "Select",
@@ -2055,7 +2045,7 @@
               "start": "with"
             }
           ],
-          "cue": 160.13
+          "cue": 169
         },
         {
           "title": "Recolour",
@@ -2087,7 +2077,7 @@
               "delay": 0.4
             }
           ],
-          "cue": 166.03
+          "cue": 176.16
         },
         {
           "title": "Rewrite",
@@ -2130,7 +2120,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 171.59
+          "cue": 182.43
         },
         {
           "title": "Made by the app",
@@ -2157,7 +2147,7 @@
               "delay": 0.5
             }
           ],
-          "cue": 179.15
+          "cue": 191.14
         }
       ]
     },
@@ -2304,8 +2294,8 @@
               "target": "h"
             }
           ],
-          "notes": "Under the hood, jz-motion is designed to be LLM first. ",
-          "cue": 189.99
+          "notes": "Under the hood, jz-motion is designed to be LLM first. A presentation is not pixels: it's simply a JSON document.",
+          "cue": 202.23
         },
         {
           "title": "Context",
@@ -2328,8 +2318,8 @@
               "stagger": 0.3
             }
           ],
-          "notes": "A presentation is not pixels: it's one JSON document.\n\nEvery request sends the model the format reference, the drawing rules and the whole library: every icon, logo, clipart and 3D model it may use.",
-          "cue": 192.88
+          "notes": "Every request sends the model the format reference, the drawing rules and the whole library: every icon, logo, clipart and 3D model it may use. So in reality, the LLM generates pure JSON.",
+          "cue": 211.33
         },
         {
           "title": "Schema check",
@@ -2343,12 +2333,12 @@
               ]
             }
           ],
-          "notes": "LLM generated JSON is then being sent to schema checker to ensure that results are correct.",
-          "cue": 210.74
+          "notes": "The JSON is then sent to a schema checker, to make sure the result is correct.",
+          "cue": 225.58
         },
         {
           "title": "Repair",
-          "notes": "…and if anything is wrong, the exact errors go back to the model to fix. That loop is why even small, cheap models produce something that loads.",
+          "notes": "And if anything goes wrong, the exact errors go back to the model to fix.",
           "actions": [
             {
               "do": "draw",
@@ -2359,7 +2349,7 @@
               "target": "repair"
             }
           ],
-          "cue": 216.13
+          "cue": 230.94
         },
         {
           "title": "Board",
@@ -2377,11 +2367,11 @@
               "target": "web-search"
             }
           ],
-          "cue": 221.74
+          "cue": 236.19
         },
         {
           "title": "The JSON",
-          "notes": "And because it's plain JSON, I can read it, diff it, keep it in git, or edit it by hand.",
+          "notes": "Because it's plain JSON, I can read it, diff it, keep it in Git or edit it by hand.",
           "actions": [
             {
               "do": "draw",
@@ -2395,7 +2385,7 @@
               "padding": 260
             }
           ],
-          "cue": 228.63
+          "cue": 242.06
         },
         {
           "title": "Beat 7",
@@ -2410,7 +2400,7 @@
               "target": "repair-2"
             }
           ],
-          "cue": 234.86
+          "auto": true
         }
       ]
     },
@@ -2609,12 +2599,12 @@
               "target": "h"
             }
           ],
-          "notes": "The other goal is consistency. Whatever a model makes has to look like it came from the same set of markers.",
-          "cue": 243.06
+          "notes": "The other goal is consistency: whatever a model makes has to look like it came from the same set of markers.",
+          "cue": 249.28
         },
         {
           "title": "Everything",
-          "notes": "Icons, clipart, isometric 3D, charts, text: the same six colours, the same stroke, drawn in the order a person would draw them.",
+          "notes": "Icons, clipart, isometric 3D, charts, text.",
           "actions": [
             {
               "do": "draw",
@@ -2632,11 +2622,11 @@
               "target": "rule"
             }
           ],
-          "cue": 247.97
+          "cue": 256.26
         },
         {
           "title": "Six marker colours",
-          "notes": "Green, pink, yellow, cyan, orange, white. Two to four per scene, each with a consistent meaning.",
+          "notes": "The same six colours, the same stroke, drawn in the order a person would draw them.",
           "actions": [
             {
               "do": "pop",
@@ -2650,11 +2640,12 @@
               ],
               "stagger": 0.15
             }
-          ]
+          ],
+          "cue": 261.96
         },
         {
           "title": "Make your own",
-          "notes": "When the library doesn't have something, I describe it, and the model draws it under the same rules. The rules are shown, and every reply is checked.",
+          "notes": "When the library doesn't have something, I describe it, and the model draws it under the same rules.",
           "actions": [
             {
               "do": "camera",
@@ -2667,22 +2658,23 @@
               "start": "with",
               "delay": 0.6
             }
-          ]
+          ],
+          "cue": 267.49
         },
         {
           "title": "Versions",
-          "notes": "It's a conversation: every reply is a version. 'Make it pink', 'add a fan on top'… until I like one.",
+          "notes": "The rules are shown, and every reply is checked.",
           "actions": [
             {
               "do": "spotlight",
               "target": "versions",
               "padding": 10
             }
-          ]
+          ],
+          "cue": 273.55
         },
         {
           "title": "Keep it",
-          "notes": "Then I save it, and from then on it's part of the library, for me and for every model that writes a presentation.",
           "actions": [
             {
               "do": "spotlight",
@@ -2694,7 +2686,8 @@
               "target": "preview",
               "start": "with"
             }
-          ]
+          ],
+          "auto": true
         }
       ]
     },
@@ -2846,7 +2839,7 @@
       "beats": [
         {
           "title": "One folder of skills",
-          "notes": "The skills folder is where I keep the rules: how to make a presentation, how to change one, how to draw a library item, how to demo an interface, how to turn it into a video.",
+          "notes": "The skills folder is where I keep the rules: how to make a presentation, how to change one, how to draw a library item, how to demo an interface, or even how to turn it into a video.",
           "actions": [
             {
               "do": "draw",
@@ -2877,11 +2870,11 @@
               "start": "with"
             }
           ],
-          "cue": 268.72
+          "cue": 278.37
         },
         {
           "title": "Both AIs follow them",
-          "notes": "The AI inside the app reads these files; Claude Code outside the app reads them too. So whichever one writes a scene, the style stays the same.",
+          "notes": "The AI inside the app reads these files. Claude Code outside the app reads them too.",
           "actions": [
             {
               "do": "draw",
@@ -2900,11 +2893,11 @@
               "stagger": 0.4
             }
           ],
-          "cue": 278.11
+          "cue": 290.36
         },
         {
           "title": "One source of truth",
-          "notes": "Change the skill, change the output — on either side. That's how consistency survives.",
+          "notes": "So whichever one writes a scene, the style stays the same.",
           "actions": [
             {
               "do": "draw",
@@ -2914,7 +2907,8 @@
               "do": "pulse",
               "target": "folder"
             }
-          ]
+          ],
+          "cue": 297.01
         }
       ]
     },
@@ -3087,7 +3081,7 @@
       "beats": [
         {
           "title": "A shelf of pieces",
-          "notes": "The library is the shelf of pieces every explainer draws from: icons, logos, hand-drawn clipart, 3D models — every one checked against the house style.",
+          "notes": "The library is the shelf of pieces every explainer draws from: icons, logos, hand-drawn clipart, 3D models, every one checked against the house style.",
           "actions": [
             {
               "do": "draw",
@@ -3118,11 +3112,11 @@
               "target": "server-stack"
             }
           ],
-          "cue": 289.02
+          "cue": 301.96
         },
         {
           "title": "Each explainer adds one",
-          "notes": "When a presentation needs something new, I describe it, the model draws it under the same rules, and it joins the shelf.",
+          "notes": "Reusing is free; generating new items costs tokens.",
           "actions": [
             {
               "do": "pop",
@@ -3132,11 +3126,12 @@
               "do": "pulse",
               "target": "it-new"
             }
-          ]
+          ],
+          "cue": 313.29
         },
         {
           "title": "So each one costs less",
-          "notes": "Reusing is free; generating costs tokens. More in the library means fewer new items each time — and every explainer costs less than the one before.",
+          "notes": "More in the library means fewer new items each time, and every explainer costs less than the one before.",
           "actions": [
             {
               "do": "draw",
@@ -3153,7 +3148,7 @@
               ]
             }
           ],
-          "cue": 300.57
+          "cue": 318
         }
       ]
     },
@@ -3368,7 +3363,7 @@
               "target": "h"
             }
           ],
-          "cue": 308.27
+          "cue": 326.29
         },
         {
           "title": "In the browser",
@@ -3387,7 +3382,8 @@
               "stagger": 0.3
             }
           ],
-          "notes": "In the browser, we have frontend application made with React.\n\nSVG animations are made with GSAP\n\n3d coordinates are calculated with 3JS"
+          "notes": "In the browser, we have a frontend application made with React. SVG animations are made with GSAP, and 3D coordinates are calculated with Three.js.",
+          "cue": 328.43
         },
         {
           "title": "A small local server",
@@ -3422,12 +3418,12 @@
               "start": "with"
             }
           ],
-          "notes": "paired with local server responsible for: \nkeeping the files, \nproxying LLM calls,\ntranscription of recordings, \nand export of videos.",
-          "cue": 320.27
+          "notes": "It's paired with a local server responsible for keeping the files, proxying LLM calls, transcription of recordings and export of videos.",
+          "cue": 339.34
         },
         {
           "title": "Swappable models",
-          "notes": "The LLM is swappable: Claude, or anything OpenAI-compatible through OpenRouter, my own GPUs, or Ollama locally.",
+          "notes": "To generate presentations, I'm using either my local subscription or OpenRouter.",
           "actions": [
             {
               "do": "draw",
@@ -3447,7 +3443,7 @@
               ]
             }
           ],
-          "cue": 328.42
+          "cue": 349.23
         },
         {
           "title": "Voice both ways",
@@ -3470,7 +3466,7 @@
               ]
             }
           ],
-          "notes": "Although I used my own recording here - Voice goes both ways: an OpenAI TTS model generates narration from the script; an OpenAI transcription model turns a recorded script back into timed text."
+          "auto": true
         }
       ]
     },
@@ -3709,11 +3705,11 @@
             }
           ],
           "notes": "Because every request is checked and repaired, I can experiment with smaller models.",
-          "cue": 334.97
+          "cue": 355.54
         },
         {
           "title": "Story",
-          "notes": "A strong model writes the story: the structure, the scenes, the words.",
+          "notes": "I'm using the most capable models for writing the story: the structure, the scenes, the words.",
           "actions": [
             {
               "do": "draw",
@@ -3726,7 +3722,7 @@
               "stagger": 0.25
             }
           ],
-          "cue": 340.17
+          "cue": 361.03
         },
         {
           "title": "Small edits",
@@ -3742,12 +3738,12 @@
               "stagger": 0.25
             }
           ],
-          "notes": "Small edits, like changing a beat, work fine with a fast, cheap models like Haiku.",
-          "cue": 344.47
+          "notes": "Small edits, like changing a beat, work fine with fast, cheap models like Haiku.",
+          "cue": 368
         },
         {
           "title": "Drawings",
-          "notes": "Icons, charts and 3D models are small, strict JSON. Haiku plus the rules is enough, and the library means most are never generated twice.",
+          "notes": "Thanks to well-defined skills, I'm also using Haiku for icons, charts and 3D models.",
           "actions": [
             {
               "do": "draw",
@@ -3760,7 +3756,7 @@
               "stagger": 0.25
             }
           ],
-          "cue": 349.17
+          "cue": 374.19
         },
         {
           "title": "Voice",
@@ -3776,12 +3772,11 @@
               "stagger": 0.25
             }
           ],
-          "notes": "I have used small OpenAI models for text-to-speech & transcription. Let me just add that I am using text to speach just for timing purposes - I have recorded final voice over myself.",
-          "cue": 355.61
+          "notes": "I have used small OpenAI models for text-to-speech and transcription. Let me just add that I'm using text-to-speech for timing purposes only. I have recorded the final voice-over myself.",
+          "cue": 380.67
         },
         {
           "title": "Transcription",
-          "notes": "And when I record myself talking, Whisper transcribes it, so I can start a whole presentation from a recording — scenes cued to the moments I spoke.",
           "actions": [
             {
               "do": "draw",
@@ -3901,7 +3896,7 @@
       "beats": [
         {
           "title": "Script at the centre",
-          "notes": "The script is the centre of this app. Every scene, every beat, every spoken sentence lives in one place.",
+          "notes": "The script is at the centre of this application. Every scene, every beat, every spoken sentence lives in one place.",
           "actions": [
             {
               "do": "draw",
@@ -3912,7 +3907,7 @@
               "target": "script-ico"
             }
           ],
-          "cue": 369.77
+          "cue": 393.77
         },
         {
           "title": "Three ways to touch it",
@@ -3930,8 +3925,8 @@
               "stagger": 0.3
             }
           ],
-          "notes": "I can read and edit the whole thing in the Script view, \n\ninline in the Timing prompter, \n\nor in the raw JSON tab if I want to see the shape.",
-          "cue": 378.82
+          "notes": "I can read and edit the whole thing in the Script view, inline in the Timing prompter,",
+          "cue": 402.09
         },
         {
           "title": "Same text, three lenses",
@@ -3949,8 +3944,8 @@
               "target": "script-ico"
             }
           ],
-          "notes": "I have three views on the same text. so that I can pick whichever one fits what I'm doing right now.",
-          "cue": 384.11
+          "notes": "or in the raw JSON tab if I want to see the shape.",
+          "cue": 407.81
         }
       ]
     },
@@ -4065,8 +4060,7 @@
               "target": "prompter"
             }
           ],
-          "notes": "Once presentation is ready I can move to the Timing window in prompter mode. \n",
-          "cue": 388.61
+          "notes": "Once presentation is ready I can move to the Timing window in prompter mode. \n"
         },
         {
           "title": "Each sentence, its own line",
@@ -4124,8 +4118,7 @@
               "target": "cap-durations",
               "start": "with"
             }
-          ],
-          "cue": 400.92
+          ]
         },
         {
           "title": "A clock that keeps me honest",
@@ -4187,8 +4180,7 @@
               "start": "with",
               "delay": 0.4
             }
-          ],
-          "cue": 407.57
+          ]
         }
       ],
       "skip": true
@@ -4338,7 +4330,7 @@
               "delay": 0.5
             }
           ],
-          "cue": 390.4
+          "cue": 413.09
         },
         {
           "title": "One line at a time",
@@ -4374,7 +4366,7 @@
               "delay": 0.8
             }
           ],
-          "cue": 397.5
+          "cue": 421.05
         },
         {
           "title": "The timeline",
@@ -4402,7 +4394,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 403.56
+          "cue": 428.2
         },
         {
           "title": "Just read",
@@ -4436,7 +4428,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 413.04
+          "cue": 438.19
         },
         {
           "title": "Tidy up",
@@ -4472,7 +4464,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 421.89
+          "cue": 446.93
         },
         {
           "title": "Back out",
@@ -4633,8 +4625,7 @@
               "stagger": 0.6
             }
           ],
-          "notes": "The AI isn't a single feature here — it's everywhere in the app. It's in the home screen, inside the editor, in the library & in timing screen",
-          "cue": 452.5
+          "notes": "The AI isn't a single feature here — it's everywhere in the app. It's in the home screen, inside the editor, in the library & in timing screen"
         },
         {
           "title": "A sentence to a draft",
@@ -4658,8 +4649,7 @@
               "target": "cap-home",
               "start": "with"
             }
-          ],
-          "cue": 455.2
+          ]
         },
         {
           "title": "Change THIS scene",
@@ -4693,8 +4683,7 @@
               "target": "cap-ask",
               "start": "with"
             }
-          ],
-          "cue": 458.1
+          ]
         },
         {
           "title": "Chat about the whole thing",
@@ -4728,8 +4717,7 @@
               "target": "cap-panel",
               "start": "with"
             }
-          ],
-          "cue": 461.15
+          ]
         },
         {
           "title": "Same skills everywhere",
@@ -4768,8 +4756,7 @@
               "delay": 1
             }
           ],
-          "notes": "All of them have access to the same skills. Pick the place that fits the move — the house style follows.",
-          "cue": 465.7
+          "notes": "All of them have access to the same skills. Pick the place that fits the move — the house style follows."
         }
       ],
       "skip": true
@@ -4928,7 +4915,7 @@
               "delay": 0.8
             }
           ],
-          "cue": 430.4
+          "cue": 455.19
         },
         {
           "title": "Home",
@@ -4964,7 +4951,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 436.05
+          "cue": 460.71
         },
         {
           "title": "This scene",
@@ -5006,7 +4993,7 @@
               "delay": 1
             }
           ],
-          "cue": 440.2
+          "cue": 464.81
         },
         {
           "title": "The AI tab",
@@ -5042,7 +5029,7 @@
               "delay": 0.5
             }
           ],
-          "cue": 450.58
+          "cue": 475.5
         },
         {
           "title": "The library",
@@ -5078,7 +5065,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 458.21
+          "cue": 483.25
         },
         {
           "title": "Same skills",
@@ -5100,7 +5087,7 @@
               "delay": 0.4
             }
           ],
-          "cue": 464.67
+          "cue": 489.63
         }
       ]
     },
@@ -5187,8 +5174,8 @@
               "delay": 0.6
             }
           ],
-          "notes": "One of main goals was to create an app that would allow me to create a ten-minute explainer under five dollars. I am happy to share that I was successful.",
-          "cue": 469.4
+          "notes": "One of my main goals was to create an app that would let me make a ten-minute explainer video for under five dollars. I'm happy to share that I was successful.",
+          "cue": 497.19
         },
         {
           "title": "Why it works",
@@ -5199,8 +5186,8 @@
               "stagger": 0.4
             }
           ],
-          "notes": "If I would have to name 3 main cotributors those would be: \n\na presentation is pure JSON, so the tokens are cheap; \n\nthe library grows, so most drawings are reused; \n\nand the repair loop lets me use small, fast models.",
-          "cue": 487
+          "notes": "If I had to name three main contributors to that success: a presentation is pure JSON, so tokens are cheap;",
+          "cue": 507.44
         },
         {
           "title": "Beat 3",
@@ -5210,7 +5197,8 @@
               "target": "lib"
             }
           ],
-          "cue": 491.59
+          "notes": "the library grows, so most drawings are reused;",
+          "cue": 514.89
         },
         {
           "title": "Beat 4",
@@ -5220,7 +5208,8 @@
               "target": "mini"
             }
           ],
-          "cue": 495.55
+          "notes": "and the repair loop lets me use small, fast models.",
+          "cue": 518.99
         }
       ]
     },
@@ -5336,12 +5325,12 @@
               "stagger": 0.4
             }
           ],
-          "notes": "And the last mile: I click Record and adjusting the timeing, like I'm doing now. My script, my voice, and every click are saved as a take.\n\nThank you for watching",
-          "cue": 499.34
+          "notes": "And now the last mile: I click Record and adjust the timing, like I'm doing right now.",
+          "cue": 523.99
         },
         {
           "title": "Export",
-          "notes": "It exports straight to an MP4, with my camera in the corner or side by side with a friend. Or I record first, and it builds the presentation from the transcript.",
+          "notes": "My script, my voice and every click are saved as a take.",
           "actions": [
             {
               "do": "draw",
@@ -5361,11 +5350,12 @@
                 "f2"
               ]
             }
-          ]
+          ],
+          "cue": 530.28
         },
         {
           "title": "Thanks",
-          "notes": "That's jz-motion: explainers in minutes, in one consistent style, a little cheaper every time. Thanks for watching.",
+          "notes": "Thank you for watching.",
           "actions": [
             {
               "do": "draw",
@@ -5375,7 +5365,8 @@
               ],
               "stagger": 1.2
             }
-          ]
+          ],
+          "cue": 535.22
         }
       ]
     }
@@ -5383,414 +5374,213 @@
   "voiceover": {
     "clips": [
       {
-        "id": "rec-mw3bwcim",
-        "upload": "2d5b827f.webm",
-        "sourceDuration": 22.19,
+        "id": "gen-title",
+        "scene": "title",
+        "upload": "generated-title.webm",
+        "sourceDuration": 16.754,
         "offset": 0,
-        "lane": 1,
-        "trimStart": 0,
-        "trimEnd": 22.19,
-        "name": "narration 05/11/2026, 20:13:48"
-      },
-      {
-        "id": "rec-mw3c1vy5-Lmw3c5fzn",
-        "upload": "1ff45723.webm",
-        "sourceDuration": 35.4,
-        "offset": 21.65,
-        "lane": 0,
-        "trimStart": 0.5,
-        "trimEnd": 12.952613230387339,
-        "name": "narration 05/11/2026, 20:18:06"
-      },
-      {
-        "id": "rec-mw3cd8j5",
-        "upload": "64f71444.webm",
-        "sourceDuration": 9.78,
-        "offset": 34.55,
-        "lane": 1,
-        "trimStart": 1.4,
-        "trimEnd": 8.95,
-        "name": "narration 05/11/2026, 20:26:56"
-      },
-      {
-        "id": "rec-mw3cfmvq",
-        "upload": "84d64aa6.webm",
-        "sourceDuration": 11.75,
-        "offset": 42.15,
         "lane": 0,
         "trimStart": 0,
-        "trimEnd": 11.75,
-        "name": "narration 05/11/2026, 20:28:48"
+        "trimEnd": 16.754,
+        "name": "generated voice · JZ-motion"
       },
       {
-        "id": "rec-mw3cuggg",
-        "upload": "fe9e5dc5.webm",
-        "sourceDuration": 8.72,
-        "offset": 54,
-        "lane": 1,
-        "trimStart": 0.6,
-        "trimEnd": 6.8,
-        "name": "narration 05/11/2026, 20:40:19"
-      },
-      {
-        "id": "rec-mw3d01py",
-        "upload": "cdcac378.webm",
-        "sourceDuration": 8.79,
-        "offset": 60.25,
+        "id": "gen-no-photoshop",
+        "scene": "no-photoshop",
+        "upload": "generated-no-photoshop.webm",
+        "sourceDuration": 9.948,
+        "offset": 17.646,
         "lane": 0,
         "trimStart": 0,
-        "trimEnd": 8.79,
-        "name": "narration 05/11/2026, 20:44:40"
+        "trimEnd": 9.948,
+        "name": "generated voice · No Photoshop needed"
       },
       {
-        "id": "rec-mw3drzt8",
-        "upload": "44eb4d2a.webm",
-        "sourceDuration": 14.59,
-        "offset": 87.6,
+        "id": "gen-why",
+        "scene": "why",
+        "upload": "generated-why.webm",
+        "sourceDuration": 26.867,
+        "offset": 28.486,
         "lane": 0,
-        "trimStart": 3.45,
-        "trimEnd": 3.8,
-        "name": "narration 05/11/2026, 21:06:24"
+        "trimStart": 0,
+        "trimEnd": 26.867,
+        "name": "generated voice · Why I built it"
+      },
+      {
+        "id": "gen-assistant",
+        "scene": "assistant",
+        "upload": "generated-assistant.webm",
+        "sourceDuration": 6.866,
+        "offset": 56.245,
+        "lane": 0,
+        "trimStart": 0,
+        "trimEnd": 6.866,
+        "name": "generated voice · My own video assistant"
+      },
+      {
+        "id": "gen-inspiration",
+        "scene": "inspiration",
+        "upload": "generated-inspiration.webm",
+        "sourceDuration": 12.558,
+        "offset": 64.003,
+        "lane": 0,
+        "trimStart": 0,
+        "trimEnd": 12.558,
+        "name": "generated voice · Inspiration"
       },
       {
         "id": "gen-start-b",
+        "scene": "start-b",
         "upload": "generated-start-b.webm",
-        "sourceDuration": 42.576,
-        "offset": 70.45,
+        "sourceDuration": 42.706,
+        "offset": 77.454,
         "lane": 0,
         "trimStart": 0,
-        "trimEnd": 42.576,
+        "trimEnd": 42.706,
         "name": "generated voice · Start with a sentence (B)"
       },
       {
         "id": "gen-editor-b",
+        "scene": "editor-b",
         "upload": "generated-editor-b.webm",
-        "sourceDuration": 36.515,
-        "offset": 113.55,
+        "sourceDuration": 37.429,
+        "offset": 121.052,
         "lane": 0,
         "trimStart": 0,
-        "trimEnd": 36.515,
+        "trimEnd": 37.429,
         "name": "generated voice · Edit like a whiteboard (B)"
       },
       {
         "id": "gen-edit-colour-b",
+        "scene": "edit-colour-b",
         "upload": "generated-edit-colour-b.webm",
-        "sourceDuration": 38.28,
-        "offset": 151.3,
+        "sourceDuration": 41.964,
+        "offset": 159.373,
         "lane": 0,
         "trimStart": 0,
-        "trimEnd": 38.28,
+        "trimEnd": 41.964,
         "name": "generated voice · Edit text, change colour (B)"
       },
       {
-        "id": "rec-mw51k7iy-after-edit-colour-b",
-        "upload": "fe1e0d33.webm",
-        "sourceDuration": 22.41,
-        "offset": 189.981,
-        "lane": 0,
-        "trimStart": 3.75,
-        "trimEnd": 11.15,
-        "name": "narration 07/11/2026, 00:59:58"
-      },
-      {
-        "id": "rec-mw51ottv",
-        "upload": "905677a0.webm",
-        "sourceDuration": 12.5,
-        "offset": 196.631,
-        "lane": 1,
-        "trimStart": 0,
-        "trimEnd": 12.5,
-        "name": "narration 07/11/2026, 01:03:33"
-      },
-      {
-        "id": "rec-mw51trpm",
-        "upload": "20db9f5e.webm",
-        "sourceDuration": 10.11,
-        "offset": 208.481,
-        "lane": 0,
-        "trimStart": 2.5,
-        "trimEnd": 9.85,
-        "name": "narration 07/11/2026, 01:07:24"
-      },
-      {
-        "id": "rec-mw51vcsn",
-        "upload": "45bcef42.webm",
-        "sourceDuration": 7.71,
-        "offset": 215.081,
-        "lane": 1,
-        "trimStart": 1.35,
-        "trimEnd": 7.71,
-        "name": "narration 07/11/2026, 01:08:38"
-      },
-      {
-        "id": "rec-mw51xdpq",
-        "upload": "016043cf.webm",
-        "sourceDuration": 7.99,
-        "offset": 221.131,
-        "lane": 0,
-        "trimStart": 1.7,
-        "trimEnd": 7.99,
-        "name": "narration 07/11/2026, 01:10:12"
-      },
-      {
-        "id": "rec-mw51yqgp",
-        "upload": "b4814c07.webm",
-        "sourceDuration": 9.5,
-        "offset": 226.981,
-        "lane": 1,
-        "trimStart": 2.15,
-        "trimEnd": 9.5,
-        "name": "narration 07/11/2026, 01:11:15"
-      },
-      {
-        "id": "rec-mw522fkr",
-        "upload": "f59324e0.webm",
-        "sourceDuration": 11.81,
-        "offset": 240.86,
-        "lane": 0,
-        "trimStart": 4.05,
-        "trimEnd": 11.81,
-        "name": "narration 07/11/2026, 01:14:08"
-      },
-      {
-        "id": "rec-mw524wbk",
-        "upload": "3feec469.webm",
-        "sourceDuration": 14.18,
-        "offset": 247.561,
-        "lane": 1,
-        "trimStart": 0,
-        "trimEnd": 11.5,
-        "name": "narration 07/11/2026, 01:16:03"
-      },
-      {
-        "id": "rec-mw526lk4",
-        "upload": "fb3bcaea.webm",
-        "sourceDuration": 11.39,
-        "offset": 258.811,
-        "lane": 0,
-        "trimStart": 2.05,
-        "trimEnd": 11.39,
-        "name": "narration 07/11/2026, 01:17:22"
-      },
-      {
-        "id": "rec-mw528tx6",
-        "upload": "82104101.webm",
-        "sourceDuration": 16.15,
-        "offset": 268.011,
-        "lane": 1,
-        "trimStart": 2.85,
-        "trimEnd": 12.75,
-        "name": "narration 07/11/2026, 01:19:07"
-      },
-      {
-        "id": "rec-mw52c6ln",
-        "upload": "7018f457.webm",
-        "sourceDuration": 19.58,
-        "offset": 277.611,
-        "lane": 0,
-        "trimStart": 1.9,
-        "trimEnd": 13.05,
-        "name": "narration 07/11/2026, 01:21:43"
-      },
-      {
-        "id": "rec-mw52f2rl",
-        "upload": "b2ffdd55.webm",
-        "sourceDuration": 11.3,
-        "offset": 288.411,
-        "lane": 1,
-        "trimStart": 1.55,
-        "trimEnd": 11.3,
-        "name": "narration 07/11/2026, 01:23:58"
-      },
-      {
-        "id": "rec-mw52je4z",
-        "upload": "3b0830c6.webm",
-        "sourceDuration": 13.43,
-        "offset": 297.911,
-        "lane": 0,
-        "trimStart": 2.1,
-        "trimEnd": 13,
-        "name": "narration 07/11/2026, 01:27:19"
-      },
-      {
-        "id": "rec-mw52z80x",
-        "upload": "dfe1cb08.webm",
-        "sourceDuration": 3.55,
-        "offset": 307.411,
-        "lane": 1,
-        "trimStart": 0,
-        "trimEnd": 3.55,
-        "name": "narration 07/11/2026, 01:39:38"
-      },
-      {
-        "id": "rec-mw53mr55",
-        "upload": "94e3a6c0.webm",
-        "sourceDuration": 11.7,
-        "offset": 310.661,
-        "lane": 0,
-        "trimStart": 1.5,
-        "trimEnd": 11.7,
-        "name": "narration 07/11/2026, 01:57:56"
-      },
-      {
-        "id": "rec-mw53tozq",
-        "upload": "13718d9f.webm",
-        "sourceDuration": 10.51,
-        "offset": 320.961,
-        "lane": 1,
-        "trimStart": 2.25,
-        "trimEnd": 10.51,
-        "name": "narration 07/11/2026, 02:03:20"
-      },
-      {
-        "id": "rec-mw541301",
-        "upload": "2d02a93c.webm",
-        "sourceDuration": 6.02,
-        "offset": 328.811,
+        "id": "gen-llm-first",
+        "scene": "llm-first",
+        "upload": "generated-llm-first.webm",
+        "sourceDuration": 46.165,
+        "offset": 202.228,
         "lane": 0,
         "trimStart": 0,
-        "trimEnd": 5.95,
-        "name": "narration 07/11/2026, 02:09:04"
+        "trimEnd": 46.165,
+        "name": "generated voice · LLM first"
       },
       {
-        "id": "rec-mw547pck",
-        "upload": "ead480c5.webm",
-        "sourceDuration": 11.84,
-        "offset": 334.861,
-        "lane": 1,
-        "trimStart": 1.45,
-        "trimEnd": 7.1,
-        "name": "narration 07/11/2026, 02:14:13"
-      },
-      {
-        "id": "rec-mw548j67",
-        "upload": "80c82c3e.webm",
-        "sourceDuration": 5.11,
-        "offset": 340.311,
-        "lane": 0,
-        "trimStart": 0.75,
-        "trimEnd": 5.11,
-        "name": "narration 07/11/2026, 02:14:52"
-      },
-      {
-        "id": "rec-mw54avj2",
-        "upload": "ee44e043.webm",
-        "sourceDuration": 6.57,
-        "offset": 344.361,
-        "lane": 1,
-        "trimStart": 1,
-        "trimEnd": 6.57,
-        "name": "narration 07/11/2026, 02:16:41"
-      },
-      {
-        "id": "rec-mw54dhaa",
-        "upload": "96595d98.webm",
-        "sourceDuration": 7.29,
-        "offset": 349.311,
+        "id": "gen-style",
+        "scene": "style",
+        "upload": "generated-style.webm",
+        "sourceDuration": 28.196,
+        "offset": 249.284,
         "lane": 0,
         "trimStart": 0,
-        "trimEnd": 7.29,
-        "name": "narration 07/11/2026, 02:18:43"
+        "trimEnd": 28.196,
+        "name": "generated voice · One style for everything"
       },
       {
-        "id": "rec-mw54jm6z",
-        "upload": "f5f71161.webm",
-        "sourceDuration": 15.77,
-        "offset": 356.711,
-        "lane": 1,
-        "trimStart": 2.3,
-        "trimEnd": 15.77,
-        "name": "narration 07/11/2026, 02:23:29"
-      },
-      {
-        "id": "rec-mw54l6t9",
-        "upload": "65e47db8.webm",
-        "sourceDuration": 9.39,
-        "offset": 369.811,
+        "id": "gen-skills-guide",
+        "scene": "skills-guide",
+        "upload": "generated-skills-guide.webm",
+        "sourceDuration": 22.694,
+        "offset": 278.372,
         "lane": 0,
-        "trimStart": 1.2,
-        "trimEnd": 9.39,
-        "name": "narration 07/11/2026, 02:24:42"
+        "trimStart": 0,
+        "trimEnd": 22.694,
+        "name": "generated voice · Skills guide the app"
       },
       {
-        "id": "rec-mw54o0fy",
-        "upload": "86cdc516.webm",
-        "sourceDuration": 11.74,
-        "offset": 377.961,
-        "lane": 1,
-        "trimStart": 1.25,
-        "trimEnd": 11.74,
-        "name": "narration 07/11/2026, 02:26:54"
-      },
-      {
-        "id": "rec-mw55ca1p",
-        "upload": "4b90863f.webm",
-        "sourceDuration": 15.57,
-        "offset": 409.261,
+        "id": "gen-library",
+        "scene": "library",
+        "upload": "generated-library.webm",
+        "sourceDuration": 23.437,
+        "offset": 301.958,
         "lane": 0,
-        "trimStart": 4.2,
-        "trimEnd": 4.4,
-        "name": "narration 07/11/2026, 02:45:46"
+        "trimStart": 0,
+        "trimEnd": 23.437,
+        "name": "generated voice · A library that lowers the cost"
+      },
+      {
+        "id": "gen-architecture",
+        "scene": "architecture",
+        "upload": "generated-architecture.webm",
+        "sourceDuration": 28.362,
+        "offset": 326.287,
+        "lane": 0,
+        "trimStart": 0,
+        "trimEnd": 28.362,
+        "name": "generated voice · Architecture"
+      },
+      {
+        "id": "gen-models",
+        "scene": "models",
+        "upload": "generated-models.webm",
+        "sourceDuration": 37.336,
+        "offset": 355.541,
+        "lane": 0,
+        "trimStart": 0,
+        "trimEnd": 37.336,
+        "name": "generated voice · The right model for each job"
+      },
+      {
+        "id": "gen-script",
+        "scene": "script",
+        "upload": "generated-script.webm",
+        "sourceDuration": 18.429,
+        "offset": 393.769,
+        "lane": 0,
+        "trimStart": 0,
+        "trimEnd": 18.429,
+        "name": "generated voice · Script at the centre"
       },
       {
         "id": "gen-timing-b",
+        "scene": "timing-b",
         "upload": "generated-timing-b.webm",
-        "sourceDuration": 41.128,
-        "offset": 388,
+        "sourceDuration": 41.206,
+        "offset": 413.09,
         "lane": 0,
         "trimStart": 0,
-        "trimEnd": 41.128,
+        "trimEnd": 41.206,
         "name": "generated voice · Timing, prompter and voice-over (B)"
       },
       {
         "id": "gen-ai-helpers-b",
+        "scene": "ai-helpers-b",
         "upload": "generated-ai-helpers-b.webm",
-        "sourceDuration": 39.828,
-        "offset": 428.85,
-        "lane": 1,
+        "sourceDuration": 41.108,
+        "offset": 455.188,
+        "lane": 0,
         "trimStart": 0,
-        "trimEnd": 39.828,
+        "trimEnd": 41.108,
         "name": "generated voice · AI helpers across the app (B)"
       },
       {
-        "id": "rec-mw55l5gk-after-ai-helpers-b",
-        "upload": "3d54f2ee.webm",
-        "sourceDuration": 13.78,
-        "offset": 469.55,
+        "id": "gen-cost",
+        "scene": "cost",
+        "upload": "generated-cost.webm",
+        "sourceDuration": 25.907,
+        "offset": 497.188,
         "lane": 0,
-        "trimStart": 2.75,
-        "trimEnd": 13.78,
-        "name": "narration 07/11/2026, 02:52:40"
+        "trimStart": 0,
+        "trimEnd": 25.907,
+        "name": "generated voice · Under $5 per 10 minutes"
       },
       {
-        "id": "rec-mw55rho6",
-        "upload": "c3c5e511.webm",
-        "sourceDuration": 19.05,
-        "offset": 480.141,
-        "lane": 1,
-        "trimStart": 1.95,
-        "trimEnd": 19.05,
-        "name": "narration 07/11/2026, 02:57:36"
-      },
-      {
-        "id": "rec-mw55zwmv",
-        "upload": "6e72a101.webm",
-        "sourceDuration": 12.43,
-        "offset": 497.241,
+        "id": "gen-publish",
+        "scene": "publish",
+        "upload": "generated-publish.webm",
+        "sourceDuration": 13.879,
+        "offset": 523.987,
         "lane": 0,
-        "trimStart": 1.75,
-        "trimEnd": 12.43,
-        "name": "narration 07/11/2026, 03:04:09"
-      },
-      {
-        "id": "rec-mw560zf8",
-        "upload": "a9a1ac08.webm",
-        "sourceDuration": 2.46,
-        "offset": 507.941,
-        "lane": 1,
-        "trimStart": 0.9,
-        "trimEnd": 2.46,
-        "name": "narration 07/11/2026, 03:04:59"
+        "trimStart": 0,
+        "trimEnd": 13.879,
+        "name": "generated voice · Publish more"
       }
     ]
   }

@@ -26,9 +26,11 @@ A presentation is timed when it has a `voiceover` (the narration in Timing) and 
 
 1. Write its `notes` (below), then time them: `npm run voice -- time presentations/<id>.json --scenes <scene-id>,…`. Each beat's words should take at least as long as its animation; shorten the animation or say more where they don't.
 2. Put its generated narration on the timeline: `npm run voice -- place presentations/<id>.json --scenes <scene-id>,…`. For each scene it joins the sentences into one clip (`uploads/generated-<scene-id>.webm`), opens a gap where the scene plays, cues the scene's beats where their sentences start, and moves every later clip and cue on by the gap (a recording that runs across it is split), so the rest keeps its timing. It must end with "✓ every cue in order".
-3. Commit `uploads/generated-*` with the presentation (they are kept in git, with LFS; the person's own recordings in `uploads/` are not). Tell the person to `git pull` and `git lfs pull`, and that the generated voice stands in until they record the scene themselves in Timing.
+3. Commit `uploads/generated-*` with the presentation (everything in `uploads/` is kept in git, with LFS). Tell the person to `git pull` and `git lfs pull`, and that the generated voice stands in until they record the scene themselves in Timing.
 
 When the project has the person's voice (`voice/my-voice.json`), `npm run voice` speaks in it, so new scenes sound like them until they record. The service comes from the environment: `OPENROUTER_API_KEY` (Voxtral, about 2¢ per 1,000 characters), `OPENAI_API_KEY`, or `TTS_BASE_URL`/`TTS_MODEL`/`TTS_VOICE`/`TTS_API_KEY`. Without one, ask the person for a key (or to run the command themselves) rather than leaving the scenes untimed.
+
+When the voice-over's clips name their scenes (`scene` on each clip, see the voiceover-and-video skill), moving, deleting, leaving out or putting back a scene in the app moves its clips and cues with it. Editing the JSON by hand does not: after moving or deleting scenes in the file, run `npm run voice -- rebuild` (generated voice) or tell the person to re-time in Timing.
 
 ## A second version of a scene ("version B")
 
