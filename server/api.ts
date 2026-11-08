@@ -7,6 +7,7 @@ import { pipeline } from 'node:stream/promises';
 import type { Plugin, PreviewServer, ViteDevServer } from 'vite';
 import { exportVideo } from './export';
 import { deleteIcon, readLibrary, saveIcon } from './library';
+import { measureLoudness } from './loudness';
 import { findOffset } from './media';
 import { logAi, readAiLog, shorten } from './aiLog';
 import { cleanVoice } from './cleanVoice';
@@ -148,7 +149,7 @@ async function takes(req: IncomingMessage, res: ServerResponse, parts: string[],
       start: trimStartQ !== null ? Number(trimStartQ) : undefined,
       end: trimEndQ !== null ? Number(trimEndQ) : undefined,
     } : undefined;
-    return send(res, 200, await addTrack(id, name, upload, ext, Number(query.get('offset') ?? 0), trim));
+    return send(res, 200, await addTrack(id, name, upload, ext, Number(query.get('offset') ?? 0), trim, query.has('gain') ? Number(query.get('gain')) : undefined));
   }
   if (sub === 'sync' && name && m === 'POST') {
     const take = await getTake(id);
@@ -242,6 +243,7 @@ export function jzmServer(): Plugin {
           return send(res, 200, await transcribe(upload, service));
         }
         if (url.pathname === '/api/uploads' && req.method === 'POST') return send(res, 200, { upload: await saveUpload(req, url.searchParams.get('ext') ?? 'mp3') });
+        if (parts[0] === 'api' && parts[1] === 'uploads' && parts[2] && parts[3] === 'loudness' && req.method === 'GET') return send(res, 200, await measureLoudness(parts[2], Number(url.searchParams.get('start') ?? 0), url.searchParams.has('end') ? Number(url.searchParams.get('end')) : undefined));
         if (parts[0] === 'api' && parts[1] === 'uploads' && parts[2] && parts[3] === 'clean' && req.method === 'POST') return send(res, 200, await cleanVoice(parts[2]));
         if (parts[0] === 'uploads' && parts[1] && req.method === 'GET') return await serveUpload(req, res, parts[1]);
         if (parts[0] === 'api' && parts[1] === 'media') {

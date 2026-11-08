@@ -1,6 +1,7 @@
 // Recording narration with the script as a prompter: start/stop the microphone, place each beat's
 // cue with → (or take it back with ←), hold the prompter still with Space, and add the finished
 // recording as a new clip on the timeline. Also releases the mic and the audio graph on close.
+import { micConstraints } from './micDevice';
 import { useEffect, useState } from 'react';
 import type { Clip } from '../../engine/schema';
 import type { Click } from '../../video/performance';
@@ -27,7 +28,7 @@ export function useNarrationRecording({ clock, clips, clicks, setClips, onCue, o
   const startRecording = async () => {
     setError(null);
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: true } });
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: micConstraints() });
       pause();
       const recorder = new MediaRecorder(stream, MediaRecorder.isTypeSupported('audio/webm;codecs=opus') ? { mimeType: 'audio/webm;codecs=opus' } : undefined);
       const chunks: Blob[] = [];

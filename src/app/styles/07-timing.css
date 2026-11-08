@@ -194,3 +194,44 @@
 .drag-hint .key kbd { font: inherit; font-size: 11px; padding: 0 5px; margin-right: 4px; border: 1px solid var(--line); border-radius: 4px; }
 .drag-hint .key.on { color: var(--accent); }
 .drag-hint .key.on kbd { border-color: var(--accent); background: #3ef0ff1f; }
+
+/* The clip window (double-click a voice clip): volume, actions, microphone check, recording it again. */
+.clip-detail { width: min(860px, 94vw); max-height: 90vh; overflow: auto; display: flex; flex-direction: column; gap: 14px; }
+.clip-detail .modal-head { display: flex; gap: 10px; align-items: center; }
+.clip-detail .clip-name-input { flex: 1; font-size: 16px; font-weight: 600; background: transparent; border: 1px solid transparent; border-radius: 6px; padding: 4px 6px; min-width: 260px; }
+.clip-detail .clip-name-input:hover, .clip-detail .clip-name-input:focus { border-color: var(--line); }
+.clip-detail section { border-top: 1px solid var(--line); padding-top: 10px; display: flex; flex-direction: column; gap: 8px; }
+.clip-detail h4 { margin: 0; font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+.clip-detail h4 .fold { all: unset; cursor: pointer; }
+.clip-detail h4 .fold::before { content: '▸ '; }
+.clip-detail h4 .fold.open::before { content: '▾ '; }
+.clip-detail .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.clip-detail .row audio { height: 32px; }
+.clip-detail button.danger { color: #ff7a8a; }
+.loudness { display: flex; gap: 12px; align-items: baseline; font-size: 15px; }
+.loudness b { font-size: 22px; }
+.loudness.good b, .mic-advice.good { color: #4ade80; }
+.loudness.warn b, .mic-advice.warn { color: #facc15; }
+.loudness.low b, .mic-advice.low { color: var(--muted); }
+.mic-advice.bad { color: #ff7a8a; }
+.mic-advice { margin: 0; font-weight: 600; }
+.gain { display: flex; gap: 8px; align-items: center; }
+.gain input { width: 220px; }
+.level-meter { position: relative; height: 22px; border-radius: 6px; background: #0b0f12; border: 1px solid var(--line); overflow: hidden; margin-bottom: 14px; overflow: visible; }
+.level-meter .zone { position: absolute; top: 0; bottom: 0; opacity: 0.22; }
+.level-meter .zone.low { background: #475569; }
+.level-meter .zone.warn { background: #facc15; }
+.level-meter .zone.good { background: #22c55e; opacity: 0.32; }
+.level-meter .zone.bad { background: #ef4444; }
+.level-meter .fill { position: absolute; top: 4px; bottom: 4px; left: 0; background: linear-gradient(90deg, #3ef0ff, #4ade80); border-radius: 3px; transition: width 60ms linear; }
+.level-meter .peak { position: absolute; top: 0; bottom: 0; width: 2px; background: #fff; }
+.level-meter .scale { position: absolute; top: 100%; left: 0; right: 0; height: 14px; font-size: 10px; color: var(--muted); }
+.level-meter .scale b { position: absolute; transform: translateX(-50%); font-weight: 400; }
+.mic-check { display: flex; flex-direction: column; gap: 8px; }
+.rerecord-lines { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; max-height: 260px; overflow: auto; }
+.rerecord-lines li { padding: 6px 10px; border-radius: 8px; border: 1px solid var(--line); }
+.rerecord-lines li p { margin: 2px 0; font-size: 17px; line-height: 1.4; }
+.rerecord-lines li small { color: var(--muted); }
+.rerecord-lines li.now { border-color: #3ef0ff; background: #3ef0ff10; }
+.rerecord-lines li.done { opacity: 0.45; }
+.rec-btn.on { background: #ef444433; border-color: #ef4444; }

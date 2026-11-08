@@ -68,7 +68,12 @@ export function useClipMixer(clips: Clip[]) {
       const startCtxT = anchorCtx + Math.max(0, c.offset - fromT);
       const node = a.createBufferSource();
       node.buffer = buf;
-      node.connect(a.destination);
+      if (c.gain) {
+        // The clip's own volume change (dB).
+        const g = a.createGain();
+        g.gain.value = 10 ** (c.gain / 20);
+        node.connect(g).connect(a.destination);
+      } else node.connect(a.destination);
       node.start(startCtxT, srcStart, dur);
       sources.current.push(node);
     });

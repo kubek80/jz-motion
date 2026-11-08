@@ -3,6 +3,7 @@
 import { useCleanVoice } from './useCleanVoice';
 import type { RawBeat, RawDoc } from '../editor/doc';
 import { BeatDrawer } from './BeatDrawer';
+import { ClipDetail } from './ClipDetail';
 import { TranscriptWindow } from './TranscriptWindow';
 import { TimelineMinimap } from './TimelineMinimap';
 import { useMissingUploads } from './useMissingUploads';
@@ -103,6 +104,8 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
   }, [pps]); // eslint-disable-line react-hooks/exhaustive-deps
   /** Clips being transcribed in the Transcript window. */
   const [transcribing, setTranscribing] = useState<Clip[] | null>(null);
+  /** The clip open in the clip window (double-click a clip). */
+  const [openClip, setOpenClip] = useState<number | null>(null);
   /** The beat whose options are open in the drawer. */
   const [openBeat, setOpenBeat] = useState<{ scene: number; beat: number } | null>(null);
   const { clipDrag, startDragClip, deleteClip, startTrimClip, splitAtPlayhead, splitClipAt, canSplitAt, setClipLane } = useClipEditing(clips, setClips, rec, pps, now);
@@ -235,6 +238,7 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
         onTranscribe={(i) => setTranscribing([clips[i]])}
         onClean={(i) => void cleanClip(i)}
         onRestore={restoreClip}
+        onOpenClip={setOpenClip}
         drawClipPeaks={drawClipPeaks}
         np={np}
         tapping={tapping}
@@ -243,6 +247,27 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
         beatDrag={drag}
         onCue={onCue}
       />
+      {openClip !== null && clips[openClip] && (
+        <ClipDetail
+          key={clips[openClip].id}
+          clip={clips[openClip]}
+          index={openClip}
+          clips={clips}
+          clicks={clicks}
+          beatOf={(c) => doc.scenes[c.scene]?.beats?.[c.beat]}
+          missing={missing.has(clips[openClip].upload)}
+          setClips={setClips}
+          onCues={(changes) => onCues(changes)}
+          playFrom={(t) => { seek(t); play(); }}
+          pause={pause}
+          onClean={(i) => void cleanClip(i)}
+          onRestore={restoreClip}
+          onTranscribe={(i) => setTranscribing([clips[i]])}
+          setClipLane={setClipLane}
+          deleteClip={deleteClip}
+          onClose={() => setOpenClip(null)}
+        />
+      )}
       {transcribing && (
         <TranscriptWindow
           clips={transcribing}
