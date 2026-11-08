@@ -118,7 +118,7 @@ describe('ffmpeg', () => {
   it('falls back to what the recorded tracks allow', () => {
     expect(resolveLayout({ layout: 'camera', track: 'friend' }, [])).toEqual({ layout: 'board', track: '' });
     expect(resolveLayout({ layout: 'camera', track: 'friend' }, ['me'])).toEqual({ layout: 'camera', track: 'me' });
-    expect(resolveLayout({ layout: 'side', track: 'me' }, ['me'])).toEqual({ layout: 'pip', track: 'me' });
+    expect(resolveLayout({ layout: 'side', track: 'me' }, ['me'])).toEqual({ layout: 'side', track: 'me' });
     expect(resolveLayout({ layout: 'side', track: 'me' }, ['me', 'friend'])).toEqual({ layout: 'side', track: 'me', second: 'friend' });
   });
 

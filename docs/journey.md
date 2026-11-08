@@ -1045,3 +1045,19 @@ After pulling, Jakub saw only black boxes where his avatar should be. The files 
 ![Timing with an avatar that is only a placeholder](journey/123-avatar-video-missing.jpg)
 
 **Checked by:** Playwright on a copy whose intro avatar was a placeholder file and scene 4's was gone: the editor, the lane and Timing's board said so; test files removed; typecheck, tests, build.
+
+## Step 85: Scene 9's ending, a scene about the avatar, side by side
+
+Jakub asked for: the feedback loop at the end of scene 9 ("LLM first") to have words and voice, and his avatar there; My avatar not to show the picture an avatar was first made from (only pictures uploaded there); a new scene after "Finding my voice" about how the avatar works, including that a cartoon was a cost decision (forgiving, usually right in one take); the last scene with the avatar beside the board, not full screen; and a look at exported avatar frames at full size, since Timing's preview suggested the corner avatar could be clipped.
+
+- **Scene 9**: two beats replace the wordless one: "When I want something changed, I simply send my feedback to the model" (the feedback arrow, dots flowing, the model pulsing) and "And the loop starts again…" (the loop redrawn arrow by arrow). Voice said again (`npm run voice -- again`); after Jakub's review, his avatar in the corner for the whole scene.
+- **Scene 12, "My avatar"** (new): a photo → the cartoon (image model) → the cartoon speaking (fal.ai, playing on the board); the cost decision; then a recording of the app (`jzm-avatar`): the video lane, right-clicking a clip, My avatar. Narration placed in his voice.
+- **Side by side**: `side` with one camera (the avatar) now puts it on the left half and the board on the right, in the export, Timing's board and the editor's still. The last scene uses it.
+- **Timing's board** places the avatar inside a 16:9 frame of the board itself. Before, when Timing gave the board a wider area than 16:9, the board was drawn letterboxed but the avatar was placed at the edge of the whole area, off the board (the clipping Jakub saw).
+- **Bugs found:** `place` opened the gap at the next scene's first cue, cutting off the 0.8 s of its clip before that (rejoined by hand; `place` now opens the gap where the next scene's clip starts). In the export the corner avatar was fine: full 16:9, framed, 48 px from the edges (1:1 below).
+
+![An exported frame at 1:1: the corner avatar; and the last scene side by side](journey/124-avatar-in-the-video.jpg)
+
+![Scene 12: the drawing, the lane, the menu, My avatar](journey/125-scene-my-avatar.jpg)
+
+**Checked by:** single-scene exports with voice and avatar (scene 4 in the corner, the last scene side by side, the new scene), frames looked at, one at 1:1; Playwright: the avatar stays on the board in a 1018×311 Timing area, the side layout in Timing and the editor, My avatar without the stored picture; the presentation: every cue in order, none cut short; typecheck, tests, build.

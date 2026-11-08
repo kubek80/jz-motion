@@ -97,7 +97,7 @@
 .avatar-still { position: absolute; z-index: 2; pointer-events: none; opacity: 0.9; aspect-ratio: 16 / 9; border-radius: 6px; overflow: hidden; outline: 2px solid #3ef0ff; background: #000; bottom: 2.5%; }
 .avatar-still.pip { right: 2.5%; width: 26%; }
 .avatar-still.pip-left { left: 2.5%; width: 26%; }
-.avatar-still.camera { left: 2.5%; width: 26%; }
+.avatar-still.camera, .avatar-still.side { left: 2.5%; width: 26%; }
 .avatar-still video { width: 100%; height: 100%; object-fit: cover; display: block; }
 .avatar-still .tag { position: absolute; left: 6px; top: 6px; padding: 1px 7px; border-radius: 999px; background: #000b; color: #9ff6ff; font-size: 11px; }
 .avatar-still.empty { background: transparent; outline: 2px dashed #3ef0ff88; }

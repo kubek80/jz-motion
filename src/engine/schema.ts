@@ -257,7 +257,8 @@ export const Action = z.discriminatedUnion('do', [
 /**
  * How the video frame is laid out while a beat plays (video export only):
  * board = board only; pip / pip-left = board with a small camera bottom-right / bottom-left;
- * camera = camera full screen with the board small; side = two cameras side by side.
+ * camera = camera full screen with the board small; side = two cameras side by side, or with one camera
+ * (your avatar) the camera on the left half and the board on the right.
  */
 export const layoutNames = ['board', 'pip', 'pip-left', 'camera', 'side'] as const;
 const videoLayout = {

@@ -6,8 +6,8 @@ import type { RawDoc } from './doc';
 // video shows you full frame, a still in the bottom-left corner marked so, since the board has to stay full size to edit). Clicks go
 // through it to the board. Without an avatar yet, a dashed outline shows where the camera goes.
 
-type Layout = 'camera' | 'pip' | 'pip-left';
-const isCamera = (l: unknown): l is Layout => l === 'camera' || l === 'pip' || l === 'pip-left';
+type Layout = 'camera' | 'pip' | 'pip-left' | 'side';
+const isCamera = (l: unknown): l is Layout => l === 'camera' || l === 'pip' || l === 'pip-left' || l === 'side';
 
 export function AvatarStill({ doc, sceneIndex }: { doc: RawDoc; sceneIndex: number }) {
   const scene = doc.scenes[sceneIndex];
@@ -20,7 +20,7 @@ export function AvatarStill({ doc, sceneIndex }: { doc: RawDoc; sceneIndex: numb
   return (
     <div className={`avatar-still ${layout}${avatar ? '' : ' empty'}`} title={avatar ? `Your avatar · ${where}` : 'The camera goes here in the video: no avatar for this scene yet (make one in Timing: double-click its clip)'}>
       {avatar && <AvatarVideo file={avatar.video} still />}
-      <span className="tag">{avatar ? (layout === 'camera' ? '🎥 full frame in the video' : '🎥 avatar') : 'camera / avatar'}</span>
+      <span className="tag">{avatar ? (layout === 'camera' ? '🎥 full frame in the video' : layout === 'side' ? '🎥 beside the board in the video' : '🎥 avatar') : 'camera / avatar'}</span>
     </div>
   );
 }

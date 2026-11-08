@@ -110,7 +110,7 @@ For video export, a beat or a scene can say where the recorded camera goes while
 | `pip` | The board, with the camera small in the bottom-right corner. |
 | `pip-left` | The same, bottom-left. |
 | `camera` | The camera full screen, with the board small in the top-right corner. |
-| `side` | Two cameras side by side (the `track` one on the left). |
+| `side` | Two cameras side by side (the `track` one on the left); with one camera (your avatar), it on the left half and the board on the right. |
 
 `track` names the recording to show, for example `"me"` (default) or `"friend"`. Layouts fall back gracefully: without a camera recording every layout shows the board.
 

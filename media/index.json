@@ -47,6 +47,22 @@
   },
   "added": "2026-11-06T03:18:47.224Z"
  },
+ "381e786d7e1192aa.webm": {
+  "file": "381e786d7e1192aa.webm",
+  "src": "/media/381e786d7e1192aa.webm",
+  "name": "my avatar · speaking",
+  "kind": "recording",
+  "bytes": 1829479,
+  "width": 1280,
+  "height": 720,
+  "duration": 17.33,
+  "poster": "/media/381e786d7e1192aa.webm.poster.webp",
+  "original": {
+   "name": "avatar-title-bea1bb.mp4",
+   "bytes": 2233061
+  },
+  "added": "2026-11-08T12:22:45.195Z"
+ },
  "4b9030113ac6f590.webp": {
   "file": "4b9030113ac6f590.webp",
   "src": "/media/4b9030113ac6f590.webp",
@@ -181,6 +197,22 @@
   },
   "added": "2026-11-06T03:18:44.538Z"
  },
+ "b86a0ae19e9275a3.webm": {
+  "file": "b86a0ae19e9275a3.webm",
+  "src": "/media/b86a0ae19e9275a3.webm",
+  "name": "jzm-avatar",
+  "kind": "recording",
+  "bytes": 1759999,
+  "width": 3200,
+  "height": 2000,
+  "duration": 27.24,
+  "poster": "/media/b86a0ae19e9275a3.webm.poster.webp",
+  "original": {
+   "name": "jzm-avatar.mkv",
+   "bytes": 173788747
+  },
+  "added": "2026-11-08T12:10:10.553Z"
+ },
  "d646c507ff654c09.webp": {
   "file": "d646c507ff654c09.webp",
   "src": "/media/d646c507ff654c09.webp",
@@ -226,6 +258,20 @@
    "bytes": 79413858
   },
   "added": "2026-11-07T11:43:58.027Z"
+ },
+ "ea22b9de74dff4bc.webp": {
+  "file": "ea22b9de74dff4bc.webp",
+  "src": "/media/ea22b9de74dff4bc.webp",
+  "name": "my avatar · cartoon in a home studio",
+  "kind": "picture",
+  "bytes": 82728,
+  "width": 1376,
+  "height": 768,
+  "original": {
+   "name": "avatar-photo-6738ede7a5.jpg",
+   "bytes": 125898
+  },
+  "added": "2026-11-08T12:22:23.901Z"
  },
  "fd7f86670bc81049.webp": {
   "file": "fd7f86670bc81049.webp",
