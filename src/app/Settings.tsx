@@ -50,7 +50,7 @@ export function VoicerFields({ value, onChange }: { value: Voicer; onChange: (v:
           <span>your voice</span>
           <span>
             {s ? <>{s.name ?? s.upload}, {(s.end - s.start).toFixed(0)} s <button className="small" onClick={() => onChange({ ...value, sample: undefined })}>Clear</button></>
-              : <span className="note-text">Not chosen yet: in Timing, double-click a clip of you speaking clearly (10–30 s) and click <b>Use as my voice</b>.</span>}
+              : <span className="note-text">Not chosen yet: record a sample in <b>🎙 My voice</b> (home screen or Timing).</span>}
           </span>
         </div>
       ) : (

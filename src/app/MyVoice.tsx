@@ -115,7 +115,7 @@ export function MyVoice({ onClose }: { onClose: () => void }) {
               ? <p className="muted hint">Kept with the project: <code>voice/my-voice.json</code> and <code>uploads/{s.upload}</code>. Commit and push them, and it works on your other computers (and for Claude working in the repository).</p>
               : <div className="row"><button onClick={() => void keepInProject()} disabled={!!busy} title="Keep the sample and these settings in the project (git), never the key">💾 Save in the project</button><span className="muted">so it works on your other computers, and for Claude in the repository</span></div>
           ) : null}
-          {!s && <p className="muted">None yet: record one below, or double-click a clip of you speaking in Timing and click <b>Use as my voice</b>.</p>}
+          {!s && <p className="muted">None yet: record one below.</p>}
           <label className="field">
             <span>copied by</span>
             <select value={clones(voicer) ? voicer.model : ''} onChange={(e) => { const v = CLONERS.find((x) => x.model === e.target.value); if (v) set({ ...voicer, baseURL: v.baseURL, model: v.model }); }}>
