@@ -1,5 +1,6 @@
 // The editor for one open presentation: owns its state (text and undo history, mode, selection, open
 // windows) and lays out the board, panels and controls. The parts live in ./editor/.
+import { AvatarStill } from './editor/AvatarStill';
 import { hasBoundClips, layoutScenes, type TimedDoc } from '../video/sceneTimeline';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { compile, Stage, type StagePosition } from '../engine';
@@ -305,6 +306,7 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
             onDrop={(e) => { if (mode === 'edit' && addPicture(imageFrom(e.dataTransfer))) e.preventDefault(); }}
           >
             <div className="host" ref={stageHost} />
+            {doc && !inline && <AvatarStill doc={doc} sceneIndex={sceneIndex} />}
             <video ref={preview} className={recording && recorder.state.stream?.getVideoTracks().length ? 'cam-preview on' : 'cam-preview'} autoPlay muted playsInline />
             {inline && <InlineTextEditor inline={inline} setInline={setInline} finishInline={finishInline} />}
             {mode === 'edit' && doc && pickedEl && isRecording(pickedEl) && !inline && <FrameStepper stage={stage} frame={stageFrame} id={pickedEl.id} doc={doc} sceneIndex={sceneIndex} update={update} />}

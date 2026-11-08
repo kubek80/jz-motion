@@ -2,6 +2,7 @@
 // and trim handles, the beat clicks, and the playhead. Pressing on empty timeline seeks there.
 // Right-click a clip (play, split, change lane, remove) or a beat (edit it, play, let it follow);
 // double-click a beat to edit it in the editor.
+import { AvatarLane, type AvatarRow } from './AvatarLane';
 import { useState, type RefObject } from 'react';
 import { ContextMenu, menuAt, type MenuAt } from '../ContextMenu';
 import type { Clip } from '../../engine/schema';
@@ -36,6 +37,8 @@ interface Props {
   onTranscribe: (index: number) => void;
   /** Opens the clip window (double-click a clip). */
   onOpenClip: (index: number) => void;
+  /** Your avatar's videos (and scenes waiting for one), for the video lane. */
+  avatars: AvatarRow[];
   /** Removes a clip's background noise (a cleaned copy), or goes back to the original recording. */
   onClean: (index: number) => void;
   onRestore: (index: number) => void;
@@ -55,7 +58,7 @@ interface Props {
 const FLAG_ROW = 24;
 const FLAG_MAX = 160;
 
-export function Timeline({ laneRef, missing, height, rec, seek, time, total, pps, width, clips, primary, clipDrag, startDragClip, startTrimClip, deleteClip, splitClipAt, canSplitAt, setClipLane, playFrom, onTranscribe, onOpenClip, onClean, onRestore, onEditBeat, drawClipPeaks, np, tapping, tapIndex, startDrag, onCue, beatDrag }: Props) {
+export function Timeline({ laneRef, missing, height, rec, seek, time, total, pps, width, clips, primary, clipDrag, startDragClip, startTrimClip, deleteClip, splitClipAt, canSplitAt, setClipLane, playFrom, onTranscribe, onOpenClip, avatars, onClean, onRestore, onEditBeat, drawClipPeaks, np, tapping, tapIndex, startDrag, onCue, beatDrag }: Props) {
   const { shown, currentIndex, beatOf, sceneTitle } = np;
   // Beat labels go in rows above their lines: as many rows as the timeline's height allows, each label in the
   // lowest row where it doesn't run into the label before it (a short timeline keeps two rows).
@@ -163,6 +166,7 @@ export function Timeline({ laneRef, missing, height, rec, seek, time, total, pps
           )}
           {!primary && <span className="muted wave-empty">No voice-over yet: load one above, or tap along in silence.</span>}
         </div>
+        <AvatarLane rows={avatars} pps={pps} time={time} onOpen={(i) => !rec.current && onOpenClip(i)} />
         <div className="clicks">
           {shown.map((c, i) => {
             const color = SCENE_COLORS[c.scene % SCENE_COLORS.length];

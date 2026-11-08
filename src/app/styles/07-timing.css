@@ -278,3 +278,12 @@
 .my-voice .mic-section .row h4 { margin: 0; }
 /* A clip's window: your avatar saying it. */
 .avatar-preview { display: block; width: 320px; max-width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 8px; border: 1px solid var(--line); margin-bottom: 8px; background: #000; }
+
+/* The video lane: your avatar's videos under the voice they say. */
+.timing-track .avatar-lane { position: relative; flex: 0 0 34px; border-top: 1px dashed var(--line); }
+.avatar-block { position: absolute; top: 3px; height: 28px; border-radius: 5px; overflow: hidden; cursor: pointer; display: flex; align-items: center; gap: 6px; background: color-mix(in srgb, #3dff8b 16%, #0b0e11); border: 1px solid color-mix(in srgb, #3dff8b 55%, transparent); color: #d9ffe8; font-size: 11px; white-space: nowrap; }
+.avatar-block video { height: 100%; aspect-ratio: 16 / 9; object-fit: cover; flex: none; pointer-events: none; }
+.avatar-block .avatar-name { padding-right: 6px; overflow: hidden; text-overflow: ellipsis; }
+.avatar-block.showing { box-shadow: 0 0 0 2px #3dff8b, 0 0 12px #3dff8b88; }
+.avatar-block.stale { border-color: #ffb020; background: color-mix(in srgb, #ffb020 14%, #0b0e11); color: #ffe2a8; }
+.avatar-block.empty { background: transparent; border-style: dashed; color: #9fdcb8; padding-left: 6px; }
