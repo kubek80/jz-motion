@@ -161,7 +161,7 @@ async function takes(req: IncomingMessage, res: ServerResponse, parts: string[],
     await getTake(id);
     const file = join(TAKES_DIR, id, `upload-${randomUUID()}`);
     await buildAvatarTrack(`${file}.mp4`, await readJson(req));
-    return send(res, 200, await addTrack(id, 'me', `${file}.mp4`, 'mp4', 0));
+    return send(res, 200, await addTrack(id, 'me', `${file}.mp4`, 'mp4', 0, undefined, undefined, { avatar: true }));
   }
   if (sub === 'sync' && name && m === 'POST') {
     const take = await getTake(id);

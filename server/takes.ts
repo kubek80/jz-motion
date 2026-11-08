@@ -21,6 +21,8 @@ export interface Track {
   trimEnd?: number;
   /** Volume change in dB (from the voice clip's own setting). */
   gain?: number;
+  /** Your avatar's videos (black between them): scenes that don't set a layout show the board only. */
+  avatar?: boolean;
 }
 
 export interface Take {
@@ -65,7 +67,7 @@ export async function createTake(input: { name: string; performance: Performance
 }
 
 /** Stores a media file as a track, cleaning up browser recordings and reading what it contains. */
-export async function addTrack(id: string, name: string, upload: string, ext: string, offset: number, trim?: { start?: number; end?: number }, gain?: number): Promise<Take> {
+export async function addTrack(id: string, name: string, upload: string, ext: string, offset: number, trim?: { start?: number; end?: number }, gain?: number, extra?: Pick<Track, 'avatar'>): Promise<Take> {
   if (!safe(name)) throw new Error('track names use letters, digits, - and _');
   const take = await getTake(id);
   const file = `${name}.${ext === 'webm' ? 'webm' : ext}`;
@@ -77,7 +79,7 @@ export async function addTrack(id: string, name: string, upload: string, ext: st
     await rename(upload, target);
   }
   const info = await probe(target);
-  const track: Track = { name, file, offset, ...info, ...(gain ? { gain } : {}) };
+  const track: Track = { name, file, offset, ...info, ...(gain ? { gain } : {}), ...extra };
   if (trim?.start !== undefined || trim?.end !== undefined) {
     const clamp = (v: number) => Math.max(0, Math.min(info.duration, v));
     if (trim.start !== undefined) track.trimStart = clamp(trim.start);
