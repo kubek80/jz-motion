@@ -41,6 +41,8 @@ interface Props {
   onTranscribe: (i: number) => void;
   deleteClip: (i: number) => void;
   onClose: () => void;
+  /** Opens My avatar (its picture, style and how it moves). */
+  onMyAvatar?: () => void;
 }
 
 interface Loudness { lufs: number | null; peak: number | null; target: number }
@@ -240,7 +242,7 @@ export function ClipDetail(p: Props) {
           </div>
         </section>
 
-        <AvatarSection clip={c} from={srcFrom} to={srcTo} onAvatar={(a) => update({ avatar: a })} />
+        <AvatarSection clip={c} from={srcFrom} to={srcTo} onMyAvatar={p.onMyAvatar} />
 
         <section>
           <h4><button className={`fold ${micOpen ? 'open' : ''}`} onClick={() => setMicOpen(!micOpen)} aria-expanded={micOpen}>Check the microphone</button></h4>

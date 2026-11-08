@@ -20,29 +20,47 @@ export interface MyAvatar {
   prompt?: string;
   /** Drive the face with a calmer copy of the voice (quieter, peaks evened out): smaller mouth movements. */
   calm?: boolean;
+  /** The picture the photo was made from (uploads/avatar-source-*), and the style it was made in, if styled. */
+  source?: string;
+  style?: string;
 }
 
-export const AVATAR_MODEL = 'fal-ai/kling-video/ai-avatar/v2/standard';
-/** fal.ai's price for that model, per second of video (for estimates shown before making one). */
-export const AVATAR_PRICE = 0.0562;
+/** The fal.ai models that animate a photo, with their price per second of video (for estimates). */
+export const AVATAR_MODELS = [
+  { model: 'fal-ai/kling-video/ai-avatar/v2/standard', label: 'Kling AI Avatar v2 · Standard', price: 0.0562 },
+  { model: 'fal-ai/kling-video/ai-avatar/v2/pro', label: 'Kling AI Avatar v2 · Pro (sharper, slower)', price: 0.115 },
+];
+export const AVATAR_MODEL = AVATAR_MODELS[0].model;
+export const AVATAR_PRICE = AVATAR_MODELS[0].price;
+export const avatarPrice = (model?: string) => AVATAR_MODELS.find((m) => m.model === model)?.price ?? AVATAR_PRICE;
 const SUBTLE = 'A calm man speaking to the camera with subtle, small mouth movements and a relaxed face; minimal head movement.';
 
 export async function readMyAvatar(): Promise<MyAvatar | null> {
   try { return JSON.parse(await readFile(AVATAR_FILE, 'utf8')); } catch { return null; }
 }
 
-/** Keep `file` (a picture) as the avatar photo: a copy in uploads/, landscape 16:9 around the middle. */
-export async function saveAvatarPhoto(file: string, opts: { top?: number } = {}): Promise<MyAvatar> {
+/** `file` (a picture) as an avatar photo in uploads/: landscape 16:9 (a band `top` of the way down), 1920 wide at most. */
+export async function makeAvatarPicture(file: string, opts: { top?: number } = {}): Promise<string> {
   const id = createHash('sha1').update(await readFile(file)).digest('hex').slice(0, 10);
   const photo = `avatar-photo-${id}.jpg`;
-  // A 16:9 band of the picture, `top` (0–1) of the way down what's left over; 1920 wide at most.
   const top = Math.max(0, Math.min(1, opts.top ?? 0.4));
   await run(FFMPEG, ['-y', '-v', 'error', '-i', file, '-vf', `crop=iw:min(ih\\,iw*9/16):0:(ih-min(ih\\,iw*9/16))*${top},scale='min(1920,iw)':-2`, '-q:v', '3', uploadPath(photo)]);
+  return photo;
+}
+
+/** Change your avatar's settings (kept with the project, for every presentation). */
+export async function updateMyAvatar(patch: Partial<MyAvatar>): Promise<MyAvatar> {
   const was = await readMyAvatar();
-  const saved: MyAvatar = { model: AVATAR_MODEL, prompt: SUBTLE, calm: true, ...was, photo };
+  const next = { model: AVATAR_MODEL, prompt: SUBTLE, calm: true, ...was, ...patch } as MyAvatar;
+  if (!next.photo) throw new Error('no avatar photo yet');
   await mkdir(join(AVATAR_FILE, '..'), { recursive: true });
-  await writeFile(AVATAR_FILE, `${JSON.stringify(saved, null, 2)}\n`);
-  return saved;
+  await writeFile(AVATAR_FILE, `${JSON.stringify(next, null, 2)}\n`);
+  return next;
+}
+
+/** Keep `file` (a picture) as the avatar photo, as it is. */
+export async function saveAvatarPhoto(file: string, opts: { top?: number } = {}): Promise<MyAvatar> {
+  return updateMyAvatar({ photo: await makeAvatarPicture(file, opts), style: undefined });
 }
 
 const dataUri = async (file: string, type: string) => `data:${type};base64,${(await readFile(file)).toString('base64')}`;
@@ -53,9 +71,9 @@ const dataUri = async (file: string, type: string) => `data:${type};base64,${(aw
  */
 export async function makeAvatar(req: { upload: string; trimStart: number; trimEnd: number; name?: string; apiKey?: string }, onStatus: (s: string) => void = () => undefined) {
   const me = await readMyAvatar();
-  if (!me) throw new Error('No avatar photo yet: npm run avatar -- photo <picture>');
+  if (!me) throw new Error('No avatar yet: choose one in My avatar (or npm run avatar -- photo <picture>)');
   const key = req.apiKey || process.env.FAL_KEY;
-  if (!key) throw new Error('No fal.ai key: add it in Settings → My avatar (or set FAL_KEY).');
+  if (!key) throw new Error('No fal.ai key: add it in My avatar (or set FAL_KEY).');
   const work = join(tmpdir(), `jzm-avatar-${randomUUID()}`);
   await mkdir(work, { recursive: true });
   try {

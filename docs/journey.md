@@ -1019,3 +1019,17 @@ Jakub wanted to see the avatar in the editor too (a still is enough), and to see
 ![The editor with the avatar's still (intro, a scene waiting for one, scene 4) and Timing's video lane](journey/121-avatar-in-editor-and-lane.jpg)
 
 **Checked by:** Playwright on a copy with a scene given a corner layout and no avatar, and scene 23's clip trimmed by a second: the editor showed the full-frame still on the intro, the dashed place on that scene, the corner still on scene 4 and nothing on Inspiration; the lane showed four avatars, the waiting one and the trimmed one marked; double-clicking a block opened its clip with the avatar; typecheck, tests, build.
+
+## Step 83: My avatar, a cartoon in a home studio
+
+Jakub found the photo avatar too expressive and wanted something more casual: his AI portrait turned into a flat, bold-outline retro cartoon talking head in a home YouTube studio. He wanted his avatar to work like his voice (app-level, its own window), to make one by right-clicking a clip in Timing, the avatar's models in scenes 15 and 16, and "add a database" in scene 19 to read "add a drawing". He was asked along the way: he chose the dark t-shirt version, avatars per clip (not per sentence), My avatar like My voice, and the avatar's video only in its four scenes.
+
+- **The look**: three versions from his portrait (suit and bow tie, dark t-shirt, olive shirt; Gemini image model through OpenRouter); he chose the t-shirt. The four avatars (intro, scenes 4 and 23, the end) were made again with it: calm, small mouth movements.
+- **🧑 My avatar** (home screen, Timing, Settings): the avatar in use; start from a picture; use it as it is or **draw it in a style** (the cartoon studio style by default, editable) and choose the new version; how it moves (Kling AI Avatar v2 Standard or Pro, calm, movement); the fal.ai key. Kept in `voice/my-avatar.json` with the picture it came from and its style. `npm run avatar -- photo <picture> --style default` does the same from the command line.
+- **Right-click a clip → Make my avatar for this clip**. Avatars being made are followed by Timing (`avatarJobs.ts`), so each lands on its clip whether its window is open or not; the video lane shows ⏳ while it's made.
+- **`npm run voice -- again --scenes …`**: a scene whose notes changed is said again in place; what follows moves on. Used for scene 19 ("add a drawing") and scenes 15 and 16, which now show fal.ai and the avatar's two models (the voice entry in scene 15 also corrected to OpenRouter · my voice).
+- The skills (voiceover-and-video, edit-presentation) say how to work with the avatar: app-level, made only for named scenes, made again after its scene's voice changes, ask before changing it.
+
+![Three versions, My avatar, and the clip menu](journey/122-my-avatar.jpg)
+
+**Checked by:** the four avatars looked at frame by frame; Playwright: My avatar opened from the home screen, a picture chosen and framed (not saved; the test file removed); in Timing on a copy, right-clicking a clip made its avatar on fal.ai (⏳ in the lane, then on the clip in the file, no window open; removed afterwards); scenes 15 and 16 snapshotted; the presentation: every cue in order, none cut short (a 0.1 s overlap between scenes 6 and 7 was already in Jakub's version); typecheck, tests, build.

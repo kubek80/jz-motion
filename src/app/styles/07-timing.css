@@ -287,3 +287,13 @@
 .avatar-block.showing { box-shadow: 0 0 0 2px #3dff8b, 0 0 12px #3dff8b88; }
 .avatar-block.stale { border-color: #ffb020; background: color-mix(in srgb, #ffb020 14%, #0b0e11); color: #ffe2a8; }
 .avatar-block.empty { background: transparent; border-style: dashed; color: #9fdcb8; padding-left: 6px; }
+.avatar-block.making { background: repeating-linear-gradient(135deg, #3dff8b22 0 8px, transparent 8px 16px); border-style: dashed; color: #bfffd6; padding-left: 6px; }
+
+/* My avatar */
+.my-avatar .avatar-in-use { display: flex; gap: 14px; align-items: flex-start; }
+.my-avatar .avatar-in-use img, .my-avatar .avatar-candidate img { width: 320px; max-width: 45%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 8px; border: 1px solid var(--line); }
+.my-avatar .avatar-candidate { display: flex; flex-direction: column; gap: 8px; }
+.my-avatar .avatar-candidate img { width: 480px; max-width: 100%; }
+.my-avatar .avatar-source { height: 54px; border-radius: 6px; border: 1px solid var(--line); }
+.my-avatar .button-like { display: inline-flex; align-items: center; padding: 6px 12px; border: 1px solid var(--line); border-radius: 8px; cursor: pointer; background: var(--panel); }
+.my-avatar .button-like:hover { border-color: var(--accent); }

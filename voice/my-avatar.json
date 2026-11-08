@@ -2,5 +2,7 @@
   "model": "fal-ai/kling-video/ai-avatar/v2/standard",
   "prompt": "A calm man speaking to the camera with subtle, small mouth movements and a relaxed face; minimal head movement.",
   "calm": true,
-  "photo": "avatar-photo-390415f159.jpg"
+  "photo": "avatar-photo-6738ede7a5.jpg",
+  "source": "avatar-source-aeb2cbc1d7.webp",
+  "style": "Turn this photo of me into a flat 2D cartoon illustration in a retro mid-century adult-animation style: bold clean black outlines, flat cel shading with one shadow tone, limited muted palette, slightly angular stylised features, like a 1960s spy-comic TV cartoon. Keep it clearly recognisable as me: same face, eyes, nose, beard, long dark hair. Make me slightly slimmer. A talking head, head and shoulders, centred, facing the camera and looking into the lens, relaxed and friendly, mouth gently closed (it will be animated to speak), a calm casual look, not dramatic. Setting: a cosy home YouTube studio behind me, softly out of focus: a podcast microphone on a boom arm at the edge of frame, a soft LED panel glow, shelves with a few books and a plant, warm lamp light with teal accent lighting. Wide 16:9 frame with me in the middle third. No text, no logos. Clothes: a plain dark charcoal t-shirt."
 }

@@ -39,6 +39,8 @@ interface Props {
   onOpenClip: (index: number) => void;
   /** Your avatar's videos (and scenes waiting for one), for the video lane. */
   avatars: AvatarRow[];
+  /** Make your avatar say a clip (right-click menu). */
+  onMakeAvatar: (index: number) => void;
   /** Removes a clip's background noise (a cleaned copy), or goes back to the original recording. */
   onClean: (index: number) => void;
   onRestore: (index: number) => void;
@@ -58,7 +60,7 @@ interface Props {
 const FLAG_ROW = 24;
 const FLAG_MAX = 160;
 
-export function Timeline({ laneRef, missing, height, rec, seek, time, total, pps, width, clips, primary, clipDrag, startDragClip, startTrimClip, deleteClip, splitClipAt, canSplitAt, setClipLane, playFrom, onTranscribe, onOpenClip, avatars, onClean, onRestore, onEditBeat, drawClipPeaks, np, tapping, tapIndex, startDrag, onCue, beatDrag }: Props) {
+export function Timeline({ laneRef, missing, height, rec, seek, time, total, pps, width, clips, primary, clipDrag, startDragClip, startTrimClip, deleteClip, splitClipAt, canSplitAt, setClipLane, playFrom, onTranscribe, onOpenClip, avatars, onMakeAvatar, onClean, onRestore, onEditBeat, drawClipPeaks, np, tapping, tapIndex, startDrag, onCue, beatDrag }: Props) {
   const { shown, currentIndex, beatOf, sceneTitle } = np;
   // Beat labels go in rows above their lines: as many rows as the timeline's height allows, each label in the
   // lowest row where it doesn't run into the label before it (a short timeline keeps two rows).
@@ -198,6 +200,7 @@ export function Timeline({ laneRef, missing, height, rec, seek, time, total, pps
             title={`${c.name ?? `clip ${menu.index + 1}`} · ${fmt(c.trimEnd - c.trimStart)}${missing.has(c.upload) ? ' · recording missing' : ''}`}
             items={[
               { label: '⚙ Details: volume, microphone, record again…', onClick: () => onOpenClip(menu.index) },
+              { label: c.avatar ? '🧑 Make my avatar again for this clip' : '🧑 Make my avatar for this clip', onClick: () => onMakeAvatar(menu.index), disabled: missing.has(c.upload) || avatars.some((r) => r.index === menu.index && r.making !== undefined), hint: 'Your avatar says this clip (a few minutes on fal.ai); it appears in the video lane under it' },
               { label: '▶ Play from here', onClick: () => playFrom(menu.t), disabled: missing.has(c.upload) },
               c.cleanedFrom
                 ? { label: '↺ Back to the original recording', onClick: () => onRestore(menu.index), hint: 'Use the recording as it was, with its background noise (the cleaned copy stays on disk)' }

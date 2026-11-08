@@ -22,6 +22,8 @@ import { TimingHeader } from './TimingHeader';
 import { useBoardFollowsClock } from './useBoardFollowsClock';
 import { AvatarBoard } from './AvatarBoard';
 import { avatarRows } from './AvatarLane';
+import { onAvatarDone, startAvatar, useAvatarJobs } from './avatarJobs';
+import { MyAvatar } from '../MyAvatar';
 import { useClipEditing } from './useClipEditing';
 import { useClock } from './useClock';
 import { useCueDragging } from './useCueDragging';
@@ -78,7 +80,6 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
   const voiceDuration = useMemo(() => clipsDuration(clips), [clips]);
   const perf = useMemo(() => cuePerformance(presentation, voiceDuration), [presentation, voiceDuration]);
   const total = Math.max(perf.duration, voiceDuration, 1);
-  const avatars = useMemo(() => avatarRows(clips, doc), [clips, doc]);
 
   const clock = useClock(clips, total);
   const { mixer, rec, time, playing, now, seek, play, pause } = clock;
@@ -126,6 +127,25 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
     return i >= 0 ? i : clips.findIndex((c) => c.lane === openAt.lane && openAt.t >= c.offset && openAt.t < c.offset + (c.trimEnd - c.trimStart));
   })();
   const [myVoice, setMyVoice] = useState(false);
+  const [myAvatar, setMyAvatar] = useState(false);
+  // Your avatar's videos: made in the background (avatarJobs.ts), each put on its clip (and the pieces it was cut
+  // into) when it's ready, without stopping playback.
+  const jobs = useAvatarJobs();
+  const avatars = useMemo(() => avatarRows(clips, doc, jobs), [clips, doc, jobs]);
+  const latest = useRef({ clips, onVoiceover });
+  latest.current = { clips, onVoiceover };
+  useEffect(() => onAvatarDone((clipId, a) => {
+    const cs = latest.current.clips;
+    const c = cs.find((x) => x.id === clipId);
+    if (!c) return false;
+    const next = cs.map((x) => (x.id === clipId || (x.upload === c.upload && x.trimStart >= a.trimStart - 0.05 && x.trimEnd <= a.trimEnd + 0.05) ? { ...x, avatar: a } : x));
+    latest.current.onVoiceover({ clips: next });
+    return true;
+  }), []);
+  const makeAvatar = (i: number) => {
+    const c = clips[i];
+    if (c) startAvatar(c.id, { upload: c.upload, trimStart: c.trimStart, trimEnd: c.trimEnd, name: c.scene ?? c.name }).catch((e) => setError(`Avatar: ${(e as Error).message}`));
+  };
   /** The beat whose options are open in the drawer. */
   const [openBeat, setOpenBeat] = useState<{ scene: number; beat: number } | null>(null);
   const { clipDrag, startDragClip, deleteClip, startTrimClip, splitAtPlayhead, splitClipAt, canSplitAt, setClipLane } = useClipEditing(clips, setClips, rec, pps, now);
@@ -181,6 +201,7 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
         removeMissing={() => setClips(clips.filter((c) => !missing.has(c.upload)))}
         onTranscript={() => setTranscribing(clips.filter((c) => !missing.has(c.upload)))}
         onMyVoice={() => setMyVoice(true)}
+        onMyAvatar={() => setMyAvatar(true)}
         onClose={close}
       />
       <div className="timing-body prompter">
@@ -261,6 +282,7 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
         onRestore={restoreClip}
         onOpenClip={(i) => setOpenClipId(clips[i]?.id ?? null)}
         avatars={avatars}
+        onMakeAvatar={makeAvatar}
         drawClipPeaks={drawClipPeaks}
         np={np}
         tapping={tapping}
@@ -273,6 +295,7 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
         <ClipDetail
           key={openAt!.id}
           presentationId={presentationId}
+          onMyAvatar={() => setMyAvatar(true)}
           clip={clips[openClip]}
           index={openClip}
           clips={clips}
@@ -295,6 +318,7 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
         />
       )}
       {myVoice && <MyVoice onClose={() => setMyVoice(false)} />}
+      {myAvatar && <MyAvatar onClose={() => setMyAvatar(false)} />}
       {transcribing && (
         <TranscriptWindow
           clips={transcribing}

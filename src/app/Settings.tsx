@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
+import { MyAvatar } from './MyAvatar';
 import { MyVoice } from './MyVoice';
 import { loadProfiles, type ModelProfile } from '../ai/profiles';
 import { rate } from '../ai/recommend';
 import { ModelSelect } from './ModelSelect';
 import { ModelsEditor } from './ModelsEditor';
-import { keepVoiceInProject, loadFalKey, saveFalKey, loadModeModels, loadTranscriber, loadVoicer, saveModeModel, saveTranscriber, saveVoicer, TRANSCRIBERS, VOICERS, VOICES, clones, sharedKey, type StartMode, type Transcriber, type Voicer } from './settingsStore';
+import { keepVoiceInProject, loadModeModels, loadTranscriber, loadVoicer, saveModeModel, saveTranscriber, saveVoicer, TRANSCRIBERS, VOICERS, VOICES, clones, sharedKey, type StartMode, type Transcriber, type Voicer } from './settingsStore';
 
 /** Speech-to-text service settings (for presentations made from a recording). */
 export function TranscriberFields({ value, onChange }: { value: Transcriber; onChange: (t: Transcriber) => void }) {
@@ -84,7 +85,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
   const [transcriber, setTranscriber] = useState(loadTranscriber);
   const [voicer, setVoicer] = useState(loadVoicer);
   const [myVoice, setMyVoice] = useState(false);
-  const [falKey, setFalKey] = useState(loadFalKey);
+  const [myAvatar, setMyAvatar] = useState(false);
   // Changes made in My voice show here too.
   useEffect(() => {
     const changed = () => setVoicer(loadVoicer());
@@ -132,8 +133,9 @@ export function Settings({ onClose }: { onClose: () => void }) {
         </section>
         <section className="settings-section">
           <h3>My avatar</h3>
-          <p className="muted hint">A photo of you that says your voice clips, for the intro, the end or wherever a scene's layout shows the camera: Kling AI Avatar on fal.ai, about 6¢ a second of video. Make one from a clip's window in Timing (double-click the clip). The photo is kept with the project (<code>npm run avatar -- photo &lt;picture&gt;</code>).</p>
-          <label className="field"><span>fal.ai key</span><input type="password" autoComplete="off" value={falKey} placeholder="from fal.ai → Keys" onChange={(e) => { setFalKey(e.target.value); saveFalKey(e.target.value); }} /></label>
+          <p className="muted hint">A picture of you, or a styled version of it, that says your voice clips wherever a scene's layout shows the camera (Kling AI Avatar on fal.ai, about 6¢ a second of video). Make one for a clip from its window in Timing, or right-click the clip.</p>
+          <div className="row"><button onClick={() => setMyAvatar(true)}>🧑 My avatar…</button></div>
+          {myAvatar && <MyAvatar onClose={() => setMyAvatar(false)} />}
         </section>
       </div>
     </div>
