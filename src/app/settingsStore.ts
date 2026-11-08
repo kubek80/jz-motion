@@ -12,7 +12,7 @@ export const TRANSCRIBERS = [
 ];
 
 /** A part of one of your recordings that a cloning model copies the voice of. */
-export interface VoiceSample { upload: string; start: number; end: number; name?: string }
+export interface VoiceSample { upload: string; start: number; end: number; name?: string; /** What is said in it (a sample read from a given text). */ text?: string }
 
 /** Voice generation (text to speech). Any OpenAI-compatible /audio/speech endpoint. */
 export interface Voicer {

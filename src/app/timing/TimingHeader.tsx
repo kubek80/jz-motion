@@ -25,10 +25,12 @@ interface Props {
   removeMissing: () => void;
   /** Opens the transcript of every clip whose recording is here. */
   onTranscript: () => void;
+  /** Opens My voice (the sample generated speech copies). */
+  onMyVoice: () => void;
   onClose: () => void;
 }
 
-export function TimingHeader({ clickCount, cuedCount, primary, clips, voiceDuration, loadVoiceover, onVoiceover, voicer, missingSentences, generating, generateVoice, onCues, recording, busy, makeTake, missingCount, removeMissing, onTranscript, onClose }: Props) {
+export function TimingHeader({ clickCount, cuedCount, primary, clips, voiceDuration, loadVoiceover, onVoiceover, voicer, missingSentences, generating, generateVoice, onCues, recording, busy, makeTake, missingCount, removeMissing, onTranscript, onMyVoice, onClose }: Props) {
   return (
     <header className="timing-head">
       <h2>Timing</h2>
@@ -59,6 +61,7 @@ export function TimingHeader({ clickCount, cuedCount, primary, clips, voiceDurat
       >
         {generating ? `Generating voice ${generating.done}/${generating.total}…` : missingSentences.length ? `Generate voice (${missingSentences.length})` : 'Voice up to date'}
       </button>
+        <button onClick={onMyVoice} disabled={recording} title="The voice generated speech copies: your sample, recorded or taken from a clip">🎙 My voice</button>
       <button onClick={() => onCues([], true)} disabled={!cuedCount || recording} title="Forget every cue: clicks go back to even pauses">Clear cues</button>
       <button className="primary" disabled={!primary || !!busy} onClick={() => void makeTake()} title="A take with this timing and the voice-over as its sound, ready to export in the Video tab">
         Make a take for export

@@ -262,7 +262,7 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
   return (
     <div className={`app mode-${mode}`}>
       <EditorWindows
-        id={id} text={text} doc={doc} result={result} sceneIndex={sceneIndex} update={update} latest={() => docRef.current!} add={add}
+        id={id} text={text} doc={doc} result={result} sceneIndex={sceneIndex} update={update} latest={() => docRef.current!} add={add} onUndo={history.undo}
         onSceneAdded={(index) => { openScene.current = index; setPicked([]); setSelection(null); }}
         settingsOpen={settingsOpen} setSettingsOpen={setSettingsOpen} timingOpen={timingOpen} setTimingOpen={setTimingOpen}
         scriptOpen={scriptOpen} setScriptOpen={setScriptOpen} libraryOpen={libraryOpen} setLibraryOpen={setLibraryOpen}

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { MyVoice } from './MyVoice';
 import { loadProfiles, type ModelProfile } from '../ai/profiles';
 import { rate } from '../ai/recommend';
 import { ModelSelect } from './ModelSelect';
@@ -75,6 +76,13 @@ export function Settings({ onClose }: { onClose: () => void }) {
   const [profiles, setProfiles] = useState<ModelProfile[]>(loadProfiles);
   const [transcriber, setTranscriber] = useState(loadTranscriber);
   const [voicer, setVoicer] = useState(loadVoicer);
+  const [myVoice, setMyVoice] = useState(false);
+  // Changes made in My voice show here too.
+  useEffect(() => {
+    const changed = () => setVoicer(loadVoicer());
+    window.addEventListener('jzm-voicer-changed', changed);
+    return () => window.removeEventListener('jzm-voicer-changed', changed);
+  }, []);
   const [modeModels, setModeModels] = useState(loadModeModels);
 
   return (
@@ -111,6 +119,8 @@ export function Settings({ onClose }: { onClose: () => void }) {
           <h3>Voice generation (for the prompter and takes)</h3>
           <p className="muted hint">Turns each sentence of a beat's speaker notes into a short clip, so the prompter can show how long each line should take, and gives new scenes a voice until you record them. Any OpenAI-compatible /audio/speech service. Through OpenRouter (one key): ElevenLabs is the most natural, Gemini follows a style, and Fish Audio or HeyGen speak in <b>your voice</b>, copied from one of your clips.</p>
           <VoicerFields value={voicer} onChange={(v) => { setVoicer(v); saveVoicer(v); }} />
+          <div className="row"><button onClick={() => setMyVoice(true)} title="Your voice sample for cloning: record it, hear it, choose the model">🎙 My voice…</button></div>
+          {myVoice && <MyVoice onClose={() => setMyVoice(false)} />}
         </section>
       </div>
     </div>

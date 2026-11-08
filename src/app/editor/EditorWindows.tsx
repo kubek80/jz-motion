@@ -12,6 +12,22 @@ import { Timing } from '../Timing';
 import type { RawDoc } from './doc';
 import type { AddRequest } from './Library';
 
+/** The document with these cues set (or, with `clearOthers`, only these). */
+function withCues(doc: RawDoc, changes: { scene: number; beat: number; cue: number | undefined }[], clearOthers = false): RawDoc {
+  return {
+    ...doc,
+    scenes: doc.scenes.map((s, si) => ({
+      ...s,
+      beats: s.beats?.map((b, bi) => {
+        const change = changes.find((c) => c.scene === si && c.beat === bi);
+        const { cue, ...rest } = b;
+        const next = change ? change.cue : clearOthers ? undefined : cue;
+        return next === undefined ? rest : { ...rest, cue: next };
+      }),
+    })),
+  };
+}
+
 interface Props {
   id: string;
   text: string;
@@ -24,6 +40,8 @@ interface Props {
   add: (r: AddRequest) => void;
   /** A new scene from the Creator was inserted at this index: open it and clear the selection. */
   onSceneAdded: (index: number) => void;
+  /** Undo the last change (the clip window's Undo). */
+  onUndo: () => void;
   /** From Timing: close it and edit this beat. */
   onEditBeat: (scene: number, beat: number) => void;
   /** Timing closed with this scene at its playhead: show it. */
@@ -45,7 +63,7 @@ interface Props {
 }
 
 export function EditorWindows({
-  id, text, doc, result, sceneIndex, update, latest, add, onSceneAdded, onEditBeat, onTimingClosed,
+  id, text, doc, result, sceneIndex, update, latest, add, onSceneAdded, onEditBeat, onUndo, onTimingClosed,
   settingsOpen, setSettingsOpen, timingOpen, setTimingOpen, scriptOpen, setScriptOpen, libraryOpen, setLibraryOpen,
   creating, setCreating, libraryVersion, setLibraryVersion, onTake,
 }: Props) {
@@ -68,19 +86,17 @@ export function EditorWindows({
           onCues={(changes, clearOthers) => {
             const doc = latest();
             log('onCues', { count: changes.length, clearOthers: !!clearOthers, changes, cuedBefore: cuedBeatCount(doc) });
-            return update({
-            ...doc,
-            scenes: doc.scenes.map((s, si) => ({
-              ...s,
-              beats: s.beats?.map((b, bi) => {
-                const change = changes.find((c) => c.scene === si && c.beat === bi);
-                const { cue, ...rest } = b;
-                const next = change ? change.cue : clearOthers ? undefined : cue;
-                return next === undefined ? rest : { ...rest, cue: next };
-              }),
-            })),
-          });
+            return update(withCues(doc, changes, clearOthers));
           }}
+          onTimeline={(v, changes) => {
+            // Clips and cues in one change, so one undo takes back both.
+            const doc = withCues(latest(), changes);
+            log('onTimeline', { before: voiceoverSummary(doc.voiceover), after: voiceoverSummary(v), cues: changes.length });
+            const next = { ...doc };
+            if (v) next.voiceover = v; else delete next.voiceover;
+            update(next);
+          }}
+          onUndo={onUndo}
           onNotes={(scene, beat, notes) => update({
             ...latest(),
             scenes: latest().scenes.map((s, si) => si !== scene ? s : ({
