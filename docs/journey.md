@@ -876,3 +876,11 @@ Jakub asked to select part of a clip's wave and loop it, remove a selection with
 
 **Checked by:** tests for finding a recording's pieces and removing a part both ways; Playwright on a copy: a 5 s selection looped inside 0:10–0:15, closing the gap moved the next scenes' cues 5 s earlier (the left-out original's too), one Undo restored it, keeping the timing moved nothing; My voice with Chromium's stand-in microphone: recorded, used as the sample (switching to Fish Audio), a sentence made in it; re-recording a clip with the microphone check closed; typecheck, tests, build.
 
+## Step 68: The microphone test in My voice, in plain sight
+
+Jakub asked for the microphone tester in the My voice window. It was there, folded away under the sample text; it is now a **Microphone** section of its own, before recording the sample, and on as soon as the window opens: choose the microphone, the live meter with its zones and what to do, and a five-second test to listen to. **Stop the test** turns the microphone off (and **Test the microphone** back on); recording the sample keeps it on until the take is ready to hear.
+
+![The Microphone section in My voice](journey/113-my-voice-microphone.jpg)
+
+**Checked by:** Playwright with Chromium's stand-in microphone: the meter and advice show when the window opens, Stop the test removes them, recording a sample afterwards still gives a take to use; typecheck, tests, build.
+

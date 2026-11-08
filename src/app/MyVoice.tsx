@@ -21,7 +21,8 @@ export function MyVoice({ onClose }: { onClose: () => void }) {
   const voicer = useVoicer();
   const [text, setText] = useState(SAMPLE_TEXT);
   const [device, setDevice] = useState(micDevice());
-  const [micOpen, setMicOpen] = useState(false);
+  // The microphone test is on while the window is open (it can be switched off).
+  const [micOpen, setMicOpen] = useState(true);
   const [want, setWant] = useState(false);
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -109,12 +110,21 @@ export function MyVoice({ onClose }: { onClose: () => void }) {
           {!clones(voicer) && s && <p className="note-text">Generated speech uses another voice now; choose a model above to use yours.</p>}
         </section>
 
+        <section className="mic-section">
+          <div className="row">
+            <h4>Microphone</h4>
+            <span className="spacer" />
+            <button onClick={() => setMicOpen(!micOpen)} disabled={t.state === 'recording'} title={micOpen ? 'Stop listening to the microphone' : 'Listen to the microphone: its level, live'}>
+              {micOpen ? 'Stop the test' : '🎙 Test the microphone'}
+            </button>
+          </div>
+          {micOpen ? <MicCheck mic={mic} onDevice={setDevice} /> : <p className="muted">Off. Test it before recording: pick the microphone, speak, and turn the gain on your device until your peaks sit in the green.</p>}
+        </section>
+
         <section>
           <h4>Record a new sample</h4>
           <p className="muted hint">Read this the way you narrate: same microphone, same distance, a quiet room, no music. About 30 seconds; change the words if you like. A clear, natural reading copies best.</p>
           <textarea className="sample-text" rows={7} value={text} onChange={(e) => setText(e.target.value)} disabled={t.state === 'recording'} />
-          <h4><button className={`fold ${micOpen ? 'open' : ''}`} onClick={() => setMicOpen(!micOpen)}>Check the microphone</button></h4>
-          {micOpen && <MicCheck mic={mic} onDevice={setDevice} />}
           {t.state === 'recording' && <LevelMeter mic={mic} />}
           <div className="row">
             {t.state === 'idle' && <button className="rec-btn" onClick={() => setWant(true)} disabled={want}>{want ? 'Opening the microphone…' : '● Record the sample'}</button>}

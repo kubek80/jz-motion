@@ -266,3 +266,4 @@
 .my-voice .row audio { height: 32px; }
 .my-voice .grow { flex: 1; min-width: 240px; }
 .my-voice .sample-text { font-size: 17px; line-height: 1.5; padding: 10px 12px; resize: vertical; }
+.my-voice .mic-section .row h4 { margin: 0; }
