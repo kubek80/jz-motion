@@ -6,6 +6,9 @@
 //   OPENROUTER_API_KEY            OpenRouter, Voxtral (mistralai/voxtral-mini-tts-2603, voice en_paul_neutral)
 //   OPENAI_API_KEY                OpenAI (gpt-4o-mini-tts, voice alloy)
 //   TTS_BASE_URL, TTS_MODEL, TTS_VOICE, TTS_API_KEY   anything else (or to override the above)
+//   TTS_INSTRUCTIONS             how to speak, for models that take a style ("calm, clear narrator")
+//   TTS_SAMPLE                   your voice for a cloning model (TTS_MODEL=fish-audio/s2.1-pro): a recording in
+//                                uploads/, optionally with the part to use: generated-x.webm or rec-1.webm@12-40
 //
 // `place` is for scenes added to a presentation that is already timed to a voice-over (a new scene, or a second
 // version of one): for each scene it joins the scene's sentences into one clip (uploads/generated-<scene id>.webm),
@@ -36,6 +39,11 @@ const voicer = {
   model: env.TTS_MODEL ?? (env.OPENROUTER_API_KEY ? 'mistralai/voxtral-mini-tts-2603' : 'gpt-4o-mini-tts'),
   voice: env.TTS_VOICE ?? (env.OPENROUTER_API_KEY ? 'en_paul_neutral' : 'alloy'),
   apiKey: env.TTS_API_KEY ?? env.OPENROUTER_API_KEY ?? env.OPENAI_API_KEY,
+  instructions: env.TTS_INSTRUCTIONS,
+  sample: (() => {
+    const m = /^(?:uploads\/)?([^@]+?)(?:@([\d.]+)-([\d.]+))?$/.exec(env.TTS_SAMPLE ?? '');
+    return m ? { upload: m[1], start: Number(m[2] ?? 0), end: Number(m[3] ?? 30) } : undefined;
+  })(),
 };
 if (!voicer.apiKey) {
   console.error('No speech service: set OPENROUTER_API_KEY (or OPENAI_API_KEY, or TTS_BASE_URL/TTS_MODEL/TTS_VOICE/TTS_API_KEY).');

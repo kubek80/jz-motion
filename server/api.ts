@@ -18,7 +18,7 @@ import { claudeCodeChat, claudeCodeStatus } from './claudeCode';
 import { runAgent } from './claudeAgent';
 import { createPresentation, deletePresentation, listPresentations, readPresentation, writePresentation } from './presentations';
 import { addTrack, createTake, deleteTake, getTake, listTakes, TAKES_DIR, trackPath, updateTake } from './takes';
-import { generateTts, readSidecar as readTtsSidecar, serveTts } from './tts';
+import { generateTts, readSidecar as readTtsSidecar, serveTts, speechVoices } from './tts';
 
 // The local server side of the app, mounted into the Vite dev and preview servers:
 //   /api/presentations  list, create, read, save, delete presentations (presentations/<id>.json)
@@ -269,6 +269,7 @@ export function jzmServer(): Plugin {
         }
         if (parts[0] === 'api' && parts[1] === 'presentations') return await presentations(req, res, parts[2]);
         if (parts[0] === 'api' && parts[1] === 'takes') return await takes(req, res, parts.slice(2), url.searchParams);
+        if (url.pathname === '/api/tts-voices' && req.method === 'GET') return send(res, 200, await speechVoices(url.searchParams.get('model') ?? ''));
         if (parts[0] === 'api' && parts[1] === 'tts' && parts[2] && req.method === 'GET') return send(res, 200, await readTtsSidecar(parts[2]));
         if (url.pathname === '/api/tts' && req.method === 'POST') return send(res, 200, await generateTts(await readJson(req)));
         if (parts[0] === 'tts' && parts[1] && parts[2] && req.method === 'GET' && (await serveTts(res, parts[1], parts[2]))) return;
