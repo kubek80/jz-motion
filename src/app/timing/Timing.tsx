@@ -21,6 +21,7 @@ import { TimingControls } from './TimingControls';
 import { TimingHeader } from './TimingHeader';
 import { useBoardFollowsClock } from './useBoardFollowsClock';
 import { AvatarBoard } from './AvatarBoard';
+import { avatarRows } from './AvatarLane';
 import { useClipEditing } from './useClipEditing';
 import { useClock } from './useClock';
 import { useCueDragging } from './useCueDragging';
@@ -77,6 +78,7 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
   const voiceDuration = useMemo(() => clipsDuration(clips), [clips]);
   const perf = useMemo(() => cuePerformance(presentation, voiceDuration), [presentation, voiceDuration]);
   const total = Math.max(perf.duration, voiceDuration, 1);
+  const avatars = useMemo(() => avatarRows(clips, doc), [clips, doc]);
 
   const clock = useClock(clips, total);
   const { mixer, rec, time, playing, now, seek, play, pause } = clock;
@@ -258,6 +260,7 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
         onClean={(i) => void cleanClip(i)}
         onRestore={restoreClip}
         onOpenClip={(i) => setOpenClipId(clips[i]?.id ?? null)}
+        avatars={avatars}
         drawClipPeaks={drawClipPeaks}
         np={np}
         tapping={tapping}

@@ -1008,3 +1008,14 @@ Jakub couldn't see his avatar in Timing: it was only put in at export. Timing's 
 ![Timing: the intro, scene 4 and a scene without an avatar](journey/120-avatar-in-timing.jpg)
 
 **Checked by:** Playwright on a copy: Timing opened on the intro (full frame, the avatar 3 s in after 3 s of playing), on scene 4 (corner, in step) and on Inspiration (board only); the layout decision checked against the presentation at several times in Node; typecheck, tests, build.
+
+## Step 82: The avatar in the editor, and a video lane in Timing
+
+Jakub wanted to see the avatar in the editor too (a still is enough), and to see in Timing which sounds have a video made from them, since he can change those sounds.
+
+- **Editor**: where the scene's layout shows the camera, a still of the avatar sits where the video puts it: a bottom corner for pip / pip-left; for camera (full frame in the video) the bottom-left corner, marked "full frame in the video", because the board has to stay full size to edit. Clicks go through it; without an avatar yet a dashed outline marks the place.
+- **Timing → video lane**, under the two voice lanes: each avatar video under the clip it says, lit while it plays; ⚠ and amber when the clip was trimmed or cut since it was made; a dashed "no avatar yet" where a scene shows the camera but its clip has none. Double-click opens the clip's window, with its avatar and Make it again.
+
+![The editor with the avatar's still (intro, a scene waiting for one, scene 4) and Timing's video lane](journey/121-avatar-in-editor-and-lane.jpg)
+
+**Checked by:** Playwright on a copy with a scene given a corner layout and no avatar, and scene 23's clip trimmed by a second: the editor showed the full-frame still on the intro, the dashed place on that scene, the corner still on scene 4 and nothing on Inspiration; the lane showed four avatars, the waiting one and the trimmed one marked; double-clicking a block opened its clip with the avatar; typecheck, tests, build.
