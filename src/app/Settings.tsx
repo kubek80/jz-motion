@@ -4,7 +4,7 @@ import { loadProfiles, type ModelProfile } from '../ai/profiles';
 import { rate } from '../ai/recommend';
 import { ModelSelect } from './ModelSelect';
 import { ModelsEditor } from './ModelsEditor';
-import { loadModeModels, loadTranscriber, loadVoicer, saveModeModel, saveTranscriber, saveVoicer, TRANSCRIBERS, VOICERS, VOICES, clones, sharedKey, type StartMode, type Transcriber, type Voicer } from './settingsStore';
+import { keepVoiceInProject, loadModeModels, loadTranscriber, loadVoicer, saveModeModel, saveTranscriber, saveVoicer, TRANSCRIBERS, VOICERS, VOICES, clones, sharedKey, type StartMode, type Transcriber, type Voicer } from './settingsStore';
 
 /** Speech-to-text service settings (for presentations made from a recording). */
 export function TranscriberFields({ value, onChange }: { value: Transcriber; onChange: (t: Transcriber) => void }) {
@@ -72,6 +72,13 @@ export function VoicerFields({ value, onChange }: { value: Voicer; onChange: (v:
 const MODES: [StartMode, string][] = [['topic', 'From a topic'], ['script', 'From a script'], ['recording', 'From a recording']];
 
 /** API keys and models, the transcription service, and which model each kind of start uses. */
+// Changes to the project's voice (its sample is the one kept in voice/) go to the project too, a moment after typing stops.
+let keepTimer = 0;
+const keepProjectVoice = (v: Voicer) => {
+  window.clearTimeout(keepTimer);
+  if (v.sample?.upload.startsWith('voice-sample-') && clones(v)) keepTimer = window.setTimeout(() => void keepVoiceInProject(v).catch(() => undefined), 800);
+};
+
 export function Settings({ onClose }: { onClose: () => void }) {
   const [profiles, setProfiles] = useState<ModelProfile[]>(loadProfiles);
   const [transcriber, setTranscriber] = useState(loadTranscriber);
@@ -118,7 +125,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
         <section className="settings-section">
           <h3>Voice generation (for the prompter and takes)</h3>
           <p className="muted hint">Turns each sentence of a beat's speaker notes into a short clip, so the prompter can show how long each line should take, and gives new scenes a voice until you record them. Any OpenAI-compatible /audio/speech service. Through OpenRouter (one key): ElevenLabs is the most natural, Gemini follows a style, and Fish Audio or HeyGen speak in <b>your voice</b>, copied from one of your clips.</p>
-          <VoicerFields value={voicer} onChange={(v) => { setVoicer(v); saveVoicer(v); }} />
+          <VoicerFields value={voicer} onChange={(v) => { setVoicer(v); saveVoicer(v); keepProjectVoice(v); }} />
           <div className="row"><button onClick={() => setMyVoice(true)} title="Your voice sample for cloning: record it, hear it, choose the model">🎙 My voice…</button></div>
           {myVoice && <MyVoice onClose={() => setMyVoice(false)} />}
         </section>

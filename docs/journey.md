@@ -960,3 +960,12 @@ Jakub didn't want **Use as my voice** in the clip window (his voice has its own 
 ![The clip's actions](journey/117-clip-actions.jpg)
 
 **Checked by:** Playwright: the clip window's actions are Play in the timeline, Clean up voice, Transcribe, Remove clip; typecheck, tests, build.
+
+## Step 78: A lighter accent for the generated voice
+
+Jakub tried his intro in four speaking styles of his cloned voice (as recorded, lighter, neutral British, neutral American) and chose neutral British. It is now the voice's style in `voice/my-voice.json` (`instructions`), so `npm run voice` and the app speak that way, and the presentation's narration was generated again with it.
+
+- A browser already using the project's sample now follows the project's model and style when they change (after a pull); one with a voice of its own is left alone.
+- Changing the style (or model) of the project's voice in Settings saves it to the project too, so the next start doesn't bring the old one back.
+
+**Checked by:** Playwright: a browser with the project's sample but no style took the new style on start, one with another voice kept it; typing a style in Settings wrote it to `voice/my-voice.json` (restored afterwards); the rebuilt presentation: every cue in order, none cut short; typecheck, tests, build.

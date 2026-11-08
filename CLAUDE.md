@@ -41,7 +41,7 @@ Explainers about *any* app (including jz-motion itself) use `snap` and `record` 
 | `scratch/` | Raw captures and files moved out of the way (`migrate` puts unused pictures here); safe to delete | no |
 | `uploads/` | Voice recordings: narration, re-takes, generated narration (`generated-*`), Jakub's voice sample (`voice-sample-*`), with their transcripts | yes, with Git LFS (transcripts plain text); video uploaded to start a presentation is not |
 | `takes/`, `exports/`, `snapshots/` | Takes, videos, previews | no |
-| `voice/` | `my-voice.json`: Jakub's own voice for generated speech (the sample, which part, what is said in it, the cloning model; never a key). `npm run voice` speaks in it by default | yes |
+| `voice/` | `my-voice.json`: Jakub's own voice for generated speech (the sample, which part, what is said in it, the cloning model, how to speak: a neutral British accent; never a key). `npm run voice` speaks in it by default | yes |
 | `logs/` | `ai.jsonl`: every AI request, its reply and what came of it (read it when an AI change didn't do what was asked) | no |
 | `src/examples/` | Example presentations shipped with the app (`public/examples/` holds their pictures) | yes |
 

@@ -111,10 +111,15 @@ export async function projectVoice(): Promise<{ baseURL: string; model: string; 
   try { const r = await fetch('/api/my-voice'); const v = await r.json(); return v?.sample ? v : null; } catch { return null; }
 }
 
-/** On a computer whose browser has no voice of yours yet, use the project's. */
+/**
+ * On a computer whose browser has no voice of yours yet, use the project's. A browser already using the project's
+ * sample follows the project's model and speaking style when they change there (e.g. a pull).
+ */
 export async function adoptProjectVoice() {
   const here = loadVoicer();
-  if (here.sample) return;
+  if (here.sample && !here.sample.upload.startsWith('voice-sample-')) return;
   const v = await projectVoice();
-  if (v) saveVoicer({ ...here, baseURL: v.baseURL, model: v.model, ...(v.instructions ? { instructions: v.instructions } : {}), sample: v.sample });
+  if (!v || (here.sample && here.sample.upload !== v.sample.upload)) return;
+  const next: Voicer = { ...here, baseURL: v.baseURL, model: v.model, instructions: v.instructions, sample: v.sample };
+  if (JSON.stringify(next) !== JSON.stringify(here)) saveVoicer(next);
 }
