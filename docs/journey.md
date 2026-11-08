@@ -939,3 +939,16 @@ Jakub asked to re-make every recording of "JZ-motion: explainers, fast" from wha
 ![Timing: one generated clip per scene](journey/115-scenes-own-their-voice.jpg)
 
 **Checked by:** tests for the layout (move, leave out and put back, new scene without a recording); a script over the rebuilt presentation (74 cued beats, 0 ignored, 0 cut short, 19 clips all bound); two clips transcribed back to text; Playwright on a copy: leaving "Why I built it" out moved the next scenes and their clips 28 s earlier and Timing showed 18 clips, putting it back restored them (within 0.1 s); typecheck, tests, build.
+
+## Step 76: Generate a clip again
+
+Jakub's clip window only offered **Record again**; with narration made by generated voice, he wanted to generate a clip again too.
+
+- **✨ Generate again** in the clip window says the clip's lines (from the current notes) with the voice in Settings, his clone when set, as one new clip in place of the old one. The beats go where their lines start, a pause stretches where an animation needs it, and everything after moves by the difference in length. It is a new file, so **↶ Undo** brings the old clip back.
+- **New reading of every line** (on by default) asks the service again for every sentence; off, lines that didn't change keep their reading and only edited ones are generated.
+- The joining moved to `server/voiceJoin.ts` (`/api/voice/join`), shared with `npm run voice -- place|rebuild`.
+- **Bug found:** generated clips were at about -34 LUFS, 18 dB under the level the video aims for (the cloning model speaks quietly), so Timing played them faint. Joined clips are now levelled to -16 LUFS; the presentation's 19 clips were rebuilt (from the cache, same timing) and sit at -17.5 to -18.7.
+
+![Generate again in a clip's window](journey/116-generate-again.jpg)
+
+**Checked by:** Playwright on a copy: Generate again on "My own video assistant" replaced the clip (new file, same scene and name), moved the following clips and cues by the difference, and the clip measured "About right"; fresh readings differ from the cached ones; the rebuilt presentation: 74 cued beats, 0 ignored, 0 cut short; typecheck, tests, build.

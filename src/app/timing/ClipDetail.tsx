@@ -6,16 +6,17 @@ import { splitSentences } from '../tts';
 import { fmt } from './format';
 import { MicCheck, LevelMeter, advice } from './MicCheck';
 import { micDevice } from './micDevice';
-import { clones, keepVoiceInProject, loadVoicer, saveVoicer, VOICERS } from '../settingsStore';
+import { clones, keepVoiceInProject, loadVoicer, saveVoicer, useVoicer, VOICERS } from '../settingsStore';
 import { useMicLevel } from './useMicLevel';
 import { beatsIn, replaceTake, useRerecord } from './useRerecord';
 import { ClipWave } from './ClipWave';
 import { chainOf, removeSpan } from './clipChain';
 
 // One voice clip in detail (double-click it on the timeline): how loud it is and its volume, everything you can
-// do with it, a microphone check, and recording it again with its lines as a prompter.
+// do with it, a microphone check, and recording or generating it again with its lines as a prompter.
 
 interface Props {
+  presentationId: string;
   clip: Clip;
   index: number;
   clips: Clip[];
@@ -114,6 +115,39 @@ export function ClipDetail(p: Props) {
   };
 
   const inside = beatsIn(whole, p.clicks);
+
+  // "Generate again": the clip's lines spoken by the voice in Settings (your clone when it is set), as one new clip.
+  const voicer = useVoicer();
+  const voiceLabel = VOICERS.find((x) => x.baseURL === voicer.baseURL && x.model === voicer.model)?.label.split(';')[0].replace(/\((?!.*\)).*$/, (m) => `${m})`) ?? voicer.model;
+  const [fresh, setFresh] = useState(true);
+  const [generating, setGenerating] = useState(false);
+  const cuedInside = inside.filter((ck) => ck.cued);
+  const notesOf = (ck: Click) => Array.from({ length: ck.last - ck.beat + 1 }, (_, k) => p.beatOf({ ...ck, beat: ck.beat + k })?.notes ?? '').filter(Boolean).join('\n\n');
+  const canGenerate = cuedInside.some((ck) => splitSentences(notesOf(ck)).length);
+  const generate = async () => {
+    if (!voicer.apiKey) { setError(`No key for ${voicer.baseURL}: add it in Settings → Voice generation.`); return; }
+    setGenerating(true);
+    setError(null);
+    try {
+      const parts = cuedInside.map((ck) => ({ notes: notesOf(ck), need: ck.until - ck.from }));
+      const res = await fetch('/api/voice/join', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ presentationId: p.presentationId, name: c.scene ?? c.name ?? 'clip', parts, fresh, voice: voicer.voice, model: voicer.model, baseURL: voicer.baseURL, apiKey: voicer.apiKey, instructions: voicer.instructions, sample: clones(voicer) ? voicer.sample : undefined }),
+      });
+      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error ?? res.statusText);
+      const g: { upload: string; duration: number; starts: number[] } = await res.json();
+      const others = p.clips.filter((_, i) => !chain.indices.includes(i));
+      const r = replaceTake([...others, whole], others.length, g.upload, g.duration, g.starts.slice(1), p.clicks, p.allCued);
+      const made = { ...r.clips[others.length], name: `generated voice · ${(c.name ?? 'clip').replace(/^(generated voice|re-recorded) · /, '')}` };
+      p.setTimeline(r.clips.map((x, i) => (i === others.length ? made : x)), r.cues);
+      p.onReplaced(made.id);
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setGenerating(false);
+    }
+  };
   const marks = t.state === 'recording' || t.state === 'review' ? t.marks : [];
   const current = Math.min(marks.length, Math.max(0, inside.length - 1));
 
@@ -225,10 +259,17 @@ export function ClipDetail(p: Props) {
         </section>
 
         <section className="rerecord">
-          <h4>Record it again</h4>
+          <h4>Record or generate it again</h4>
           {t.state === 'recording' && <LevelMeter mic={mic} />}
           <div className="row">
             {t.state === 'idle' && <button className="rec-btn" onClick={() => setWantRecord(true)} disabled={wantRecord} title="Record this clip again with the microphone above; → when you start each next line">● Record again</button>}
+            {t.state === 'idle' && <>
+              <button onClick={() => void generate()} disabled={generating || !canGenerate} title={canGenerate ? `Say these lines with generated voice (${voiceLabel}) as a new clip in place of this one; everything after it moves by the difference in length. Undo brings this one back.` : 'No beat inside this clip has speaker notes to say'}>{generating ? 'Generating…' : '✨ Generate again'}</button>
+              <label className="muted" title="Off: lines that haven't changed keep the reading they had; only edited lines are generated">
+                <input type="checkbox" checked={fresh} onChange={(e) => setFresh(e.target.checked)} /> new reading of every line
+              </label>
+              <span className="muted">{voiceLabel}</span>
+            </>}
             {t.state === 'recording' && <>
               <button className="rec-btn on" onClick={() => void rerecord.stop()}>■ Stop</button>
               <span className="muted">{t.elapsed.toFixed(1)} s of {len.toFixed(1)} s · <b>→</b> next line · <b>←</b> back · <b>Space</b> stop{mic.clipped ? ' · ⚠ it distorts: turn the gain down' : ''}</span>
