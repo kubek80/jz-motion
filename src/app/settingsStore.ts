@@ -61,6 +61,14 @@ const write = (key: string, value: unknown) => {
   }
 };
 
+/** Accents your cloned voice can speak in: a speaking style sent to the cloning model (Fish Audio follows it). */
+export const ACCENTS: { label: string; instructions?: string }[] = [
+  { label: 'As in my sample' },
+  { label: 'Lighter accent', instructions: 'Speak clear, natural English with a lighter accent: smoother vowels and softer consonants, but still clearly the same person.' },
+  { label: 'Neutral British', instructions: 'Speak in a neutral, standard British English accent, clear and calm, as a native speaker would, keeping the same voice.' },
+  { label: 'Neutral American', instructions: 'Speak in a neutral, standard American English accent, clear and calm, as a native speaker would, keeping the same voice.' },
+];
+
 /** Your fal.ai key, for your avatar's talking-head videos (Settings → My avatar). */
 export const loadFalKey = () => read<string>('jzm.falKey', '');
 export const saveFalKey = (key: string) => write('jzm.falKey', key);

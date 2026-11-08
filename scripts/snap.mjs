@@ -20,7 +20,7 @@ import { spawnSync } from 'node:child_process';
 import { mkdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { captureOptions, openCapturePage } from './capturePage.mjs';
+import { captureOptions, fakeMic, openCapturePage } from './capturePage.mjs';
 
 const args = process.argv.slice(2);
 const posArgs = args.filter((a, i) => !a.startsWith('--') && !args[i - 1]?.startsWith('--'));
@@ -43,7 +43,7 @@ const out = resolve('scratch/captures', `${name}.png`);
 
 await mkdir(resolve('scratch/captures'), { recursive: true });
 // Google Chrome when installed (as on a Mac), otherwise Playwright's own Chromium.
-const browser = await chromium.launch({ channel: 'chrome' }).catch(() => chromium.launch());
+const browser = await chromium.launch({ channel: 'chrome', args: fakeMic() }).catch(() => chromium.launch({ args: fakeMic() }));
 try {
   const page = await openCapturePage(browser, capture);
   await page.goto(url, { waitUntil: 'domcontentloaded' });

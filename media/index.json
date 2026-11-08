@@ -91,6 +91,20 @@
   },
   "added": "2026-11-06T03:18:44.204Z"
  },
+ "664319f028c1f992.webp": {
+  "file": "664319f028c1f992.webp",
+  "src": "/media/664319f028c1f992.webp",
+  "name": "jzm-sharp-2x",
+  "kind": "picture",
+  "bytes": 313694,
+  "width": 3200,
+  "height": 2000,
+  "original": {
+   "name": "jzm-sharp-2x.png",
+   "bytes": 1618936
+  },
+  "added": "2026-11-08T08:25:30.407Z"
+ },
  "7665128ccdb495f4.webm": {
   "file": "7665128ccdb495f4.webm",
   "src": "/media/7665128ccdb495f4.webm",
@@ -106,6 +120,22 @@
    "bytes": 145443911
   },
   "added": "2026-11-07T11:55:27.002Z"
+ },
+ "784b81eb03acc43d.webm": {
+  "file": "784b81eb03acc43d.webm",
+  "src": "/media/784b81eb03acc43d.webm",
+  "name": "jzm-voice",
+  "kind": "recording",
+  "bytes": 2465861,
+  "width": 3200,
+  "height": 2000,
+  "duration": 47.48,
+  "poster": "/media/784b81eb03acc43d.webm.poster.webp",
+  "original": {
+   "name": "jzm-voice.mkv",
+   "bytes": 199330962
+  },
+  "added": "2026-11-08T08:24:34.987Z"
  },
  "82bbdbbedef4ff3a.webp": {
   "file": "82bbdbbedef4ff3a.webp",
@@ -165,6 +195,22 @@
   },
   "added": "2026-11-06T03:18:38.091Z"
  },
+ "d79c545053b83648.webm": {
+  "file": "d79c545053b83648.webm",
+  "src": "/media/d79c545053b83648.webm",
+  "name": "jzm-frames",
+  "kind": "recording",
+  "bytes": 627833,
+  "width": 3200,
+  "height": 2000,
+  "duration": 21.48,
+  "poster": "/media/d79c545053b83648.webm.poster.webp",
+  "original": {
+   "name": "jzm-frames.mkv",
+   "bytes": 89485339
+  },
+  "added": "2026-11-08T08:21:58.637Z"
+ },
  "e5270e172e7fbf3f.webm": {
   "file": "e5270e172e7fbf3f.webm",
   "src": "/media/e5270e172e7fbf3f.webm",
@@ -180,5 +226,19 @@
    "bytes": 79413858
   },
   "added": "2026-11-07T11:43:58.027Z"
+ },
+ "fd7f86670bc81049.webp": {
+  "file": "fd7f86670bc81049.webp",
+  "src": "/media/fd7f86670bc81049.webp",
+  "name": "jzm-sharp-1x",
+  "kind": "picture",
+  "bytes": 97166,
+  "width": 1280,
+  "height": 800,
+  "original": {
+   "name": "jzm-sharp-1x.png",
+   "bytes": 326643
+  },
+  "added": "2026-11-08T08:25:20.551Z"
  }
 }

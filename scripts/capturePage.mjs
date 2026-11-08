@@ -7,6 +7,15 @@
 // The page lays out in (size / zoom) CSS pixels and is captured at size × scale pixels: by default 2560×1600,
 // so a camera move can zoom in two times on a 1080p video before the interface goes soft.
 
+/**
+ * JZM_FAKE_MIC=<file.wav>: the capture browser's microphone plays that recording (and asks no permission), so a
+ * demo of a microphone meter or a recording shows real speech.
+ */
+export function fakeMic() {
+  const wav = process.env.JZM_FAKE_MIC;
+  return wav ? ['--use-fake-ui-for-media-stream', '--use-fake-device-for-media-stream', `--use-file-for-fake-audio-capture=${wav}`] : [];
+}
+
 export function captureOptions(value) {
   const [w, h] = value('size', '1280x800').split('x').map(Number);
   const zoom = Number(value('zoom', 1.25));
@@ -24,7 +33,7 @@ export async function openCapturePage(browser, { w, h, zoom, scale }) {
  * so Chrome's screencast streams full-size frames as fast as the page repaints.
  */
 export async function launchForRecording(chromium, { w, h, zoom, scale }) {
-  const args = [`--force-device-scale-factor=${scale * zoom}`];
+  const args = [`--force-device-scale-factor=${scale * zoom}`, ...fakeMic()];
   // Google Chrome when installed (as on a Mac), otherwise Playwright's own Chromium.
   const browser = await chromium.launch({ channel: 'chrome', args }).catch(() => chromium.launch({ args }));
   const page = await (await browser.newContext({ viewport: null })).newPage();
