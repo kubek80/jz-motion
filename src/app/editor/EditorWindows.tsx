@@ -6,7 +6,7 @@ import { insertScene } from '../../ai/assistant';
 import { Creator, type CreateRequest } from '../Creator';
 import { cuedBeatCount, log, voiceoverSummary } from '../debug';
 import { LibraryManager } from '../LibraryManager';
-import { updateBeats } from './doc';
+import { updateBeats, updateScene } from './doc';
 import { Script } from '../Script';
 import { Settings } from '../Settings';
 import { Timing } from '../Timing';
@@ -128,6 +128,10 @@ export function EditorWindows({
           onEditBeat={onEditBeat}
           doc={doc}
           onBeat={(si, bi, next) => update(updateBeats(latest(), si, (beats) => beats.map((b, i) => (i === bi ? next : b))))}
+          onSceneLayout={(si, layout, beatsToo) => {
+            const d = updateScene(latest(), si, { layout });
+            update(beatsToo ? updateBeats(d, si, (beats) => beats.map((b) => { const { layout: _l, ...rest } = b as typeof b & { layout?: string }; return rest; })) : d);
+          }}
           startScene={sceneIndex}
           onClose={(scene) => { setTimingOpen(false); onTimingClosed(scene); }}
         />

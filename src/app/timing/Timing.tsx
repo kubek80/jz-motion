@@ -22,6 +22,7 @@ import { TimingHeader } from './TimingHeader';
 import { useBoardFollowsClock } from './useBoardFollowsClock';
 import { AvatarBoard } from './AvatarBoard';
 import { avatarRows } from './AvatarLane';
+import { AvatarDrawer, type Placement } from './AvatarDrawer';
 import { onAvatarDone, startAvatar, useAvatarJobs } from './avatarJobs';
 import { MyAvatar } from '../MyAvatar';
 import { useClipEditing } from './useClipEditing';
@@ -59,6 +60,8 @@ interface Props {
   /** The presentation as edited, and replacing one beat (from the beat drawer). */
   doc: RawDoc;
   onBeat: (scene: number, beat: number, next: RawBeat) => void;
+  /** Where a scene's camera (your avatar) shows in the video; `beatsToo`: beats that set their own follow it. */
+  onSceneLayout: (scene: number, layout: Placement, beatsToo: boolean) => void;
   /** The scene being looked at in the editor: Timing opens with the playhead at its start. */
   startScene?: number;
   /** Closes Timing; `scene` is the one at the playhead, for the editor to show. */
@@ -69,7 +72,7 @@ interface Props {
  * Timing a presentation to a voice-over: the narration's waveform with every click placed on it. Drag a click
  * to move it, or play and tap T as each line starts. The board plays along, with the script line beside it.
  */
-export function Timing({ presentation, text, presentationId, voiceover, onVoiceover, onCues, onTimeline, onUndo, onNotes, onTake, onEditBeat, doc, onBeat, startScene = 0, onClose }: Props) {
+export function Timing({ presentation, text, presentationId, voiceover, onVoiceover, onCues, onTimeline, onUndo, onNotes, onTake, onEditBeat, doc, onBeat, onSceneLayout, startScene = 0, onClose }: Props) {
   const onCue = (scene: number, beat: number, cue: number | undefined) => onCues([{ scene, beat, cue }]);
   const clicks = useMemo(() => cueClicks(presentation), [presentation]);
   // Voiceover is held either as a legacy single clip or as a multi-clip arrangement; `clipsOf()`
@@ -148,6 +151,9 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
   };
   /** The beat whose options are open in the drawer. */
   const [openBeat, setOpenBeat] = useState<{ scene: number; beat: number } | null>(null);
+  // The avatar drawer (a block in the video lane clicked), by clip id; one drawer at a time.
+  const [openAvatar, setOpenAvatar] = useState<string | null>(null);
+  useEffect(() => { if (openBeat) setOpenAvatar(null); }, [openBeat]);
   const { clipDrag, startDragClip, deleteClip, startTrimClip, splitAtPlayhead, splitClipAt, canSplitAt, setClipLane } = useClipEditing(clips, setClips, rec, pps, now);
   const { drag, startDrag, tapping, setTapping, tapIndex, setTapIndex, nextAfter, tap } = useCueDragging(clicks, rec, pps, onCue, onCues, seek, now, (i) => setOpenBeat({ scene: clicks[i].scene, beat: clicks[i].beat }),
     (from, by) => setClips(clips.map((c) => (c.offset >= from - 1e-3 ? { ...c, offset: Math.max(0, Math.round((c.offset + by) * 1000) / 1000) } : c))),
@@ -216,6 +222,13 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
           np={np}
           notes={notes}
         />
+        {(() => {
+          const c = openAvatar ? clips.find((x) => x.id === openAvatar) : undefined;
+          const si = c ? doc.scenes.findIndex((s) => s.id === c.scene) : -1;
+          return c && si >= 0 && !openBeat ? (
+            <AvatarDrawer doc={doc} clip={c} scene={si} onPlace={onSceneLayout} onOpenClip={() => setOpenClipId(c.id)} onClose={() => setOpenAvatar(null)} />
+          ) : null;
+        })()}
         {openBeat && (
           <BeatDrawer doc={doc} presentation={presentation} scene={openBeat.scene} beat={openBeat.beat} onBeat={onBeat} onEditBeat={onEditBeat} onClose={() => setOpenBeat(null)} />
         )}
@@ -282,6 +295,14 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
         onRestore={restoreClip}
         onOpenClip={(i) => setOpenClipId(clips[i]?.id ?? null)}
         avatars={avatars}
+        onSelectAvatar={(i) => {
+          const c = clips[i];
+          setOpenBeat(null);
+          setOpenAvatar(c?.id ?? null);
+          // The board shows the clip, so a new position is seen as it's chosen.
+          if (c && !playing) seek(c.offset + Math.min(1, (c.trimEnd - c.trimStart) / 2));
+        }}
+        selectedAvatar={openAvatar}
         onMakeAvatar={makeAvatar}
         drawClipPeaks={drawClipPeaks}
         np={np}
