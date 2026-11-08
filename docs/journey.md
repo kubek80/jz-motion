@@ -890,3 +890,9 @@ Jakub found that the first 5 s microphone test was fine but a second one never s
 
 **Checked by:** Playwright with Chromium's stand-in microphone: three tests in a row, the first two stopping on their own after 5 s with a player each time, the third stopped early with Stop; typecheck, tests, build.
 
+## Step 70: The microphone test says what it got
+
+After step 69 Jakub found the test recorded nothing at all. It could not be reproduced here (Chromium with Chrome's usual autoplay rules: two tests in a row, 5.0 s and 79 KB each), so the likely cause is a page left half old, half new after pulling while it was open. To make a failure visible instead of silent, the test now records in small pieces as it goes (more reliable than one piece at the end), checks before starting that the microphone is still giving sound, and says what came of it: "Recorded 5.0 s (79 KB). Listen:", or "Nothing came through from <microphone> (it is muted)…" with what to do, or the browser's error. Each test is written to the debug log (\`micTest\`: bytes, pieces, the microphone, muted or not).
+
+**Checked by:** Playwright with Chrome's usual autoplay rules and the stand-in microphone: two tests in a row, each with its message and player; typecheck, tests, build.
+
