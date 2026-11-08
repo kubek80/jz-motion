@@ -921,3 +921,7 @@ Jakub wanted his voice at the app's level, reachable from the home screen. The v
 
 **Checked by:** Playwright with a stand-in voice file: a fresh browser on the home screen took the project's voice, and the button opens My voice with it (stand-in removed afterwards); typecheck, tests, build.
 
+## Step 74: Voice recordings travel with the project
+
+Jakub asked Claude to re-make every recording of his presentation, starting from transcripts of his own short recordings, which were only on his computer. Voice recordings in `uploads/` (narration, re-takes, generated narration, his voice sample) and their transcripts are now kept in git, the audio with LFS: 36 clips, 5 min 10 s, a few MB as Opus, so no bloat. Video uploaded to start a presentation from a recording stays out (it can be large).
+

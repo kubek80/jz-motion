@@ -39,7 +39,8 @@ Explainers about *any* app (including jz-motion itself) use `snap` and `record` 
 | `media/` | The media library: pictures (WebP), screen recordings (WebM video + poster), sounds, with `index.json` (names, sizes) | yes, with Git LFS (`git lfs install` once per computer; `index.json` is plain text) |
 | `images/` | Older pictures, from before the media library (migrated; `npm run media -- migrate` moves any new ones in) | yes |
 | `scratch/` | Raw captures and files moved out of the way (`migrate` puts unused pictures here); safe to delete | no |
-| `uploads/`, `takes/`, `exports/`, `snapshots/` | Recordings, voice-overs, takes, videos, previews | no (except `uploads/generated-*`, generated narration placed by `npm run voice -- place`, and `uploads/voice-sample-*`, Jakub's voice sample: in git, with LFS) |
+| `uploads/` | Voice recordings: narration, re-takes, generated narration (`generated-*`), Jakub's voice sample (`voice-sample-*`), with their transcripts | yes, with Git LFS (transcripts plain text); video uploaded to start a presentation is not |
+| `takes/`, `exports/`, `snapshots/` | Takes, videos, previews | no |
 | `voice/` | `my-voice.json`: Jakub's own voice for generated speech (the sample, which part, what is said in it, the cloning model; never a key). `npm run voice` speaks in it by default | yes |
 | `logs/` | `ai.jsonl`: every AI request, its reply and what came of it (read it when an AI change didn't do what was asked) | no |
 | `src/examples/` | Example presentations shipped with the app (`public/examples/` holds their pictures) | yes |
