@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { clones, keepVoiceInProject, projectVoice, saveVoicer, useVoicer, VOICERS, type Voicer } from './settingsStore';
+import { ACCENTS, clones, keepVoiceInProject, projectVoice, saveVoicer, useVoicer, VOICERS, type Voicer } from './settingsStore';
 import { requestTts } from './tts';
 import { MicCheck, LevelMeter } from './timing/MicCheck';
 import { micDevice } from './timing/micDevice';
@@ -57,6 +57,15 @@ export function MyVoice({ onClose }: { onClose: () => void }) {
     try { await keepVoiceInProject(voicer); setInProject(true); } catch (e) { setError((e as Error).message); } finally { setBusy(null); }
   };
   const set = (next: Voicer) => saveVoicer(next);
+  // The accent is the speaking style sent with each line; with your voice kept in the project, it goes there too.
+  const accent = ACCENTS.find((a) => (a.instructions ?? '') === (voicer.instructions ?? ''))?.label ?? 'custom';
+  const setAccent = async (label: string) => {
+    const a = ACCENTS.find((x) => x.label === label);
+    if (!a) return;
+    const next = { ...voicer, instructions: a.instructions };
+    set(next);
+    if (inProject) await keepVoiceInProject(next).catch((e) => setError((e as Error).message));
+  };
   const cloner = clones(voicer) ? voicer : { ...voicer, baseURL: CLONERS[0].baseURL, model: CLONERS[0].model };
 
   const keep = async () => {
@@ -121,6 +130,13 @@ export function MyVoice({ onClose }: { onClose: () => void }) {
             <select value={clones(voicer) ? voicer.model : ''} onChange={(e) => { const v = CLONERS.find((x) => x.model === e.target.value); if (v) set({ ...voicer, baseURL: v.baseURL, model: v.model }); }}>
               {!clones(voicer) && <option value="">— not a cloning model now ({voicer.model}) —</option>}
               {CLONERS.map((v) => <option key={v.model} value={v.model}>{v.label}</option>)}
+            </select>
+          </label>
+          <label className="field">
+            <span>accent</span>
+            <select value={accent} onChange={(e) => void setAccent(e.target.value)} title="How your cloned voice speaks; lines already generated keep theirs until generated again">
+              {accent === 'custom' && <option value="custom">Your own style (Settings → how to speak)</option>}
+              {ACCENTS.map((a) => <option key={a.label} value={a.label}>{a.label}</option>)}
             </select>
           </label>
           {!clones(voicer) && s && <p className="note-text">Generated speech uses another voice now; choose a model above to use yours.</p>}

@@ -984,3 +984,17 @@ Jakub wanted his avatar in the video: the intro, the end and a couple of times i
 ![The intro and scene 4 in the exported video](journey/118-my-avatar.jpg)
 
 **Checked by:** the four avatars made with the command (63 s, about $3.55); the clip window showing one; a take made in Timing got a 545 s camera track; the export (the first 500 s: the whole 9 minutes takes longer than a cloud session allows) shows Jakub full screen in the intro and in a corner in scene 4, and showed the empty box found above; after the fix, the take's layouts are camera, pip, pip, camera on exactly the four scenes and the board everywhere else, with the avatar in the track at scenes 23 and 24; a test for the board fallback; typecheck, tests, build.
+
+## Step 80: Two scenes after "LLM first", and accents in My voice
+
+Jakub asked for two scenes after "LLM first", told as the story of what was built rather than a sales pitch: one about screen recordings (captured larger so camera moves stay sharp; stepping through a recording's frames, and beats that go to a frame), one about the voice (testing the microphone, recording again, generating again, the clip window, cloning his voice, the accent). Every line of the presentation in the neutral British style, and a way to switch accents in My voice.
+
+- **My voice → accent**: As in my sample, Lighter accent, Neutral British, Neutral American. It is the speaking style sent with each line; with the voice kept in the project it is saved there too, so `npm run voice` follows it.
+- **Recordings that stay sharp** (scene 13): an ordinary screenshot and a capture of the same screen twice as large (`jzm-sharp`), the camera zoomed three times into each; then a recording of the editor (`jzm-frames`): selecting a recording, stepping through its frames, dragging to frame 70, and **Go to frame 70** landing in a beat.
+- **Finding my voice** (scene 14): one recording of the voice tools (`jzm-voice`): the takes on the timeline, a clip's window (its wave and loudness, a part selected for looping or cutting), the microphone check with real speech on the meter (`JZM_FAKE_MIC`, new: the capture browser's microphone plays a file), Record again / Generate again, and My voice with the sample and the accent. It ends: "That's the version you're hearing now."
+- Both scenes got their narration in his cloned voice with the British accent (`npm run voice -- place`); everything after moved on. All 121 sentences of the presentation are in that style.
+- **Bug found (mine):** the first export of the voice scene jumped to the wrong moments: I had taken frame numbers from the video's frame count (376), but the app numbers distinct pictures (87). Re-picked from `npm run media -- frames`; the demo skill now says so.
+
+![Scenes 13 and 14 in an export](journey/119-recordings-and-voice.jpg)
+
+**Checked by:** Playwright: My voice shows Neutral British and switching writes the project (restored afterwards); every capture looked at frame by frame; an export of just the two scenes (snapshots can't show recordings' frames reliably), checked beat by beat after the frame fix; the presentation: 86 cued beats, 0 ignored, 0 cut short, all 21 clips bound; typecheck, tests, build.

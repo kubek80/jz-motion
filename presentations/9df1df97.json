@@ -2407,6 +2407,804 @@
       ]
     },
     {
+      "id": "recordings",
+      "title": "Recordings that stay sharp",
+      "elements": [
+        {
+          "id": "h",
+          "type": "text",
+          "text": "SCREEN RECORDINGS",
+          "x": 960,
+          "y": 70,
+          "size": 56,
+          "color": "yellow",
+          "style": "bold",
+          "pinned": true
+        },
+        {
+          "id": "soft",
+          "type": "image",
+          "src": "/media/fd7f86670bc81049.webp",
+          "x": 960,
+          "y": 560,
+          "width": 1200,
+          "height": 750,
+          "frame": "browser",
+          "url": "localhost:5173",
+          "color": "cyan"
+        },
+        {
+          "id": "sharp",
+          "type": "image",
+          "src": "/media/664319f028c1f992.webp",
+          "x": 960,
+          "y": 560,
+          "width": 1200,
+          "height": 750,
+          "frame": "browser",
+          "url": "localhost:5173",
+          "color": "cyan"
+        },
+        {
+          "id": "rec",
+          "type": "image",
+          "src": "/media/d79c545053b83648.webm",
+          "x": 960,
+          "y": 560,
+          "width": 1200,
+          "height": 750,
+          "frame": "browser",
+          "url": "localhost:5173",
+          "color": "cyan"
+        },
+        {
+          "id": "a-detail",
+          "type": "area",
+          "x": 924,
+          "y": 832,
+          "width": 192,
+          "height": 103,
+          "shape": "rect",
+          "color": "cyan"
+        },
+        {
+          "id": "a-stepper",
+          "type": "area",
+          "x": 904,
+          "y": 583,
+          "width": 424,
+          "height": 71,
+          "shape": "rect",
+          "color": "pink"
+        },
+        {
+          "id": "a-beat1",
+          "type": "area",
+          "x": 702,
+          "y": 846,
+          "width": 204,
+          "height": 243,
+          "shape": "rect",
+          "color": "green"
+        },
+        {
+          "id": "cap-soft",
+          "type": "text",
+          "text": "an ordinary screenshot: soft once the camera moves in",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "white",
+          "pinned": true
+        },
+        {
+          "id": "cap-sharp",
+          "type": "text",
+          "text": "captured twice as large, the text a little bigger",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "cyan",
+          "pinned": true
+        },
+        {
+          "id": "cap-step",
+          "type": "text",
+          "text": "select a recording, step through its frames",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "pink",
+          "pinned": true
+        },
+        {
+          "id": "cap-drag",
+          "type": "text",
+          "text": "or drag straight to a moment",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "pink",
+          "pinned": true
+        },
+        {
+          "id": "cap-go",
+          "type": "text",
+          "text": "a beat goes to that frame",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "green",
+          "pinned": true
+        }
+      ],
+      "beats": [
+        {
+          "title": "Screenshots",
+          "notes": "Early on, I showed the app with ordinary screenshots. They looked fine, until the camera moved in.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "h"
+            },
+            {
+              "do": "draw",
+              "target": "soft"
+            },
+            {
+              "do": "camera",
+              "focus": "a-detail",
+              "zoom": 3,
+              "delay": 0.6
+            },
+            {
+              "do": "draw",
+              "target": "cap-soft",
+              "start": "with",
+              "delay": 0.4
+            }
+          ],
+          "cue": 250.12
+        },
+        {
+          "title": "Captured larger",
+          "notes": "So now every capture is made twice as large, with the text a little bigger. The same zoom stays sharp.",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "cap-soft"
+            },
+            {
+              "do": "fade-in",
+              "target": "sharp",
+              "start": "with",
+              "duration": 0.8
+            },
+            {
+              "do": "draw",
+              "target": "cap-sharp",
+              "start": "with",
+              "delay": 0.4
+            }
+          ],
+          "cue": 256.85
+        },
+        {
+          "title": "Frame by frame",
+          "notes": "Screen recordings are made the same way. When I select one on the board, I can step through it, frame by frame.",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "cap-sharp"
+            },
+            {
+              "do": "camera",
+              "focus": "all",
+              "start": "with"
+            },
+            {
+              "do": "fade-in",
+              "target": "rec",
+              "start": "with",
+              "duration": 0.6
+            },
+            {
+              "do": "play",
+              "target": "rec",
+              "goto": 4,
+              "fade": true,
+              "duration": 0.6,
+              "delay": 0.3
+            },
+            {
+              "do": "camera",
+              "focus": "a-stepper",
+              "zoom": 1.8
+            },
+            {
+              "do": "spotlight",
+              "target": "a-stepper",
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap-step",
+              "start": "with",
+              "delay": 0.3
+            },
+            {
+              "do": "play",
+              "target": "rec",
+              "until": 14,
+              "duration": 3,
+              "start": "with",
+              "delay": 0.5
+            }
+          ],
+          "cue": 264.18
+        },
+        {
+          "title": "Pick a moment",
+          "notes": "Or I drag straight to the moment I want to talk about.",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "cap-step"
+            },
+            {
+              "do": "draw",
+              "target": "cap-drag",
+              "start": "with",
+              "delay": 0.2
+            },
+            {
+              "do": "play",
+              "target": "rec",
+              "until": 61,
+              "duration": 3,
+              "start": "with"
+            }
+          ],
+          "cue": 271.5
+        },
+        {
+          "title": "A beat goes there",
+          "notes": "Then one click, and a beat goes to that frame. That's how the demos in this video keep pace with what I say.",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "cap-drag"
+            },
+            {
+              "do": "play",
+              "target": "rec",
+              "until": 75,
+              "duration": 1.5,
+              "start": "with"
+            },
+            {
+              "do": "camera",
+              "focus": "a-beat1",
+              "zoom": 1.8,
+              "delay": 0.3
+            },
+            {
+              "do": "spotlight",
+              "target": "a-beat1",
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap-go",
+              "start": "with",
+              "delay": 0.3
+            }
+          ],
+          "cue": 275.42
+        },
+        {
+          "title": "Back out",
+          "auto": true,
+          "actions": [
+            {
+              "do": "spotlight",
+              "on": false
+            },
+            {
+              "do": "camera",
+              "focus": "all",
+              "start": "with"
+            },
+            {
+              "do": "fade-out",
+              "target": "cap-go",
+              "start": "with"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "voice-tools",
+      "title": "Finding my voice",
+      "elements": [
+        {
+          "id": "h",
+          "type": "text",
+          "text": "MY VOICE",
+          "x": 960,
+          "y": 70,
+          "size": 56,
+          "color": "yellow",
+          "style": "bold",
+          "pinned": true
+        },
+        {
+          "id": "vrec",
+          "type": "image",
+          "src": "/media/784b81eb03acc43d.webm",
+          "x": 960,
+          "y": 560,
+          "width": 1200,
+          "height": 750,
+          "frame": "browser",
+          "url": "localhost:5173 · Timing",
+          "color": "cyan"
+        },
+        {
+          "id": "a-lanes",
+          "type": "area",
+          "x": 960,
+          "y": 837,
+          "width": 1200,
+          "height": 71,
+          "shape": "rect",
+          "color": "green"
+        },
+        {
+          "id": "a-wave",
+          "type": "area",
+          "x": 960,
+          "y": 453,
+          "width": 1127,
+          "height": 143,
+          "shape": "rect",
+          "color": "cyan"
+        },
+        {
+          "id": "a-volume",
+          "type": "area",
+          "x": 593,
+          "y": 616,
+          "width": 396,
+          "height": 141,
+          "shape": "rect",
+          "color": "green"
+        },
+        {
+          "id": "a-select",
+          "type": "area",
+          "x": 960,
+          "y": 420,
+          "width": 1129,
+          "height": 216,
+          "shape": "rect",
+          "color": "yellow"
+        },
+        {
+          "id": "a-mic",
+          "type": "area",
+          "x": 961,
+          "y": 902,
+          "width": 1132,
+          "height": 75,
+          "shape": "rect",
+          "color": "green"
+        },
+        {
+          "id": "a-again",
+          "type": "area",
+          "x": 961,
+          "y": 752,
+          "width": 1132,
+          "height": 291,
+          "shape": "rect",
+          "color": "pink"
+        },
+        {
+          "id": "a-sample",
+          "type": "area",
+          "x": 960,
+          "y": 403,
+          "width": 1129,
+          "height": 173,
+          "shape": "rect",
+          "color": "cyan"
+        },
+        {
+          "id": "a-accent",
+          "type": "area",
+          "x": 960,
+          "y": 460,
+          "width": 1129,
+          "height": 60,
+          "shape": "rect",
+          "color": "yellow"
+        },
+        {
+          "id": "cap-takes",
+          "type": "text",
+          "text": "my own takes, on the timeline",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "green",
+          "pinned": true
+        },
+        {
+          "id": "cap-wave",
+          "type": "text",
+          "text": "its wave, and how loud it is",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "cyan",
+          "pinned": true
+        },
+        {
+          "id": "cap-select",
+          "type": "text",
+          "text": "play a part in a loop, or cut it out",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "yellow",
+          "pinned": true
+        },
+        {
+          "id": "cap-mic",
+          "type": "text",
+          "text": "the gain set until my voice sits in the green",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "green",
+          "pinned": true
+        },
+        {
+          "id": "cap-again",
+          "type": "text",
+          "text": "record it again, or generate it again",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "pink",
+          "pinned": true
+        },
+        {
+          "id": "cap-clone",
+          "type": "text",
+          "text": "my voice, copied from a sample I read once",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "cyan",
+          "pinned": true
+        },
+        {
+          "id": "cap-accent",
+          "type": "text",
+          "text": "the same voice, a softer accent",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "yellow",
+          "pinned": true
+        }
+      ],
+      "beats": [
+        {
+          "title": "Short takes",
+          "notes": "The voice took the longest to get right. At first, I recorded myself in short takes, straight onto the timeline.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "h"
+            },
+            {
+              "do": "draw",
+              "target": "vrec"
+            },
+            {
+              "do": "play",
+              "target": "vrec",
+              "goto": 9,
+              "fade": true,
+              "duration": 0.6
+            },
+            {
+              "do": "camera",
+              "focus": "a-lanes",
+              "padding": 40,
+              "delay": 0.3
+            },
+            {
+              "do": "spotlight",
+              "target": "a-lanes",
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap-takes",
+              "start": "with",
+              "delay": 0.3
+            }
+          ],
+          "cue": 283.81
+        },
+        {
+          "title": "A closer look",
+          "notes": "Double-clicking a take opens it up: its wave, and how loud it is next to the level the video aims for.",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "cap-takes"
+            },
+            {
+              "do": "spotlight",
+              "on": false,
+              "start": "with"
+            },
+            {
+              "do": "camera",
+              "focus": "all",
+              "start": "with"
+            },
+            {
+              "do": "play",
+              "target": "vrec",
+              "goto": 16,
+              "fade": true,
+              "duration": 0.6,
+              "start": "with"
+            },
+            {
+              "do": "camera",
+              "focus": [
+                "a-wave",
+                "a-volume"
+              ],
+              "padding": 60,
+              "delay": 0.4
+            },
+            {
+              "do": "spotlight",
+              "target": [
+                "a-wave",
+                "a-volume"
+              ],
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap-wave",
+              "start": "with",
+              "delay": 0.3
+            }
+          ],
+          "cue": 291.32
+        },
+        {
+          "title": "Fix a part",
+          "notes": "I can select a part, play it in a loop, or cut it out, with or without closing the gap.",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "cap-wave"
+            },
+            {
+              "do": "play",
+              "target": "vrec",
+              "until": 44,
+              "duration": 2.5,
+              "start": "with"
+            },
+            {
+              "do": "camera",
+              "focus": "a-select",
+              "padding": 50,
+              "start": "with"
+            },
+            {
+              "do": "spotlight",
+              "target": "a-select",
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap-select",
+              "start": "with",
+              "delay": 0.5
+            }
+          ],
+          "cue": 298.48
+        },
+        {
+          "title": "The microphone",
+          "notes": "Before recording again, I check the microphone, and turn the gain until my voice sits in the green.",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "cap-select"
+            },
+            {
+              "do": "play",
+              "target": "vrec",
+              "goto": 56,
+              "fade": true,
+              "duration": 0.6,
+              "start": "with"
+            },
+            {
+              "do": "camera",
+              "focus": "a-mic",
+              "zoom": 1.9,
+              "start": "with",
+              "delay": 0.3
+            },
+            {
+              "do": "spotlight",
+              "target": "a-mic",
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap-mic",
+              "start": "with",
+              "delay": 0.3
+            }
+          ],
+          "cue": 304.54
+        },
+        {
+          "title": "Record or generate",
+          "notes": "Then I either record the take again, or let the app say it for me, from the very same lines.",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "cap-mic"
+            },
+            {
+              "do": "play",
+              "target": "vrec",
+              "goto": 62,
+              "fade": true,
+              "duration": 0.6,
+              "start": "with"
+            },
+            {
+              "do": "camera",
+              "focus": "a-again",
+              "padding": 50,
+              "start": "with",
+              "delay": 0.3
+            },
+            {
+              "do": "spotlight",
+              "target": "a-again",
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap-again",
+              "start": "with",
+              "delay": 0.3
+            },
+            {
+              "do": "play",
+              "target": "vrec",
+              "until": 67,
+              "duration": 2,
+              "delay": 0.5
+            }
+          ],
+          "cue": 311.51
+        },
+        {
+          "title": "My cloned voice",
+          "notes": "Generating only got good once it used my own voice. A cloning model copies it from a thirty-second sample I read once.",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "cap-again"
+            },
+            {
+              "do": "play",
+              "target": "vrec",
+              "goto": 76,
+              "fade": true,
+              "duration": 0.6,
+              "start": "with"
+            },
+            {
+              "do": "camera",
+              "focus": "a-sample",
+              "padding": 50,
+              "start": "with",
+              "delay": 0.3
+            },
+            {
+              "do": "spotlight",
+              "target": "a-sample",
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap-clone",
+              "start": "with",
+              "delay": 0.3
+            }
+          ],
+          "cue": 317.6
+        },
+        {
+          "title": "A softer accent",
+          "notes": "It can even soften my accent. That's the version you're hearing now.",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "cap-clone"
+            },
+            {
+              "do": "play",
+              "target": "vrec",
+              "until": 86,
+              "duration": 1.5,
+              "start": "with"
+            },
+            {
+              "do": "camera",
+              "focus": "a-accent",
+              "zoom": 2.2,
+              "start": "with"
+            },
+            {
+              "do": "spotlight",
+              "target": "a-accent",
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap-accent",
+              "start": "with",
+              "delay": 0.3
+            }
+          ],
+          "cue": 325.94
+        },
+        {
+          "title": "Back out",
+          "auto": true,
+          "actions": [
+            {
+              "do": "spotlight",
+              "on": false
+            },
+            {
+              "do": "camera",
+              "focus": "all",
+              "start": "with"
+            },
+            {
+              "do": "fade-out",
+              "target": "cap-accent",
+              "start": "with"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "style",
       "title": "One style for everything",
       "elements": [
@@ -2602,7 +3400,7 @@
             }
           ],
           "notes": "The other goal is consistency: whatever a model makes has to look like it came from the same set of markers.",
-          "cue": 250.12
+          "cue": 331.46
         },
         {
           "title": "Everything",
@@ -2624,7 +3422,7 @@
               "target": "rule"
             }
           ],
-          "cue": 257.8
+          "cue": 339.14
         },
         {
           "title": "Six marker colours",
@@ -2643,7 +3441,7 @@
               "stagger": 0.15
             }
           ],
-          "cue": 263.5
+          "cue": 344.84
         },
         {
           "title": "Make your own",
@@ -2661,7 +3459,7 @@
               "delay": 0.6
             }
           ],
-          "cue": 269.4
+          "cue": 350.73
         },
         {
           "title": "Versions",
@@ -2673,7 +3471,7 @@
               "padding": 10
             }
           ],
-          "cue": 275.59
+          "cue": 356.92
         },
         {
           "title": "Keep it",
@@ -2872,7 +3670,7 @@
               "start": "with"
             }
           ],
-          "cue": 280.28
+          "cue": 361.61
         },
         {
           "title": "Both AIs follow them",
@@ -2895,7 +3693,7 @@
               "stagger": 0.4
             }
           ],
-          "cue": 292.27
+          "cue": 373.61
         },
         {
           "title": "One source of truth",
@@ -2910,7 +3708,7 @@
               "target": "folder"
             }
           ],
-          "cue": 299.07
+          "cue": 380.41
         }
       ]
     },
@@ -3114,7 +3912,7 @@
               "target": "server-stack"
             }
           ],
-          "cue": 304.39
+          "cue": 385.73
         },
         {
           "title": "Each explainer adds one",
@@ -3129,7 +3927,7 @@
               "target": "it-new"
             }
           ],
-          "cue": 315.72
+          "cue": 397.06
         },
         {
           "title": "So each one costs less",
@@ -3150,7 +3948,7 @@
               ]
             }
           ],
-          "cue": 320.29
+          "cue": 401.63
         }
       ]
     },
@@ -3365,7 +4163,7 @@
               "target": "h"
             }
           ],
-          "cue": 328.22
+          "cue": 409.56
         },
         {
           "title": "In the browser",
@@ -3385,7 +4183,7 @@
             }
           ],
           "notes": "In the browser, we have a frontend application made with React. SVG animations are made with GSAP, and 3D coordinates are calculated with Three.js.",
-          "cue": 330.52
+          "cue": 411.86
         },
         {
           "title": "A small local server",
@@ -3421,7 +4219,7 @@
             }
           ],
           "notes": "It's paired with a local server responsible for keeping the files, proxying LLM calls, transcription of recordings and export of videos.",
-          "cue": 342.18
+          "cue": 423.52
         },
         {
           "title": "Swappable models",
@@ -3445,7 +4243,7 @@
               ]
             }
           ],
-          "cue": 351.9
+          "cue": 433.23
         },
         {
           "title": "Voice both ways",
@@ -3707,7 +4505,7 @@
             }
           ],
           "notes": "Because every request is checked and repaired, I can experiment with smaller models.",
-          "cue": 358.47
+          "cue": 439.81
         },
         {
           "title": "Story",
@@ -3724,7 +4522,7 @@
               "stagger": 0.25
             }
           ],
-          "cue": 364.42
+          "cue": 445.76
         },
         {
           "title": "Small edits",
@@ -3741,7 +4539,7 @@
             }
           ],
           "notes": "Small edits, like changing a beat, work fine with fast, cheap models like Haiku.",
-          "cue": 371.55
+          "cue": 452.89
         },
         {
           "title": "Drawings",
@@ -3758,7 +4556,7 @@
               "stagger": 0.25
             }
           ],
-          "cue": 377.64
+          "cue": 458.98
         },
         {
           "title": "Voice",
@@ -3775,7 +4573,7 @@
             }
           ],
           "notes": "For transcription I use a small OpenAI model. At first I recorded the voice-over myself, but as I kept updating the script, I switched to AI: a clone of my own voice, so a changed sentence doesn't mean recording it again.",
-          "cue": 384.61
+          "cue": 465.95
         },
         {
           "title": "Transcription",
@@ -3909,7 +4707,7 @@
               "target": "script-ico"
             }
           ],
-          "cue": 400.89
+          "cue": 482.23
         },
         {
           "title": "Three ways to touch it",
@@ -3928,7 +4726,7 @@
             }
           ],
           "notes": "I can read and edit the whole thing in the Script view, inline in the Timing prompter,",
-          "cue": 409.16
+          "cue": 490.5
         },
         {
           "title": "Same text, three lenses",
@@ -3947,7 +4745,7 @@
             }
           ],
           "notes": "or in the raw JSON tab if I want to see the shape.",
-          "cue": 414.69
+          "cue": 496.03
         }
       ]
     },
@@ -4332,7 +5130,7 @@
               "delay": 0.5
             }
           ],
-          "cue": 419.97
+          "cue": 501.31
         },
         {
           "title": "One line at a time",
@@ -4368,7 +5166,7 @@
               "delay": 0.8
             }
           ],
-          "cue": 428.29
+          "cue": 509.63
         },
         {
           "title": "The timeline",
@@ -4396,7 +5194,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 435.74
+          "cue": 517.08
         },
         {
           "title": "Just read",
@@ -4430,7 +5228,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 445.31
+          "cue": 526.65
         },
         {
           "title": "Tidy up",
@@ -4466,7 +5264,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 454.26
+          "cue": 535.6
         },
         {
           "title": "Back out",
@@ -4917,7 +5715,7 @@
               "delay": 0.8
             }
           ],
-          "cue": 462.65
+          "cue": 543.98
         },
         {
           "title": "Home",
@@ -4953,7 +5751,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 468.35
+          "cue": 549.69
         },
         {
           "title": "This scene",
@@ -4995,7 +5793,7 @@
               "delay": 1
             }
           ],
-          "cue": 472.45
+          "cue": 553.79
         },
         {
           "title": "The AI tab",
@@ -5031,7 +5829,7 @@
               "delay": 0.5
             }
           ],
-          "cue": 482.93
+          "cue": 564.27
         },
         {
           "title": "The library",
@@ -5067,7 +5865,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 490.69
+          "cue": 572.03
         },
         {
           "title": "Same skills",
@@ -5089,7 +5887,7 @@
               "delay": 0.4
             }
           ],
-          "cue": 496.98
+          "cue": 578.32
         }
       ]
     },
@@ -5177,7 +5975,7 @@
             }
           ],
           "notes": "One of my main goals was to create an app that would let me make a ten-minute explainer video for under five dollars. I'm happy to share that I was successful.",
-          "cue": 505.04
+          "cue": 586.38
         },
         {
           "title": "Why it works",
@@ -5189,7 +5987,7 @@
             }
           ],
           "notes": "If I had to name three main contributors to that success: a presentation is pure JSON, so tokens are cheap;",
-          "cue": 515.45
+          "cue": 596.79
         },
         {
           "title": "Beat 3",
@@ -5200,7 +5998,7 @@
             }
           ],
           "notes": "the library grows, so most drawings are reused;",
-          "cue": 523.13
+          "cue": 604.47
         },
         {
           "title": "Beat 4",
@@ -5211,7 +6009,7 @@
             }
           ],
           "notes": "and the repair loop lets me use small, fast models.",
-          "cue": 527.12
+          "cue": 608.46
         }
       ],
       "layout": "pip"
@@ -5329,7 +6127,7 @@
             }
           ],
           "notes": "And now the last mile: I click Record and adjust the timing, like I'm doing right now.",
-          "cue": 531.76
+          "cue": 613.1
         },
         {
           "title": "Export",
@@ -5354,7 +6152,7 @@
               ]
             }
           ],
-          "cue": 538.13
+          "cue": 619.47
         },
         {
           "title": "Thanks",
@@ -5369,7 +6167,7 @@
               "stagger": 1.2
             }
           ],
-          "cue": 542.54
+          "cue": 623.87
         }
       ],
       "layout": "camera"
@@ -5487,11 +6285,33 @@
         "name": "generated voice · LLM first"
       },
       {
+        "id": "gen-recordings",
+        "scene": "recordings",
+        "upload": "generated-recordings.webm",
+        "sourceDuration": 32.807,
+        "offset": 250.12,
+        "lane": 0,
+        "trimStart": 0,
+        "trimEnd": 32.807,
+        "name": "generated voice · Recordings that stay sharp"
+      },
+      {
+        "id": "gen-voice-tools",
+        "scene": "voice-tools",
+        "upload": "generated-voice-tools.webm",
+        "sourceDuration": 46.807,
+        "offset": 283.806,
+        "lane": 0,
+        "trimStart": 0,
+        "trimEnd": 46.807,
+        "name": "generated voice · Finding my voice"
+      },
+      {
         "id": "gen-style",
         "scene": "style",
         "upload": "generated-style.webm",
         "sourceDuration": 29.307,
-        "offset": 250.12,
+        "offset": 331.451,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 29.307,
@@ -5502,7 +6322,7 @@
         "scene": "skills-guide",
         "upload": "generated-skills-guide.webm",
         "sourceDuration": 23.307,
-        "offset": 280.279,
+        "offset": 361.61,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 23.307,
@@ -5513,7 +6333,7 @@
         "scene": "library",
         "upload": "generated-library.webm",
         "sourceDuration": 23.007,
-        "offset": 304.388,
+        "offset": 385.719,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 23.007,
@@ -5524,7 +6344,7 @@
         "scene": "architecture",
         "upload": "generated-architecture.webm",
         "sourceDuration": 29.407,
-        "offset": 328.221,
+        "offset": 409.552,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 29.407,
@@ -5535,7 +6355,7 @@
         "scene": "models",
         "upload": "generated-models.webm",
         "sourceDuration": 41.607,
-        "offset": 358.468,
+        "offset": 439.799,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 41.607,
@@ -5546,7 +6366,7 @@
         "scene": "script",
         "upload": "generated-script.webm",
         "sourceDuration": 18.207,
-        "offset": 400.887,
+        "offset": 482.218,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 18.207,
@@ -5557,7 +6377,7 @@
         "scene": "timing-b",
         "upload": "generated-timing-b.webm",
         "sourceDuration": 41.807,
-        "offset": 419.973,
+        "offset": 501.304,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 41.807,
@@ -5568,7 +6388,7 @@
         "scene": "ai-helpers-b",
         "upload": "generated-ai-helpers-b.webm",
         "sourceDuration": 41.507,
-        "offset": 462.645,
+        "offset": 543.976,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 41.507,
@@ -5579,7 +6399,7 @@
         "scene": "cost",
         "upload": "generated-cost.webm",
         "sourceDuration": 25.907,
-        "offset": 505.037,
+        "offset": 586.368,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 25.907,
@@ -5595,7 +6415,7 @@
         "scene": "publish",
         "upload": "generated-publish.webm",
         "sourceDuration": 13.507,
-        "offset": 531.757,
+        "offset": 613.088,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 13.507,

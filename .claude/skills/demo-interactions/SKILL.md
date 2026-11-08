@@ -97,6 +97,7 @@ Scenarios click, type and save, so the presentation they open gets changed. Make
 
 Live in `scripts/scenarios/<name>.mjs`. Each exports `run(page)`; the browser is already at the URL you passed. Keep interactions short — 2–8 seconds — so the recording stays small and the beat it plays over doesn't drag.
 
+- A demo of a microphone (a level meter, a recording): `JZM_FAKE_MIC=<file.wav> npm run record -- …` makes the capture browser's microphone play that file, so the meter shows real speech (a generated clip converted to WAV, a few dB down, sits in the green). `jzm-voice` does this.
 - An optional `setup(page)` runs first and isn't recorded: settings in `localStorage`, a reload, picking the scene to start on. Without it the recording starts with a white page while it loads.
 - `scripts/scenarios/jzm-helpers.mjs` has what the jz-motion demos share: `useMockModel(page)` (AI steps with `npm run mock-llm`, no key), `glide` (a visible mouse move), and `notes(name)`, which writes `scratch/captures/<name>-steps.json`: when each step happened (seconds into the recording) and where things were on screen. A scene uses the step times to pick its frames (`goto` / `until`) and the boxes to place its `area`s exactly; `jzm-home-start`, `jzm-editor-tour`, `jzm-edit-colour-b`, `jzm-timing` and `jzm-ai-everywhere` are examples.
 - Record against copies (a presentation made for the demo, or a copy of a real one), never the user's own files: scenarios click, type and save. AI steps with the mock model can create a presentation: delete it afterwards.
@@ -119,6 +120,7 @@ What worked for the jz-motion demos:
 
 - The recording as one `image`, `"frame": "browser"`, 1200×750 at (960, 560): room for a title above (pinned, y 70) and one caption below (pinned, y ≈ 1025, size 42).
 - Each beat: fade out the previous caption, `camera` on an `area` with an explicit `zoom` (1.5–2.2), a dark `spotlight` on the same area (captions over the dimmed interface stay readable), draw the new caption, and move the recording: `goto` a step's frame with `"fade": true`, or `until` a frame over the time the words take. Spotlight off and `focus: "all"` at the end.
+- Frame numbers are the app's **distinct pictures** (`npm run media -- frames <file>`; slow on a 3200-wide recording, run it in the background), not the video's frame count from ffprobe: they differ a lot. Pick the frame just *before* the next step's change (a step that scrolls or closes something comes right after).
 - Areas from the scenario's noted boxes (page points × image width ÷ page width, from the picture's top-left under the browser bar), frames from its noted step times (the frame showing just after each step): a step that changes the layout (a box growing) needs an area big enough for both.
 
 ### Pacing: slow is the point
