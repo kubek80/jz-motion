@@ -998,3 +998,13 @@ Jakub asked for two scenes after "LLM first", told as the story of what was buil
 ![Scenes 13 and 14 in an export](journey/119-recordings-and-voice.jpg)
 
 **Checked by:** Playwright: My voice shows Neutral British and switching writes the project (restored afterwards); every capture looked at frame by frame; an export of just the two scenes (snapshots can't show recordings' frames reliably), checked beat by beat after the frame fix; the presentation: 86 cued beats, 0 ignored, 0 cut short, all 21 clips bound; typecheck, tests, build.
+
+## Step 81: The avatar in Timing
+
+Jakub couldn't see his avatar in Timing: it was only put in at export. Timing's board now shows it as the video will: where the layout shows the camera and a clip has an avatar, its video plays in step with the playhead (muted; the clip is the sound), full frame with the board small at the top right for `camera`, in a bottom corner for `pip` / `pip-left`; elsewhere the board alone. (`AvatarBoard`, around the board's own container.)
+
+- **Bug found:** after Timing opened on a later scene, the intro's full-frame layout (shown for a moment at 0:00) stayed up over a scene with no avatar: what was showing was remembered inside the per-frame loop, which starts again on play and pause, so the change back to "nothing" was missed. It is kept across restarts now.
+
+![Timing: the intro, scene 4 and a scene without an avatar](journey/120-avatar-in-timing.jpg)
+
+**Checked by:** Playwright on a copy: Timing opened on the intro (full frame, the avatar 3 s in after 3 s of playing), on scene 4 (corner, in step) and on Inspiration (board only); the layout decision checked against the presentation at several times in Node; typecheck, tests, build.

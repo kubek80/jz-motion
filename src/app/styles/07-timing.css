@@ -9,6 +9,15 @@
 .timing-body { position: relative; flex: 1; min-height: 0; display: flex; gap: 10px; padding: 14px 16px 6px; align-items: stretch; }
 .timing-board { flex: 1 1 0; min-width: 0; aspect-ratio: 16 / 9; max-height: 100%; max-width: 100%; align-self: center; border-radius: 8px; overflow: hidden; background: #000; }
 .timing-board svg { width: 100%; height: 100%; }
+/* The board and, where the layout shows the camera, your avatar: as the video lays them out. */
+.timing-board { position: relative; }
+.timing-board .board-host { position: absolute; inset: 0; }
+.timing-board .avatar-live { position: absolute; object-fit: cover; background: #000; }
+.timing-board.avatar-camera .avatar-live { inset: 0; width: 100%; height: 100%; }
+.timing-board.avatar-camera .board-host { inset: 2.5% 2.5% auto auto; width: 36%; height: 36%; z-index: 1; outline: 2px solid #67e8f9; background: #000; }
+.timing-board.avatar-pip .avatar-live, .timing-board.avatar-pip-left .avatar-live { bottom: 2.5%; width: 26%; aspect-ratio: 16 / 9; z-index: 1; outline: 2px solid #67e8f9; }
+.timing-board.avatar-pip .avatar-live { right: 2.5%; }
+.timing-board.avatar-pip-left .avatar-live { left: 2.5%; }
 .timing-script { flex: 0 0 var(--timing-script-w, 360px); min-width: 180px; display: flex; flex-direction: column; gap: 12px; overflow: auto; }
 .timing-script > div { display: flex; flex-direction: column; gap: 4px; padding: 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
 .timing-script .now { border-color: color-mix(in srgb, var(--accent) 50%, var(--line)); }
