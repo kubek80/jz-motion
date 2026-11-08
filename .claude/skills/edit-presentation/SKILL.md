@@ -32,6 +32,8 @@ When the project has the person's voice (`voice/my-voice.json`), `npm run voice`
 
 When the voice-over's clips name their scenes (`scene` on each clip, see the voiceover-and-video skill), moving, deleting, leaving out or putting back a scene in the app moves its clips and cues with it. Editing the JSON by hand does not: after moving or deleting scenes in the file, run `npm run voice -- rebuild` (generated voice) or tell the person to re-time in Timing.
 
+**Changing the words of a timed scene** (its `notes`): the narration still says the old words. With generated voice, run `npm run voice -- again presentations/<id>.json --scenes <scene-id>`: the scene's clip is said again from the new notes in place, and everything after moves by the difference. If that clip has an avatar (`avatar` on it), tell the person and offer to make it again (`npm run avatar -- make`, see the voiceover-and-video skill): it costs money.
+
 ## A second version of a scene ("version B")
 
 When asked for another version of a scene to compare:

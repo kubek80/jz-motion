@@ -3400,7 +3400,7 @@
           "type": "icon",
           "icon": "anthropic",
           "x": 1680,
-          "y": 300,
+          "y": 260,
           "size": 110,
           "color": "orange",
           "label": "Claude · LLM"
@@ -3410,7 +3410,7 @@
           "type": "icon",
           "icon": "openai",
           "x": 1680,
-          "y": 500,
+          "y": 420,
           "size": 110,
           "color": "white",
           "label": "any OpenAI-compat · LLM"
@@ -3418,19 +3418,19 @@
         {
           "id": "mod-tts",
           "type": "icon",
-          "icon": "openai",
+          "icon": "user",
           "x": 1680,
-          "y": 700,
+          "y": 580,
           "size": 100,
           "color": "pink",
-          "label": "OpenAI · voice"
+          "label": "OpenRouter · my voice"
         },
         {
           "id": "mod-stt",
           "type": "icon",
           "icon": "openai",
           "x": 1680,
-          "y": 880,
+          "y": 740,
           "size": 100,
           "color": "yellow",
           "label": "OpenAI · transcription"
@@ -3481,6 +3481,33 @@
           "scale": 88.2,
           "color": "cyan",
           "label": "local server"
+        },
+        {
+          "id": "fn-avatar",
+          "type": "icon",
+          "icon": "video",
+          "x": 1175,
+          "y": 705,
+          "size": 90,
+          "color": "green",
+          "label": "my avatar"
+        },
+        {
+          "id": "mod-fal",
+          "type": "icon",
+          "icon": "video",
+          "x": 1680,
+          "y": 900,
+          "size": 100,
+          "color": "green",
+          "label": "fal.ai · avatar video"
+        },
+        {
+          "id": "a6",
+          "type": "arrow",
+          "from": "server-stack",
+          "to": "mod-fal",
+          "color": "green"
         }
       ],
       "beats": [
@@ -3493,7 +3520,7 @@
               "target": "h"
             }
           ],
-          "cue": 402.19
+          "cue": 401.43
         },
         {
           "title": "In the browser",
@@ -3513,7 +3540,7 @@
             }
           ],
           "notes": "In the browser, we have a frontend application made with React. SVG animations are made with GSAP, and 3D coordinates are calculated with Three.js.",
-          "cue": 404.49
+          "cue": 403.73
         },
         {
           "title": "A small local server",
@@ -3549,7 +3576,7 @@
             }
           ],
           "notes": "It's paired with a local server responsible for keeping the files, proxying LLM calls, transcription of recordings and export of videos.",
-          "cue": 416.15
+          "cue": 415.39
         },
         {
           "title": "Swappable models",
@@ -3573,7 +3600,7 @@
               ]
             }
           ],
-          "cue": 425.86
+          "cue": 425.11
         },
         {
           "title": "Voice both ways",
@@ -3597,6 +3624,28 @@
             }
           ],
           "auto": true
+        },
+        {
+          "title": "My avatar",
+          "notes": "For my avatar, the server sends a portrait and my voice to fal.ai, which turns them into a talking head.",
+          "actions": [
+            {
+              "do": "pop",
+              "target": "fn-avatar"
+            },
+            {
+              "do": "draw",
+              "target": [
+                "a6",
+                "mod-fal"
+              ]
+            },
+            {
+              "do": "flow",
+              "target": "a6"
+            }
+          ],
+          "cue": 430.78
         }
       ]
     },
@@ -3619,7 +3668,7 @@
           "type": "text",
           "text": "write the story",
           "x": 150,
-          "y": 290,
+          "y": 215,
           "size": 42,
           "color": "white",
           "align": "start"
@@ -3629,7 +3678,7 @@
           "type": "icon",
           "icon": "anthropic",
           "x": 1050,
-          "y": 290,
+          "y": 215,
           "size": 70,
           "color": "pink"
         },
@@ -3638,7 +3687,7 @@
           "type": "text",
           "text": "Claude Sonnet / Opus",
           "x": 1150,
-          "y": 290,
+          "y": 215,
           "size": 42,
           "color": "pink",
           "align": "start"
@@ -3648,11 +3697,11 @@
           "type": "arrow",
           "from": {
             "x": 700,
-            "y": 290
+            "y": 215
           },
           "to": {
             "x": 1000,
-            "y": 290
+            "y": 215
           },
           "color": "pink"
         },
@@ -3661,7 +3710,7 @@
           "type": "text",
           "text": "change a beat",
           "x": 150,
-          "y": 440,
+          "y": 330,
           "size": 42,
           "color": "white",
           "align": "start"
@@ -3671,7 +3720,7 @@
           "type": "icon",
           "icon": "anthropic",
           "x": 1050,
-          "y": 440,
+          "y": 330,
           "size": 70,
           "color": "cyan"
         },
@@ -3680,7 +3729,7 @@
           "type": "text",
           "text": "Claude Haiku",
           "x": 1150,
-          "y": 440,
+          "y": 330,
           "size": 42,
           "color": "cyan",
           "align": "start"
@@ -3690,11 +3739,11 @@
           "type": "arrow",
           "from": {
             "x": 700,
-            "y": 440
+            "y": 330
           },
           "to": {
             "x": 1000,
-            "y": 440
+            "y": 330
           },
           "color": "cyan"
         },
@@ -3703,7 +3752,7 @@
           "type": "text",
           "text": "icons, charts, 3D",
           "x": 150,
-          "y": 590,
+          "y": 445,
           "size": 42,
           "color": "white",
           "align": "start"
@@ -3713,7 +3762,7 @@
           "type": "icon",
           "icon": "anthropic",
           "x": 1050,
-          "y": 590,
+          "y": 445,
           "size": 70,
           "color": "green"
         },
@@ -3722,7 +3771,7 @@
           "type": "text",
           "text": "Claude Haiku + the rules",
           "x": 1150,
-          "y": 590,
+          "y": 445,
           "size": 42,
           "color": "green",
           "align": "start"
@@ -3732,11 +3781,11 @@
           "type": "arrow",
           "from": {
             "x": 700,
-            "y": 590
+            "y": 445
           },
           "to": {
             "x": 1000,
-            "y": 590
+            "y": 445
           },
           "color": "green"
         },
@@ -3745,7 +3794,7 @@
           "type": "text",
           "text": "voice-over (my voice)",
           "x": 150,
-          "y": 740,
+          "y": 560,
           "size": 42,
           "color": "white",
           "align": "start"
@@ -3755,7 +3804,7 @@
           "type": "icon",
           "icon": "user",
           "x": 1050,
-          "y": 740,
+          "y": 560,
           "size": 70,
           "color": "orange"
         },
@@ -3764,7 +3813,7 @@
           "type": "text",
           "text": "Fish Audio S2.1 Pro (clone)",
           "x": 1150,
-          "y": 740,
+          "y": 560,
           "size": 42,
           "color": "orange",
           "align": "start"
@@ -3774,11 +3823,11 @@
           "type": "arrow",
           "from": {
             "x": 700,
-            "y": 740
+            "y": 560
           },
           "to": {
             "x": 1000,
-            "y": 740
+            "y": 560
           },
           "color": "orange"
         },
@@ -3787,7 +3836,7 @@
           "type": "text",
           "text": "transcription (STT)",
           "x": 150,
-          "y": 890,
+          "y": 675,
           "size": 42,
           "color": "white",
           "align": "start"
@@ -3797,7 +3846,7 @@
           "type": "icon",
           "icon": "openai",
           "x": 1050,
-          "y": 890,
+          "y": 675,
           "size": 70,
           "color": "yellow"
         },
@@ -3806,7 +3855,7 @@
           "type": "text",
           "text": "OpenAI Whisper",
           "x": 1150,
-          "y": 890,
+          "y": 675,
           "size": 42,
           "color": "yellow",
           "align": "start"
@@ -3816,13 +3865,97 @@
           "type": "arrow",
           "from": {
             "x": 700,
-            "y": 890
+            "y": 675
           },
           "to": {
             "x": 1000,
-            "y": 890
+            "y": 675
           },
           "color": "yellow"
+        },
+        {
+          "id": "task5",
+          "type": "text",
+          "text": "cartoon portrait",
+          "x": 150,
+          "y": 790,
+          "size": 42,
+          "color": "white",
+          "align": "start"
+        },
+        {
+          "id": "logo5",
+          "type": "icon",
+          "icon": "gemini",
+          "x": 1050,
+          "y": 790,
+          "size": 70,
+          "color": "cyan"
+        },
+        {
+          "id": "model5",
+          "type": "text",
+          "text": "Gemini image model (OpenRouter)",
+          "x": 1150,
+          "y": 790,
+          "size": 42,
+          "color": "cyan",
+          "align": "start"
+        },
+        {
+          "id": "ar5",
+          "type": "arrow",
+          "from": {
+            "x": 700,
+            "y": 790
+          },
+          "to": {
+            "x": 1000,
+            "y": 790
+          },
+          "color": "cyan"
+        },
+        {
+          "id": "task6",
+          "type": "text",
+          "text": "my avatar, speaking",
+          "x": 150,
+          "y": 905,
+          "size": 42,
+          "color": "white",
+          "align": "start"
+        },
+        {
+          "id": "logo6",
+          "type": "icon",
+          "icon": "video",
+          "x": 1050,
+          "y": 905,
+          "size": 70,
+          "color": "green"
+        },
+        {
+          "id": "model6",
+          "type": "text",
+          "text": "Kling AI Avatar (fal.ai)",
+          "x": 1150,
+          "y": 905,
+          "size": 42,
+          "color": "green",
+          "align": "start"
+        },
+        {
+          "id": "ar6",
+          "type": "arrow",
+          "from": {
+            "x": 700,
+            "y": 905
+          },
+          "to": {
+            "x": 1000,
+            "y": 905
+          },
+          "color": "green"
         }
       ],
       "beats": [
@@ -3835,7 +3968,7 @@
             }
           ],
           "notes": "Because every request is checked and repaired, I can experiment with smaller models.",
-          "cue": 432.44
+          "cue": 439.48
         },
         {
           "title": "Story",
@@ -3852,7 +3985,7 @@
               "stagger": 0.25
             }
           ],
-          "cue": 438.39
+          "cue": 445.43
         },
         {
           "title": "Small edits",
@@ -3869,7 +4002,7 @@
             }
           ],
           "notes": "Small edits, like changing a beat, work fine with fast, cheap models like Haiku.",
-          "cue": 445.52
+          "cue": 452.56
         },
         {
           "title": "Drawings",
@@ -3886,7 +4019,7 @@
               "stagger": 0.25
             }
           ],
-          "cue": 451.61
+          "cue": 458.65
         },
         {
           "title": "Voice",
@@ -3903,7 +4036,7 @@
             }
           ],
           "notes": "For transcription I use a small OpenAI model. At first I recorded the voice-over myself, but as I kept updating the script, I switched to AI: a clone of my own voice, so a changed sentence doesn't mean recording it again.",
-          "cue": 458.58
+          "cue": 465.62
         },
         {
           "title": "Transcription",
@@ -3920,6 +4053,32 @@
             }
           ],
           "auto": true
+        },
+        {
+          "title": "My avatar",
+          "notes": "My avatar started as a photo. A Gemini image model turned it into a cartoon, and Kling AI Avatar on fal.ai makes it speak my lines.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "task5",
+                "ar5",
+                "logo5",
+                "model5"
+              ]
+            },
+            {
+              "do": "draw",
+              "target": [
+                "task6",
+                "ar6",
+                "logo6",
+                "model6"
+              ],
+              "delay": 0.6
+            }
+          ],
+          "cue": 481
         }
       ]
     },
@@ -4037,7 +4196,7 @@
               "target": "script-ico"
             }
           ],
-          "cue": 474.86
+          "cue": 493.96
         },
         {
           "title": "Three ways to touch it",
@@ -4056,7 +4215,7 @@
             }
           ],
           "notes": "I can read and edit the whole thing in the Script view, inline in the Timing prompter,",
-          "cue": 483.13
+          "cue": 502.23
         },
         {
           "title": "Same text, three lenses",
@@ -4075,7 +4234,7 @@
             }
           ],
           "notes": "or in the raw JSON tab if I want to see the shape.",
-          "cue": 488.66
+          "cue": 507.76
         }
       ]
     },
@@ -4224,7 +4383,7 @@
               "delay": 0.5
             }
           ],
-          "cue": 493.94
+          "cue": 513.04
         },
         {
           "title": "One line at a time",
@@ -4260,7 +4419,7 @@
               "delay": 0.8
             }
           ],
-          "cue": 502.26
+          "cue": 521.36
         },
         {
           "title": "The timeline",
@@ -4288,7 +4447,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 509.71
+          "cue": 528.81
         },
         {
           "title": "Just read",
@@ -4322,7 +4481,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 519.28
+          "cue": 538.38
         },
         {
           "title": "Tidy up",
@@ -4358,7 +4517,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 528.23
+          "cue": 547.33
         },
         {
           "title": "Back out",
@@ -4537,7 +4696,7 @@
               "delay": 0.8
             }
           ],
-          "cue": 536.61
+          "cue": 554.96
         },
         {
           "title": "Home",
@@ -4573,11 +4732,11 @@
               "delay": 0.3
             }
           ],
-          "cue": 542.32
+          "cue": 560.66
         },
         {
           "title": "This scene",
-          "notes": "In the editor, the bar above the beats changes just this scene: split a beat, add a database, or, like here, turn one part into a scene of its own.",
+          "notes": "In the editor, the bar above the beats changes just this scene: split a beat, add a drawing, or, like here, turn one part into a scene of its own.",
           "actions": [
             {
               "do": "fade-out",
@@ -4615,7 +4774,7 @@
               "delay": 1
             }
           ],
-          "cue": 546.42
+          "cue": 564.76
         },
         {
           "title": "The AI tab",
@@ -4651,7 +4810,7 @@
               "delay": 0.5
             }
           ],
-          "cue": 556.9
+          "cue": 575.6
         },
         {
           "title": "The library",
@@ -4687,7 +4846,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 564.66
+          "cue": 583.36
         },
         {
           "title": "Same skills",
@@ -4709,7 +4868,7 @@
               "delay": 0.4
             }
           ],
-          "cue": 570.95
+          "cue": 589.66
         }
       ]
     },
@@ -4797,7 +4956,7 @@
             }
           ],
           "notes": "One of my main goals was to create an app that would let me make a ten-minute explainer video for under five dollars. I'm happy to share that I was successful.",
-          "cue": 579.01
+          "cue": 598.51
         },
         {
           "title": "Why it works",
@@ -4809,7 +4968,7 @@
             }
           ],
           "notes": "If I had to name three main contributors to that success: a presentation is pure JSON, so tokens are cheap;",
-          "cue": 589.42
+          "cue": 608.92
         },
         {
           "title": "Beat 3",
@@ -4820,7 +4979,7 @@
             }
           ],
           "notes": "the library grows, so most drawings are reused;",
-          "cue": 597.1
+          "cue": 616.6
         },
         {
           "title": "Beat 4",
@@ -4831,7 +4990,7 @@
             }
           ],
           "notes": "and the repair loop lets me use small, fast models.",
-          "cue": 601.09
+          "cue": 620.59
         }
       ],
       "layout": "pip"
@@ -4949,7 +5108,7 @@
             }
           ],
           "notes": "And now the last mile: I click Record and adjust the timing, like I'm doing right now.",
-          "cue": 605.73
+          "cue": 625.23
         },
         {
           "title": "Export",
@@ -4974,7 +5133,7 @@
               ]
             }
           ],
-          "cue": 612.1
+          "cue": 631.6
         },
         {
           "title": "Thanks",
@@ -4989,7 +5148,7 @@
               "stagger": 1.2
             }
           ],
-          "cue": 616.5
+          "cue": 636
         }
       ],
       "layout": "camera"
@@ -5008,7 +5167,7 @@
         "trimEnd": 17.007,
         "name": "generated voice · JZ-motion",
         "avatar": {
-          "video": "avatar-title-aa795c.mp4",
+          "video": "avatar-title-bea1bb.mp4",
           "trimStart": 0,
           "trimEnd": 17.007
         }
@@ -5057,7 +5216,7 @@
         "trimEnd": 6.907,
         "name": "generated voice · My own video assistant",
         "avatar": {
-          "video": "avatar-assistant-eae62f.mp4",
+          "video": "avatar-assistant-b4c4d8.mp4",
           "trimStart": 0,
           "trimEnd": 6.907
         }
@@ -5176,22 +5335,22 @@
         "id": "gen-architecture",
         "scene": "architecture",
         "upload": "generated-architecture.webm",
-        "sourceDuration": 29.407,
+        "sourceDuration": 37.207,
         "offset": 401.432,
         "lane": 0,
         "trimStart": 0,
-        "trimEnd": 29.407,
+        "trimEnd": 37.207,
         "name": "generated voice · Architecture"
       },
       {
         "id": "gen-models",
         "scene": "models",
         "upload": "generated-models.webm",
-        "sourceDuration": 41.607,
-        "offset": 431.679,
+        "sourceDuration": 52.907,
+        "offset": 439.479,
         "lane": 0,
         "trimStart": 0,
-        "trimEnd": 41.607,
+        "trimEnd": 52.907,
         "name": "generated voice · The right model for each job"
       },
       {
@@ -5199,7 +5358,7 @@
         "scene": "script",
         "upload": "generated-script.webm",
         "sourceDuration": 18.207,
-        "offset": 474.098,
+        "offset": 493.198,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 18.207,
@@ -5210,7 +5369,7 @@
         "scene": "timing-b",
         "upload": "generated-timing-b.webm",
         "sourceDuration": 41.807,
-        "offset": 493.184,
+        "offset": 512.284,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 41.807,
@@ -5220,11 +5379,11 @@
         "id": "gen-ai-helpers-b",
         "scene": "ai-helpers-b",
         "upload": "generated-ai-helpers-b.webm",
-        "sourceDuration": 41.507,
-        "offset": 535.856,
+        "sourceDuration": 41.907,
+        "offset": 554.956,
         "lane": 0,
         "trimStart": 0,
-        "trimEnd": 41.507,
+        "trimEnd": 41.907,
         "name": "generated voice · AI helpers across the app (B)"
       },
       {
@@ -5232,13 +5391,13 @@
         "scene": "cost",
         "upload": "generated-cost.webm",
         "sourceDuration": 25.907,
-        "offset": 578.248,
+        "offset": 597.748,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 25.907,
         "name": "generated voice · Under $5 per 10 minutes",
         "avatar": {
-          "video": "avatar-cost-9fd99b.mp4",
+          "video": "avatar-cost-10a9a5.mp4",
           "trimStart": 0,
           "trimEnd": 25.907
         }
@@ -5248,13 +5407,13 @@
         "scene": "publish",
         "upload": "generated-publish.webm",
         "sourceDuration": 13.507,
-        "offset": 604.968,
+        "offset": 624.468,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 13.507,
         "name": "generated voice · Publish more",
         "avatar": {
-          "video": "avatar-publish-ff59e6.mp4",
+          "video": "avatar-publish-cf90ef.mp4",
           "trimStart": 0,
           "trimEnd": 13.507
         }

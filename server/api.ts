@@ -21,7 +21,8 @@ import { createPresentation, deletePresentation, listPresentations, readPresenta
 import { addTrack, createTake, deleteTake, getTake, listTakes, TAKES_DIR, trackPath, updateTake } from './takes';
 import { generateTts, readSidecar as readTtsSidecar, serveTts, speechVoices } from './tts';
 import { joinVoiceRequest } from './voiceJoin';
-import { AVATAR_PRICE, avatarJob, buildAvatarTrack, readMyAvatar, startAvatarJob } from './avatar';
+import { buildAvatarTrack } from './avatar';
+import { myAvatarRoutes } from './myAvatarRoutes';
 
 // The local server side of the app, mounted into the Vite dev and preview servers:
 //   /api/presentations  list, create, read, save, delete presentations (presentations/<id>.json)
@@ -31,7 +32,7 @@ import { AVATAR_PRICE, avatarJob, buildAvatarTrack, readMyAvatar, startAvatarJob
 //   /api/transcribe  upload a recording and transcribe it (to make a presentation from it), or transcribe a narration clip already in uploads/ (?upload=)
 //   /api/llm      proxy to OpenAI-compatible model APIs (browsers can't call most of them directly)
 //   /api/takes    recordings: create, upload tracks, set offsets, auto-sync, delete
-//   /api/avatar   your avatar: GET /api/my-avatar, POST /api/avatar (start a talking-head video of a clip), GET /api/avatar/<job>
+//   /api/my-avatar, /api/avatar   your avatar: its picture, style and settings; talking-head videos of clips (myAvatarRoutes.ts)
 //   /api/voice/join  generate several beats' lines as one clip in uploads/ (a clip's Generate again)
 //   /api/tts      generate a voice clip for a sentence; the cache (tts/<id>.json) is served from /api/tts/<id>
 //   /api/media    the media library: add (converted), list with where each is used, rename, delete, a recording's frame times (/frames); served at /media/<file>
@@ -286,9 +287,7 @@ export function jzmServer(): Plugin {
         if (url.pathname === '/api/tts-voices' && req.method === 'GET') return send(res, 200, await speechVoices(url.searchParams.get('model') ?? ''));
         if (parts[0] === 'api' && parts[1] === 'tts' && parts[2] && req.method === 'GET') return send(res, 200, await readTtsSidecar(parts[2]));
         if (url.pathname === '/api/tts' && req.method === 'POST') return send(res, 200, await generateTts(await readJson(req)));
-        if (url.pathname === '/api/my-avatar' && req.method === 'GET') return send(res, 200, { avatar: await readMyAvatar(), pricePerSecond: AVATAR_PRICE, hasServerKey: !!process.env.FAL_KEY });
-        if (url.pathname === '/api/avatar' && req.method === 'POST') return send(res, 200, startAvatarJob(await readJson(req)));
-        if (parts[0] === 'api' && parts[1] === 'avatar' && parts[2] && req.method === 'GET') return send(res, 200, avatarJob(parts[2]));
+        if ((url.pathname.startsWith('/api/my-avatar') || url.pathname.startsWith('/api/avatar')) && (await myAvatarRoutes(req, res, url, send))) return;
         if (url.pathname === '/api/voice/join' && req.method === 'POST') return send(res, 200, await joinVoiceRequest(await readJson(req)));
         if (parts[0] === 'tts' && parts[1] && parts[2] && req.method === 'GET' && (await serveTts(res, parts[1], parts[2]))) return;
         if (url.pathname === '/api/export' && req.method === 'POST') return send(res, 200, startExport(await readJson(req), appUrl()));

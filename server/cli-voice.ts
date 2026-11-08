@@ -21,6 +21,9 @@
 // `rebuild` replaces the whole voice-over with generated narration, one clip per playing scene, laid out one after
 // another from the start, each bound to its scene and its beats cued where their sentences start. Where a beat's
 // animation outlasts its words, the pause after them grows to fit. Scenes left out lose their cues.
+//
+// `again` says a scene's notes again (after they changed) as a new clip in place of the scene's clip; everything
+// after it moves by the difference in length.
 import { readFile, writeFile } from 'node:fs/promises';
 import { basename, join, resolve } from 'node:path';
 import { splitSentences } from '../src/app/tts';
@@ -35,8 +38,8 @@ import { joinVoice, SENTENCE_GAP } from './voiceJoin';
 const args = process.argv.slice(2);
 const value = (name: string) => { const i = args.indexOf(`--${name}`); return i >= 0 ? args[i + 1] : undefined; };
 const [cmd, file] = args;
-if (!['time', 'place', 'rebuild'].includes(cmd) || !file) {
-  console.error('usage: npm run voice -- time <presentation.json> [--scenes id,id]\n       npm run voice -- place <presentation.json> --scenes id,id\n       npm run voice -- rebuild <presentation.json>');
+if (!['time', 'place', 'rebuild', 'again'].includes(cmd) || !file) {
+  console.error('usage: npm run voice -- time <presentation.json> [--scenes id,id]\n       npm run voice -- place <presentation.json> --scenes id,id\n       npm run voice -- rebuild <presentation.json>\n       npm run voice -- again <presentation.json> --scenes id,id');
   process.exit(2);
 }
 
@@ -123,6 +126,31 @@ if (cmd === 'time') {
     putClip(si, at, v);
     delete scene.skip;
     console.log(`${scene.title ?? scene.id}: ${v.duration.toFixed(1)} s of generated voice at ${at.toFixed(1)} s; everything after moves ${v.length.toFixed(1)} s later`);
+  }
+  await finish();
+} else if (cmd === 'again') {
+  // again: a scene's narration said again from its notes (they changed), in place of its clip; what follows moves by
+  // the difference in length, as Generate again in the app does.
+  if (!wanted?.length) { console.error('again needs --scenes id,id'); process.exit(2); }
+  const clips = doc.voiceover?.clips ?? [];
+  for (const id of wanted) {
+    const si = doc.scenes.findIndex((s) => s.id === id);
+    const own = clips.filter((c) => c.scene === id);
+    if (own.length !== 1) { console.error(`scene "${id}" needs exactly one clip of its own (it has ${own.length}): use place or rebuild`); process.exit(2); }
+    const c = own[0];
+    const v = await voiceScene(si);
+    if (!v) { console.log(`${id}: no speaker notes, left as it was`); continue; }
+    const oldLen = c.trimEnd - c.trimStart;
+    const oldEnd = c.offset + oldLen;
+    const delta = Math.round((v.duration - oldLen) * 1000) / 1000;
+    for (const x of clips) if (x !== c && x.offset >= oldEnd - 1e-3) x.offset = Math.round((x.offset + delta) * 1000) / 1000;
+    for (const [sj, s] of doc.scenes.entries()) if (sj !== si) for (const b of s.beats) if (b.cue !== undefined && b.cue >= oldEnd - 0.05) b.cue = Math.round((b.cue + delta) * 100) / 100;
+    for (const b of doc.scenes[si].beats) delete b.cue;
+    for (const [bi, off] of v.cues) doc.scenes[si].beats[bi].cue = Math.round((c.offset + off) * 100) / 100;
+    if (c.avatar) console.log(`${id}: its avatar said the old words: make it again (npm run avatar -- make … --scenes ${id})`);
+    Object.assign(c, { upload: v.upload, sourceDuration: v.duration, trimStart: 0, trimEnd: v.duration });
+    delete c.avatar; delete c.gain; delete c.cleanedFrom;
+    console.log(`${id}: ${v.duration.toFixed(1)} s (${delta >= 0 ? '+' : ''}${delta.toFixed(1)} s); everything after moves by that`);
   }
   await finish();
 } else {

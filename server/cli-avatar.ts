@@ -1,4 +1,5 @@
-// npm run avatar -- photo <picture> [--top 0.4]                    your avatar's photo (kept with the project)
+// npm run avatar -- photo <picture> [--top 0.4] [--style default|"…"]   your avatar's picture (kept with the project);
+//                                                 --style: a styled version (default: the cartoon studio look; needs OPENROUTER_API_KEY)
 // npm run avatar -- make <presentation.json> --scenes id,id [--layout camera|pip|pip-left]
 //
 // `make` gives each named scene's voice clip a talking-head video of your avatar saying it (Kling AI Avatar on
@@ -7,13 +8,27 @@
 // FAL_KEY=proxy-injected).
 import { readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
-import { AVATAR_PRICE, makeAvatar, readMyAvatar, saveAvatarPhoto } from './avatar';
+import { createHash } from 'node:crypto';
+import { copyFile } from 'node:fs/promises';
+import { extname } from 'node:path';
+import { avatarPrice, makeAvatar, readMyAvatar, saveAvatarPhoto, updateMyAvatar } from './avatar';
+import { DEFAULT_STYLE, styleAvatar } from './myAvatarRoutes';
+import { uploadPath } from './transcribe';
 
 const args = process.argv.slice(2);
 const value = (name: string) => { const i = args.indexOf(`--${name}`); return i >= 0 ? args[i + 1] : undefined; };
 const [cmd, file] = args;
 
-if (cmd === 'photo' && file) {
+if (cmd === 'photo' && file && value('style')) {
+  // The picture kept as where the avatar comes from, then redrawn in the style.
+  const ext = extname(file).slice(1).toLowerCase().replace('jpeg', 'jpg');
+  const source = `avatar-source-${createHash('sha1').update(await readFile(resolve(file))).digest('hex').slice(0, 10)}.${ext}`;
+  await copyFile(resolve(file), uploadPath(source));
+  const style = value('style') === 'default' ? DEFAULT_STYLE : value('style')!;
+  const photo = await styleAvatar(source, style);
+  await updateMyAvatar({ photo, source, style });
+  console.log(`Avatar: uploads/${photo}, styled from uploads/${source} (voice/my-avatar.json)`);
+} else if (cmd === 'photo' && file) {
   const saved = await saveAvatarPhoto(resolve(file), { top: value('top') !== undefined ? Number(value('top')) : undefined });
   console.log(`Avatar photo: uploads/${saved.photo} (voice/my-avatar.json)`);
 } else if (cmd === 'make' && file) {
@@ -29,7 +44,7 @@ if (cmd === 'photo' && file) {
   if (missing.length) { console.error(`no scene with id ${missing.join(', ')}`); process.exit(2); }
   const clips = (doc.voiceover?.clips ?? []).filter((c) => c.scene && wanted.includes(c.scene));
   const seconds = clips.reduce((n, c) => n + c.trimEnd - c.trimStart, 0);
-  console.log(`${clips.length} clips, ${seconds.toFixed(0)} s of avatar: about $${(seconds * AVATAR_PRICE).toFixed(2)}`);
+  console.log(`${clips.length} clips, ${seconds.toFixed(0)} s of avatar: about $${(seconds * avatarPrice((await readMyAvatar())?.model)).toFixed(2)}`);
   // All at once: fal.ai works on them side by side.
   const made = new Map<string, { video: string; trimStart: number; trimEnd: number }>();
   await Promise.all(clips.map(async (c) => {
@@ -43,6 +58,6 @@ if (cmd === 'photo' && file) {
   if (layout) for (const s of now.scenes) if (wanted.includes(s.id)) s.layout = layout;
   await writeFile(path, `${JSON.stringify(now, null, 2)}\n`);
 } else {
-  console.error('usage: npm run avatar -- photo <picture> [--top 0.4]\n       npm run avatar -- make <presentation.json> --scenes id,id [--layout camera|pip|pip-left]');
+  console.error('usage: npm run avatar -- photo <picture> [--top 0.4] [--style default|"…"]\n       npm run avatar -- make <presentation.json> --scenes id,id [--layout camera|pip|pip-left]');
   process.exit(2);
 }

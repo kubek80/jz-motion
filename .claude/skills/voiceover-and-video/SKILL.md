@@ -26,6 +26,7 @@ From 1 or 3: **Make a take for export** in the Timing window. Then the **Video**
 npm run voice -- time  presentations/<id>.json [--scenes id,id]   # per beat: animation vs. how long its words take
 npm run voice -- place presentations/<id>.json --scenes id,id     # new scenes in a timed presentation: their generated voice on the timeline
 npm run voice -- rebuild presentations/<id>.json                  # the whole voice-over again: one generated clip per playing scene
+npm run voice -- again presentations/<id>.json --scenes id,id     # a scene's notes changed: its clip said again in place, what follows moves on
 ```
 
 - One clip per sentence (the prompter's lines), cached in `tts/<id>/` so a sentence is paid for once; the app's **Generate voice** uses the same cache.
@@ -37,14 +38,20 @@ In the app, a clip's window (double-click it in Timing) has **✨ Generate again
 
 ## Your avatar
 
-`voice/my-avatar.json` holds the person's avatar: a photo (`uploads/avatar-photo-*`, a 16:9 picture of them) that says voice clips, made on fal.ai (Kling AI Avatar v2, about 6¢ a second; a calmer copy of the voice drives the face and the prompt asks for subtle mouth movements, which is how they want it). Each video is `uploads/avatar-*.mp4`, named on its clip (`avatar`), and the export shows it where the scene's or beat's `layout` shows the camera: `camera` (full screen) for an intro or ending, `pip` in a corner elsewhere.
+The person's avatar is app-level, like their voice: `voice/my-avatar.json` (for every presentation) holds the picture it was made from (`uploads/avatar-source-*`), the style it was redrawn in (`style`: by default a flat retro cartoon talking head in a home YouTube studio, the look Jakub chose), the photo in use (`uploads/avatar-photo-*`, 16:9), the fal.ai model that makes it speak (Kling AI Avatar v2 Standard, about 6¢ a second; Pro about 11.5¢), the movement prompt and `calm` (a quieter, evened-out copy of the voice drives the face: small mouth movements, which is how he wants it). Each video is `uploads/avatar-*.mp4`, named on its clip (`avatar`); the export, Timing's board and a still on the editor's board show it where the scene's or beat's `layout` shows the camera: `camera` (full frame) for an intro or ending, `pip` in a corner elsewhere.
+
+In the app: **🧑 My avatar** (home screen, Timing, Settings) sets the picture, a styled version of it (an image model through OpenRouter redraws it from the style text, about 14¢), the model, the movement and the fal.ai key. In Timing, **right-click a clip → Make my avatar for this clip**, or its window's **My avatar**; the **video lane** under the voice lanes shows each avatar under its sound (⚠ when the clip changed since, dashed where a scene shows the camera but has no avatar, ⏳ while one is being made).
 
 ```sh
-npm run avatar -- photo <picture> [--top 0.4]                                  # set the photo (a 16:9 band, `top` of the way down)
-npm run avatar -- make presentations/<id>.json --scenes id,id --layout camera  # each scene's clip said by the avatar
+npm run avatar -- photo <picture> [--style default|"…"]                        # the avatar's picture; --style: a styled version (OPENROUTER_API_KEY)
+npm run avatar -- make presentations/<id>.json --scenes id,id --layout camera  # each scene's clip said by the avatar (FAL_KEY)
 ```
 
-Use it only for the scenes the person names (it costs money). After the voice of such a scene changes, make its avatar again (the clip window does this itself after Generate again). In a Claude cloud session: `FAL_KEY=proxy-injected NODE_USE_ENV_PROXY=1 npm run avatar -- …`. Run one `make` at a time on a presentation: each writes the file when it finishes.
+- Make avatars only for the scenes the person names: they cost money. Tell them the estimate the command prints.
+- After a scene's voice changes (`npm run voice -- again`, Generate again, a new take), its avatar says the old words: make it again (`npm run avatar -- make … --scenes id`; the app does it itself after Generate again).
+- Changing the look (a new picture or style) doesn't change avatars already made; ask before remaking them all.
+- Ask the person before changing their avatar's picture, style or model: it is theirs, like their voice.
+- In a Claude cloud session: `FAL_KEY=proxy-injected OPENROUTER_API_KEY=proxy-injected NODE_USE_ENV_PROXY=1 npm run avatar -- …`; fal's files come from `fal.media` hosts, which the environment must allow.
 
 ## Recordings belong to scenes
 

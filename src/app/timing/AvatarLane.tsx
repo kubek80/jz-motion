@@ -8,13 +8,15 @@ import type { RawDoc } from '../editor/doc';
 
 const showsCamera = (l: unknown) => l === 'camera' || l === 'pip' || l === 'pip-left';
 
-export interface AvatarRow { index: number; at: number; length: number; video?: string; stale?: boolean; scene?: string }
+export interface AvatarRow { index: number; at: number; length: number; video?: string; stale?: boolean; scene?: string; /** Being made: how it's going. */ making?: string }
 
-export function avatarRows(clips: Clip[], doc: RawDoc): AvatarRow[] {
+export function avatarRows(clips: Clip[], doc: RawDoc, jobs: Record<string, { note?: string; error?: string }> = {}): AvatarRow[] {
   const wants = new Set(doc.scenes.filter((s) => [s.layout, ...(s.beats ?? []).map((b) => (b as { layout?: unknown }).layout)].some(showsCamera)).map((s) => s.id));
   const seen = new Set<string>();
   const rows: AvatarRow[] = [];
   clips.forEach((c, index) => {
+    const job = jobs[c.id];
+    if (job && !job.error) { rows.push({ index, at: c.offset, length: c.trimEnd - c.trimStart, scene: c.scene, making: job.note ?? 'making' }); return; }
     if (c.avatar) {
       if (seen.has(c.avatar.video)) return;
       seen.add(c.avatar.video);
@@ -42,15 +44,15 @@ export function AvatarLane({ rows, pps, time, onOpen }: { rows: AvatarRow[]; pps
         return (
           <div
             key={`${r.index}-${r.video ?? 'none'}`}
-            className={['avatar-block', r.video ? '' : 'empty', r.stale ? 'stale' : '', r.video && on ? 'showing' : ''].join(' ')}
+            className={['avatar-block', r.making !== undefined ? 'making' : r.video ? '' : 'empty', r.stale ? 'stale' : '', r.video && on ? 'showing' : ''].join(' ')}
             style={{ left: 20 + r.at * pps, width: Math.max(34, r.length * pps) }}
             onDoubleClick={() => onOpen(r.index)}
-            title={r.video
+            title={r.making !== undefined ? `Your avatar is being made for this clip: ${r.making}` : r.video
               ? `Your avatar saying this clip (${r.length.toFixed(1)} s)${r.stale ? ': made for an earlier cut of the clip, make it again' : ''} · double-click to see it or make it again`
               : 'This scene shows the camera, but its clip has no avatar yet · double-click to make one'}
           >
             {r.video && <video src={`/uploads/${r.video}#t=1`} muted playsInline preload="metadata" />}
-            <span className="avatar-name">{r.video ? `${r.stale ? '⚠ ' : ''}🎥 avatar` : '🎥 no avatar yet'}</span>
+            <span className="avatar-name">{r.making !== undefined ? `⏳ making… ${r.making}` : r.video ? `${r.stale ? '⚠ ' : ''}🎥 avatar` : '🎥 no avatar yet'}</span>
           </div>
         );
       })}
