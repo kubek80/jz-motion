@@ -7,6 +7,8 @@
 //   OPENAI_API_KEY                OpenAI (gpt-4o-mini-tts, voice alloy)
 //   TTS_BASE_URL, TTS_MODEL, TTS_VOICE, TTS_API_KEY   anything else (or to override the above)
 //   TTS_INSTRUCTIONS             how to speak, for models that take a style ("calm, clear narrator")
+//   (none of these)               your own voice when voice/my-voice.json exists (My voice in the app saves it);
+//                                TTS_MY_VOICE=0 to use another voice
 //   TTS_SAMPLE                   your voice for a cloning model (TTS_MODEL=fish-audio/s2.1-pro): a recording in
 //                                uploads/, optionally with the part to use: generated-x.webm or rec-1.webm@12-40
 //
@@ -23,6 +25,7 @@ import { cueClicks } from '../src/video/performance';
 import { freeLane, makeRoom, type TimelineClip } from '../src/video/makeRoom';
 import { registerLibrary } from './library';
 import { FFMPEG, probe, run } from './media';
+import { readMyVoice } from './myVoice';
 import { generateTts } from './tts';
 
 const args = process.argv.slice(2);
@@ -34,17 +37,20 @@ if (!['time', 'place'].includes(cmd) || !file) {
 }
 
 const env = process.env;
+// The person's own voice, kept with the project (voice/my-voice.json), unless a model or sample is named here.
+const mine = !env.TTS_MODEL && !env.TTS_SAMPLE && env.TTS_MY_VOICE !== '0' ? await readMyVoice() : null;
 const voicer = {
-  baseURL: env.TTS_BASE_URL ?? (env.OPENROUTER_API_KEY ? 'https://openrouter.ai/api/v1' : 'https://api.openai.com/v1'),
-  model: env.TTS_MODEL ?? (env.OPENROUTER_API_KEY ? 'mistralai/voxtral-mini-tts-2603' : 'gpt-4o-mini-tts'),
+  baseURL: env.TTS_BASE_URL ?? mine?.baseURL ?? (env.OPENROUTER_API_KEY ? 'https://openrouter.ai/api/v1' : 'https://api.openai.com/v1'),
+  model: env.TTS_MODEL ?? mine?.model ?? (env.OPENROUTER_API_KEY ? 'mistralai/voxtral-mini-tts-2603' : 'gpt-4o-mini-tts'),
   voice: env.TTS_VOICE ?? (env.OPENROUTER_API_KEY ? 'en_paul_neutral' : 'alloy'),
   apiKey: env.TTS_API_KEY ?? env.OPENROUTER_API_KEY ?? env.OPENAI_API_KEY,
-  instructions: env.TTS_INSTRUCTIONS,
-  sample: (() => {
+  instructions: env.TTS_INSTRUCTIONS ?? mine?.instructions,
+  sample: mine?.sample ?? (() => {
     const m = /^(?:uploads\/)?([^@]+?)(?:@([\d.]+)-([\d.]+))?$/.exec(env.TTS_SAMPLE ?? '');
     return m ? { upload: m[1], start: Number(m[2] ?? 0), end: Number(m[3] ?? 30) } : undefined;
   })(),
 };
+if (mine) console.log(`In your voice: ${mine.sample.name ?? mine.sample.upload} (${mine.model}; voice/my-voice.json, TTS_MY_VOICE=0 for another voice)`);
 if (!voicer.apiKey) {
   console.error('No speech service: set OPENROUTER_API_KEY (or OPENAI_API_KEY, or TTS_BASE_URL/TTS_MODEL/TTS_VOICE/TTS_API_KEY).');
   process.exit(2);

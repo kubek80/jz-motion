@@ -8,6 +8,7 @@ import type { Plugin, PreviewServer, ViteDevServer } from 'vite';
 import { exportVideo } from './export';
 import { deleteIcon, readLibrary, saveIcon } from './library';
 import { measureLoudness } from './loudness';
+import { readMyVoice, saveMyVoice } from './myVoice';
 import { findOffset } from './media';
 import { logAi, readAiLog, shorten } from './aiLog';
 import { cleanVoice } from './cleanVoice';
@@ -269,6 +270,8 @@ export function jzmServer(): Plugin {
         }
         if (parts[0] === 'api' && parts[1] === 'presentations') return await presentations(req, res, parts[2]);
         if (parts[0] === 'api' && parts[1] === 'takes') return await takes(req, res, parts.slice(2), url.searchParams);
+        if (url.pathname === '/api/my-voice' && req.method === 'GET') return send(res, 200, (await readMyVoice()) ?? {});
+        if (url.pathname === '/api/my-voice' && req.method === 'POST') return send(res, 200, await saveMyVoice(await readJson(req)));
         if (url.pathname === '/api/tts-voices' && req.method === 'GET') return send(res, 200, await speechVoices(url.searchParams.get('model') ?? ''));
         if (parts[0] === 'api' && parts[1] === 'tts' && parts[2] && req.method === 'GET') return send(res, 200, await readTtsSidecar(parts[2]));
         if (url.pathname === '/api/tts' && req.method === 'POST') return send(res, 200, await generateTts(await readJson(req)));

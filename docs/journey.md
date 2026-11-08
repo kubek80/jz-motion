@@ -902,3 +902,14 @@ After step 69 Jakub found the test recorded nothing at all. It could not be repr
 
 **Checked by:** Playwright, intercepting the request: with an OpenRouter model under Models the request carries its key; with none, nothing is sent and the message says where to add it; typecheck, tests, build.
 
+## Step 72: Your voice kept with the project
+
+Jakub cloned his voice and wanted the sample in git, so Claude could generate speech in his voice too. The voice lived only in his browser (settings) and in `uploads/` (not in git).
+
+- **`voice/my-voice.json`** keeps the cloning model and which part of which recording to use, with what is said in it (never a key); the recording is copied to **`uploads/voice-sample-<id>.webm`**, kept in git with LFS (the original stays where it was).
+- **My voice** saves both when a sample is recorded or chosen ("Use as my voice" in a clip's window too), and offers **Save in the project** for a sample chosen before; it says when the sample in use is the one kept with the project.
+- A browser with no voice yet (another computer, after a pull) takes the project's.
+- **`npm run voice`** speaks in that voice by default (`TTS_MY_VOICE=0` for another), so Claude placing a new scene's narration does it in Jakub's voice. The skills say so.
+
+**Checked by:** Playwright: Save in the project wrote `voice/my-voice.json` and `uploads/voice-sample-….webm` (not ignored by git, LFS), the browser switched to it, and a fresh browser took it over; `npm run voice -- time` said "In your voice: …" and generated with it; the test sample was removed afterwards; typecheck, tests, build.
+

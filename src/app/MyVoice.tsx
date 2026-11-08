@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { clones, saveVoicer, useVoicer, VOICERS, type Voicer } from './settingsStore';
+import { clones, keepVoiceInProject, projectVoice, saveVoicer, useVoicer, VOICERS, type Voicer } from './settingsStore';
 import { requestTts } from './tts';
 import { MicCheck, LevelMeter } from './timing/MicCheck';
 import { micDevice } from './timing/micDevice';
@@ -46,6 +46,16 @@ export function MyVoice({ onClose }: { onClose: () => void }) {
   }, [t.state]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const s = voicer.sample;
+  // Whether the sample in use is the one kept with the project (in git).
+  const [inProject, setInProject] = useState<boolean | null>(null);
+  useEffect(() => {
+    void projectVoice().then((v) => setInProject(!!v && !!s && v.sample.upload === s.upload && v.sample.start === s.start && v.sample.end === s.end && v.model === voicer.model));
+  }, [s?.upload, s?.start, s?.end, voicer.model]); // eslint-disable-line react-hooks/exhaustive-deps
+  const keepInProject = async () => {
+    setBusy('Saving it in the project…');
+    setError(null);
+    try { await keepVoiceInProject(voicer); setInProject(true); } catch (e) { setError((e as Error).message); } finally { setBusy(null); }
+  };
   const set = (next: Voicer) => saveVoicer(next);
   const cloner = clones(voicer) ? voicer : { ...voicer, baseURL: CLONERS[0].baseURL, model: CLONERS[0].model };
 
@@ -57,7 +67,8 @@ export function MyVoice({ onClose }: { onClose: () => void }) {
       const res = await fetch('/api/uploads?ext=webm', { method: 'POST', body: t.blob });
       if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error ?? res.statusText);
       const { upload } = await res.json();
-      set({ ...cloner, sample: { upload, start: 0, end: Math.min(t.duration, 30), name: `my voice sample · ${new Date().toLocaleDateString()}`, text: t.duration >= 15 && t.duration <= 31 ? text : undefined } });
+      await keepVoiceInProject({ ...cloner, sample: { upload, start: 0, end: Math.min(t.duration, 30), name: `my voice sample · ${new Date().toLocaleDateString()}`, text: t.duration >= 15 && t.duration <= 31 ? text : undefined } });
+      setInProject(true);
       take.discard();
     } catch (e) {
       setError((e as Error).message);
@@ -98,7 +109,13 @@ export function MyVoice({ onClose }: { onClose: () => void }) {
               <audio controls src={`/uploads/${s.upload}#t=${s.start},${s.end}`} />
               <button onClick={() => set({ ...voicer, sample: undefined })}>Stop using it</button>
             </div>
-          ) : <p className="muted">None yet: record one below, or double-click a clip of you speaking in Timing and click <b>Use as my voice</b>.</p>}
+          ) : null}
+          {s && clones(voicer) ? (
+            inProject
+              ? <p className="muted hint">Kept with the project: <code>voice/my-voice.json</code> and <code>uploads/{s.upload}</code>. Commit and push them, and it works on your other computers (and for Claude working in the repository).</p>
+              : <div className="row"><button onClick={() => void keepInProject()} disabled={!!busy} title="Keep the sample and these settings in the project (git), never the key">💾 Save in the project</button><span className="muted">so it works on your other computers, and for Claude in the repository</span></div>
+          ) : null}
+          {!s && <p className="muted">None yet: record one below, or double-click a clip of you speaking in Timing and click <b>Use as my voice</b>.</p>}
           <label className="field">
             <span>copied by</span>
             <select value={clones(voicer) ? voicer.model : ''} onChange={(e) => { const v = CLONERS.find((x) => x.model === e.target.value); if (v) set({ ...voicer, baseURL: v.baseURL, model: v.model }); }}>
