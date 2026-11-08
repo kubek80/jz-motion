@@ -1,6 +1,5 @@
 // The editor for one open presentation: owns its state (text and undo history, mode, selection, open
 // windows) and lays out the board, panels and controls. The parts live in ./editor/.
-import { adoptProjectVoice } from './settingsStore';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { compile, Stage, type StagePosition } from '../engine';
 import type { Camera } from '../engine/schema';
@@ -92,8 +91,6 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
   const saved = useRef(initial);
   const latest = useRef(text);
   latest.current = text;
-  // A computer whose browser has no voice of yours yet uses the one kept with the project.
-  useEffect(() => { void adoptProjectVoice(); }, []);
   useEffect(() => {
     if (text === saved.current) return;
     const timer = window.setTimeout(() => { saved.current = text; onSave(text); }, 500);

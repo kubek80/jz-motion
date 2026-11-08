@@ -5,6 +5,7 @@ import { Home } from './Home';
 import { openStore, type Store } from './store';
 import { log } from './debug';
 import { loadUserLibrary } from './userLibrary';
+import { adoptProjectVoice } from './settingsStore';
 
 /** The id in the address (#/p/<id>), so a reload keeps the presentation open. */
 const idFromHash = () => location.hash.match(/^#\/p\/([\w-]+)/)?.[1] ?? null;
@@ -35,6 +36,8 @@ export function Root() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    // Your voice, kept with the project, for a browser that has none yet (another computer).
+    void adoptProjectVoice();
     void getStore().then(setStore);
     const onHash = () => setOpenId(idFromHash());
     window.addEventListener('hashchange', onHash);

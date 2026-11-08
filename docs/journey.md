@@ -913,3 +913,11 @@ Jakub cloned his voice and wanted the sample in git, so Claude could generate sp
 
 **Checked by:** Playwright: Save in the project wrote `voice/my-voice.json` and `uploads/voice-sample-….webm` (not ignored by git, LFS), the browser switched to it, and a fresh browser took it over; `npm run voice -- time` said "In your voice: …" and generated with it; the test sample was removed afterwards; typecheck, tests, build.
 
+## Step 73: My voice from the home screen
+
+Jakub wanted his voice at the app's level, reachable from the home screen. The voice already belongs to the app (one sample for every presentation, kept in `voice/my-voice.json`); the home screen now has **🎙 My voice** next to Library and Settings, and the app takes the project's voice when it starts (on the home screen too), not only when a presentation opens.
+
+![My voice opened from the home screen](journey/114-home-my-voice.jpg)
+
+**Checked by:** Playwright with a stand-in voice file: a fresh browser on the home screen took the project's voice, and the button opens My voice with it (stand-in removed afterwards); typecheck, tests, build.
+
