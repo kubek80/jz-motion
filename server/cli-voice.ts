@@ -119,7 +119,9 @@ if (cmd === 'time') {
     const clicks = cueClicks(compiled(trial));
     const next = clicks.find((c) => c.scene > si);
     const end = Math.max(...doc.voiceover.clips.map((c) => c.offset + c.trimEnd - c.trimStart), ...clicks.map((c) => c.t + c.until - c.from));
-    const at = next ? next.t : end + 1;
+    // Where the next timed scene starts: its first cue, or its own clip when that starts earlier (so it isn't cut).
+    const nextClip = next ? doc.voiceover.clips.filter((c) => c.scene === doc.scenes[next.scene].id).map((c) => c.offset) : [];
+    const at = next ? Math.min(next.t, ...nextClip) : end + 1;
     const v = await voiceScene(si);
     if (!v) { console.log(`${scene.title ?? scene.id}: no speaker notes, nothing to place`); continue; }
     makeRoom(doc, at, v.length, scene.id);

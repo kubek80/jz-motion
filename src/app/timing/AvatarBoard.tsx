@@ -8,14 +8,14 @@ import { layoutAt, stateAt, type Performance } from '../../video/performance';
 // and a clip has an avatar (`avatar` on the clip), its video plays in step with the playhead: full frame with the
 // board small in the top right (camera), or in a bottom corner (pip, pip-left). Muted: the clip is the sound.
 
-type Shown = { video: string; at: number; layout: 'camera' | 'pip' | 'pip-left' } | null;
+type Shown = { video: string; at: number; layout: 'camera' | 'pip' | 'pip-left' | 'side' } | null;
 
 /** The avatar to show at `t` on the timeline, and where. */
 export function avatarAt(clips: Clip[], presentation: CompiledPresentation, perf: Performance, t: number): Shown {
   const st = stateAt(perf, t);
   if (!presentation.scenes[st.scene]) return null;
   const { layout } = layoutAt(presentation, st.scene, st.time, 'board');
-  if (layout !== 'camera' && layout !== 'pip' && layout !== 'pip-left') return null;
+  if (layout !== 'camera' && layout !== 'pip' && layout !== 'pip-left' && layout !== 'side') return null;
   for (const c of clips) {
     if (!c.avatar) continue;
     const at = c.offset - (c.trimStart - c.avatar.trimStart);
@@ -55,8 +55,11 @@ export function AvatarBoard({ host, clips, presentation, perf, now, playing }: {
 
   return (
     <div className={`timing-board${shown ? ` avatar-${shown.layout}` : ''}`}>
-      <div className="board-host" ref={host} />
-      {shown && <AvatarVideo key={shown.video} ref={video} className="avatar-live" file={shown.video} />}
+      {/* A 16:9 frame inside whatever space Timing gives the board: the avatar is placed on the board, as in the video. */}
+      <div className="board-frame">
+        <div className="board-host" ref={host} />
+        {shown && <AvatarVideo key={shown.video} ref={video} className="avatar-live" file={shown.video} />}
+      </div>
     </div>
   );
 }

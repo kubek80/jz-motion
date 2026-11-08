@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { loadFalKey, loadVoicer, saveFalKey, sharedKey, withKey } from './settingsStore';
 
-// "My avatar": the picture that says your voice clips in the video. See the one in use, start from any picture,
+// "My avatar": the picture that says your voice clips in the video. See the one in use, upload a picture to start from
+// (only one uploaded here is shown: the picture an avatar was first made from stays out of sight),
 // make a styled version of it (an image model through OpenRouter redraws it as the style says: the cartoon talking
 // head in a home studio by default), and choose how it moves. Kept with the project (voice/my-avatar.json), for
 // every presentation; the fal.ai key stays in this browser.
@@ -27,7 +28,6 @@ export function MyAvatar({ onClose }: { onClose: () => void }) {
   const load = async () => {
     const i: Info = await (await fetch('/api/my-avatar')).json();
     setInfo(i);
-    setSource((s) => s ?? i.avatar?.source ?? null);
     setStyle((s) => s || i.avatar?.style || i.defaultStyle);
     setPrompt(i.avatar?.prompt ?? '');
   };
@@ -103,7 +103,7 @@ export function MyAvatar({ onClose }: { onClose: () => void }) {
             {source && <img className="avatar-source" src={`/uploads/${source}`} alt="The picture to start from" />}
             {source && <button onClick={() => void asItIs()} disabled={!!busy}>Use it as it is</button>}
           </div>
-          <p className="muted hint">A picture of you facing the camera works best: head and shoulders, even light. It is framed 16:9.</p>
+          <p className="muted hint">Upload a new picture of you to make a new avatar from: facing the camera works best, head and shoulders, even light. It is framed 16:9.</p>
         </section>
 
         <section>
@@ -112,7 +112,7 @@ export function MyAvatar({ onClose }: { onClose: () => void }) {
           <div className="row wrap">
             <button className="primary" onClick={() => void styled()} disabled={!!busy || !source} title="An image model redraws the picture as this says (Gemini through OpenRouter, about 14¢)">✨ Draw it in this style</button>
             <button onClick={() => setStyle(info?.defaultStyle ?? '')} disabled={!!busy}>The cartoon studio style</button>
-            {!source && <span className="muted">Choose a picture first.</span>}
+            {!source && <span className="muted">Upload a picture first.</span>}
           </div>
           {candidate && (
             <div className="avatar-candidate">

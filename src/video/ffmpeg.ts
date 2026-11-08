@@ -45,7 +45,8 @@ export function resolveLayout(seg: { layout: LayoutName; track: string }, videoT
   const main = videoTracks.includes(seg.track) ? seg.track : videoTracks[0];
   if (seg.layout === 'side') {
     const other = videoTracks.find((t) => t !== main);
-    return other ? { layout: 'side', track: main, second: other } : { layout: 'pip', track: main };
+    // One camera (your avatar): it on the left half, the board on the right.
+    return other ? { layout: 'side', track: main, second: other } : { layout: 'side', track: main };
   }
   return { layout: seg.layout, track: main };
 }
@@ -88,7 +89,8 @@ export function buildFfmpegArgs(job: FfmpegJob): string[] {
         break;
       case 'side':
         add(`left:${s.track}`, s.track, `${cover(W / 2, H)},${frame(4)}`, 0, 0, s);
-        add(`right:${s.second}`, s.second!, `${cover(W / 2, H)},${frame(4)}`, W / 2, 0, s);
+        if (s.second) add(`right:${s.second}`, s.second, `${cover(W / 2, H)},${frame(4)}`, W / 2, 0, s);
+        else add('board-half', 'board', `scale=${even(W / 2)}:${even(H / 2)},${frame(4)}`, even(W / 2), even(H / 4), s);
         break;
     }
   }

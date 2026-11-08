@@ -10,7 +10,8 @@
 .timing-board { flex: 1 1 0; min-width: 0; aspect-ratio: 16 / 9; max-height: 100%; max-width: 100%; align-self: center; border-radius: 8px; overflow: hidden; background: #000; }
 .timing-board svg { width: 100%; height: 100%; }
 /* The board and, where the layout shows the camera, your avatar: as the video lays them out. */
-.timing-board { position: relative; }
+.timing-board { position: relative; container-type: size; }
+.timing-board .board-frame { position: absolute; inset: 0; margin: auto; width: min(100cqw, calc(100cqh * 16 / 9)); aspect-ratio: 16 / 9; height: auto; overflow: hidden; }
 .timing-board .board-host { position: absolute; inset: 0; }
 .timing-board .avatar-live { position: absolute; object-fit: cover; background: #000; }
 .timing-board.avatar-camera .avatar-live { inset: 0; width: 100%; height: 100%; }
@@ -303,3 +304,5 @@
 .avatar-still .avatar-video-problem { width: 100%; height: 100%; }
 .avatar-block .avatar-video-problem { height: 100%; padding: 0 6px; font-size: 10px; white-space: nowrap; }
 .timing-board .avatar-video-problem.avatar-live { font-size: 14px; }
+.timing-board.avatar-side .avatar-live { left: 0; top: 0; width: 50%; height: 100%; }
+.timing-board.avatar-side .board-host { inset: 25% 0 auto 50%; width: 50%; height: 50%; z-index: 1; outline: 2px solid #67e8f9; background: #000; }

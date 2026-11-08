@@ -1808,7 +1808,8 @@
           ],
           "cue": 245.8
         }
-      ]
+      ],
+      "layout": "pip"
     },
     {
       "id": "recordings",
@@ -2609,6 +2610,389 @@
       ]
     },
     {
+      "id": "my-avatar",
+      "title": "My avatar",
+      "elements": [
+        {
+          "id": "h",
+          "type": "text",
+          "text": "MY AVATAR",
+          "x": 960,
+          "y": 70,
+          "size": 56,
+          "color": "yellow",
+          "style": "bold",
+          "pinned": true
+        },
+        {
+          "id": "me",
+          "type": "icon",
+          "icon": "user",
+          "x": 250,
+          "y": 400,
+          "size": 160,
+          "color": "cyan",
+          "label": "a photo of me"
+        },
+        {
+          "id": "toon",
+          "type": "image",
+          "src": "/media/ea22b9de74dff4bc.webp",
+          "x": 860,
+          "y": 400,
+          "width": 448,
+          "height": 252,
+          "color": "pink"
+        },
+        {
+          "id": "talk",
+          "type": "image",
+          "src": "/media/381e786d7e1192aa.webm",
+          "x": 1530,
+          "y": 400,
+          "width": 448,
+          "height": 252,
+          "color": "green"
+        },
+        {
+          "id": "a1",
+          "type": "arrow",
+          "from": "me",
+          "to": "toon",
+          "color": "pink",
+          "label": "image model"
+        },
+        {
+          "id": "a2",
+          "type": "arrow",
+          "from": "toon",
+          "to": "talk",
+          "color": "green",
+          "label": "fal.ai + my voice"
+        },
+        {
+          "id": "why-h",
+          "type": "text",
+          "text": "a cost decision",
+          "x": 960,
+          "y": 680,
+          "size": 44,
+          "color": "yellow"
+        },
+        {
+          "id": "why1",
+          "type": "text",
+          "text": "a cartoon: usually right in one take",
+          "x": 960,
+          "y": 780,
+          "size": 46,
+          "color": "green"
+        },
+        {
+          "id": "why2",
+          "type": "text",
+          "text": "a realistic face: several takes",
+          "x": 960,
+          "y": 870,
+          "size": 46,
+          "color": "orange"
+        },
+        {
+          "id": "rec",
+          "type": "image",
+          "src": "/media/b86a0ae19e9275a3.webm",
+          "x": 960,
+          "y": 560,
+          "width": 1200,
+          "height": 750,
+          "frame": "browser",
+          "url": "localhost:5173 · Timing",
+          "color": "cyan"
+        },
+        {
+          "id": "a-lanes",
+          "type": "area",
+          "x": 960,
+          "y": 856,
+          "width": 1200,
+          "height": 113,
+          "shape": "rect",
+          "color": "green"
+        },
+        {
+          "id": "a-menu",
+          "type": "area",
+          "x": 590,
+          "y": 857,
+          "width": 291,
+          "height": 220,
+          "shape": "rect",
+          "color": "pink"
+        },
+        {
+          "id": "a-inuse",
+          "type": "area",
+          "x": 960,
+          "y": 417,
+          "width": 1126,
+          "height": 202,
+          "shape": "rect",
+          "color": "cyan"
+        },
+        {
+          "id": "cap-lane",
+          "type": "text",
+          "text": "each avatar on its own lane, under the voice it says",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "green",
+          "pinned": true
+        },
+        {
+          "id": "cap-menu",
+          "type": "text",
+          "text": "right-click a clip: make my avatar",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "pink",
+          "pinned": true
+        },
+        {
+          "id": "cap-mine",
+          "type": "text",
+          "text": "My avatar: the picture, its style, how it moves",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "cyan",
+          "pinned": true
+        }
+      ],
+      "beats": [
+        {
+          "title": "A face",
+          "notes": "The last piece was a face. My avatar starts from a photo of me, redrawn by an image model as a cartoon, in a little home studio.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "h"
+            },
+            {
+              "do": "draw",
+              "target": "me"
+            },
+            {
+              "do": "draw",
+              "target": "a1",
+              "delay": 0.3
+            },
+            {
+              "do": "fade-in",
+              "target": "toon",
+              "duration": 0.8
+            }
+          ],
+          "cue": 335.29
+        },
+        {
+          "title": "It speaks",
+          "notes": "A second model, on fal.ai, makes that cartoon say my voice clips, one clip at a time.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "a2"
+            },
+            {
+              "do": "fade-in",
+              "target": "talk",
+              "duration": 0.6
+            },
+            {
+              "do": "play",
+              "target": "talk",
+              "on": true,
+              "from": 0
+            }
+          ],
+          "cue": 345.1
+        },
+        {
+          "title": "Why a cartoon",
+          "notes": "Choosing a cartoon was a cost decision. Cartoons are more forgiving: one take usually looks right, where a realistic face needed several.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "why-h"
+            },
+            {
+              "do": "draw",
+              "target": "why1",
+              "delay": 0.4
+            },
+            {
+              "do": "draw",
+              "target": "why2",
+              "delay": 1.2
+            }
+          ],
+          "cue": 352.6
+        },
+        {
+          "title": "In Timing",
+          "notes": "In Timing, each avatar sits on its own lane, under the voice it says.",
+          "actions": [
+            {
+              "do": "play",
+              "target": "talk",
+              "on": false
+            },
+            {
+              "do": "fade-out",
+              "target": [
+                "me",
+                "a1",
+                "toon",
+                "a2",
+                "talk",
+                "why-h",
+                "why1",
+                "why2"
+              ],
+              "start": "with",
+              "stagger": 0.05
+            },
+            {
+              "do": "fade-in",
+              "target": "rec",
+              "duration": 0.6
+            },
+            {
+              "do": "play",
+              "target": "rec",
+              "goto": 46,
+              "fade": true,
+              "duration": 0.5,
+              "start": "with"
+            },
+            {
+              "do": "camera",
+              "focus": "a-lanes",
+              "padding": 40,
+              "delay": 0.3
+            },
+            {
+              "do": "spotlight",
+              "target": "a-lanes",
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap-lane",
+              "start": "with",
+              "delay": 0.3
+            }
+          ],
+          "cue": 361.7
+        },
+        {
+          "title": "Right-click",
+          "notes": "To make one, I right-click a clip, and a few minutes later it's there.",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "cap-lane"
+            },
+            {
+              "do": "play",
+              "target": "rec",
+              "goto": 57,
+              "fade": true,
+              "duration": 0.5,
+              "start": "with"
+            },
+            {
+              "do": "camera",
+              "focus": "a-menu",
+              "zoom": 1.8,
+              "start": "with",
+              "delay": 0.3
+            },
+            {
+              "do": "spotlight",
+              "target": "a-menu",
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap-menu",
+              "start": "with",
+              "delay": 0.3
+            }
+          ],
+          "cue": 367.05
+        },
+        {
+          "title": "My avatar",
+          "notes": "And My avatar keeps the picture, its style and how it moves, for every video I make.",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "cap-menu"
+            },
+            {
+              "do": "play",
+              "target": "rec",
+              "goto": 64,
+              "fade": true,
+              "duration": 0.5,
+              "start": "with"
+            },
+            {
+              "do": "camera",
+              "focus": "a-inuse",
+              "padding": 60,
+              "start": "with",
+              "delay": 0.3
+            },
+            {
+              "do": "spotlight",
+              "target": "a-inuse",
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap-mine",
+              "start": "with",
+              "delay": 0.3
+            }
+          ],
+          "cue": 371.99
+        },
+        {
+          "title": "Back out",
+          "auto": true,
+          "actions": [
+            {
+              "do": "spotlight",
+              "on": false
+            },
+            {
+              "do": "camera",
+              "focus": "all",
+              "start": "with"
+            },
+            {
+              "do": "fade-out",
+              "target": "cap-mine",
+              "start": "with"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "style",
       "title": "One style for everything",
       "elements": [
@@ -2804,7 +3188,7 @@
             }
           ],
           "notes": "The other goal is consistency: whatever a model makes has to look like it came from the same set of markers.",
-          "cue": 335.29
+          "cue": 378.9
         },
         {
           "title": "Everything",
@@ -2826,7 +3210,7 @@
               "target": "rule"
             }
           ],
-          "cue": 342.97
+          "cue": 386.58
         },
         {
           "title": "Six marker colours",
@@ -2845,7 +3229,7 @@
               "stagger": 0.15
             }
           ],
-          "cue": 348.67
+          "cue": 392.28
         },
         {
           "title": "Make your own",
@@ -2863,7 +3247,7 @@
               "delay": 0.6
             }
           ],
-          "cue": 354.56
+          "cue": 398.17
         },
         {
           "title": "Versions",
@@ -2875,7 +3259,7 @@
               "padding": 10
             }
           ],
-          "cue": 360.75
+          "cue": 404.36
         },
         {
           "title": "Keep it",
@@ -3074,7 +3458,7 @@
               "start": "with"
             }
           ],
-          "cue": 365.44
+          "cue": 409.05
         },
         {
           "title": "Both AIs follow them",
@@ -3097,7 +3481,7 @@
               "stagger": 0.4
             }
           ],
-          "cue": 377.44
+          "cue": 421.05
         },
         {
           "title": "One source of truth",
@@ -3112,7 +3496,7 @@
               "target": "folder"
             }
           ],
-          "cue": 384.24
+          "cue": 427.85
         }
       ]
     },
@@ -3316,7 +3700,7 @@
               "target": "server-stack"
             }
           ],
-          "cue": 389.56
+          "cue": 433.17
         },
         {
           "title": "Each explainer adds one",
@@ -3331,7 +3715,7 @@
               "target": "it-new"
             }
           ],
-          "cue": 400.89
+          "cue": 444.5
         },
         {
           "title": "So each one costs less",
@@ -3352,7 +3736,7 @@
               ]
             }
           ],
-          "cue": 405.46
+          "cue": 449.07
         }
       ]
     },
@@ -3594,7 +3978,7 @@
               "target": "h"
             }
           ],
-          "cue": 412.63
+          "cue": 456.24
         },
         {
           "title": "In the browser",
@@ -3614,7 +3998,7 @@
             }
           ],
           "notes": "In the browser, we have a frontend application made with React. SVG animations are made with GSAP, and 3D coordinates are calculated with Three.js.",
-          "cue": 414.93
+          "cue": 458.54
         },
         {
           "title": "A small local server",
@@ -3650,7 +4034,7 @@
             }
           ],
           "notes": "It's paired with a local server responsible for keeping the files, proxying LLM calls, transcription of recordings and export of videos.",
-          "cue": 426.59
+          "cue": 470.2
         },
         {
           "title": "Swappable models",
@@ -3674,7 +4058,7 @@
               ]
             }
           ],
-          "cue": 436.31
+          "cue": 479.92
         },
         {
           "title": "Voice both ways",
@@ -3719,7 +4103,7 @@
               "target": "a6"
             }
           ],
-          "cue": 441.98
+          "cue": 485.59
         }
       ]
     },
@@ -4042,7 +4426,7 @@
             }
           ],
           "notes": "Because every request is checked and repaired, I can experiment with smaller models.",
-          "cue": 450.68
+          "cue": 494.29
         },
         {
           "title": "Story",
@@ -4059,7 +4443,7 @@
               "stagger": 0.25
             }
           ],
-          "cue": 456.63
+          "cue": 500.24
         },
         {
           "title": "Small edits",
@@ -4076,7 +4460,7 @@
             }
           ],
           "notes": "Small edits, like changing a beat, work fine with fast, cheap models like Haiku.",
-          "cue": 463.76
+          "cue": 507.37
         },
         {
           "title": "Drawings",
@@ -4093,7 +4477,7 @@
               "stagger": 0.25
             }
           ],
-          "cue": 469.85
+          "cue": 513.46
         },
         {
           "title": "Voice",
@@ -4110,7 +4494,7 @@
             }
           ],
           "notes": "For transcription I use a small OpenAI model. At first I recorded the voice-over myself, but as I kept updating the script, I switched to AI: a clone of my own voice, so a changed sentence doesn't mean recording it again.",
-          "cue": 476.82
+          "cue": 520.43
         },
         {
           "title": "Transcription",
@@ -4152,7 +4536,7 @@
               "delay": 0.6
             }
           ],
-          "cue": 492.2
+          "cue": 535.81
         }
       ]
     },
@@ -4270,7 +4654,7 @@
               "target": "script-ico"
             }
           ],
-          "cue": 505.16
+          "cue": 548.77
         },
         {
           "title": "Three ways to touch it",
@@ -4289,7 +4673,7 @@
             }
           ],
           "notes": "I can read and edit the whole thing in the Script view, inline in the Timing prompter,",
-          "cue": 513.43
+          "cue": 557.04
         },
         {
           "title": "Same text, three lenses",
@@ -4308,7 +4692,7 @@
             }
           ],
           "notes": "or in the raw JSON tab if I want to see the shape.",
-          "cue": 518.96
+          "cue": 562.57
         }
       ]
     },
@@ -4457,7 +4841,7 @@
               "delay": 0.5
             }
           ],
-          "cue": 524.24
+          "cue": 567.85
         },
         {
           "title": "One line at a time",
@@ -4493,7 +4877,7 @@
               "delay": 0.8
             }
           ],
-          "cue": 532.56
+          "cue": 576.17
         },
         {
           "title": "The timeline",
@@ -4521,7 +4905,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 540.01
+          "cue": 583.62
         },
         {
           "title": "Just read",
@@ -4555,7 +4939,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 549.58
+          "cue": 593.19
         },
         {
           "title": "Tidy up",
@@ -4591,7 +4975,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 558.53
+          "cue": 602.14
         },
         {
           "title": "Back out",
@@ -4770,7 +5154,7 @@
               "delay": 0.8
             }
           ],
-          "cue": 566.16
+          "cue": 609.77
         },
         {
           "title": "Home",
@@ -4806,7 +5190,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 571.86
+          "cue": 615.47
         },
         {
           "title": "This scene",
@@ -4848,7 +5232,7 @@
               "delay": 1
             }
           ],
-          "cue": 575.96
+          "cue": 619.57
         },
         {
           "title": "The AI tab",
@@ -4884,7 +5268,7 @@
               "delay": 0.5
             }
           ],
-          "cue": 586.8
+          "cue": 630.41
         },
         {
           "title": "The library",
@@ -4920,7 +5304,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 594.56
+          "cue": 638.17
         },
         {
           "title": "Same skills",
@@ -4942,7 +5326,7 @@
               "delay": 0.4
             }
           ],
-          "cue": 600.86
+          "cue": 644.47
         }
       ]
     },
@@ -5030,7 +5414,7 @@
             }
           ],
           "notes": "One of my main goals was to create an app that would let me make a ten-minute explainer video for under five dollars. I'm happy to share that I was successful.",
-          "cue": 609.71
+          "cue": 653.32
         },
         {
           "title": "Why it works",
@@ -5042,7 +5426,7 @@
             }
           ],
           "notes": "If I had to name three main contributors to that success: a presentation is pure JSON, so tokens are cheap;",
-          "cue": 620.12
+          "cue": 663.73
         },
         {
           "title": "Beat 3",
@@ -5053,7 +5437,7 @@
             }
           ],
           "notes": "the library grows, so most drawings are reused;",
-          "cue": 627.8
+          "cue": 671.41
         },
         {
           "title": "Beat 4",
@@ -5064,7 +5448,7 @@
             }
           ],
           "notes": "and the repair loop lets me use small, fast models.",
-          "cue": 631.79
+          "cue": 675.4
         }
       ],
       "layout": "pip"
@@ -5182,7 +5566,7 @@
             }
           ],
           "notes": "And now the last mile: I click Record and adjust the timing, like I'm doing right now.",
-          "cue": 636.43
+          "cue": 680.04
         },
         {
           "title": "Export",
@@ -5207,7 +5591,7 @@
               ]
             }
           ],
-          "cue": 642.8
+          "cue": 686.41
         },
         {
           "title": "Thanks",
@@ -5222,10 +5606,10 @@
               "stagger": 1.2
             }
           ],
-          "cue": 647.2
+          "cue": 690.81
         }
       ],
-      "layout": "camera"
+      "layout": "side"
     }
   ],
   "voiceover": {
@@ -5348,7 +5732,12 @@
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 57.307,
-        "name": "generated voice · LLM first"
+        "name": "generated voice · LLM first",
+        "avatar": {
+          "video": "avatar-llm-first-c6772a.mp4",
+          "trimStart": 0,
+          "trimEnd": 57.307
+        }
       },
       {
         "id": "gen-recordings",
@@ -5373,11 +5762,22 @@
         "name": "generated voice · Finding my voice"
       },
       {
+        "id": "gen-my-avatar",
+        "scene": "my-avatar",
+        "upload": "generated-my-avatar.webm",
+        "sourceDuration": 42.807,
+        "offset": 335.29,
+        "lane": 0,
+        "trimStart": 0,
+        "trimEnd": 42.807,
+        "name": "generated voice · My avatar"
+      },
+      {
         "id": "gen-style",
         "scene": "style",
         "upload": "generated-style.webm",
         "sourceDuration": 29.307,
-        "offset": 334.531,
+        "offset": 378.139,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 29.307,
@@ -5388,7 +5788,7 @@
         "scene": "skills-guide",
         "upload": "generated-skills-guide.webm",
         "sourceDuration": 23.307,
-        "offset": 364.69,
+        "offset": 408.298,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 23.307,
@@ -5399,7 +5799,7 @@
         "scene": "library",
         "upload": "generated-library.webm",
         "sourceDuration": 23.007,
-        "offset": 388.799,
+        "offset": 432.407,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 23.007,
@@ -5410,7 +5810,7 @@
         "scene": "architecture",
         "upload": "generated-architecture.webm",
         "sourceDuration": 37.207,
-        "offset": 412.632,
+        "offset": 456.24,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 37.207,
@@ -5421,7 +5821,7 @@
         "scene": "models",
         "upload": "generated-models.webm",
         "sourceDuration": 52.907,
-        "offset": 450.679,
+        "offset": 494.287,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 52.907,
@@ -5432,7 +5832,7 @@
         "scene": "script",
         "upload": "generated-script.webm",
         "sourceDuration": 18.207,
-        "offset": 504.398,
+        "offset": 548.006,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 18.207,
@@ -5443,7 +5843,7 @@
         "scene": "timing-b",
         "upload": "generated-timing-b.webm",
         "sourceDuration": 41.807,
-        "offset": 523.484,
+        "offset": 567.092,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 41.807,
@@ -5454,7 +5854,7 @@
         "scene": "ai-helpers-b",
         "upload": "generated-ai-helpers-b.webm",
         "sourceDuration": 41.907,
-        "offset": 566.156,
+        "offset": 609.764,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 41.907,
@@ -5465,7 +5865,7 @@
         "scene": "cost",
         "upload": "generated-cost.webm",
         "sourceDuration": 25.907,
-        "offset": 608.948,
+        "offset": 652.556,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 25.907,
@@ -5481,7 +5881,7 @@
         "scene": "publish",
         "upload": "generated-publish.webm",
         "sourceDuration": 13.507,
-        "offset": 635.668,
+        "offset": 679.276,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 13.507,
