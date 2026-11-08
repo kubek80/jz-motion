@@ -4,7 +4,7 @@ import { loadProfiles, type ModelProfile } from '../ai/profiles';
 import { rate } from '../ai/recommend';
 import { ModelSelect } from './ModelSelect';
 import { ModelsEditor } from './ModelsEditor';
-import { loadModeModels, loadTranscriber, loadVoicer, saveModeModel, saveTranscriber, saveVoicer, TRANSCRIBERS, VOICERS, VOICES, clones, type StartMode, type Transcriber, type Voicer } from './settingsStore';
+import { loadModeModels, loadTranscriber, loadVoicer, saveModeModel, saveTranscriber, saveVoicer, TRANSCRIBERS, VOICERS, VOICES, clones, sharedKey, type StartMode, type Transcriber, type Voicer } from './settingsStore';
 
 /** Speech-to-text service settings (for presentations made from a recording). */
 export function TranscriberFields({ value, onChange }: { value: Transcriber; onChange: (t: Transcriber) => void }) {
@@ -19,7 +19,7 @@ export function TranscriberFields({ value, onChange }: { value: Transcriber; onC
       </label>
       <label className="field"><span>base URL</span><input value={value.baseURL} onChange={(e) => onChange({ ...value, baseURL: e.target.value })} /></label>
       <label className="field"><span>model</span><input value={value.model} onChange={(e) => onChange({ ...value, model: e.target.value })} /></label>
-      <label className="field"><span>API key</span><input type="password" autoComplete="off" value={value.apiKey} onChange={(e) => onChange({ ...value, apiKey: e.target.value })} /></label>
+      <label className="field"><span>API key</span><input type="password" autoComplete="off" value={value.apiKey} placeholder={sharedKey(value) ? 'empty: uses the key of your model for this service (Models above)' : 'needed'} onChange={(e) => onChange({ ...value, apiKey: e.target.value })} /></label>
     </>
   );
 }

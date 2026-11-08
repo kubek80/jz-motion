@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { clones, saveVoicer, useVoicer, VOICERS, type Voicer } from './settingsStore';
+import { requestTts } from './tts';
 import { MicCheck, LevelMeter } from './timing/MicCheck';
 import { micDevice } from './timing/micDevice';
 import { useMicLevel } from './timing/useMicLevel';
@@ -69,9 +70,7 @@ export function MyVoice({ onClose }: { onClose: () => void }) {
     setBusy('Making it in your voice…');
     setError(null);
     try {
-      const res = await fetch('/api/tts', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ presentationId: 'my-voice', text: trial, ...voicer, sample: clones(voicer) ? voicer.sample : undefined }) });
-      const r = await res.json();
-      if (!res.ok) throw new Error(r.error ?? res.statusText);
+      const r = await requestTts('my-voice', trial, voicer);
       setHeard(`/tts/my-voice/${r.audio}`);
     } catch (e) {
       setError((e as Error).message);

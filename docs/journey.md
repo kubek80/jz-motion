@@ -896,3 +896,9 @@ After step 69 Jakub found the test recorded nothing at all. It could not be repr
 
 **Checked by:** Playwright with Chrome's usual autoplay rules and the stand-in microphone: two tests in a row, each with its message and player; typecheck, tests, build.
 
+## Step 71: The voice uses your OpenRouter key from Models
+
+"Say it in my voice" failed with OpenRouter's "No cookie auth credentials found" (401): no key was sent, because the voice's own key in Settings → Voice generation was empty while Jakub's OpenRouter key sits with his models. Generated voice now uses its own key, or else the key of a model for the same service under Models (`withKey`, for Generate voice, Script, My voice and everything that asks for speech); the key field says so when it is empty. With no key anywhere, it says where to add one instead of sending a request without it.
+
+**Checked by:** Playwright, intercepting the request: with an OpenRouter model under Models the request carries its key; with none, nothing is sent and the message says where to add it; typecheck, tests, build.
+

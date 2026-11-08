@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { loadProfiles } from '../ai/profiles';
 // Settings kept in this browser: the speech-to-text service, the voice generator, and which model each kind of request uses.
 
 export interface Transcriber { baseURL: string; model: string; apiKey: string }
@@ -74,11 +75,17 @@ export type StartMode = 'topic' | 'script' | 'recording';
 export const loadModeModels = () => read<Partial<Record<StartMode, string>>>('jzm.modeModels', {});
 export const saveModeModel = (mode: StartMode, id: string) => write('jzm.modeModels', { ...loadModeModels(), [mode]: id });
 
-/** The voice settings, kept up to date when they change (Settings, or "Use as my voice" on a clip). */
+const host = (url: string) => { try { return new URL(url).host; } catch { return ''; } };
+/** A model under Models with a key for the same service (OpenRouter, OpenAI…), for a voice with no key of its own. */
+export const sharedKey = (v: Pick<Voicer, 'baseURL'>) => loadProfiles().find((p) => p.apiKey && host(p.baseURL) === host(v.baseURL))?.apiKey;
+/** The voice settings with a key: their own, or the same service's key from Models. */
+export const withKey = (v: Voicer): Voicer => (v.apiKey ? v : { ...v, apiKey: sharedKey(v) ?? '' });
+
+/** The voice settings (with a key, see withKey), kept up to date when they change (Settings, or "Use as my voice"). */
 export function useVoicer(): Voicer {
-  const [v, setV] = useState(loadVoicer);
+  const [v, setV] = useState(() => withKey(loadVoicer()));
   useEffect(() => {
-    const changed = () => setV(loadVoicer());
+    const changed = () => setV(withKey(loadVoicer()));
     window.addEventListener('jzm-voicer-changed', changed);
     return () => window.removeEventListener('jzm-voicer-changed', changed);
   }, []);
