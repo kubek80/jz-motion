@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { log } from '../debug';
 import { setMicDevice } from './micDevice';
 import type { MicLevel } from './useMicLevel';
 
@@ -39,7 +40,7 @@ export function LevelMeter({ mic }: { mic: MicLevel }) {
 
 export function MicCheck({ mic, onDevice }: { mic: MicLevel; onDevice: (id: string | undefined) => void }) {
   const a = advice(mic.peak, mic.clipped);
-  const [test, setTest] = useState<{ state: 'idle' | 'recording' | 'ready'; url?: string; left?: number }>({ state: 'idle' });
+  const [test, setTest] = useState<{ state: 'idle' | 'recording' | 'ready'; url?: string; left?: number; note?: string; bad?: boolean }>({ state: 'idle' });
   const timer = useRef<number | undefined>(undefined);
   const recorder = useRef<MediaRecorder | null>(null);
   // The previous test's sound is let go when a new one replaces it; the countdown is only stopped by the test
@@ -53,12 +54,28 @@ export function MicCheck({ mic, onDevice }: { mic: MicLevel; onDevice: (id: stri
   };
   const recordTest = () => {
     if (!mic.stream || recorder.current?.state === 'recording') return;
-    const rec = new MediaRecorder(mic.stream);
+    const track = mic.stream.getAudioTracks()[0];
+    if (!track || track.readyState !== 'live') {
+      setTest({ state: 'idle', note: 'The microphone is not giving sound (its input ended): pick it again above, or close and reopen this window.', bad: true });
+      return;
+    }
+    let rec: MediaRecorder;
+    try { rec = new MediaRecorder(mic.stream); } catch (e) { setTest({ state: 'idle', note: `The browser can't record from it: ${(e as Error).message}`, bad: true }); return; }
     recorder.current = rec;
     const chunks: Blob[] = [];
-    rec.ondataavailable = (e) => e.data.size && chunks.push(e.data);
-    rec.onstop = () => setTest({ state: 'ready', url: URL.createObjectURL(new Blob(chunks, { type: rec.mimeType })) });
-    rec.start();
+    const started = performance.now();
+    rec.ondataavailable = (e) => { if (e.data.size) chunks.push(e.data); };
+    rec.onerror = (e) => setTest({ state: 'idle', note: `Recording failed: ${(e as unknown as { error?: Error }).error?.message ?? 'unknown error'}`, bad: true });
+    rec.onstop = () => {
+      const blob = new Blob(chunks, { type: rec.mimeType || 'audio/webm' });
+      const secs = (performance.now() - started) / 1000;
+      log('micTest', { bytes: blob.size, chunks: chunks.length, secs, type: rec.mimeType, track: track.readyState, muted: track.muted, label: track.label });
+      // A few hundred bytes is just the file's header: no sound came through.
+      if (blob.size < 2000) setTest({ state: 'idle', note: `Nothing came through from "${track.label || 'the microphone'}"${track.muted ? ' (it is muted)' : ''}: check that it is not muted or used by another app, pick it again above, or reload the page.`, bad: true });
+      else setTest({ state: 'ready', url: URL.createObjectURL(blob), note: `Recorded ${secs.toFixed(1)} s (${Math.round(blob.size / 1024)} KB). Listen:` });
+    };
+    // In small pieces as it goes (more reliable than one piece at the end).
+    rec.start(250);
     let left = 5;
     setTest({ state: 'recording', left });
     window.clearInterval(timer.current);
@@ -87,7 +104,8 @@ export function MicCheck({ mic, onDevice }: { mic: MicLevel; onDevice: (id: stri
         <button onClick={test.state === 'recording' ? stopTest : recordTest} disabled={!mic.stream} className={test.state === 'recording' ? 'rec-btn on' : ''} title={test.state === 'recording' ? 'Stop the test now' : 'Record five seconds and listen to how you sound'}>
           {test.state === 'recording' ? `■ Stop (${test.left} s left)` : test.state === 'ready' ? '● Record another 5 s test' : '● Record a 5 s test'}
         </button>
-        {test.state === 'ready' && test.url && <audio controls src={test.url} />}
+        {test.note && <span className={test.bad ? 'note-text' : 'muted'}>{test.note}</span>}
+        {test.state === 'ready' && test.url && <audio key={test.url} controls src={test.url} />}
       </div>
       <p className="muted hint">Recording narration uses this microphone too. The video evens out the overall volume, so aim for peaks in the green rather than as loud as possible.</p>
     </div>
