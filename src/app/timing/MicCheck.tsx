@@ -41,20 +41,30 @@ export function MicCheck({ mic, onDevice }: { mic: MicLevel; onDevice: (id: stri
   const a = advice(mic.peak, mic.clipped);
   const [test, setTest] = useState<{ state: 'idle' | 'recording' | 'ready'; url?: string; left?: number }>({ state: 'idle' });
   const timer = useRef<number | undefined>(undefined);
-  useEffect(() => () => { window.clearInterval(timer.current); if (test.url) URL.revokeObjectURL(test.url); }, [test.url]);
+  const recorder = useRef<MediaRecorder | null>(null);
+  // The previous test's sound is let go when a new one replaces it; the countdown is only stopped by the test
+  // itself or when the window closes (letting go of the old sound used to stop the new countdown too).
+  useEffect(() => () => { if (test.url) URL.revokeObjectURL(test.url); }, [test.url]);
+  useEffect(() => () => { window.clearInterval(timer.current); if (recorder.current?.state === 'recording') recorder.current.stop(); }, []);
 
+  const stopTest = () => {
+    window.clearInterval(timer.current);
+    if (recorder.current?.state === 'recording') recorder.current.stop();
+  };
   const recordTest = () => {
-    if (!mic.stream) return;
+    if (!mic.stream || recorder.current?.state === 'recording') return;
     const rec = new MediaRecorder(mic.stream);
+    recorder.current = rec;
     const chunks: Blob[] = [];
     rec.ondataavailable = (e) => e.data.size && chunks.push(e.data);
     rec.onstop = () => setTest({ state: 'ready', url: URL.createObjectURL(new Blob(chunks, { type: rec.mimeType })) });
     rec.start();
     let left = 5;
     setTest({ state: 'recording', left });
+    window.clearInterval(timer.current);
     timer.current = window.setInterval(() => {
       left -= 1;
-      if (left <= 0) { window.clearInterval(timer.current); rec.stop(); } else setTest({ state: 'recording', left });
+      if (left <= 0) stopTest(); else setTest({ state: 'recording', left });
     }, 1000);
   };
 
@@ -74,8 +84,8 @@ export function MicCheck({ mic, onDevice }: { mic: MicLevel; onDevice: (id: stri
         </>
       )}
       <div className="row">
-        <button onClick={recordTest} disabled={!mic.stream || test.state === 'recording'} title="Record five seconds and listen to how you sound">
-          {test.state === 'recording' ? `● Recording… ${test.left}` : '● Record a 5 s test'}
+        <button onClick={test.state === 'recording' ? stopTest : recordTest} disabled={!mic.stream} className={test.state === 'recording' ? 'rec-btn on' : ''} title={test.state === 'recording' ? 'Stop the test now' : 'Record five seconds and listen to how you sound'}>
+          {test.state === 'recording' ? `■ Stop (${test.left} s left)` : test.state === 'ready' ? '● Record another 5 s test' : '● Record a 5 s test'}
         </button>
         {test.state === 'ready' && test.url && <audio controls src={test.url} />}
       </div>
