@@ -28,9 +28,9 @@ import { compile } from '../src/engine/compile';
 import { cueClicks } from '../src/video/performance';
 import { freeLane, makeRoom, type TimelineClip } from '../src/video/makeRoom';
 import { registerLibrary } from './library';
-import { FFMPEG, probe, run } from './media';
 import { readMyVoice } from './myVoice';
 import { generateTts } from './tts';
+import { joinVoice, SENTENCE_GAP } from './voiceJoin';
 
 const args = process.argv.slice(2);
 const value = (name: string) => { const i = args.indexOf(`--${name}`); return i >= 0 ? args[i + 1] : undefined; };
@@ -60,8 +60,6 @@ if (!voicer.apiKey) {
   process.exit(2);
 }
 
-const SENTENCE_GAP = 0.25;
-const BEAT_GAP = 0.6;
 const SCENE_TAIL = 0.9;
 
 type Doc = { scenes: { id: string; title?: string; skip?: boolean; beats: { title?: string; notes?: string; cue?: number; auto?: boolean }[] }[]; voiceover?: { clips: (TimelineClip & { scene?: string })[] } };
@@ -154,30 +152,21 @@ if (cmd === 'time') {
 async function voiceScene(si: number) {
   const scene = doc.scenes[si];
   const anim = compiled(doc).scenes[si].beats.map((b) => b.end - b.start);
-  const parts: { audio: string; gap: number }[] = [];
-  const cues: [number, number][] = [];
-  let t = 0, lead = 0;
+  const parts: { notes?: string; need: number }[] = [];
+  const beats: number[] = [];
   for (const [bi, b] of scene.beats.entries()) {
-    const lines = await speak(b.notes);
-    if (!lines.length && b.auto) continue;
-    cues.push([bi, t]);
+    const words = splitSentences(b.notes ?? '').length;
+    if (!words && b.auto) continue;
     // The time this beat needs on screen: its animation and that of the wordless auto beats right after it.
     let need = anim[bi];
     for (let k = bi + 1; k < scene.beats.length && scene.beats[k].auto && !splitSentences(scene.beats[k].notes ?? '').length; k++) need += anim[k];
-    const start = t;
-    lines.forEach((l, k) => { const gap = k < lines.length - 1 ? SENTENCE_GAP : BEAT_GAP; parts.push({ audio: l.audio, gap }); t += l.duration + gap; });
-    const extra = Math.max(0, start + need + 0.3 - t);
-    if (extra) { if (parts.length) parts[parts.length - 1].gap += extra; else lead += extra; t += extra; }
+    parts.push({ notes: b.notes, need });
+    beats.push(bi);
   }
-  if (!parts.length) return null;
-  const upload = `generated-${scene.id}.webm`;
-  const inputs = parts.flatMap((p) => ['-i', p.audio]);
-  const pads = parts.map((p, k) => `[${k}:a]aresample=48000,aformat=channel_layouts=mono,apad=pad_dur=${p.gap.toFixed(3)}[p${k}]`);
-  const joined = `${parts.map((_, k) => `[p${k}]`).join('')}concat=n=${parts.length}:v=0:a=1[out]`;
-  await run(FFMPEG, ['-y', '-v', 'error', ...inputs, '-filter_complex', [...pads, joined].join(';'), '-map', '[out]', '-c:a', 'libopus', '-b:a', '64k', join('uploads', upload)]);
-  const duration = (await probe(join('uploads', upload))).duration;
-  // A wordless first beat: the clip starts after it.
-  return { upload, duration, lead, cues, length: Math.round(Math.max(t + SCENE_TAIL, lead + duration + 0.4) * 1000) / 1000 };
+  const r = await joinVoice(presentationId, `generated-${scene.id}.webm`, parts, voicer);
+  if (!r) return null;
+  const cues = beats.map((bi, k) => [bi, r.starts[k]] as [number, number]);
+  return { upload: r.upload, duration: r.duration, lead: 0, cues, length: Math.round(Math.max(r.length + SCENE_TAIL, r.duration + 0.4) * 1000) / 1000 };
 }
 
 /** Put a scene's clip on the timeline at `at`, bound to the scene, and cue its beats. */

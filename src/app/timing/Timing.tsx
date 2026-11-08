@@ -268,6 +268,7 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
       {openClip !== null && openClip >= 0 && clips[openClip] && (
         <ClipDetail
           key={openAt!.id}
+          presentationId={presentationId}
           clip={clips[openClip]}
           index={openClip}
           clips={clips}
