@@ -1,6 +1,7 @@
 {
   "baseURL": "https://openrouter.ai/api/v1",
   "model": "fish-audio/s2.1-pro",
+  "instructions": "Speak in a neutral, standard British English accent, clear and calm, as a native speaker would, keeping the same voice.",
   "sample": {
     "upload": "voice-sample-bcb1670058.webm",
     "start": 0,
