@@ -4,3 +4,5 @@ media/** filter=lfs diff=lfs merge=lfs -text
 media/index.json !filter !diff !merge text
 # Generated narration kept with the presentations (uploads/generated-*) is stored the same way.
 uploads/generated-* filter=lfs diff=lfs merge=lfs -text
+# Your voice sample (uploads/voice-sample-*, see voice/my-voice.json) too.
+uploads/voice-sample-* filter=lfs diff=lfs merge=lfs -text

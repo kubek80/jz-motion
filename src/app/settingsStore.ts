@@ -91,3 +91,30 @@ export function useVoicer(): Voicer {
   }, []);
   return v;
 }
+
+/**
+ * Keeps your voice with the project (voice/my-voice.json and the sample in uploads/voice-sample-*, both in git):
+ * so it works on another computer, and for an assistant working in the repository. Never the key.
+ */
+export async function keepVoiceInProject(v: Voicer): Promise<Voicer> {
+  if (!v.sample || !clones(v)) return v;
+  const res = await fetch('/api/my-voice', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ baseURL: v.baseURL, model: v.model, instructions: v.instructions, sample: v.sample }) });
+  if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error ?? res.statusText);
+  const saved = (await res.json()) as { sample: VoiceSample };
+  const next = { ...v, sample: saved.sample };
+  saveVoicer(next);
+  return next;
+}
+
+/** The project's voice (voice/my-voice.json), if any. */
+export async function projectVoice(): Promise<{ baseURL: string; model: string; instructions?: string; sample: VoiceSample } | null> {
+  try { const r = await fetch('/api/my-voice'); const v = await r.json(); return v?.sample ? v : null; } catch { return null; }
+}
+
+/** On a computer whose browser has no voice of yours yet, use the project's. */
+export async function adoptProjectVoice() {
+  const here = loadVoicer();
+  if (here.sample) return;
+  const v = await projectVoice();
+  if (v) saveVoicer({ ...here, baseURL: v.baseURL, model: v.model, ...(v.instructions ? { instructions: v.instructions } : {}), sample: v.sample });
+}

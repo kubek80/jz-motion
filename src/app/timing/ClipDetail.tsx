@@ -6,7 +6,7 @@ import { splitSentences } from '../tts';
 import { fmt } from './format';
 import { MicCheck, LevelMeter, advice } from './MicCheck';
 import { micDevice } from './micDevice';
-import { clones, loadVoicer, saveVoicer, VOICERS } from '../settingsStore';
+import { clones, keepVoiceInProject, loadVoicer, saveVoicer, VOICERS } from '../settingsStore';
 import { useMicLevel } from './useMicLevel';
 import { beatsIn, replaceTake, useRerecord } from './useRerecord';
 import { ClipWave } from './ClipWave';
@@ -108,6 +108,7 @@ export function ClipDetail(p: Props) {
     const clone = VOICERS.find((x) => x.clones)!;
     const next = clones(v) ? { ...v, sample } : { ...v, baseURL: clone.baseURL, model: clone.model, sample };
     saveVoicer(next);
+    void keepVoiceInProject(next).catch(() => undefined);
     const model = VOICERS.find((x) => x.baseURL === next.baseURL && x.model === next.model)?.label ?? next.model;
     setVoiceNote(`Generated voice now copies your voice from this clip (${(sample.end - sample.start).toFixed(0)} s, ${model}).${len < 10 ? ' A clip of 10–30 s copies it more closely.' : ''} Lines already generated in another voice stay until you generate again; Settings → Voice generation to change it. It uses your OpenRouter key there.`);
   };
