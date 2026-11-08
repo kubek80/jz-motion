@@ -105,26 +105,29 @@ export function stateAt(perf: Performance, time: number): { scene: number; time:
 
 export interface LayoutChoice { layout: LayoutName; track: string }
 
-/** The layout of the beat playing (or last played) at timeline position `time` in a scene. */
-export function layoutAt(p: CompiledPresentation, scene: number, time: number): LayoutChoice {
+/**
+ * The layout of the beat playing (or last played) at timeline position `time` in a scene; `fallback` where neither
+ * the beat nor the scene sets one (a camera running throughout: pip; your avatar, only in some scenes: board).
+ */
+export function layoutAt(p: CompiledPresentation, scene: number, time: number, fallback: LayoutName = 'pip'): LayoutChoice {
   const s = p.scenes[scene];
   let beat: (typeof s.beats)[number] | undefined;
   for (const b of s.beats) {
     if (b.end > b.start && b.start < time - 1e-6) beat = b;
   }
-  return { layout: beat?.layout ?? s.layout ?? 'pip', track: beat?.track ?? s.track ?? 'me' };
+  return { layout: beat?.layout ?? s.layout ?? fallback, track: beat?.track ?? s.track ?? 'me' };
 }
 
 export interface Segment extends LayoutChoice { start: number; end: number }
 
 /** Layout over time, as runs of equal layout, sampled at the video frame rate. */
-export function layoutSegments(p: CompiledPresentation, perf: Performance, fps: number): Segment[] {
+export function layoutSegments(p: CompiledPresentation, perf: Performance, fps: number, fallback: LayoutName = 'pip'): Segment[] {
   const out: Segment[] = [];
   const frames = Math.ceil(perf.duration * fps);
   for (let f = 0; f < frames; f++) {
     const t = f / fps;
     const st = stateAt(perf, t);
-    const l = layoutAt(p, st.scene, st.time);
+    const l = layoutAt(p, st.scene, st.time, fallback);
     const last = out.at(-1);
     if (last && last.layout === l.layout && last.track === l.track) last.end = (f + 1) / fps;
     else out.push({ ...l, start: t, end: (f + 1) / fps });

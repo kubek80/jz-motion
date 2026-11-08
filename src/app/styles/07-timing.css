@@ -267,3 +267,5 @@
 .my-voice .grow { flex: 1; min-width: 240px; }
 .my-voice .sample-text { font-size: 17px; line-height: 1.5; padding: 10px 12px; resize: vertical; }
 .my-voice .mic-section .row h4 { margin: 0; }
+/* A clip's window: your avatar saying it. */
+.avatar-preview { display: block; width: 320px; max-width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 8px; border: 1px solid var(--line); margin-bottom: 8px; background: #000; }

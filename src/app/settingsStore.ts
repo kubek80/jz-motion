@@ -61,6 +61,9 @@ const write = (key: string, value: unknown) => {
   }
 };
 
+/** Your fal.ai key, for your avatar's talking-head videos (Settings → My avatar). */
+export const loadFalKey = () => read<string>('jzm.falKey', '');
+export const saveFalKey = (key: string) => write('jzm.falKey', key);
 export const loadTranscriber = () => read<Transcriber>('jzm.transcriber', { baseURL: TRANSCRIBERS[0].baseURL, model: TRANSCRIBERS[0].model, apiKey: '' });
 export const saveTranscriber = (t: Transcriber) => write('jzm.transcriber', t);
 

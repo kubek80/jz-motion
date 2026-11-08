@@ -49,7 +49,8 @@ export async function exportVideo(opts: ExportOptions): Promise<{ file: string; 
   await mkdir(dirname(opts.out), { recursive: true });
   const args = buildFfmpegArgs({
     width, height, fps, duration: frames / fps, out: opts.out, tracks, normalizeAudio: opts.normalizeAudio,
-    segments: layoutSegments(compiled.presentation, perf, fps),
+    // Your avatar shows only where a scene or beat asks for the camera; a camera running throughout shows in a corner.
+    segments: layoutSegments(compiled.presentation, perf, fps, opts.take?.tracks.some((t) => t.avatar) ? 'board' : 'pip'),
   });
   const ffmpeg = spawn(FFMPEG, args, { stdio: ['pipe', 'ignore', 'pipe'] });
   let ffmpegError = '';

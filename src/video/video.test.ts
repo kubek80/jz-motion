@@ -107,6 +107,8 @@ describe('performance', () => {
     expect(layoutAt(p, 0, 0)).toEqual({ layout: 'pip', track: 'me' });
     expect(layoutAt(p, 0, 3.5)).toEqual({ layout: 'camera', track: 'friend' });
     expect(layoutAt(p, 1, 0)).toEqual({ layout: 'pip', track: 'me' });
+    // Your avatar (only in some scenes): where nothing sets a layout, the board alone.
+    expect(layoutAt(p, 1, 0, 'board')).toEqual({ layout: 'board', track: 'me' });
     const segs = layoutSegments(p, autoPerformance(p, { lead: 1, gap: 2, tail: 3 }), 10);
     expect(segs.map((s) => [s.layout, s.start, s.end])).toEqual([['pip', 0, 6.1], ['camera', 6.1, 10], ['pip', 10, 14]]);
   });
