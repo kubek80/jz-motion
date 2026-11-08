@@ -884,3 +884,9 @@ Jakub asked for the microphone tester in the My voice window. It was there, fold
 
 **Checked by:** Playwright with Chromium's stand-in microphone: the meter and advice show when the window opens, Stop the test removes them, recording a sample afterwards still gives a take to use; typecheck, tests, build.
 
+## Step 69: The second microphone test never stopped
+
+Jakub found that the first 5 s microphone test was fine but a second one never stopped, and couldn't be stopped. Letting go of the first test's sound was tied to its URL changing, and that clean-up also cleared the countdown: starting the second test changed the URL, so the clean-up ran and cleared the new test's countdown as soon as it began. The two are separate now (the sound is let go when replaced; the countdown is cleared by the test itself, or when the window closes), and a running test has a **Stop** button with the seconds left. Same tester in the clip window and in My voice.
+
+**Checked by:** Playwright with Chromium's stand-in microphone: three tests in a row, the first two stopping on their own after 5 s with a player each time, the third stopped early with Stop; typecheck, tests, build.
+
