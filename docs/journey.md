@@ -1061,3 +1061,13 @@ Jakub asked for: the feedback loop at the end of scene 9 ("LLM first") to have w
 ![Scene 12: the drawing, the lane, the menu, My avatar](journey/125-scene-my-avatar.jpg)
 
 **Checked by:** single-scene exports with voice and avatar (scene 4 in the corner, the last scene side by side, the new scene), frames looked at, one at 1:1; Playwright: the avatar stays on the board in a 1018×311 Timing area, the side layout in Timing and the editor, My avatar without the stored picture; the presentation: every cue in order, none cut short; typecheck, tests, build.
+
+## Step 86: Where the avatar shows, from Timing
+
+Jakub wanted to click an avatar in Timing and get a drawer with positioning options. Clicking a block in the video lane now opens **My avatar** for that clip: the video, Make it again, and **where it shows in the video** as five small pictures of the frame: hidden (the board alone), corner right, corner left, side by side, full frame. It sets the scene's layout (one undo step), and the playhead moves to the clip so Timing's board shows the choice at once. Beats that set their own layout are listed, with a button to make them follow the scene. Double-click still opens the clip's window.
+
+- **Bug found:** the beats' marker lines reached up over the video lane and took the clicks meant for its blocks (a click could open a beat instead). The blocks are now above them, like the voice clips; the video lane is always there (empty, labelled) so the lines reach through all the lanes as before.
+
+![The avatar drawer: side by side chosen, the board showing it](journey/126-avatar-drawer.jpg)
+
+**Checked by:** Playwright on a copy: clicking scene 4's block opened the drawer on "Corner, right" with the board showing it; "Side by side" wrote `side` to the file and the board followed; Ctrl+Z put `pip` back; typecheck, tests, build.

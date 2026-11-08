@@ -39,6 +39,10 @@ interface Props {
   onOpenClip: (index: number) => void;
   /** Your avatar's videos (and scenes waiting for one), for the video lane. */
   avatars: AvatarRow[];
+  /** A block in the video lane clicked: its avatar drawer. */
+  onSelectAvatar: (index: number) => void;
+  /** The clip whose avatar drawer is open. */
+  selectedAvatar: string | null;
   /** Make your avatar say a clip (right-click menu). */
   onMakeAvatar: (index: number) => void;
   /** Removes a clip's background noise (a cleaned copy), or goes back to the original recording. */
@@ -60,7 +64,7 @@ interface Props {
 const FLAG_ROW = 24;
 const FLAG_MAX = 160;
 
-export function Timeline({ laneRef, missing, height, rec, seek, time, total, pps, width, clips, primary, clipDrag, startDragClip, startTrimClip, deleteClip, splitClipAt, canSplitAt, setClipLane, playFrom, onTranscribe, onOpenClip, avatars, onMakeAvatar, onClean, onRestore, onEditBeat, drawClipPeaks, np, tapping, tapIndex, startDrag, onCue, beatDrag }: Props) {
+export function Timeline({ laneRef, missing, height, rec, seek, time, total, pps, width, clips, primary, clipDrag, startDragClip, startTrimClip, deleteClip, splitClipAt, canSplitAt, setClipLane, playFrom, onTranscribe, onOpenClip, avatars, onMakeAvatar, onSelectAvatar, selectedAvatar, onClean, onRestore, onEditBeat, drawClipPeaks, np, tapping, tapIndex, startDrag, onCue, beatDrag }: Props) {
   const { shown, currentIndex, beatOf, sceneTitle } = np;
   // Beat labels go in rows above their lines: as many rows as the timeline's height allows, each label in the
   // lowest row where it doesn't run into the label before it (a short timeline keeps two rows).
@@ -168,7 +172,7 @@ export function Timeline({ laneRef, missing, height, rec, seek, time, total, pps
           )}
           {!primary && <span className="muted wave-empty">No voice-over yet: load one above, or tap along in silence.</span>}
         </div>
-        <AvatarLane rows={avatars} pps={pps} time={time} onOpen={(i) => !rec.current && onOpenClip(i)} />
+        <AvatarLane rows={avatars} pps={pps} time={time} onOpen={(i) => !rec.current && onOpenClip(i)} onSelect={(i) => !rec.current && onSelectAvatar(i)} selected={selectedAvatar ? clips.findIndex((c) => c.id === selectedAvatar) : -1} />
         <div className="clicks">
           {shown.map((c, i) => {
             const color = SCENE_COLORS[c.scene % SCENE_COLORS.length];

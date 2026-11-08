@@ -69,7 +69,7 @@
 .clip-trim-start { left: 0; border-radius: 6px 0 0 6px; }
 .clip-trim-end { right: 0; border-radius: 0 6px 6px 0; }
 .timing-track .clicks { position: relative; flex: 1 1 auto; min-height: 96px; }
-.click { --c: #3ef0ff; position: absolute; top: -80px; bottom: 6px; border-left: 2px solid var(--c); cursor: ew-resize; }
+.click { --c: #3ef0ff; position: absolute; top: -114px; bottom: 6px; border-left: 2px solid var(--c); cursor: ew-resize; }
 .click.auto { border-left-style: dashed; opacity: .6; }
 .click.late { --c: #ff6b7d; }
 .click .flag { position: absolute; bottom: calc(30px + var(--row, 0) * 24px); left: -1px; max-width: 160px; padding: 2px 6px; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--c); background: color-mix(in srgb, var(--c) 14%, #0b0e11); border: 1px solid color-mix(in srgb, var(--c) 50%, transparent); border-radius: 0 6px 6px 0; }
@@ -196,7 +196,7 @@
 .beat-drawer .action-editor { padding: 0; border-top: 1px solid var(--line); padding-top: 8px; }
 
 /* Beats are easier to grab: a wider invisible strip along the line, in the beats area (not over the clips). */
-.click::before { content: ''; position: absolute; top: 80px; bottom: 0; left: -8px; width: 16px; cursor: ew-resize; }
+.click::before { content: ''; position: absolute; top: 114px; bottom: 0; left: -8px; width: 16px; cursor: ew-resize; }
 /* While a beat is dragged: where it goes, and what Shift and Ctrl add. Stays in view when the timeline scrolls. */
 .drag-hint-anchor { position: sticky; left: 0; top: 0; height: 0; z-index: 8; }
 .drag-hint { position: absolute; left: 8px; top: 24px; display: flex; align-items: center; gap: 10px; padding: 4px 10px; font-size: 12px; white-space: nowrap; background: color-mix(in srgb, var(--panel) 95%, transparent); border: 1px solid var(--line); border-radius: 7px; box-shadow: 0 6px 18px #000a; pointer-events: none; }
@@ -282,7 +282,7 @@
 
 /* The video lane: your avatar's videos under the voice they say. */
 .timing-track .avatar-lane { position: relative; flex: 0 0 34px; border-top: 1px dashed var(--line); }
-.avatar-block { position: absolute; top: 3px; height: 28px; border-radius: 5px; overflow: hidden; cursor: pointer; display: flex; align-items: center; gap: 6px; background: color-mix(in srgb, #3dff8b 16%, #0b0e11); border: 1px solid color-mix(in srgb, #3dff8b 55%, transparent); color: #d9ffe8; font-size: 11px; white-space: nowrap; }
+.avatar-block { position: absolute; z-index: 2; top: 3px; height: 28px; border-radius: 5px; overflow: hidden; cursor: pointer; display: flex; align-items: center; gap: 6px; background: color-mix(in srgb, #3dff8b 16%, #0b0e11); border: 1px solid color-mix(in srgb, #3dff8b 55%, transparent); color: #d9ffe8; font-size: 11px; white-space: nowrap; }
 .avatar-block video { height: 100%; aspect-ratio: 16 / 9; object-fit: cover; flex: none; pointer-events: none; }
 .avatar-block .avatar-name { padding-right: 6px; overflow: hidden; text-overflow: ellipsis; }
 .avatar-block.showing { box-shadow: 0 0 0 2px #3dff8b, 0 0 12px #3dff8b88; }
@@ -306,3 +306,24 @@
 .timing-board .avatar-video-problem.avatar-live { font-size: 14px; }
 .timing-board.avatar-side .avatar-live { left: 0; top: 0; width: 50%; height: 100%; }
 .timing-board.avatar-side .board-host { inset: 25% 0 auto 50%; width: 50%; height: 50%; z-index: 1; outline: 2px solid #67e8f9; background: #000; }
+
+/* The avatar drawer: where it shows in the video, as small pictures of the frame. */
+.avatar-block.selected { box-shadow: 0 0 0 2px var(--accent); }
+.avatar-drawer .drawer-body { display: flex; flex-direction: column; gap: 10px; padding: 12px; overflow: auto; }
+.avatar-drawer h4 { margin: 4px 0 0; font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+.avatar-drawer .avatar-preview { width: 100%; }
+.avatar-drawer .placements { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.avatar-drawer .placement { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 8px 6px; font-size: 12px; }
+.avatar-drawer .placement.on { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, var(--panel)); }
+.mini { position: relative; width: 84px; aspect-ratio: 16 / 9; background: #000; border: 1px solid var(--line); border-radius: 3px; overflow: hidden; }
+.mini i { position: absolute; display: block; }
+.mini .b { inset: 0; background: #1c2a33; }
+.mini .a { background: #3dff8b; border-radius: 2px; }
+.mini-board .a { display: none; }
+.mini-pip .a { right: 6%; bottom: 8%; width: 30%; height: 30%; }
+.mini-pip-left .a { left: 6%; bottom: 8%; width: 30%; height: 30%; }
+.mini-side .a { left: 0; top: 0; width: 50%; height: 100%; }
+.mini-side .b { inset: 25% 0 25% 50%; }
+.mini-camera .a { inset: 0; }
+.mini-camera .b { inset: 6% 6% auto auto; width: 38%; height: 38%; z-index: 1; outline: 1px solid #67e8f9; }
+.avatar-lane .lane-empty { position: absolute; left: 26px; top: 9px; font-size: 11px; }
