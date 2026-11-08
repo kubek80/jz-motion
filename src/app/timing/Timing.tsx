@@ -256,6 +256,7 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
           clicks={clicks}
           beatOf={(c) => doc.scenes[c.scene]?.beats?.[c.beat]}
           missing={missing.has(clips[openClip].upload)}
+          loadBuffer={mixer.loadBuffer}
           setClips={setClips}
           onCues={(changes) => onCues(changes)}
           playFrom={(t) => { seek(t); play(); }}

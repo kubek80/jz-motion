@@ -9,6 +9,7 @@ import { micDevice } from './micDevice';
 import { clones, loadVoicer, saveVoicer, VOICERS } from '../settingsStore';
 import { useMicLevel } from './useMicLevel';
 import { beatsIn, replaceTake, useRerecord } from './useRerecord';
+import { ClipWave } from './ClipWave';
 
 // One voice clip in detail (double-click it on the timeline): how loud it is and its volume, everything you can
 // do with it, a microphone check, and recording it again with its lines as a prompter.
@@ -20,6 +21,8 @@ interface Props {
   clicks: Click[];
   beatOf: (c: Click) => RawBeat | undefined;
   missing: boolean;
+  /** Decoded recordings, shared with the timeline. */
+  loadBuffer: (upload: string) => Promise<AudioBuffer>;
   setClips: (next: Clip[]) => void;
   onCues: (changes: { scene: number; beat: number; cue: number | undefined }[]) => void;
   playFrom: (t: number) => void;
@@ -147,6 +150,7 @@ export function ClipDetail(p: Props) {
         </div>
 
         {p.missing && <p className="note-text">The recording {c.upload} isn't on this computer: it can be recorded again below, or removed.</p>}
+        {!p.missing && <ClipWave clip={c} loadBuffer={p.loadBuffer} enabled={t.state !== 'recording'} marks={inside.map((ck) => ({ t: ck.t - c.offset, label: `${ck.scene + 1}.${ck.beat + 1}` }))} />}
 
         <section>
           <h4>Volume</h4>
@@ -169,7 +173,7 @@ export function ClipDetail(p: Props) {
         <section>
           <h4>This clip</h4>
           <div className="row wrap">
-            <button onClick={() => p.playFrom(c.offset)} disabled={p.missing}>▶ Play</button>
+            <button onClick={() => p.playFrom(c.offset)} disabled={p.missing} title="Play the timeline from this clip: everything that sounds there, with the board">▶ Play in the timeline</button>
             {c.cleanedFrom
               ? <button onClick={() => p.onRestore(index)} title="Use the recording as it was, with its background noise">↺ Back to the original recording</button>
               : <button onClick={() => p.onClean(index)} disabled={p.missing} title="Remove background noise (fan, hum, room, keyboard) with RNNoise, on this computer; the original is kept">✨ Clean up voice</button>}

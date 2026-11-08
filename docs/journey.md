@@ -852,3 +852,11 @@ Jakub chose OpenRouter for cloning his voice, and better models for generated sp
 
 **Checked by:** a sentence through every preset (Fish and HeyGen cloning the same sample land at the same pitch, 134 Hz; ElevenLabs, Microsoft, Gemini with a style, MiniMax, HeyGen's own voice); `npm run voice -- time` with a sample; Use as my voice in the clip window and the Settings section in a browser; typecheck, tests, build.
 
+## Step 66: A clip's sound wave, and playing that clip alone
+
+Jakub asked to see the clip's sound wave in its window and to play only that clip. At the top of the window now: the wave of the part the clip plays (from the decoded audio the timeline already holds), drawn to the loudest moment so a quiet clip still shows its shape, with moments near 0 dB in red, the beats that start in it marked (7.1, 7.2…), and a player for the clip alone at its own volume (the volume slider works while it plays): **Play this clip** / Pause, the time, click the wave to go to a moment, Space to play or pause. The old Play button is now **Play in the timeline** (everything that sounds there, with the board). Recording a new take stops it.
+
+![The clip's wave, its beats and the playhead](journey/110-clip-wave.jpg)
+
+**Checked by:** Playwright on a copy: the wave drawn with its five beat marks; Play this clip ran 2.0 s in 2 s; clicking the middle went to 0:21.6 of 0:42.6; Space paused it there; typecheck, tests, build.
+

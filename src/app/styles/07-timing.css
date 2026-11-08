@@ -235,3 +235,12 @@
 .rerecord-lines li.now { border-color: #3ef0ff; background: #3ef0ff10; }
 .rerecord-lines li.done { opacity: 0.45; }
 .rec-btn.on { background: #ef444433; border-color: #ef4444; }
+/* A clip's own sound wave and player, in its window. */
+.clip-wave { display: flex; flex-direction: column; gap: 6px; }
+.clip-wave .wave { position: relative; height: 110px; border: 1px solid var(--line); border-radius: 8px; background: #0b0f12; cursor: pointer; margin-top: 14px; }
+.clip-wave canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.clip-wave .loading { position: absolute; left: 12px; top: 44px; }
+.clip-wave .wave-playhead { position: absolute; top: -4px; bottom: -4px; width: 2px; background: #facc15; pointer-events: none; }
+.clip-wave .mark { position: absolute; top: 0; bottom: 0; border-left: 1px dashed #ffffff55; pointer-events: none; }
+.clip-wave .mark b { position: absolute; top: -16px; left: -2px; font-size: 10px; font-weight: 400; color: var(--muted); }
+.clip-wave .play { min-width: 140px; }
