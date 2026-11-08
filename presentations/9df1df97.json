@@ -3613,7 +3613,7 @@
         {
           "id": "task3",
           "type": "text",
-          "text": "voice-over (TTS)",
+          "text": "voice-over (my voice)",
           "x": 150,
           "y": 740,
           "size": 42,
@@ -3623,7 +3623,7 @@
         {
           "id": "logo3",
           "type": "icon",
-          "icon": "openai",
+          "icon": "user",
           "x": 1050,
           "y": 740,
           "size": 70,
@@ -3632,7 +3632,7 @@
         {
           "id": "model3",
           "type": "text",
-          "text": "OpenAI gpt-4o-mini-tts",
+          "text": "Fish Audio S2.1 Pro (clone)",
           "x": 1150,
           "y": 740,
           "size": 42,
@@ -3772,7 +3772,7 @@
               "stagger": 0.25
             }
           ],
-          "notes": "I have used small OpenAI models for text-to-speech and transcription. Let me just add that I'm using text-to-speech for timing purposes only. I have recorded the final voice-over myself.",
+          "notes": "For transcription I use a small OpenAI model. At first I recorded the voice-over myself, but as I kept updating the script, I switched to AI: a clone of my own voice, so a changed sentence doesn't mean recording it again.",
           "cue": 380.67
         },
         {
@@ -3907,7 +3907,7 @@
               "target": "script-ico"
             }
           ],
-          "cue": 393.77
+          "cue": 396.68
         },
         {
           "title": "Three ways to touch it",
@@ -3926,7 +3926,7 @@
             }
           ],
           "notes": "I can read and edit the whole thing in the Script view, inline in the Timing prompter,",
-          "cue": 402.09
+          "cue": 405
         },
         {
           "title": "Same text, three lenses",
@@ -3945,7 +3945,7 @@
             }
           ],
           "notes": "or in the raw JSON tab if I want to see the shape.",
-          "cue": 407.81
+          "cue": 410.72
         }
       ]
     },
@@ -4330,7 +4330,7 @@
               "delay": 0.5
             }
           ],
-          "cue": 413.09
+          "cue": 416
         },
         {
           "title": "One line at a time",
@@ -4366,7 +4366,7 @@
               "delay": 0.8
             }
           ],
-          "cue": 421.05
+          "cue": 423.96
         },
         {
           "title": "The timeline",
@@ -4394,7 +4394,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 428.2
+          "cue": 431.11
         },
         {
           "title": "Just read",
@@ -4428,7 +4428,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 438.19
+          "cue": 441.11
         },
         {
           "title": "Tidy up",
@@ -4464,7 +4464,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 446.93
+          "cue": 449.84
         },
         {
           "title": "Back out",
@@ -4915,7 +4915,7 @@
               "delay": 0.8
             }
           ],
-          "cue": 455.19
+          "cue": 458.1
         },
         {
           "title": "Home",
@@ -4951,7 +4951,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 460.71
+          "cue": 463.62
         },
         {
           "title": "This scene",
@@ -4993,7 +4993,7 @@
               "delay": 1
             }
           ],
-          "cue": 464.81
+          "cue": 467.73
         },
         {
           "title": "The AI tab",
@@ -5029,7 +5029,7 @@
               "delay": 0.5
             }
           ],
-          "cue": 475.5
+          "cue": 478.41
         },
         {
           "title": "The library",
@@ -5065,7 +5065,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 483.25
+          "cue": 486.17
         },
         {
           "title": "Same skills",
@@ -5087,7 +5087,7 @@
               "delay": 0.4
             }
           ],
-          "cue": 489.63
+          "cue": 492.54
         }
       ]
     },
@@ -5175,7 +5175,7 @@
             }
           ],
           "notes": "One of my main goals was to create an app that would let me make a ten-minute explainer video for under five dollars. I'm happy to share that I was successful.",
-          "cue": 497.19
+          "cue": 500.1
         },
         {
           "title": "Why it works",
@@ -5187,7 +5187,7 @@
             }
           ],
           "notes": "If I had to name three main contributors to that success: a presentation is pure JSON, so tokens are cheap;",
-          "cue": 507.44
+          "cue": 510.35
         },
         {
           "title": "Beat 3",
@@ -5198,7 +5198,7 @@
             }
           ],
           "notes": "the library grows, so most drawings are reused;",
-          "cue": 514.89
+          "cue": 517.8
         },
         {
           "title": "Beat 4",
@@ -5209,7 +5209,7 @@
             }
           ],
           "notes": "and the repair loop lets me use small, fast models.",
-          "cue": 518.99
+          "cue": 521.9
         }
       ]
     },
@@ -5326,7 +5326,7 @@
             }
           ],
           "notes": "And now the last mile: I click Record and adjust the timing, like I'm doing right now.",
-          "cue": 523.99
+          "cue": 526.9
         },
         {
           "title": "Export",
@@ -5351,7 +5351,7 @@
               ]
             }
           ],
-          "cue": 530.28
+          "cue": 533.19
         },
         {
           "title": "Thanks",
@@ -5366,7 +5366,7 @@
               "stagger": 1.2
             }
           ],
-          "cue": 535.22
+          "cue": 538.13
         }
       ]
     }
@@ -5520,11 +5520,11 @@
         "id": "gen-models",
         "scene": "models",
         "upload": "generated-models.webm",
-        "sourceDuration": 37.336,
+        "sourceDuration": 40.247,
         "offset": 355.541,
         "lane": 0,
         "trimStart": 0,
-        "trimEnd": 37.336,
+        "trimEnd": 40.247,
         "name": "generated voice · The right model for each job"
       },
       {
@@ -5532,7 +5532,7 @@
         "scene": "script",
         "upload": "generated-script.webm",
         "sourceDuration": 18.429,
-        "offset": 393.769,
+        "offset": 396.68,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 18.429,
@@ -5543,7 +5543,7 @@
         "scene": "timing-b",
         "upload": "generated-timing-b.webm",
         "sourceDuration": 41.206,
-        "offset": 413.09,
+        "offset": 416.001,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 41.206,
@@ -5554,7 +5554,7 @@
         "scene": "ai-helpers-b",
         "upload": "generated-ai-helpers-b.webm",
         "sourceDuration": 41.108,
-        "offset": 455.188,
+        "offset": 458.099,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 41.108,
@@ -5565,7 +5565,7 @@
         "scene": "cost",
         "upload": "generated-cost.webm",
         "sourceDuration": 25.907,
-        "offset": 497.188,
+        "offset": 500.099,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 25.907,
@@ -5576,7 +5576,7 @@
         "scene": "publish",
         "upload": "generated-publish.webm",
         "sourceDuration": 13.879,
-        "offset": 523.987,
+        "offset": 526.898,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 13.879,
