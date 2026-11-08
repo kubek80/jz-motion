@@ -1,0 +1,11 @@
+{
+  "baseURL": "https://openrouter.ai/api/v1",
+  "model": "fish-audio/s2.1-pro",
+  "sample": {
+    "upload": "voice-sample-bcb1670058.webm",
+    "start": 0,
+    "end": 28.96,
+    "name": "my voice sample · 08/11/2026",
+    "text": "Hi, I'm Jakub. I make short explainer videos about software, drawn on a dark board with glowing markers.\n\nEach one starts with a single sentence. Then I sketch the idea, point at the parts that matter, and talk you through it, step by step.\n\nSome topics take two minutes; others need ten. Does that sound simple? Mostly, yes. The tricky part is choosing what to leave out, and that's exactly what I'd like to show you today."
+  }
+}
