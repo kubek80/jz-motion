@@ -417,7 +417,7 @@
             }
           ],
           "notes": "I write notes, sometimes even a full script. Then I plan a video to go with the script,",
-          "cue": 28.42
+          "cue": 28.4
         },
         {
           "title": "Beat 5",
@@ -654,8 +654,8 @@
               "target": "lead"
             }
           ],
-          "notes": "I started from basics: I defined the style.",
-          "cue": 60.34
+          "notes": "I started from basics: I defined [strong emphasis]the style.",
+          "cue": 59.59
         },
         {
           "title": "The reference",
@@ -672,7 +672,7 @@
             }
           ],
           "notes": "I took inspiration from IBM lightboard explainers. I enjoyed their aesthetics: a glass board and neon diagrams.",
-          "cue": 64.1
+          "cue": 63.74
         },
         {
           "title": "Clear, calm, fast to follow",
@@ -800,7 +800,7 @@
               "delay": 0.8
             }
           ],
-          "cue": 71.55
+          "cue": 72.36
         },
         {
           "title": "A sentence",
@@ -825,7 +825,7 @@
               "start": "with"
             }
           ],
-          "cue": 78.09
+          "cue": 78.9
         },
         {
           "title": "Three ways in",
@@ -861,7 +861,7 @@
               "delay": 0.6
             }
           ],
-          "cue": 83.97
+          "cue": 84.78
         },
         {
           "title": "Watch it work",
@@ -885,7 +885,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 95.1
+          "cue": 95.91
         },
         {
           "title": "A first draft",
@@ -918,7 +918,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 103.52
+          "cue": 104.33
         }
       ]
     },
@@ -1060,7 +1060,7 @@
               "delay": 0.8
             }
           ],
-          "cue": 115.3
+          "cue": 116.11
         },
         {
           "title": "Click to select",
@@ -1100,7 +1100,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 122
+          "cue": 122.81
         },
         {
           "title": "The beats",
@@ -1136,7 +1136,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 129.97
+          "cue": 130.78
         },
         {
           "title": "From the library",
@@ -1178,7 +1178,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 137.79
+          "cue": 138.6
         },
         {
           "title": "P to play",
@@ -1213,7 +1213,7 @@
               "delay": 0.5
             }
           ],
-          "cue": 147.79
+          "cue": 148.6
         }
       ]
     },
@@ -1335,7 +1335,7 @@
               "delay": 0.8
             }
           ],
-          "cue": 153.67
+          "cue": 154.48
         },
         {
           "title": "Select",
@@ -1377,7 +1377,7 @@
               "start": "with"
             }
           ],
-          "cue": 162.78
+          "cue": 163.59
         },
         {
           "title": "Recolour",
@@ -1409,7 +1409,7 @@
               "delay": 0.4
             }
           ],
-          "cue": 169.62
+          "cue": 170.43
         },
         {
           "title": "Rewrite",
@@ -1452,7 +1452,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 175.84
+          "cue": 176.65
         },
         {
           "title": "Made by the app",
@@ -1479,7 +1479,7 @@
               "delay": 0.5
             }
           ],
-          "cue": 184.27
+          "cue": 185.08
         }
       ]
     },
@@ -1627,7 +1627,7 @@
             }
           ],
           "notes": "Under the hood, jz-motion is designed to be LLM first. A presentation is not pixels: it's simply a JSON document.",
-          "cue": 195.02
+          "cue": 195.83
         },
         {
           "title": "Context",
@@ -1651,7 +1651,7 @@
             }
           ],
           "notes": "Every request sends the model the format reference, the drawing rules and the whole library: every icon, logo, clipart and 3D model it may use. So in reality, the LLM generates pure JSON.",
-          "cue": 203.79
+          "cue": 204.6
         },
         {
           "title": "Schema check",
@@ -1666,7 +1666,7 @@
             }
           ],
           "notes": "The JSON is then sent to a schema checker, to make sure the result is correct.",
-          "cue": 218.25
+          "cue": 219.06
         },
         {
           "title": "Repair",
@@ -1681,7 +1681,7 @@
               "target": "repair"
             }
           ],
-          "cue": 223.91
+          "cue": 224.72
         },
         {
           "title": "Board",
@@ -1699,7 +1699,7 @@
               "target": "web-search"
             }
           ],
-          "cue": 229.03
+          "cue": 229.84
         },
         {
           "title": "The JSON",
@@ -1717,7 +1717,7 @@
               "padding": 260
             }
           ],
-          "cue": 234.62
+          "cue": 235.43
         },
         {
           "title": "Feedback",
@@ -1742,7 +1742,7 @@
               "times": 2
             }
           ],
-          "cue": 241.1
+          "cue": 241.91
         },
         {
           "title": "Round again",
@@ -1806,7 +1806,7 @@
               "start": "with"
             }
           ],
-          "cue": 245.8
+          "cue": 246.61
         }
       ],
       "layout": "pip"
@@ -1969,7 +1969,7 @@
               "delay": 0.4
             }
           ],
-          "cue": 253.95
+          "cue": 254.76
         },
         {
           "title": "Captured larger",
@@ -1992,7 +1992,7 @@
               "delay": 0.4
             }
           ],
-          "cue": 260.68
+          "cue": 261.49
         },
         {
           "title": "Frame by frame",
@@ -2046,7 +2046,7 @@
               "delay": 0.5
             }
           ],
-          "cue": 268.01
+          "cue": 268.82
         },
         {
           "title": "Pick a moment",
@@ -2070,7 +2070,7 @@
               "start": "with"
             }
           ],
-          "cue": 275.33
+          "cue": 276.14
         },
         {
           "title": "A beat goes there",
@@ -2105,7 +2105,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 279.25
+          "cue": 280.06
         },
         {
           "title": "Back out",
@@ -2345,7 +2345,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 287.64
+          "cue": 288.45
         },
         {
           "title": "A closer look",
@@ -2397,7 +2397,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 295.15
+          "cue": 295.96
         },
         {
           "title": "Fix a part",
@@ -2432,7 +2432,7 @@
               "delay": 0.5
             }
           ],
-          "cue": 302.31
+          "cue": 303.12
         },
         {
           "title": "The microphone",
@@ -2469,7 +2469,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 308.37
+          "cue": 309.18
         },
         {
           "title": "Record or generate",
@@ -2513,7 +2513,7 @@
               "delay": 0.5
             }
           ],
-          "cue": 315.34
+          "cue": 316.15
         },
         {
           "title": "My cloned voice",
@@ -2550,7 +2550,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 321.43
+          "cue": 322.24
         },
         {
           "title": "A softer accent",
@@ -2585,7 +2585,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 329.77
+          "cue": 330.58
         },
         {
           "title": "Back out",
@@ -2794,7 +2794,7 @@
               "duration": 0.8
             }
           ],
-          "cue": 335.29
+          "cue": 336.1
         },
         {
           "title": "It speaks",
@@ -2816,7 +2816,7 @@
               "from": 0
             }
           ],
-          "cue": 345.1
+          "cue": 345.91
         },
         {
           "title": "Why a cartoon",
@@ -2837,7 +2837,7 @@
               "delay": 1.2
             }
           ],
-          "cue": 352.6
+          "cue": 353.41
         },
         {
           "title": "In Timing",
@@ -2894,7 +2894,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 361.7
+          "cue": 362.51
         },
         {
           "title": "Right-click",
@@ -2931,7 +2931,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 367.05
+          "cue": 367.86
         },
         {
           "title": "My avatar",
@@ -2968,7 +2968,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 371.99
+          "cue": 372.8
         },
         {
           "title": "Back out",
@@ -3188,7 +3188,7 @@
             }
           ],
           "notes": "The other goal is consistency: whatever a model makes has to look like it came from the same set of markers.",
-          "cue": 378.9
+          "cue": 379.71
         },
         {
           "title": "Everything",
@@ -3210,7 +3210,7 @@
               "target": "rule"
             }
           ],
-          "cue": 386.58
+          "cue": 387.39
         },
         {
           "title": "Six marker colours",
@@ -3229,7 +3229,7 @@
               "stagger": 0.15
             }
           ],
-          "cue": 392.28
+          "cue": 393.09
         },
         {
           "title": "Make your own",
@@ -3247,7 +3247,7 @@
               "delay": 0.6
             }
           ],
-          "cue": 398.17
+          "cue": 398.98
         },
         {
           "title": "Versions",
@@ -3259,7 +3259,7 @@
               "padding": 10
             }
           ],
-          "cue": 404.36
+          "cue": 405.17
         },
         {
           "title": "Keep it",
@@ -3458,7 +3458,7 @@
               "start": "with"
             }
           ],
-          "cue": 409.05
+          "cue": 409.86
         },
         {
           "title": "Both AIs follow them",
@@ -3481,7 +3481,7 @@
               "stagger": 0.4
             }
           ],
-          "cue": 421.05
+          "cue": 421.86
         },
         {
           "title": "One source of truth",
@@ -3496,7 +3496,7 @@
               "target": "folder"
             }
           ],
-          "cue": 427.85
+          "cue": 428.66
         }
       ]
     },
@@ -3700,7 +3700,7 @@
               "target": "server-stack"
             }
           ],
-          "cue": 433.17
+          "cue": 433.98
         },
         {
           "title": "Each explainer adds one",
@@ -3715,7 +3715,7 @@
               "target": "it-new"
             }
           ],
-          "cue": 444.5
+          "cue": 445.31
         },
         {
           "title": "So each one costs less",
@@ -3736,7 +3736,7 @@
               ]
             }
           ],
-          "cue": 449.07
+          "cue": 449.88
         }
       ]
     },
@@ -3978,7 +3978,7 @@
               "target": "h"
             }
           ],
-          "cue": 456.24
+          "cue": 457.05
         },
         {
           "title": "In the browser",
@@ -3998,7 +3998,7 @@
             }
           ],
           "notes": "In the browser, we have a frontend application made with React. SVG animations are made with GSAP, and 3D coordinates are calculated with Three.js.",
-          "cue": 458.54
+          "cue": 459.35
         },
         {
           "title": "A small local server",
@@ -4034,7 +4034,7 @@
             }
           ],
           "notes": "It's paired with a local server responsible for keeping the files, proxying LLM calls, transcription of recordings and export of videos.",
-          "cue": 470.2
+          "cue": 471.01
         },
         {
           "title": "Swappable models",
@@ -4058,7 +4058,7 @@
               ]
             }
           ],
-          "cue": 479.92
+          "cue": 480.73
         },
         {
           "title": "Voice both ways",
@@ -4103,7 +4103,7 @@
               "target": "a6"
             }
           ],
-          "cue": 485.59
+          "cue": 486.4
         }
       ]
     },
@@ -4426,7 +4426,7 @@
             }
           ],
           "notes": "Because every request is checked and repaired, I can experiment with smaller models.",
-          "cue": 494.29
+          "cue": 495.09
         },
         {
           "title": "Story",
@@ -4443,7 +4443,7 @@
               "stagger": 0.25
             }
           ],
-          "cue": 500.24
+          "cue": 500.45
         },
         {
           "title": "Small edits",
@@ -4460,7 +4460,7 @@
             }
           ],
           "notes": "Small edits, like changing a beat, work fine with fast, cheap models like Haiku.",
-          "cue": 507.37
+          "cue": 507.29
         },
         {
           "title": "Drawings",
@@ -4477,7 +4477,7 @@
               "stagger": 0.25
             }
           ],
-          "cue": 513.46
+          "cue": 513.3
         },
         {
           "title": "Voice",
@@ -4493,8 +4493,8 @@
               "stagger": 0.25
             }
           ],
-          "notes": "For transcription I use a small OpenAI model. At first I recorded the voice-over myself, but as I kept updating the script, I switched to AI: a clone of my own voice, so a changed sentence doesn't mean recording it again.",
-          "cue": 520.43
+          "notes": "For transcription I use a small OpenAI model. At first I recorded the voice-over myself, but as I kept updating the script, I switched to AI: a clone of my own voice, so a changed sentence doesn't mean [strong emphesis]recording it again and again.",
+          "cue": 519.96
         },
         {
           "title": "Transcription",
@@ -4536,7 +4536,7 @@
               "delay": 0.6
             }
           ],
-          "cue": 535.81
+          "cue": 536.06
         }
       ]
     },
@@ -4654,7 +4654,7 @@
               "target": "script-ico"
             }
           ],
-          "cue": 548.77
+          "cue": 548.48
         },
         {
           "title": "Three ways to touch it",
@@ -4673,7 +4673,7 @@
             }
           ],
           "notes": "I can read and edit the whole thing in the Script view, inline in the Timing prompter,",
-          "cue": 557.04
+          "cue": 556.75
         },
         {
           "title": "Same text, three lenses",
@@ -4692,7 +4692,7 @@
             }
           ],
           "notes": "or in the raw JSON tab if I want to see the shape.",
-          "cue": 562.57
+          "cue": 562.28
         }
       ]
     },
@@ -4841,7 +4841,7 @@
               "delay": 0.5
             }
           ],
-          "cue": 567.85
+          "cue": 567.56
         },
         {
           "title": "One line at a time",
@@ -4877,7 +4877,7 @@
               "delay": 0.8
             }
           ],
-          "cue": 576.17
+          "cue": 575.88
         },
         {
           "title": "The timeline",
@@ -4905,7 +4905,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 583.62
+          "cue": 583.33
         },
         {
           "title": "Just read",
@@ -4939,7 +4939,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 593.19
+          "cue": 592.9
         },
         {
           "title": "Tidy up",
@@ -4975,7 +4975,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 602.14
+          "cue": 601.85
         },
         {
           "title": "Back out",
@@ -5154,7 +5154,7 @@
               "delay": 0.8
             }
           ],
-          "cue": 609.77
+          "cue": 609.48
         },
         {
           "title": "Home",
@@ -5190,7 +5190,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 615.47
+          "cue": 615.18
         },
         {
           "title": "This scene",
@@ -5232,7 +5232,7 @@
               "delay": 1
             }
           ],
-          "cue": 619.57
+          "cue": 619.28
         },
         {
           "title": "The AI tab",
@@ -5268,7 +5268,7 @@
               "delay": 0.5
             }
           ],
-          "cue": 630.41
+          "cue": 630.12
         },
         {
           "title": "The library",
@@ -5304,7 +5304,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 638.17
+          "cue": 637.88
         },
         {
           "title": "Same skills",
@@ -5326,7 +5326,7 @@
               "delay": 0.4
             }
           ],
-          "cue": 644.47
+          "cue": 644.18
         }
       ]
     },
@@ -5414,7 +5414,7 @@
             }
           ],
           "notes": "One of my main goals was to create an app that would let me make a ten-minute explainer video for under five dollars. I'm happy to share that I was successful.",
-          "cue": 653.32
+          "cue": 653.03
         },
         {
           "title": "Why it works",
@@ -5426,7 +5426,7 @@
             }
           ],
           "notes": "If I had to name three main contributors to that success: a presentation is pure JSON, so tokens are cheap;",
-          "cue": 663.73
+          "cue": 663.44
         },
         {
           "title": "Beat 3",
@@ -5437,7 +5437,7 @@
             }
           ],
           "notes": "the library grows, so most drawings are reused;",
-          "cue": 671.41
+          "cue": 671.12
         },
         {
           "title": "Beat 4",
@@ -5448,7 +5448,7 @@
             }
           ],
           "notes": "and the repair loop lets me use small, fast models.",
-          "cue": 675.4
+          "cue": 675.11
         }
       ],
       "layout": "camera"
@@ -5566,7 +5566,7 @@
             }
           ],
           "notes": "And now the last mile: I click Record and adjust the timing, like I'm doing right now.",
-          "cue": 678.55
+          "cue": 678.26
         },
         {
           "title": "Export",
@@ -5591,7 +5591,7 @@
               ]
             }
           ],
-          "cue": 684.92
+          "cue": 684.63
         },
         {
           "title": "Thanks",
@@ -5606,7 +5606,7 @@
               "stagger": 1.2
             }
           ],
-          "cue": 689.32
+          "cue": 689.03
         }
       ],
       "layout": "side"
@@ -5682,12 +5682,12 @@
       {
         "id": "gen-inspiration",
         "scene": "inspiration",
-        "upload": "generated-inspiration.webm",
-        "sourceDuration": 12.307,
+        "upload": "generated-inspiration-mw9anpdc.webm",
+        "sourceDuration": 12.507,
         "offset": 59.585,
         "lane": 0,
         "trimStart": 0,
-        "trimEnd": 11.7,
+        "trimEnd": 12.507,
         "name": "generated voice · Inspiration"
       },
       {
@@ -5695,7 +5695,7 @@
         "scene": "start-b",
         "upload": "generated-start-b.webm",
         "sourceDuration": 42.907,
-        "offset": 71.75,
+        "offset": 72.557,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 42.907,
@@ -5706,7 +5706,7 @@
         "scene": "editor-b",
         "upload": "generated-editor-b.webm",
         "sourceDuration": 37.507,
-        "offset": 114.551,
+        "offset": 115.358,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 37.507,
@@ -5717,7 +5717,7 @@
         "scene": "edit-colour-b",
         "upload": "generated-edit-colour-b.webm",
         "sourceDuration": 41.207,
-        "offset": 152.924,
+        "offset": 153.731,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 41.207,
@@ -5728,7 +5728,7 @@
         "scene": "llm-first",
         "upload": "generated-llm-first.webm",
         "sourceDuration": 57.307,
-        "offset": 195.022,
+        "offset": 195.829,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 57.307,
@@ -5744,7 +5744,7 @@
         "scene": "recordings",
         "upload": "generated-recordings.webm",
         "sourceDuration": 32.807,
-        "offset": 253.2,
+        "offset": 254.007,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 32.807,
@@ -5755,7 +5755,7 @@
         "scene": "voice-tools",
         "upload": "generated-voice-tools.webm",
         "sourceDuration": 46.807,
-        "offset": 286.886,
+        "offset": 287.693,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 46.807,
@@ -5766,7 +5766,7 @@
         "scene": "my-avatar",
         "upload": "generated-my-avatar.webm",
         "sourceDuration": 42.807,
-        "offset": 335.29,
+        "offset": 336.097,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 42.807,
@@ -5777,7 +5777,7 @@
         "scene": "style",
         "upload": "generated-style.webm",
         "sourceDuration": 29.307,
-        "offset": 378.139,
+        "offset": 378.946,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 29.307,
@@ -5788,7 +5788,7 @@
         "scene": "skills-guide",
         "upload": "generated-skills-guide.webm",
         "sourceDuration": 23.307,
-        "offset": 408.298,
+        "offset": 409.105,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 23.307,
@@ -5799,7 +5799,7 @@
         "scene": "library",
         "upload": "generated-library.webm",
         "sourceDuration": 23.007,
-        "offset": 432.407,
+        "offset": 433.214,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 23.007,
@@ -5810,7 +5810,7 @@
         "scene": "architecture",
         "upload": "generated-architecture.webm",
         "sourceDuration": 37.207,
-        "offset": 456.24,
+        "offset": 457.047,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 37.207,
@@ -5819,12 +5819,12 @@
       {
         "id": "gen-models",
         "scene": "models",
-        "upload": "generated-models.webm",
-        "sourceDuration": 52.907,
-        "offset": 494.287,
+        "upload": "generated-models-mw9arvuq.webm",
+        "sourceDuration": 51.807,
+        "offset": 495.094,
         "lane": 0,
         "trimStart": 0,
-        "trimEnd": 52.907,
+        "trimEnd": 51.807,
         "name": "generated voice · The right model for each job"
       },
       {
@@ -5832,7 +5832,7 @@
         "scene": "script",
         "upload": "generated-script.webm",
         "sourceDuration": 18.207,
-        "offset": 548.006,
+        "offset": 547.713,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 18.207,
@@ -5843,7 +5843,7 @@
         "scene": "timing-b",
         "upload": "generated-timing-b.webm",
         "sourceDuration": 41.807,
-        "offset": 567.092,
+        "offset": 566.799,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 41.807,
@@ -5854,7 +5854,7 @@
         "scene": "ai-helpers-b",
         "upload": "generated-ai-helpers-b.webm",
         "sourceDuration": 41.907,
-        "offset": 609.764,
+        "offset": 609.471,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 41.907,
@@ -5865,7 +5865,7 @@
         "scene": "cost",
         "upload": "generated-cost.webm",
         "sourceDuration": 25.907,
-        "offset": 652.556,
+        "offset": 652.263,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 25.907,
@@ -5881,7 +5881,7 @@
         "scene": "publish",
         "upload": "generated-publish.webm",
         "sourceDuration": 13.507,
-        "offset": 679.276,
+        "offset": 678.983,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 13.507,
