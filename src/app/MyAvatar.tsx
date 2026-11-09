@@ -34,10 +34,12 @@ export function MyAvatar({ onClose, embedded, version = 0 }: { onClose: () => vo
   };
   useEffect(() => { setStyle(''); setSource(null); setCandidate(null); setPrompt(''); void load(); }, [version]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
+    // Inside 🎙 Me, Me closes on Esc.
+    if (embedded) return;
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape' && !(e.target as HTMLElement).closest('input, textarea, select')) { e.stopPropagation(); onClose(); } };
     window.addEventListener('keydown', onKey, true);
     return () => window.removeEventListener('keydown', onKey, true);
-  }, [onClose]);
+  }, [onClose, embedded]);
 
   const call = async <T,>(what: string, url: string, body: BodyInit, json = true): Promise<T | null> => {
     setBusy(what);

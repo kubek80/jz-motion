@@ -1132,3 +1132,17 @@ Jakub could only add boxes to the board, and wanted ellipses and diamonds too, t
 ![A small flowchart with the three shapes; the editor with the new tools and the shape picker](journey/132-box-shapes.jpg)
 
 **Checked by:** a snapshot of a flowchart using all three shapes, corner anchors and a curved arrow back; Playwright: the Diamond tool adds a diamond and the properties show the shape picker; a test for the anchors (a diamond's edge middle, an ellipse's curve at 45°, a diamond's tip) and an unknown shape refused; typecheck, tests, build.
+
+## Step 92: How to direct your voice, with samples
+
+Jakub wanted a window explaining how to use directions, with samples to listen to, opened from 🎙 Me and the Script page.
+
+- **🎚 How to direct your voice** (a button on the Script page and in 🎙 Me's header): where to put a direction (before a word, at the start of a sentence), that any words work, that they are never read out or shown in the prompter, that only the cloned voice follows them, and that their effect is gentle. Then eight samples of the same sentence: as written, `[emphasis]` on a word, `[warm, slower]`, `[excited]`, `[serious, professional broadcast tone]`, `[short pause]` mid-sentence, `[whispering]`, and `[curious, rising]` on a question. Each plays with ▶.
+- The samples were made in his cloned voice (8 sentences, about 1¢) and kept with the project (`uploads/direction-sample-*.mp3`, `voice/direction-samples.json`, which voice said them). **Make these again in the voice in use** makes them for another avatar's voice; the window says when they were made in another voice.
+- **Changed:** a sentence with directions now keeps its pauses when a scene's clip is joined (shortening long pauses would undo a `[short pause]`).
+- **What the samples show** (measured; the listening is Jakub's): the directions are followed but gently. The pitch moves much more with `[emphasis]`, `[serious …]` and `[short pause]` (±50–65 Hz against ±29 plain), `[warm, slower]` is the steadiest, and `[whispering]` came out as loud as the plain reading, so strong changes of voice don't really happen, probably because the voice keeps to its sample and its accent.
+- **Bug found:** Esc in the directions window closed 🎙 Me too: the Look and Voice tabs inside Me still had their own Esc that closed it. Inside Me they now leave Esc to Me, and Me leaves it to the window on top.
+
+![How to direct your voice, from the Script page, a sample playing](journey/133-voice-directions.jpg)
+
+**Checked by:** Playwright: the window from the Script page and from 🎙 Me, 8 samples, one playing, Esc closing only the window on top (then Me with a second Esc); the samples' lengths, loudness, pitch and pauses measured; typecheck, tests, build.

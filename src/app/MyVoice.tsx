@@ -40,7 +40,8 @@ export function MyVoice({ onClose, embedded }: { onClose: () => void; embedded?:
     const onKey = (e: KeyboardEvent) => {
       if ((e.target as HTMLElement).closest('input, textarea, select')) return;
       if (t.state === 'recording' && (e.key === ' ' || e.key === 'Escape')) { e.preventDefault(); e.stopPropagation(); void take.stop(); }
-      else if (t.state !== 'recording' && e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); onClose(); }
+      // Inside 🎙 Me, Me closes on Esc (and not while a window is open on top of it).
+      else if (!embedded && t.state !== 'recording' && e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); onClose(); }
     };
     window.addEventListener('keydown', onKey, true);
     return () => window.removeEventListener('keydown', onKey, true);

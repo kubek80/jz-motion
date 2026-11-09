@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { CompiledPresentation } from '../engine/compile';
 import { ScriptSceneVoice, type SceneClip } from './ScriptSceneVoice';
+import { VoiceDirections } from './VoiceDirections';
 import { useVoicer } from './settingsStore';
 import { entryFor, loadSidecar, requestTts, sentencesOf, splitSentences, type TtsSidecar } from './tts';
 
@@ -32,6 +33,7 @@ export function Script({ presentation, presentationId, onNotes, doc, onDoc, onCl
   const [error, setError] = useState<string | null>(null);
   const [editing, setEditing] = useState<{ scene: number; beat: number } | null>(null);
   const [draft, setDraft] = useState('');
+  const [help, setHelp] = useState(false);
 
   useEffect(() => { void loadSidecar(presentationId).then(setTts).catch(() => undefined); }, [presentationId]);
 
@@ -110,8 +112,10 @@ export function Script({ presentation, presentationId, onNotes, doc, onDoc, onCl
         >
           {generating ? `Generating ${generating.done}/${generating.total}…` : missingSentences.length ? `Generate voice (${missingSentences.length})` : 'Voice up to date'}
         </button>
+        <button onClick={() => setHelp(true)} title="How to steer how your voice says a line, with samples to listen to">🎚 How to direct your voice</button>
         <button onClick={onClose} title="Close (Esc)">✕</button>
       </header>
+      {help && <VoiceDirections onClose={() => setHelp(false)} />}
       {error && <p className="error-text">{error}</p>}
       <div className="script-body">
         {presentation.scenes.map((scene, si) => {

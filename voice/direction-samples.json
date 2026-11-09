@@ -1,0 +1,45 @@
+{
+  "voice": "my voice (voice-sample-bcb1670058.webm 0.0–29.0 s) · Speak in a neutral, standard British English accent, clear and calm, as a native speaker would, keeping the same voice.",
+  "samples": [
+    {
+      "id": "plain",
+      "upload": "direction-sample-plain.mp3",
+      "duration": 5.22
+    },
+    {
+      "id": "emphasis",
+      "upload": "direction-sample-emphasis.mp3",
+      "duration": 5.59
+    },
+    {
+      "id": "warm",
+      "upload": "direction-sample-warm.mp3",
+      "duration": 5.28
+    },
+    {
+      "id": "excited",
+      "upload": "direction-sample-excited.mp3",
+      "duration": 5.9
+    },
+    {
+      "id": "serious",
+      "upload": "direction-sample-serious.mp3",
+      "duration": 5.9
+    },
+    {
+      "id": "pause",
+      "upload": "direction-sample-pause.mp3",
+      "duration": 5.3
+    },
+    {
+      "id": "whisper",
+      "upload": "direction-sample-whisper.mp3",
+      "duration": 5.59
+    },
+    {
+      "id": "question",
+      "upload": "direction-sample-question.mp3",
+      "duration": 1.7
+    }
+  ]
+}

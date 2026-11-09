@@ -9,7 +9,8 @@ import { uploadPath } from './transcribe';
 
 // One voice clip from several beats' notes: each sentence generated (or taken from the cache), joined with short
 // pauses, the pause after a beat's words longer where its animation needs more time. Pauses the speech model leaves
-// inside a sentence (it can stop for most of a second at a colon) are shortened to MAX_PAUSE. Used by `npm run voice`
+// inside a sentence (it can stop for most of a second at a colon) are shortened to MAX_PAUSE, except in a sentence with
+// [directions], whose pauses may be the ones asked for. Used by `npm run voice`
 // (place, rebuild, again), the Script page and "Generate again" in a clip's window.
 
 export const SENTENCE_GAP = 0.25;
@@ -17,9 +18,9 @@ export const BEAT_GAP = 0.6;
 /** The longest silence kept inside a generated sentence, in seconds. */
 export const MAX_PAUSE = 0.35;
 
-/** `file` with every silence inside it longer than MAX_PAUSE cut down to it, as `out`; its new length. */
-async function tighten(file: string, out: string): Promise<number> {
-  await run(FFMPEG, ['-y', '-v', 'error', '-i', file, '-af', `silenceremove=stop_periods=-1:stop_duration=${MAX_PAUSE}:stop_threshold=-38dB:stop_silence=${MAX_PAUSE}`, '-ac', '1', '-ar', '48000', out]);
+/** `file` with every silence inside it longer than `max` seconds cut down to it, as `out`; its new length. */
+async function tighten(file: string, out: string, max = MAX_PAUSE): Promise<number> {
+  await run(FFMPEG, ['-y', '-v', 'error', '-i', file, '-af', `silenceremove=stop_periods=-1:stop_duration=${max}:stop_threshold=-38dB:stop_silence=${max}`, '-ac', '1', '-ar', '48000', out]);
   return (await probe(out)).duration;
 }
 
@@ -42,7 +43,8 @@ export async function joinVoice(presentationId: string, upload: string, parts: J
       const r = await generateTts({ presentationId, text, ...voicer });
       const gap = k < lines.length - 1 ? SENTENCE_GAP : BEAT_GAP;
       const audio = join(tmp, `${pieces.length}.wav`);
-      const duration = await tighten(join(TTS_DIR, presentationId, r.audio), audio);
+      // A sentence with directions keeps its pauses: they may be the ones asked for ([short pause]).
+      const duration = await tighten(join(TTS_DIR, presentationId, r.audio), audio, /\[[^\]\n]*\]/.test(text) ? 60 : MAX_PAUSE);
       pieces.push({ audio, gap });
       t += duration + gap;
     }

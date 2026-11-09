@@ -22,6 +22,7 @@ import { addTrack, createTake, deleteTake, getTake, listTakes, TAKES_DIR, trackP
 import { generateTts, readSidecar as readTtsSidecar, serveTts, speechVoices } from './tts';
 import { joinVoiceRequest } from './voiceJoin';
 import { sceneVoiceRequest } from './sceneVoice';
+import { makeDirectionSamples, readDirectionSamples } from './directionSamples';
 import { buildAvatarTrack, rememberVoice } from './avatar';
 import { myAvatarRoutes } from './myAvatarRoutes';
 
@@ -36,6 +37,7 @@ import { myAvatarRoutes } from './myAvatarRoutes';
 //   /api/my-avatar, /api/avatar   your avatar: its picture, style and settings; talking-head videos of clips (myAvatarRoutes.ts)
 //   /api/voice/join  generate several beats' lines as one clip in uploads/ (a clip's Generate again)
 //   /api/voice/scene a scene's narration generated (again) and put on the timeline (the Script page) → the presentation
+//   /api/voice/direction-samples  the examples in "How to direct your voice" (GET), made in the voice in use (POST)
 //   /api/tts      generate a voice clip for a sentence; the cache (tts/<id>.json) is served from /api/tts/<id>
 //   /api/media    the media library: add (converted), list with where each is used, rename, delete, a recording's frame times (/frames); served at /media/<file>
 //   /api/images   screenshots and pictures for the board (images/<hash>.<ext>), served at /images/<file>
@@ -301,6 +303,7 @@ export function jzmServer(): Plugin {
         if ((url.pathname.startsWith('/api/my-avatar') || url.pathname.startsWith('/api/avatar') || url.pathname.startsWith('/api/me')) && (await myAvatarRoutes(req, res, url, send))) return;
         if (url.pathname === '/api/voice/join' && req.method === 'POST') return send(res, 200, await joinVoiceRequest(await readJson(req)));
         if (url.pathname === '/api/voice/scene' && req.method === 'POST') return send(res, 200, await sceneVoiceRequest(await readJson(req)));
+        if (url.pathname === '/api/voice/direction-samples') return send(res, 200, req.method === 'POST' ? await makeDirectionSamples(await readJson(req)) : await readDirectionSamples());
         if (parts[0] === 'tts' && parts[1] && parts[2] && req.method === 'GET' && (await serveTts(res, parts[1], parts[2]))) return;
         if (url.pathname === '/api/export' && req.method === 'POST') return send(res, 200, startExport(await readJson(req), appUrl()));
         if (parts[0] === 'api' && parts[1] === 'export' && parts[2]) return send(res, jobs.has(parts[2]) ? 200 : 404, jobs.get(parts[2]) ?? { error: 'no such export' });
