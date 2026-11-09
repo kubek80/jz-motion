@@ -377,100 +377,220 @@
           "y": 898,
           "size": 520,
           "color": "cyan"
+        },
+        {
+          "id": "rec",
+          "type": "text",
+          "text": "recording",
+          "x": 1420,
+          "y": 598,
+          "size": 48,
+          "align": "end",
+          "color": "white"
+        },
+        {
+          "id": "drw",
+          "type": "text",
+          "text": "drawing",
+          "x": 1420,
+          "y": 658,
+          "size": 48,
+          "align": "end",
+          "color": "white"
+        },
+        {
+          "id": "edt",
+          "type": "text",
+          "text": "editing",
+          "x": 1420,
+          "y": 718,
+          "size": 48,
+          "align": "end",
+          "color": "white"
+        },
+        {
+          "id": "pub",
+          "type": "text",
+          "text": "publishing",
+          "x": 1420,
+          "y": 778,
+          "size": 48,
+          "align": "end",
+          "color": "white"
         }
       ],
       "beats": [
         {
-          "title": "Ideas, more than time",
+          "title": "Why?",
+          "notes": "Why did I build it?",
           "actions": [
             {
               "do": "draw",
               "target": "h"
-            },
-            {
-              "do": "draw",
-              "target": [
-                "ideas",
-                "a-notes",
-                "notes"
-              ],
-              "stagger": 0.6
             }
           ],
-          "notes": "Why did I build it? I usually have far more ideas than videos.",
           "cue": 23.6
         },
         {
+          "title": "Ideas, more than videos",
+          "notes": "I usually have far more ideas than videos.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "ideas",
+              "delay": 0.75
+            },
+            {
+              "do": "pulse",
+              "target": "ideas",
+              "start": "with",
+              "delay": 0.97
+            }
+          ],
+          "cue": 25.56
+        },
+        {
+          "title": "A script",
+          "notes": "I write notes, sometimes even a full script.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "a-notes",
+              "delay": 0.31
+            },
+            {
+              "do": "draw",
+              "target": "notes",
+              "start": "with",
+              "delay": 1.39
+            }
+          ],
+          "cue": 28.77
+        },
+        {
           "title": "A video, planned",
+          "notes": "Then I plan a video to go with the script.",
           "actions": [
             {
               "do": "draw",
-              "target": [
-                "a-video",
-                "video"
-              ],
-              "stagger": 0.4
+              "target": "a-video",
+              "delay": 0.22
+            },
+            {
+              "do": "draw",
+              "target": "video",
+              "start": "with",
+              "delay": 0.12
             },
             {
               "do": "pulse",
-              "target": "video"
+              "target": "video",
+              "start": "with",
+              "delay": 1.16
             }
           ],
-          "notes": "I write notes, sometimes even a full script. Then I plan a video to go with the script,",
-          "cue": 28.4
+          "cue": 32.51
         },
         {
-          "title": "Beat 5",
+          "title": "Where it stops",
+          "notes": "And this is where it usually stops.",
           "actions": [
             {
               "do": "draw",
-              "target": "video-i-would-like"
+              "target": "video-i-would-like",
+              "delay": 0.1
             },
             {
               "do": "draw",
-              "target": "i-would-like"
+              "target": "i-would-like",
+              "start": "with",
+              "delay": 0.64
             },
             {
               "do": "pulse",
-              "target": "i-would-like"
+              "target": "i-would-like",
+              "start": "with",
+              "delay": 0.69
             }
           ],
-          "notes": "and this is when it usually stops.",
-          "cue": 34.99
+          "cue": 35.46
         },
         {
-          "title": "No time",
+          "title": "All the work",
+          "notes": "Recording, drawing, editing, publishing.",
           "actions": [
             {
-              "do": "draw",
-              "target": "me"
-            }
-          ],
-          "notes": "Recording, drawing, editing, publishing: between my work and family, I never have enough time to do it.",
-          "cue": 37.79
-        },
-        {
-          "title": "What if the board drew itself?",
-          "actions": [
-            {
-              "do": "pulse",
-              "target": "ideas"
-            },
-            {
-              "do": "draw",
-              "target": "what-if"
+              "do": "pop",
+              "target": "rec"
             },
             {
               "do": "pop",
-              "target": "lightbulb"
+              "target": "drw",
+              "start": "with",
+              "delay": 1.01
+            },
+            {
+              "do": "pop",
+              "target": "edt",
+              "start": "with",
+              "delay": 0.59
+            },
+            {
+              "do": "pop",
+              "target": "pub",
+              "start": "with",
+              "delay": 0.71
+            }
+          ],
+          "cue": 38.14
+        },
+        {
+          "title": "No time",
+          "notes": "Between my work and family, I never have enough time to do it.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "me",
+              "delay": 1.25
             },
             {
               "do": "pulse",
-              "target": "lightbulb"
+              "target": "me",
+              "start": "with",
+              "delay": 1.26
             }
           ],
+          "cue": 41.77
+        },
+        {
+          "title": "What if the board drew itself?",
           "notes": "So the question became: what if the board could draw itself, and a model could help me do it?",
-          "cue": 45.55
+          "actions": [
+            {
+              "do": "pulse",
+              "target": "ideas",
+              "delay": 0.33
+            },
+            {
+              "do": "draw",
+              "target": "what-if",
+              "start": "with",
+              "delay": 0.98
+            },
+            {
+              "do": "pop",
+              "target": "lightbulb",
+              "start": "with",
+              "delay": 2.52
+            },
+            {
+              "do": "pulse",
+              "target": "lightbulb",
+              "start": "with",
+              "delay": 0.88
+            }
+          ],
+          "cue": 45.87
         }
       ]
     },
@@ -481,7 +601,7 @@
         {
           "id": "h",
           "type": "text",
-          "text": "WHAT IF…",
+          "text": "WHAT IF\u2026",
           "x": 960,
           "y": 90,
           "size": 68,
@@ -584,7 +704,7 @@
             }
           ],
           "notes": "What if I could have my own dedicated video creation assistant? As you would have guessed, I gave it a try.",
-          "cue": 52.6
+          "cue": 52.92
         }
       ],
       "layout": "pip"
@@ -634,7 +754,7 @@
         {
           "id": "qualities",
           "type": "text",
-          "text": "clear · calm · fast to follow",
+          "text": "clear \u00b7 calm \u00b7 fast to follow",
           "x": 960,
           "y": 970,
           "size": 40,
@@ -655,7 +775,7 @@
             }
           ],
           "notes": "I started from basics: I defined [strong emphasis]the style.",
-          "cue": 59.59
+          "cue": 59.91
         },
         {
           "title": "The reference",
@@ -672,7 +792,7 @@
             }
           ],
           "notes": "I took inspiration from IBM lightboard explainers. I enjoyed their aesthetics: a glass board and neon diagrams.",
-          "cue": 63.74
+          "cue": 64.06
         },
         {
           "title": "Clear, calm, fast to follow",
@@ -800,7 +920,7 @@
               "delay": 0.8
             }
           ],
-          "cue": 72.36
+          "cue": 72.68
         },
         {
           "title": "A sentence",
@@ -825,7 +945,7 @@
               "start": "with"
             }
           ],
-          "cue": 78.9
+          "cue": 79.22
         },
         {
           "title": "Three ways in",
@@ -861,7 +981,7 @@
               "delay": 0.6
             }
           ],
-          "cue": 84.78
+          "cue": 85.1
         },
         {
           "title": "Watch it work",
@@ -885,7 +1005,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 95.91
+          "cue": 96.23
         },
         {
           "title": "A first draft",
@@ -918,7 +1038,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 104.33
+          "cue": 104.65
         }
       ]
     },
@@ -1060,7 +1180,7 @@
               "delay": 0.8
             }
           ],
-          "cue": 116.11
+          "cue": 116.43
         },
         {
           "title": "Click to select",
@@ -1100,7 +1220,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 122.81
+          "cue": 123.13
         },
         {
           "title": "The beats",
@@ -1136,7 +1256,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 130.78
+          "cue": 131.1
         },
         {
           "title": "From the library",
@@ -1178,7 +1298,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 138.6
+          "cue": 138.92
         },
         {
           "title": "P to play",
@@ -1213,7 +1333,7 @@
               "delay": 0.5
             }
           ],
-          "cue": 148.6
+          "cue": 148.92
         }
       ]
     },
@@ -1335,7 +1455,7 @@
               "delay": 0.8
             }
           ],
-          "cue": 154.48
+          "cue": 154.8
         },
         {
           "title": "Select",
@@ -1377,7 +1497,7 @@
               "start": "with"
             }
           ],
-          "cue": 163.59
+          "cue": 163.91
         },
         {
           "title": "Recolour",
@@ -1409,7 +1529,7 @@
               "delay": 0.4
             }
           ],
-          "cue": 170.43
+          "cue": 170.75
         },
         {
           "title": "Rewrite",
@@ -1452,7 +1572,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 176.65
+          "cue": 176.97
         },
         {
           "title": "Made by the app",
@@ -1479,7 +1599,7 @@
               "delay": 0.5
             }
           ],
-          "cue": 185.08
+          "cue": 185.4
         }
       ]
     },
@@ -1627,7 +1747,7 @@
             }
           ],
           "notes": "Under the hood, jz-motion is designed to be LLM first. A presentation is not pixels: it's simply a JSON document.",
-          "cue": 195.83
+          "cue": 196.15
         },
         {
           "title": "Context",
@@ -1651,7 +1771,7 @@
             }
           ],
           "notes": "Every request sends the model the format reference, the drawing rules and the whole library: every icon, logo, clipart and 3D model it may use. So in reality, the LLM generates pure JSON.",
-          "cue": 204.6
+          "cue": 204.92
         },
         {
           "title": "Schema check",
@@ -1666,7 +1786,7 @@
             }
           ],
           "notes": "The JSON is then sent to a schema checker, to make sure the result is correct.",
-          "cue": 219.06
+          "cue": 219.38
         },
         {
           "title": "Repair",
@@ -1681,7 +1801,7 @@
               "target": "repair"
             }
           ],
-          "cue": 224.72
+          "cue": 225.04
         },
         {
           "title": "Board",
@@ -1699,7 +1819,7 @@
               "target": "web-search"
             }
           ],
-          "cue": 229.84
+          "cue": 230.16
         },
         {
           "title": "The JSON",
@@ -1717,7 +1837,7 @@
               "padding": 260
             }
           ],
-          "cue": 235.43
+          "cue": 235.75
         },
         {
           "title": "Feedback",
@@ -1742,7 +1862,7 @@
               "times": 2
             }
           ],
-          "cue": 241.91
+          "cue": 242.23
         },
         {
           "title": "Round again",
@@ -1806,7 +1926,7 @@
               "start": "with"
             }
           ],
-          "cue": 246.61
+          "cue": 246.93
         }
       ],
       "layout": "pip"
@@ -1969,7 +2089,7 @@
               "delay": 0.4
             }
           ],
-          "cue": 254.76
+          "cue": 255.08
         },
         {
           "title": "Captured larger",
@@ -1992,7 +2112,7 @@
               "delay": 0.4
             }
           ],
-          "cue": 261.49
+          "cue": 261.81
         },
         {
           "title": "Frame by frame",
@@ -2046,7 +2166,7 @@
               "delay": 0.5
             }
           ],
-          "cue": 268.82
+          "cue": 269.14
         },
         {
           "title": "Pick a moment",
@@ -2070,7 +2190,7 @@
               "start": "with"
             }
           ],
-          "cue": 276.14
+          "cue": 276.46
         },
         {
           "title": "A beat goes there",
@@ -2105,7 +2225,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 280.06
+          "cue": 280.38
         },
         {
           "title": "Back out",
@@ -2153,7 +2273,7 @@
           "width": 1200,
           "height": 750,
           "frame": "browser",
-          "url": "localhost:5173 · Timing",
+          "url": "localhost:5173 \u00b7 Timing",
           "color": "cyan"
         },
         {
@@ -2345,7 +2465,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 288.45
+          "cue": 288.77
         },
         {
           "title": "A closer look",
@@ -2397,7 +2517,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 295.96
+          "cue": 296.28
         },
         {
           "title": "Fix a part",
@@ -2432,7 +2552,7 @@
               "delay": 0.5
             }
           ],
-          "cue": 303.12
+          "cue": 303.44
         },
         {
           "title": "The microphone",
@@ -2469,7 +2589,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 309.18
+          "cue": 309.5
         },
         {
           "title": "Record or generate",
@@ -2513,7 +2633,7 @@
               "delay": 0.5
             }
           ],
-          "cue": 316.15
+          "cue": 316.47
         },
         {
           "title": "My cloned voice",
@@ -2550,7 +2670,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 322.24
+          "cue": 322.56
         },
         {
           "title": "A softer accent",
@@ -2585,7 +2705,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 330.58
+          "cue": 330.9
         },
         {
           "title": "Back out",
@@ -2706,7 +2826,7 @@
           "width": 1200,
           "height": 750,
           "frame": "browser",
-          "url": "localhost:5173 · Timing",
+          "url": "localhost:5173 \u00b7 Timing",
           "color": "cyan"
         },
         {
@@ -2794,7 +2914,7 @@
               "duration": 0.8
             }
           ],
-          "cue": 336.1
+          "cue": 336.42
         },
         {
           "title": "It speaks",
@@ -2816,7 +2936,7 @@
               "from": 0
             }
           ],
-          "cue": 345.91
+          "cue": 346.23
         },
         {
           "title": "Why a cartoon",
@@ -2837,7 +2957,7 @@
               "delay": 1.2
             }
           ],
-          "cue": 353.41
+          "cue": 353.73
         },
         {
           "title": "In Timing",
@@ -2894,7 +3014,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 362.51
+          "cue": 362.83
         },
         {
           "title": "Right-click",
@@ -2931,7 +3051,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 367.86
+          "cue": 368.18
         },
         {
           "title": "My avatar",
@@ -2968,7 +3088,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 372.8
+          "cue": 373.12
         },
         {
           "title": "Back out",
@@ -3073,7 +3193,7 @@
         {
           "id": "rule",
           "type": "text",
-          "text": "six marker colours · one stroke · drawn in order",
+          "text": "six marker colours \u00b7 one stroke \u00b7 drawn in order",
           "x": 960,
           "y": 820,
           "size": 46,
@@ -3154,7 +3274,7 @@
           "width": 1150,
           "height": 719,
           "frame": "browser",
-          "url": "localhost:5173 · new clipart with AI",
+          "url": "localhost:5173 \u00b7 new clipart with AI",
           "color": "pink"
         },
         {
@@ -3188,7 +3308,7 @@
             }
           ],
           "notes": "The other goal is consistency: whatever a model makes has to look like it came from the same set of markers.",
-          "cue": 379.71
+          "cue": 380.03
         },
         {
           "title": "Everything",
@@ -3210,7 +3330,7 @@
               "target": "rule"
             }
           ],
-          "cue": 387.39
+          "cue": 387.71
         },
         {
           "title": "Six marker colours",
@@ -3229,7 +3349,7 @@
               "stagger": 0.15
             }
           ],
-          "cue": 393.09
+          "cue": 393.41
         },
         {
           "title": "Make your own",
@@ -3247,7 +3367,7 @@
               "delay": 0.6
             }
           ],
-          "cue": 398.98
+          "cue": 399.3
         },
         {
           "title": "Versions",
@@ -3259,7 +3379,7 @@
               "padding": 10
             }
           ],
-          "cue": 405.17
+          "cue": 405.49
         },
         {
           "title": "Keep it",
@@ -3397,7 +3517,7 @@
         {
           "id": "note",
           "type": "text",
-          "text": "one source of truth —\nso the house style stays the same",
+          "text": "one source of truth \u2014\nso the house style stays the same",
           "x": 960,
           "y": 900,
           "size": 40,
@@ -3458,7 +3578,7 @@
               "start": "with"
             }
           ],
-          "cue": 409.86
+          "cue": 410.18
         },
         {
           "title": "Both AIs follow them",
@@ -3481,7 +3601,7 @@
               "stagger": 0.4
             }
           ],
-          "cue": 421.86
+          "cue": 422.18
         },
         {
           "title": "One source of truth",
@@ -3496,7 +3616,7 @@
               "target": "folder"
             }
           ],
-          "cue": 428.66
+          "cue": 428.98
         }
       ]
     },
@@ -3700,7 +3820,7 @@
               "target": "server-stack"
             }
           ],
-          "cue": 433.98
+          "cue": 434.3
         },
         {
           "title": "Each explainer adds one",
@@ -3715,7 +3835,7 @@
               "target": "it-new"
             }
           ],
-          "cue": 445.31
+          "cue": 445.63
         },
         {
           "title": "So each one costs less",
@@ -3736,7 +3856,7 @@
               ]
             }
           ],
-          "cue": 449.88
+          "cue": 450.2
         }
       ]
     },
@@ -3772,7 +3892,7 @@
           "width": 400,
           "height": 90,
           "color": "yellow",
-          "label": "editor · React"
+          "label": "editor \u00b7 React"
         },
         {
           "id": "stage",
@@ -3782,7 +3902,7 @@
           "width": 400,
           "height": 90,
           "color": "pink",
-          "label": "board · SVG + GSAP"
+          "label": "board \u00b7 SVG + GSAP"
         },
         {
           "id": "ai",
@@ -3847,7 +3967,7 @@
         {
           "id": "fn-note",
           "type": "text",
-          "text": "Playwright + FFmpeg · frame by frame",
+          "text": "Playwright + FFmpeg \u00b7 frame by frame",
           "x": 960,
           "y": 860,
           "size": 24,
@@ -3861,7 +3981,7 @@
           "y": 260,
           "size": 110,
           "color": "orange",
-          "label": "Claude · LLM"
+          "label": "Claude \u00b7 LLM"
         },
         {
           "id": "mod-openai",
@@ -3871,7 +3991,7 @@
           "y": 420,
           "size": 110,
           "color": "white",
-          "label": "any OpenAI-compat · LLM"
+          "label": "any OpenAI-compat \u00b7 LLM"
         },
         {
           "id": "mod-tts",
@@ -3881,7 +4001,7 @@
           "y": 580,
           "size": 100,
           "color": "pink",
-          "label": "OpenRouter · my voice"
+          "label": "OpenRouter \u00b7 my voice"
         },
         {
           "id": "mod-stt",
@@ -3891,7 +4011,7 @@
           "y": 740,
           "size": 100,
           "color": "yellow",
-          "label": "OpenAI · transcription"
+          "label": "OpenAI \u00b7 transcription"
         },
         {
           "id": "a1",
@@ -3958,7 +4078,7 @@
           "y": 900,
           "size": 100,
           "color": "green",
-          "label": "fal.ai · avatar video"
+          "label": "fal.ai \u00b7 avatar video"
         },
         {
           "id": "a6",
@@ -3978,7 +4098,7 @@
               "target": "h"
             }
           ],
-          "cue": 457.05
+          "cue": 457.37
         },
         {
           "title": "In the browser",
@@ -3998,7 +4118,7 @@
             }
           ],
           "notes": "In the browser, we have a frontend application made with React. SVG animations are made with GSAP, and 3D coordinates are calculated with Three.js.",
-          "cue": 459.35
+          "cue": 459.67
         },
         {
           "title": "A small local server",
@@ -4034,7 +4154,7 @@
             }
           ],
           "notes": "It's paired with a local server responsible for keeping the files, proxying LLM calls, transcription of recordings and export of videos.",
-          "cue": 471.01
+          "cue": 471.33
         },
         {
           "title": "Swappable models",
@@ -4058,7 +4178,7 @@
               ]
             }
           ],
-          "cue": 480.73
+          "cue": 481.05
         },
         {
           "title": "Voice both ways",
@@ -4103,7 +4223,7 @@
               "target": "a6"
             }
           ],
-          "cue": 486.4
+          "cue": 486.72
         }
       ]
     },
@@ -4426,7 +4546,7 @@
             }
           ],
           "notes": "Because every request is checked and repaired, I can experiment with smaller models.",
-          "cue": 495.09
+          "cue": 495.41
         },
         {
           "title": "Story",
@@ -4443,7 +4563,7 @@
               "stagger": 0.25
             }
           ],
-          "cue": 500.45
+          "cue": 500.77
         },
         {
           "title": "Small edits",
@@ -4460,7 +4580,7 @@
             }
           ],
           "notes": "Small edits, like changing a beat, work fine with fast, cheap models like Haiku.",
-          "cue": 507.29
+          "cue": 507.61
         },
         {
           "title": "Drawings",
@@ -4477,7 +4597,7 @@
               "stagger": 0.25
             }
           ],
-          "cue": 513.3
+          "cue": 513.62
         },
         {
           "title": "Voice",
@@ -4494,7 +4614,7 @@
             }
           ],
           "notes": "For transcription I use a small OpenAI model. At first I recorded the voice-over myself, but as I kept updating the script, I switched to AI: a clone of my own voice, so a changed sentence doesn't mean [strong emphesis]recording it again and again.",
-          "cue": 519.96
+          "cue": 520.28
         },
         {
           "title": "Transcription",
@@ -4536,7 +4656,7 @@
               "delay": 0.6
             }
           ],
-          "cue": 536.06
+          "cue": 536.38
         }
       ]
     },
@@ -4633,7 +4753,7 @@
         {
           "id": "why",
           "type": "text",
-          "text": "I work on the words\nindependently from the board —\nthe board follows what I write.",
+          "text": "I work on the words\nindependently from the board \u2014\nthe board follows what I write.",
           "x": 1480,
           "y": 700,
           "size": 30,
@@ -4654,7 +4774,7 @@
               "target": "script-ico"
             }
           ],
-          "cue": 548.48
+          "cue": 548.8
         },
         {
           "title": "Three ways to touch it",
@@ -4673,7 +4793,7 @@
             }
           ],
           "notes": "I can read and edit the whole thing in the Script view, inline in the Timing prompter,",
-          "cue": 556.75
+          "cue": 557.07
         },
         {
           "title": "Same text, three lenses",
@@ -4692,7 +4812,7 @@
             }
           ],
           "notes": "or in the raw JSON tab if I want to see the shape.",
-          "cue": 562.28
+          "cue": 562.6
         }
       ]
     },
@@ -4720,7 +4840,7 @@
           "width": 1200,
           "height": 750,
           "frame": "browser",
-          "url": "localhost:5173 · Timing",
+          "url": "localhost:5173 \u00b7 Timing",
           "color": "cyan"
         },
         {
@@ -4796,7 +4916,7 @@
         {
           "id": "cap-record",
           "type": "text",
-          "text": "Record, read, → for the next line",
+          "text": "Record, read, \u2192 for the next line",
           "x": 960,
           "y": 1025,
           "size": 42,
@@ -4841,7 +4961,7 @@
               "delay": 0.5
             }
           ],
-          "cue": 567.56
+          "cue": 567.88
         },
         {
           "title": "One line at a time",
@@ -4877,7 +4997,7 @@
               "delay": 0.8
             }
           ],
-          "cue": 575.88
+          "cue": 576.2
         },
         {
           "title": "The timeline",
@@ -4905,7 +5025,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 583.33
+          "cue": 583.65
         },
         {
           "title": "Just read",
@@ -4939,7 +5059,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 592.9
+          "cue": 593.22
         },
         {
           "title": "Tidy up",
@@ -4975,7 +5095,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 601.85
+          "cue": 602.17
         },
         {
           "title": "Back out",
@@ -5154,7 +5274,7 @@
               "delay": 0.8
             }
           ],
-          "cue": 609.48
+          "cue": 609.8
         },
         {
           "title": "Home",
@@ -5190,7 +5310,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 615.18
+          "cue": 615.5
         },
         {
           "title": "This scene",
@@ -5232,7 +5352,7 @@
               "delay": 1
             }
           ],
-          "cue": 619.28
+          "cue": 619.6
         },
         {
           "title": "The AI tab",
@@ -5268,7 +5388,7 @@
               "delay": 0.5
             }
           ],
-          "cue": 630.12
+          "cue": 630.44
         },
         {
           "title": "The library",
@@ -5304,7 +5424,7 @@
               "delay": 0.3
             }
           ],
-          "cue": 637.88
+          "cue": 638.2
         },
         {
           "title": "Same skills",
@@ -5326,7 +5446,7 @@
               "delay": 0.4
             }
           ],
-          "cue": 644.18
+          "cue": 644.5
         }
       ]
     },
@@ -5414,7 +5534,7 @@
             }
           ],
           "notes": "One of my main goals was to create an app that would let me make a ten-minute explainer video for under five dollars. I'm happy to share that I was successful.",
-          "cue": 653.03
+          "cue": 653.35
         },
         {
           "title": "Why it works",
@@ -5426,7 +5546,7 @@
             }
           ],
           "notes": "If I had to name three main contributors to that success: a presentation is pure JSON, so tokens are cheap;",
-          "cue": 663.44
+          "cue": 663.76
         },
         {
           "title": "Beat 3",
@@ -5437,7 +5557,7 @@
             }
           ],
           "notes": "the library grows, so most drawings are reused;",
-          "cue": 671.12
+          "cue": 671.44
         },
         {
           "title": "Beat 4",
@@ -5448,7 +5568,7 @@
             }
           ],
           "notes": "and the repair loop lets me use small, fast models.",
-          "cue": 675.11
+          "cue": 675.43
         }
       ],
       "layout": "camera"
@@ -5566,7 +5686,7 @@
             }
           ],
           "notes": "And now the last mile: I click Record and adjust the timing, like I'm doing right now.",
-          "cue": 678.26
+          "cue": 678.58
         },
         {
           "title": "Export",
@@ -5591,7 +5711,7 @@
               ]
             }
           ],
-          "cue": 684.63
+          "cue": 684.95
         },
         {
           "title": "Thanks",
@@ -5606,7 +5726,7 @@
               "stagger": 1.2
             }
           ],
-          "cue": 689.03
+          "cue": 689.35
         }
       ],
       "layout": "side"
@@ -5623,7 +5743,7 @@
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 17.007,
-        "name": "generated voice · JZ-motion",
+        "name": "generated voice \u00b7 JZ-motion",
         "avatar": {
           "video": "avatar-title-bea1bb.mp4",
           "trimStart": 0,
@@ -5639,7 +5759,7 @@
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 2.9,
-        "name": "generated voice · No Photoshop needed"
+        "name": "generated voice \u00b7 No Photoshop needed"
       },
       {
         "id": "gen-no-photoshop-2",
@@ -5650,29 +5770,29 @@
         "lane": 0,
         "trimStart": 5.459,
         "trimEnd": 8.8,
-        "name": "generated voice · No Photoshop needed (2)"
+        "name": "generated voice \u00b7 No Photoshop needed (2)"
       },
       {
         "id": "gen-why",
         "scene": "why",
-        "upload": "generated-why.webm",
-        "sourceDuration": 28.507,
+        "upload": "generated-why-mw9b50ie.webm",
+        "sourceDuration": 28.827,
         "offset": 23.601,
         "lane": 0,
         "trimStart": 0,
-        "trimEnd": 28.507,
-        "name": "generated voice · Why I built it"
+        "trimEnd": 28.827,
+        "name": "generated voice \u00b7 Why I built it"
       },
       {
         "id": "gen-assistant",
         "scene": "assistant",
         "upload": "generated-assistant.webm",
         "sourceDuration": 6.907,
-        "offset": 52.6,
+        "offset": 52.92,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 6.907,
-        "name": "generated voice · My own video assistant",
+        "name": "generated voice \u00b7 My own video assistant",
         "avatar": {
           "video": "avatar-assistant-b4c4d8.mp4",
           "trimStart": 0,
@@ -5684,55 +5804,55 @@
         "scene": "inspiration",
         "upload": "generated-inspiration-mw9anpdc.webm",
         "sourceDuration": 12.507,
-        "offset": 59.585,
+        "offset": 59.905,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 12.507,
-        "name": "generated voice · Inspiration"
+        "name": "generated voice \u00b7 Inspiration"
       },
       {
         "id": "gen-start-b",
         "scene": "start-b",
         "upload": "generated-start-b.webm",
         "sourceDuration": 42.907,
-        "offset": 72.557,
+        "offset": 72.877,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 42.907,
-        "name": "generated voice · Start with a sentence (B)"
+        "name": "generated voice \u00b7 Start with a sentence (B)"
       },
       {
         "id": "gen-editor-b",
         "scene": "editor-b",
         "upload": "generated-editor-b.webm",
         "sourceDuration": 37.507,
-        "offset": 115.358,
+        "offset": 115.678,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 37.507,
-        "name": "generated voice · Edit like a whiteboard (B)"
+        "name": "generated voice \u00b7 Edit like a whiteboard (B)"
       },
       {
         "id": "gen-edit-colour-b",
         "scene": "edit-colour-b",
         "upload": "generated-edit-colour-b.webm",
         "sourceDuration": 41.207,
-        "offset": 153.731,
+        "offset": 154.051,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 41.207,
-        "name": "generated voice · Edit text, change colour (B)"
+        "name": "generated voice \u00b7 Edit text, change colour (B)"
       },
       {
         "id": "gen-llm-first",
         "scene": "llm-first",
         "upload": "generated-llm-first.webm",
         "sourceDuration": 57.307,
-        "offset": 195.829,
+        "offset": 196.149,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 57.307,
-        "name": "generated voice · LLM first",
+        "name": "generated voice \u00b7 LLM first",
         "avatar": {
           "video": "avatar-llm-first-c6772a.mp4",
           "trimStart": 0,
@@ -5744,132 +5864,132 @@
         "scene": "recordings",
         "upload": "generated-recordings.webm",
         "sourceDuration": 32.807,
-        "offset": 254.007,
+        "offset": 254.327,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 32.807,
-        "name": "generated voice · Recordings that stay sharp"
+        "name": "generated voice \u00b7 Recordings that stay sharp"
       },
       {
         "id": "gen-voice-tools",
         "scene": "voice-tools",
         "upload": "generated-voice-tools.webm",
         "sourceDuration": 46.807,
-        "offset": 287.693,
+        "offset": 288.013,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 46.807,
-        "name": "generated voice · Finding my voice"
+        "name": "generated voice \u00b7 Finding my voice"
       },
       {
         "id": "gen-my-avatar",
         "scene": "my-avatar",
         "upload": "generated-my-avatar.webm",
         "sourceDuration": 42.807,
-        "offset": 336.097,
+        "offset": 336.417,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 42.807,
-        "name": "generated voice · My avatar"
+        "name": "generated voice \u00b7 My avatar"
       },
       {
         "id": "gen-style",
         "scene": "style",
         "upload": "generated-style.webm",
         "sourceDuration": 29.307,
-        "offset": 378.946,
+        "offset": 379.266,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 29.307,
-        "name": "generated voice · One style for everything"
+        "name": "generated voice \u00b7 One style for everything"
       },
       {
         "id": "gen-skills-guide",
         "scene": "skills-guide",
         "upload": "generated-skills-guide.webm",
         "sourceDuration": 23.307,
-        "offset": 409.105,
+        "offset": 409.425,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 23.307,
-        "name": "generated voice · Skills guide the app"
+        "name": "generated voice \u00b7 Skills guide the app"
       },
       {
         "id": "gen-library",
         "scene": "library",
         "upload": "generated-library.webm",
         "sourceDuration": 23.007,
-        "offset": 433.214,
+        "offset": 433.534,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 23.007,
-        "name": "generated voice · A library that lowers the cost"
+        "name": "generated voice \u00b7 A library that lowers the cost"
       },
       {
         "id": "gen-architecture",
         "scene": "architecture",
         "upload": "generated-architecture.webm",
         "sourceDuration": 37.207,
-        "offset": 457.047,
+        "offset": 457.367,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 37.207,
-        "name": "generated voice · Architecture"
+        "name": "generated voice \u00b7 Architecture"
       },
       {
         "id": "gen-models",
         "scene": "models",
         "upload": "generated-models-mw9arvuq.webm",
         "sourceDuration": 51.807,
-        "offset": 495.094,
+        "offset": 495.414,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 51.807,
-        "name": "generated voice · The right model for each job"
+        "name": "generated voice \u00b7 The right model for each job"
       },
       {
         "id": "gen-script",
         "scene": "script",
         "upload": "generated-script.webm",
         "sourceDuration": 18.207,
-        "offset": 547.713,
+        "offset": 548.033,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 18.207,
-        "name": "generated voice · Script at the centre"
+        "name": "generated voice \u00b7 Script at the centre"
       },
       {
         "id": "gen-timing-b",
         "scene": "timing-b",
         "upload": "generated-timing-b.webm",
         "sourceDuration": 41.807,
-        "offset": 566.799,
+        "offset": 567.119,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 41.807,
-        "name": "generated voice · Timing, prompter and voice-over (B)"
+        "name": "generated voice \u00b7 Timing, prompter and voice-over (B)"
       },
       {
         "id": "gen-ai-helpers-b",
         "scene": "ai-helpers-b",
         "upload": "generated-ai-helpers-b.webm",
         "sourceDuration": 41.907,
-        "offset": 609.471,
+        "offset": 609.791,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 41.907,
-        "name": "generated voice · AI helpers across the app (B)"
+        "name": "generated voice \u00b7 AI helpers across the app (B)"
       },
       {
         "id": "gen-cost",
         "scene": "cost",
         "upload": "generated-cost.webm",
         "sourceDuration": 25.907,
-        "offset": 652.263,
+        "offset": 652.583,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 25.907,
-        "name": "generated voice · Under $5 per 10 minutes",
+        "name": "generated voice \u00b7 Under $5 per 10 minutes",
         "avatar": {
           "video": "avatar-cost-10a9a5.mp4",
           "trimStart": 0,
@@ -5881,11 +6001,11 @@
         "scene": "publish",
         "upload": "generated-publish.webm",
         "sourceDuration": 13.507,
-        "offset": 678.983,
+        "offset": 679.303,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 13.507,
-        "name": "generated voice · Publish more",
+        "name": "generated voice \u00b7 Publish more",
         "avatar": {
           "video": "avatar-publish-cf90ef.mp4",
           "trimStart": 0,

@@ -78,8 +78,9 @@ const ease = (k: number) => (k < 0.5 ? 2 * k * k : 1 - (-2 * k + 2) ** 2 / 2);
 const mix = (a: Rect, b: Rect, k: number): Rect => ({ x: a.x + (b.x - a.x) * k, y: a.y + (b.y - a.y) * k, w: a.w + (b.w - a.w) * k, h: a.h + (b.h - a.h) * k });
 
 export interface AvatarFrame {
-  /** The avatar video and the second of it to show, or null when nothing shows. */
-  video: { file: string; time: number } | null;
+  /** The avatar video and the second of it to show, or null when nothing shows; `still`: a held frame (its last before
+   * the scene ends, or its first before it starts), so a player shows that frame instead of playing on. */
+  video: { file: string; time: number; still?: boolean } | null;
   avatar: Rect;
   opacity: number;
   board: Rect;
@@ -112,10 +113,10 @@ export function avatarFrame(plan: AvatarPlan, t: number): AvatarFrame {
     const before = [...plan.spans].reverse().find((s) => s.at + s.length <= t);
     const after = plan.spans.find((s) => s.at > t);
     if (now) video = { file: now.video, time: t - now.at };
-    else if (before && before.scene === scene) video = { file: before.video, time: Math.max(0, before.length - 0.05) };
-    else if (after && after.scene === scene) video = { file: after.video, time: 0 };
-    else if (before) video = { file: before.video, time: Math.max(0, before.length - 0.05) };
-    else if (after) video = { file: after.video, time: 0 };
+    else if (before && before.scene === scene) video = { file: before.video, time: Math.max(0, before.length - 0.05), still: true };
+    else if (after && after.scene === scene) video = { file: after.video, time: 0, still: true };
+    else if (before) video = { file: before.video, time: Math.max(0, before.length - 0.05), still: true };
+    else if (after) video = { file: after.video, time: 0, still: true };
   }
   return { video, avatar, opacity: video ? opacity : 0, board, avatarOnTop };
 }

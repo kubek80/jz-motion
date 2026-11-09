@@ -62,7 +62,9 @@ export class AvatarLayer {
       this.copy.paint();
       return;
     }
-    const holding = f.video.time >= (v.duration || Infinity) - 0.06;
+    // Holding a frame (the plan says so, or the file ends): paused on it. Before, a video whose file runs on past
+    // the part its clip uses kept playing, was pulled back, played on again: a flicker at the end of the clip.
+    const holding = !!f.video.still || f.video.time >= (v.duration || Infinity) - 0.06;
     if (Math.abs(v.currentTime - want) > (opts.playing && !holding ? 0.3 : 0.04)) v.currentTime = want;
     if (opts.playing && !holding && v.paused) void v.play().catch(() => undefined);
     if ((!opts.playing || holding) && !v.paused) v.pause();
