@@ -140,6 +140,8 @@ export function EditorWindows({
         <Script
           presentation={result.presentation}
           presentationId={id}
+          doc={doc as never}
+          onDoc={(next) => update(next as typeof doc)}
           onNotes={(scene, beat, notes) => update({
             ...doc,
             scenes: doc.scenes.map((s, si) => si !== scene ? s : ({

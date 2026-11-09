@@ -27,13 +27,11 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { basename, join, resolve } from 'node:path';
 import { splitSentences } from '../src/app/tts';
-import { compile } from '../src/engine/compile';
-import { cueClicks } from '../src/video/performance';
-import { freeLane, makeRoom, type TimelineClip } from '../src/video/makeRoom';
 import { registerLibrary } from './library';
 import { readMyVoice } from './myVoice';
+import { compiled as compileDoc, cuesOutOfOrder, placeScene, putClip, sayAgain, voiceScene, type VoiceDoc } from './sceneVoice';
 import { generateTts } from './tts';
-import { joinVoice, SENTENCE_GAP } from './voiceJoin';
+import { SENTENCE_GAP } from './voiceJoin';
 
 const args = process.argv.slice(2);
 const value = (name: string) => { const i = args.indexOf(`--${name}`); return i >= 0 ? args[i + 1] : undefined; };
@@ -63,12 +61,9 @@ if (!voicer.apiKey) {
   process.exit(2);
 }
 
-const SCENE_TAIL = 0.9;
-
-type Doc = { scenes: { id: string; title?: string; skip?: boolean; beats: { title?: string; notes?: string; cue?: number; auto?: boolean }[] }[]; voiceover?: { clips: (TimelineClip & { scene?: string })[] } };
 const path = resolve(file);
 const presentationId = basename(path).replace(/\.json$/, '');
-const doc: Doc = JSON.parse(await readFile(path, 'utf8'));
+const doc: VoiceDoc = JSON.parse(await readFile(path, 'utf8'));
 await registerLibrary();
 const wanted = value('scenes')?.split(',').map((s) => s.trim()).filter(Boolean);
 const missing = wanted?.filter((id) => !doc.scenes.some((s) => s.id === id));
@@ -84,10 +79,8 @@ async function speak(notes: string | undefined) {
   return out;
 }
 
-function compiled(d: Doc) {
-  const r = compile(d);
-  if (!r.ok) { console.error(r.errors.slice(0, 5).join('\n')); process.exit(1); }
-  return r.presentation;
+function compiled(d: VoiceDoc) {
+  try { return compileDoc(d); } catch (e) { console.error((e as Error).message); process.exit(1); }
 }
 
 if (cmd === 'time') {
@@ -112,47 +105,17 @@ if (cmd === 'time') {
   const targets = doc.scenes.map((s, i) => (wanted.includes(s.id) ? i : -1)).filter((i) => i >= 0);
   for (const i of targets) if (doc.scenes[i].beats.some((b) => b.cue !== undefined)) { console.error(`scene "${doc.scenes[i].id}" is already timed (it has cues): nothing placed`); process.exit(2); }
   // From the last scene to the first, so the times of those still to place don't move under them.
-  for (const si of [...targets].reverse()) {
-    const scene = doc.scenes[si];
-    // Where it plays: where the next timed scene starts, with this and the other unplaced scenes left out meanwhile.
-    const trial: Doc = { ...doc, scenes: doc.scenes.map((s, j) => (targets.includes(j) && (j <= si || !s.beats.some((b) => b.cue !== undefined)) ? { ...s, skip: true } : s)) };
-    const clicks = cueClicks(compiled(trial));
-    const next = clicks.find((c) => c.scene > si);
-    const end = Math.max(...doc.voiceover.clips.map((c) => c.offset + c.trimEnd - c.trimStart), ...clicks.map((c) => c.t + c.until - c.from));
-    // Where the next timed scene starts: its first cue, or its own clip when that starts earlier (so it isn't cut).
-    const nextClip = next ? doc.voiceover.clips.filter((c) => c.scene === doc.scenes[next.scene].id).map((c) => c.offset) : [];
-    const at = next ? Math.min(next.t, ...nextClip) : end + 1;
-    const v = await voiceScene(si);
-    if (!v) { console.log(`${scene.title ?? scene.id}: no speaker notes, nothing to place`); continue; }
-    makeRoom(doc, at, v.length, scene.id);
-    putClip(si, at, v);
-    delete scene.skip;
-    console.log(`${scene.title ?? scene.id}: ${v.duration.toFixed(1)} s of generated voice at ${at.toFixed(1)} s; everything after moves ${v.length.toFixed(1)} s later`);
-  }
+  for (const si of [...targets].reverse()) console.log(await placeScene(doc, presentationId, si, voicer, targets.filter((j) => j !== si)));
   await finish();
 } else if (cmd === 'again') {
   // again: a scene's narration said again from its notes (they changed), in place of its clip; what follows moves by
   // the difference in length, as Generate again in the app does.
   if (!wanted?.length) { console.error('again needs --scenes id,id'); process.exit(2); }
-  const clips = doc.voiceover?.clips ?? [];
   for (const id of wanted) {
     const si = doc.scenes.findIndex((s) => s.id === id);
-    const own = clips.filter((c) => c.scene === id);
-    if (own.length !== 1) { console.error(`scene "${id}" needs exactly one clip of its own (it has ${own.length}): use place or rebuild`); process.exit(2); }
-    const c = own[0];
-    const v = await voiceScene(si);
-    if (!v) { console.log(`${id}: no speaker notes, left as it was`); continue; }
-    const oldLen = c.trimEnd - c.trimStart;
-    const oldEnd = c.offset + oldLen;
-    const delta = Math.round((v.duration - oldLen) * 1000) / 1000;
-    for (const x of clips) if (x !== c && x.offset >= oldEnd - 1e-3) x.offset = Math.round((x.offset + delta) * 1000) / 1000;
-    for (const [sj, s] of doc.scenes.entries()) if (sj !== si) for (const b of s.beats) if (b.cue !== undefined && b.cue >= oldEnd - 0.05) b.cue = Math.round((b.cue + delta) * 100) / 100;
-    for (const b of doc.scenes[si].beats) delete b.cue;
-    for (const [bi, off] of v.cues) doc.scenes[si].beats[bi].cue = Math.round((c.offset + off) * 100) / 100;
-    if (c.avatar) console.log(`${id}: its avatar said the old words: make it again (npm run avatar -- make … --scenes ${id})`);
-    Object.assign(c, { upload: v.upload, sourceDuration: v.duration, trimStart: 0, trimEnd: v.duration });
-    delete c.avatar; delete c.gain; delete c.cleanedFrom;
-    console.log(`${id}: ${v.duration.toFixed(1)} s (${delta >= 0 ? '+' : ''}${delta.toFixed(1)} s); everything after moves by that`);
+    const r = await sayAgain(doc, presentationId, si, voicer);
+    console.log(r.note);
+    if (r.avatar) console.log(`${id}: its avatar said the old words: make it again (npm run avatar -- make … --scenes ${id})`);
   }
   await finish();
 } else {
@@ -165,52 +128,17 @@ if (cmd === 'time') {
     // Scenes left out lose their old cues: they no longer match the timeline; putting one back makes room for it.
     for (const b of scene.beats) delete b.cue;
     if (scene.skip || (wanted && !wanted.includes(scene.id))) continue;
-    const v = await voiceScene(si);
+    const v = await voiceScene(doc, presentationId, si, voicer);
     if (!v) { console.log(`${scene.title ?? scene.id}: no speaker notes, left without voice`); continue; }
-    putClip(si, at, v);
+    putClip(doc, si, at, v);
     console.log(`${String(si + 1).padStart(2)}. ${(scene.title ?? scene.id).padEnd(40)} ${v.duration.toFixed(1).padStart(5)} s of voice at ${at.toFixed(1)} s`);
     at = Math.round((at + v.length) * 1000) / 1000;
   }
   await finish();
 }
 
-/**
- * A scene's narration as one clip (uploads/generated-<scene id>.webm): its sentences with short pauses, longer where
- * a beat's animation (with the wordless auto beats after it) outlasts its words. `cues`: where each beat starts in it;
- * `length`: how much timeline the scene takes, its tail included.
- */
-async function voiceScene(si: number) {
-  const scene = doc.scenes[si];
-  const anim = compiled(doc).scenes[si].beats.map((b) => b.end - b.start);
-  const parts: { notes?: string; need: number }[] = [];
-  const beats: number[] = [];
-  for (const [bi, b] of scene.beats.entries()) {
-    const words = splitSentences(b.notes ?? '').length;
-    if (!words && b.auto) continue;
-    // The time this beat needs on screen: its animation and that of the wordless auto beats right after it.
-    let need = anim[bi];
-    for (let k = bi + 1; k < scene.beats.length && scene.beats[k].auto && !splitSentences(scene.beats[k].notes ?? '').length; k++) need += anim[k];
-    parts.push({ notes: b.notes, need });
-    beats.push(bi);
-  }
-  const r = await joinVoice(presentationId, `generated-${scene.id}.webm`, parts, voicer);
-  if (!r) return null;
-  const cues = beats.map((bi, k) => [bi, r.starts[k]] as [number, number]);
-  return { upload: r.upload, duration: r.duration, lead: 0, cues, length: Math.round(Math.max(r.length + SCENE_TAIL, r.duration + 0.4) * 1000) / 1000 };
-}
-
-/** Put a scene's clip on the timeline at `at`, bound to the scene, and cue its beats. */
-function putClip(si: number, at: number, v: NonNullable<Awaited<ReturnType<typeof voiceScene>>>) {
-  const scene = doc.scenes[si];
-  const clips = doc.voiceover!.clips;
-  const from = Math.round((at + v.lead) * 1000) / 1000;
-  clips.push({ id: `gen-${scene.id}`, scene: scene.id, upload: v.upload, sourceDuration: v.duration, offset: from, lane: freeLane(clips, from, from + v.duration) ?? 0, trimStart: 0, trimEnd: v.duration, name: `generated voice · ${scene.title ?? scene.id}` });
-  clips.sort((a, b) => a.offset - b.offset || a.lane - b.lane);
-  for (const [bi, off] of v.cues) scene.beats[bi].cue = Math.round((at + off) * 100) / 100;
-}
-
 async function finish() {
-  const ignored = cueClicks(compiled(doc)).filter((c) => !c.cued && doc.scenes[c.scene].beats[c.beat].cue !== undefined).length;
+  const ignored = cuesOutOfOrder(doc);
   await writeFile(path, `${JSON.stringify(doc, null, 2)}\n`);
   console.log(ignored ? `⚠ ${ignored} cues come out of order: check it in Timing` : '✓ every cue in order');
 }

@@ -4,8 +4,22 @@
 .script-head { display: flex; align-items: baseline; gap: 14px; padding: 12px 20px; border-bottom: 1px solid var(--line); }
 .script-head h2 { margin: 0; font-size: 18px; }
 .script-head .script-total { font-size: 15px; color: var(--accent); font-variant-numeric: tabular-nums; margin-left: 8px; }
-.script-body { flex: 1; overflow: auto; padding: 24px clamp(20px, 6vw, 80px) 60px; display: flex; flex-direction: column; gap: 28px; max-width: 1000px; width: 100%; align-self: center; }
-.script-scene { display: flex; flex-direction: column; gap: 10px; }
+.script-body { flex: 1; overflow: auto; padding: 24px clamp(20px, 6vw, 80px) 60px; display: flex; flex-direction: column; gap: 28px; max-width: 1260px; width: 100%; align-self: center; }
+/* The reading column keeps its width; the scene's voice sits beside it (below it on narrow windows). */
+.script-scene { display: grid; grid-template-columns: minmax(0, 1000px) 220px; gap: 10px 24px; align-items: start; }
+.script-scene-main { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.script-voice { position: sticky; top: 0; display: flex; flex-direction: column; gap: 8px; padding: 10px 12px; border-radius: 10px; background: var(--panel); border: 1px solid var(--line); font-size: 13px; }
+.script-voice .hint { margin: 0; font-size: 12px; }
+.script-voice-head { display: flex; justify-content: space-between; text-transform: uppercase; letter-spacing: 0.06em; font-size: 11px; }
+.script-voice-len { font-variant-numeric: tabular-nums; text-transform: none; letter-spacing: 0; }
+.script-voice-player { display: flex; align-items: center; gap: 8px; }
+.script-voice-bar { flex: 1; height: 6px; border-radius: 3px; background: color-mix(in srgb, var(--fg, #fff) 12%, transparent); cursor: pointer; overflow: hidden; }
+.script-voice-bar > div { height: 100%; background: var(--accent); }
+.script-direction { font-size: 0.8em; color: var(--accent); opacity: 0.75; margin: 0 2px; font-family: var(--mono, monospace); }
+@media (max-width: 1100px) {
+  .script-scene { grid-template-columns: minmax(0, 1fr); }
+  .script-voice { position: static; }
+}
 .script-scene-head { display: flex; align-items: baseline; gap: 10px; padding-bottom: 4px; border-bottom: 1px solid var(--line); }
 .script-scene-head h3 { margin: 0; font-size: 20px; }
 .script-scene-total { font-variant-numeric: tabular-nums; font-size: 13px; }

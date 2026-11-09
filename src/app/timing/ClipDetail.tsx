@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import type { Clip } from '../../engine/schema';
 import type { RawBeat } from '../editor/doc';
 import type { Click } from '../../video/performance';
-import { splitSentences } from '../tts';
+import { splitSentences, withoutDirections } from '../tts';
 import { fmt } from './format';
 import { MicCheck, LevelMeter, advice } from './MicCheck';
 import { micDevice } from './micDevice';
@@ -278,7 +278,7 @@ export function ClipDetail(p: Props) {
               return (
                 <li key={`${ck.scene}.${ck.beat}`} ref={(el) => { if (el && t.state === 'recording' && k === current) el.scrollIntoView({ block: 'nearest' }); }} className={t.state === 'recording' && k === current ? 'now' : t.state === 'recording' && k < current ? 'done' : ''}>
                   <small>{ck.scene + 1}.{ck.beat + 1} {b?.title ?? ''}</small>
-                  {splitSentences(b?.notes).map((s, j) => <p key={j}>{s}</p>)}
+                  {splitSentences(b?.notes).map((s, j) => <p key={j}>{withoutDirections(s)}</p>)}
                 </li>
               );
             })}

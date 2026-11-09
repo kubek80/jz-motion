@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { CompiledPresentation } from '../engine/compile';
+import { ScriptSceneVoice, type SceneClip } from './ScriptSceneVoice';
 import { useVoicer } from './settingsStore';
 import { entryFor, loadSidecar, requestTts, sentencesOf, splitSentences, type TtsSidecar } from './tts';
 
@@ -7,8 +8,16 @@ interface Props {
   presentation: CompiledPresentation;
   presentationId: string;
   onNotes: (scene: number, beat: number, notes: string) => void;
+  /** The presentation as saved, and a way to replace it (a scene's voice generated). */
+  doc: { scenes: { id: string }[]; voiceover?: { clips: SceneClip[] } };
+  onDoc: (next: unknown) => void;
   onClose: () => void;
 }
+
+/** A sentence as written, its directions for the voice ([emphasis]) shown small. */
+const Said = ({ said }: { said: string }) => (
+  <>{said.split(/(\[[^\]\n]*\])/).map((part, i) => (/^\[.*\]$/.test(part) ? <span key={i} className="script-direction" title="A direction for the voice: not read out, not in the prompter">{part}</span> : part))}</>
+);
 
 const fmtDuration = (s: number) => s >= 60 ? `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}` : `${s.toFixed(1)}s`;
 
@@ -16,7 +25,7 @@ const fmtDuration = (s: number) => s >= 60 ? `${Math.floor(s / 60)}:${String(Mat
  * A full-screen writing surface for the whole narration: every scene's beats listed with their notes
  * (editable in place) and sentence-level duration estimates (or real lengths once voice is generated).
  */
-export function Script({ presentation, presentationId, onNotes, onClose }: Props) {
+export function Script({ presentation, presentationId, onNotes, doc, onDoc, onClose }: Props) {
   const voicer = useVoicer();
   const [tts, setTts] = useState<TtsSidecar>({});
   const [generating, setGenerating] = useState<{ done: number; total: number } | null>(null);
@@ -110,6 +119,7 @@ export function Script({ presentation, presentationId, onNotes, onClose }: Props
           const sceneHasClip = scene.beats.some((b) => beatHasClip(b.notes));
           return (
             <section key={si} className="script-scene">
+              <div className="script-scene-main">
               <header className="script-scene-head">
                 <span className="muted">Scene {si + 1}</span>
                 <h3>{scene.title ?? scene.id}</h3>
@@ -136,7 +146,7 @@ export function Script({ presentation, presentationId, onNotes, onClose }: Props
                             <ul>
                               {sentences.map((line, i) => (
                                 <li key={i} className={line.entry ? '' : 'estimated'}>
-                                  <span className="script-sentence">{line.text}</span>
+                                  <span className="script-sentence"><Said said={line.said} /></span>
                                   <span className="script-sentence-dur">{line.entry ? '' : '~'}{(line.entry?.duration ?? line.estimated).toFixed(1)}s</span>
                                 </li>
                               ))}
@@ -150,6 +160,16 @@ export function Script({ presentation, presentationId, onNotes, onClose }: Props
                   );
                 })}
               </ol>
+              </div>
+              <ScriptSceneVoice
+                presentationId={presentationId}
+                sceneId={doc.scenes[si]?.id ?? ''}
+                clips={(doc.voiceover?.clips ?? []).filter((c) => c.scene && c.scene === doc.scenes[si]?.id)}
+                hasNotes={scene.beats.some((b) => splitSentences(b.notes).length > 0)}
+                doc={doc}
+                onDoc={onDoc}
+                onVoiced={() => void loadSidecar(presentationId).then(setTts).catch(() => undefined)}
+              />
             </section>
           );
         })}
@@ -181,7 +201,7 @@ function ScriptEdit({ draft, onDraft, onSave, onCancel }: { draft: string; onDra
         placeholder="What you say over this beat. End sentences with a period so each shows up on its own line."
       />
       <div className="script-edit-tools">
-        <span className="muted hint">Ctrl+Enter to save · Esc to cancel</span>
+        <span className="muted hint">Ctrl+Enter to save · Esc to cancel · <b>[directions]</b> in brackets steer how your voice says it ([emphasis], [warmer, slower], [short pause]); they aren’t read out</span>
         <span className="spacer" />
         <button onClick={onCancel}>Cancel</button>
         <button className="primary" onClick={onSave}>Save</button>
