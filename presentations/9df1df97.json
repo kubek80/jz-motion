@@ -5451,7 +5451,7 @@
           "cue": 675.4
         }
       ],
-      "layout": "pip"
+      "layout": "camera"
     },
     {
       "id": "publish",
@@ -5566,7 +5566,7 @@
             }
           ],
           "notes": "And now the last mile: I click Record and adjust the timing, like I'm doing right now.",
-          "cue": 680.04
+          "cue": 678.55
         },
         {
           "title": "Export",
@@ -5591,7 +5591,7 @@
               ]
             }
           ],
-          "cue": 686.41
+          "cue": 684.92
         },
         {
           "title": "Thanks",
@@ -5606,7 +5606,7 @@
               "stagger": 1.2
             }
           ],
-          "cue": 690.81
+          "cue": 689.32
         }
       ],
       "layout": "side"
