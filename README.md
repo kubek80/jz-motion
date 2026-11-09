@@ -62,7 +62,7 @@ Every model reply is checked against the format and the drawing rules, and sent 
 
 ## Narration, timing and video
 
-**Script** (top bar) shows the whole narration on one page: every scene's beats with their speaker notes, editable in place, and how long each sentence takes to say (estimated, or measured once a voice has been generated).
+**Script** (top bar) shows the whole narration on one page: every scene's beats with their speaker notes, editable in place, and how long each sentence takes to say (estimated, or measured once a voice has been generated). Beside each scene is its voice: play it, **✨ Generate** it (a scene without voice gets it where it plays, and what follows moves on) or **✨ Generate again** (a new reading of every line, in place of the scene's clip; what follows moves by the difference). To change how a line is said, put a direction for the voice in square brackets in the notes, like `[emphasis]` before a word or `[warmer, slower]`: your cloned voice follows it, and it never shows in the prompter. Long pauses the voice leaves inside a sentence are shortened.
 
 **Timing** (top bar) times the presentation to your voice. Its timeline has two lanes of voice clips above the beats:
 

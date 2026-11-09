@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { splitSentences } from './tts';
+import { withoutDirections } from './tts';
 
 describe('splitSentences (prompter lines)', () => {
   it('keeps a single line break inside a sentence', () => {
@@ -14,3 +15,12 @@ describe('splitSentences (prompter lines)', () => {
     expect(splitSentences('  Trailing   \n  next  ')).toEqual(['Trailing   \n  next']);
   });
 });
+
+describe('directions for the voice', () => {
+  it('leaves [directions] out of what is read', () => {
+    expect(withoutDirections('[warm] Every step is on screen: [emphasis] what was asked.')).toBe('Every step is on screen: what was asked.');
+    expect(withoutDirections('Said plainly [short pause] , then on.')).toBe('Said plainly, then on.');
+    expect(withoutDirections('No directions here.')).toBe('No directions here.');
+  });
+});
+

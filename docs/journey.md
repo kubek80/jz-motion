@@ -1107,3 +1107,16 @@ The voice scene ("Finding my voice", the one Jakub noticed most: eight plays of 
 ![The voice scene, old (top) and fixed (bottom): frame 59 empty, then the recording running ahead](journey/130-voice-scene-flicker.jpg)
 
 **Checked by:** real exports with the app's exporter (scenes 6–7 and the voice scene, several pages at once as in the app), every frame compared with the frames either side of it: old code 1 + 1 flickers, new 0, and the recording draws in smoothly; the "nothing moved" check repeats as many frames as before (1116 of 2464); a test for `clipAtTime`; typecheck, tests, build.
+
+## Step 90: Each scene's voice beside the script, directions for the voice, shorter pauses
+
+Jakub wanted to see each scene's recording on the Script page and generate it (again) there, on the side, without changing how he reads the script; to steer intonation when a line comes out strangely; and he heard odd pauses between words.
+
+- **Beside each scene** (the reading column keeps its width; below the scene on a narrow window): its voice clip with a play bar and its length, **✨ Generate** for a scene without one (placed where it plays, what follows moves on) or **✨ Generate again** (a new reading of every line in place of its clip, what follows moves by the difference; when the scene has an avatar it says so, since that avatar now says the old words). It works on the presentation as open (one undo step). The scene logic of `npm run voice` (place, again, rebuild) moved to `server/sceneVoice.ts`, shared by both; "again" now also takes a scene whose voice was cut into pieces.
+- **Directions for the voice**: square brackets in the notes, like `[emphasis]` before a word or `[warmer, slower]`. The cloned voice (Fish Audio S2) follows free-form directions; they show small on the Script page, are left out of the prompter, and are never sent to voices that would read them out.
+- **The pauses**: in the last 200 generated sentences there were 92 silences longer than 0.45 s inside sentences, up to 0.8 s, mostly at colons. Joining a scene's clip now shortens any pause inside a sentence to 0.35 s (cue times follow the shortened sentences).
+- **Bug found:** generating a scene without voice wrote `uploads/generated-<scene>.webm`, the name the real presentation's clip already had, so a test on a copy overwrote it (restored from git). New clips now never take a name in use.
+
+![The Script page: each scene's voice beside it, a direction in a line, the hint while editing](journey/131-script-voice.jpg)
+
+**Checked by:** Playwright on a copy: 22 voice panels, playing scene 1, a direction added and shown, Generate again (17.0 → 18.2 s; every later clip and cue moved by +1.2 s; the avatar note shown; the sentence lengths updated), Generate for a scene without voice (placed, cued, later scenes moved); the narrow layout; the longest pause inside a sentence in the new clip 0.47 s; `npm run voice -- time` after the move; tests for `withoutDirections`; typecheck, tests, build.

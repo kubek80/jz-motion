@@ -1,4 +1,6 @@
 import { randomBytes } from 'node:crypto';
+import { mkdtemp, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { splitSentences } from '../src/app/tts';
 import { FFMPEG, probe, run } from './media';
@@ -6,11 +8,20 @@ import { TTS_DIR, generateTts, type TtsRequest } from './tts';
 import { uploadPath } from './transcribe';
 
 // One voice clip from several beats' notes: each sentence generated (or taken from the cache), joined with short
-// pauses, the pause after a beat's words longer where its animation needs more time. Used by `npm run voice`
-// (place, rebuild) and by "Generate again" in a clip's window.
+// pauses, the pause after a beat's words longer where its animation needs more time. Pauses the speech model leaves
+// inside a sentence (it can stop for most of a second at a colon) are shortened to MAX_PAUSE. Used by `npm run voice`
+// (place, rebuild, again), the Script page and "Generate again" in a clip's window.
 
 export const SENTENCE_GAP = 0.25;
 export const BEAT_GAP = 0.6;
+/** The longest silence kept inside a generated sentence, in seconds. */
+export const MAX_PAUSE = 0.35;
+
+/** `file` with every silence inside it longer than MAX_PAUSE cut down to it, as `out`; its new length. */
+async function tighten(file: string, out: string): Promise<number> {
+  await run(FFMPEG, ['-y', '-v', 'error', '-i', file, '-af', `silenceremove=stop_periods=-1:stop_duration=${MAX_PAUSE}:stop_threshold=-38dB:stop_silence=${MAX_PAUSE}`, '-ac', '1', '-ar', '48000', out]);
+  return (await probe(out)).duration;
+}
 
 export type Voicer = Omit<TtsRequest, 'presentationId' | 'text'>;
 export interface JoinPart { notes?: string; /** Seconds this part needs on screen (its animation). */ need: number }
@@ -21,6 +32,8 @@ export async function joinVoice(presentationId: string, upload: string, parts: J
   const pieces: { audio: string; gap: number }[] = [];
   const starts: number[] = [];
   let t = 0, lead = 0;
+  const tmp = await mkdtemp(join(tmpdir(), 'jzm-voice-'));
+  try {
   for (const part of parts) {
     starts.push(t);
     const start = t;
@@ -28,8 +41,10 @@ export async function joinVoice(presentationId: string, upload: string, parts: J
     for (const [k, text] of lines.entries()) {
       const r = await generateTts({ presentationId, text, ...voicer });
       const gap = k < lines.length - 1 ? SENTENCE_GAP : BEAT_GAP;
-      pieces.push({ audio: join(TTS_DIR, presentationId, r.audio), gap });
-      t += r.duration + gap;
+      const audio = join(tmp, `${pieces.length}.wav`);
+      const duration = await tighten(join(TTS_DIR, presentationId, r.audio), audio);
+      pieces.push({ audio, gap });
+      t += duration + gap;
     }
     // Silence where the animation outlasts the words.
     const extra = Math.max(0, start + part.need + 0.3 - t);
@@ -44,6 +59,9 @@ export async function joinVoice(presentationId: string, upload: string, parts: J
   await run(FFMPEG, ['-y', '-v', 'error', ...inputs, '-filter_complex', [...pads, joined].join(';'), '-map', '[out]', '-c:a', 'libopus', '-b:a', '64k', out]);
   const duration = (await probe(out)).duration;
   return { upload, duration, starts, length: t };
+  } finally {
+    await rm(tmp, { recursive: true, force: true });
+  }
 }
 
 /** POST /api/voice/join: { presentationId, name, parts, ...voicer } → a new clip in uploads/, never overwriting one. */
