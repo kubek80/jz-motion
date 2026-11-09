@@ -1182,3 +1182,16 @@ His question, ElevenLabs instead of Fish Audio, checked against OpenRouter's pri
 - Fish Audio's new **Drama 3** (built for directed performances, 0.2¢ per 1,000 characters for now) took his sample but came out an octave higher (364 Hz against his 155–167): not his voice through OpenRouter.
 
 **Checked by:** silences measured in the pause samples; the test calls above; typecheck, tests, build.
+
+## Step 96: Generate in Timing, Script from Timing, and the missing voice sample
+
+Jakub asked to generate a scene's voice from Timing (beside Record, and from the right-click menu), to jump from Timing to the line he was on in the Script, and reported an error from the Script page's Generate: FFmpeg couldn't open `uploads/voice-sample-2a6fedb943.webm`.
+
+- **The error:** his browser remembered an older voice sample, not on his computer (the project's voice, the avatar in use, is `voice-sample-bcb1670058.webm`). On start, the app only took the project's voice when the browser had none of its own. Now the browser always follows the project's voice (a sample from a recording of his own is kept), and the server, given a sample that isn't on the computer, speaks in the project's voice instead, or says plainly what is missing and how to get it (pull with Git LFS, or record one in 🧑 Avatar → Voice).
+- **✨ Generate in Timing:** beside **● Record narration**, a button for the scene at the playhead ("Generate again: JZ-motion", or "Generate" for a scene without voice), and on the right-click menus of a clip ("Generate this scene again") and of a beat ("Generate this scene's voice"). It is the Script page's Generate (one shared `generateSceneVoice`): a new reading in place of the scene's clip, or its clip where it plays; what follows moves; a note says when its avatar needs making again.
+- **📜 Script** in Timing's header opens the Script page over Timing, scrolled to the beat at the playhead and marked; Esc (or ✕) goes back to Timing, where it was.
+- **Bug found:** Esc never closed the Script page when opened from the editor. The editor's own Esc (clearing its selection) re-rendered the page, which swapped its key listener for a new one in the middle of that key press, so neither heard it. The page now keeps one listener for its lifetime.
+
+![Timing: Generate beside Record, 📜 Script in the header; the Script page opened at the beat Timing was on](journey/136-timing-generate-script.jpg)
+
+**Checked by:** Playwright on a copy, with the browser holding the old missing sample: the app switched to the project's sample at start; the server, given the missing sample, spoke in the project's; Timing's button named the scene at the playhead; the clip menu had Generate this scene again; 📜 Script opened at "Logo", marked, Esc back to Timing; Generate made a new reading of scene 1 and put it in place; typecheck, tests, build.

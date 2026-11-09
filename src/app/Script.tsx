@@ -12,6 +12,8 @@ interface Props {
   /** The presentation as saved, and a way to replace it (a scene's voice generated). */
   doc: { scenes: { id: string }[]; voiceover?: { clips: SceneClip[] } };
   onDoc: (next: unknown) => void;
+  /** Open at this beat (from Timing: the one at the playhead), scrolled to and marked. */
+  at?: { scene: number; beat: number };
   onClose: () => void;
 }
 
@@ -26,7 +28,7 @@ const fmtDuration = (s: number) => s >= 60 ? `${Math.floor(s / 60)}:${String(Mat
  * A full-screen writing surface for the whole narration: every scene's beats listed with their notes
  * (editable in place) and sentence-level duration estimates (or real lengths once voice is generated).
  */
-export function Script({ presentation, presentationId, onNotes, doc, onDoc, onClose }: Props) {
+export function Script({ presentation, presentationId, onNotes, doc, onDoc, at, onClose }: Props) {
   const voicer = useVoicer();
   const [tts, setTts] = useState<TtsSidecar>({});
   const [generating, setGenerating] = useState<{ done: number; total: number } | null>(null);
@@ -34,6 +36,11 @@ export function Script({ presentation, presentationId, onNotes, doc, onDoc, onCl
   const [editing, setEditing] = useState<{ scene: number; beat: number } | null>(null);
   const [draft, setDraft] = useState('');
   const [help, setHelp] = useState(false);
+  // Opened from Timing: straight to the beat being looked at there.
+  useEffect(() => {
+    if (!at) return;
+    document.querySelector(`[data-beat="${at.scene}-${at.beat}"]`)?.scrollIntoView({ block: 'center' });
+  }, [at?.scene, at?.beat]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => { void loadSidecar(presentationId).then(setTts).catch(() => undefined); }, [presentationId]);
 
@@ -84,15 +91,20 @@ export function Script({ presentation, presentationId, onNotes, doc, onDoc, onCl
   const save = () => { if (editing) onNotes(editing.scene, editing.beat, draft); setEditing(null); };
   const cancel = () => setEditing(null);
 
-  // Esc closes the window (bail when typing in the textarea).
+  // Esc closes the window (bail when typing in the textarea). One listener for the page's lifetime, reading the
+  // latest onClose: the editor re-renders on Esc (it clears its selection), and a listener swapped for a new one in
+  // the middle of that key press would miss it, so Esc never closed the page.
+  const close = useRef(onClose);
+  close.current = onClose;
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.target as HTMLElement).closest('textarea, input')) return;
-      if (e.key === 'Escape') { e.preventDefault(); onClose(); }
+      if (document.querySelector('.voice-directions')) return;
+      if (e.key === 'Escape') { e.preventDefault(); close.current(); }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [onClose]);
+  }, []);
 
   return (
     <div className="script">
@@ -137,7 +149,7 @@ export function Script({ presentation, presentationId, onNotes, doc, onDoc, onCl
                   const anyClip = sentences.some((l) => l.entry);
                   const isEditing = editing?.scene === si && editing?.beat === bi;
                   return (
-                    <li key={bi} className={['script-beat', isEditing ? 'editing' : ''].join(' ')}>
+                    <li key={bi} data-beat={`${si}-${bi}`} className={['script-beat', isEditing ? 'editing' : '', at && at.scene === si && at.beat === bi ? 'here' : ''].join(' ')}>
                       <div className="script-beat-head">
                         <b>{beat.title ?? `Beat ${bi + 1}`}</b>
                         <span className="muted script-beat-dur">{sentences.length ? `${anyClip ? '' : '~'}${fmtDuration(dur)}` : 'no notes'}</span>

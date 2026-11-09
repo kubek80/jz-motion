@@ -1,3 +1,4 @@
+import { useState } from 'react';
 // The windows that open over the editor: Settings, Timing, Script, the Library and the Creator
 // (new library item or new scene with AI), wired to the open presentation.
 import { splitHidden, type TimedDoc } from '../../video/sceneTimeline';
@@ -87,6 +88,8 @@ export function EditorWindows({
   settingsOpen, setSettingsOpen, timingOpen, setTimingOpen, scriptOpen, setScriptOpen, libraryOpen, setLibraryOpen,
   creating, setCreating, libraryVersion, setLibraryVersion, onTake,
 }: Props) {
+  // The beat the Script page opens at (from Timing: the one at the playhead); none from the top bar.
+  const [scriptAt, setScriptAt] = useState<{ scene: number; beat: number } | null>(null);
   return (
     <>
       {settingsOpen && <Settings onClose={() => setSettingsOpen(false)} />}
@@ -134,6 +137,8 @@ export function EditorWindows({
           }}
           startScene={sceneIndex}
           onClose={(scene) => { setTimingOpen(false); onTimingClosed(scene); }}
+          onDoc={(next) => update(next as typeof doc)}
+          onScript={(scene, beat) => { setScriptAt({ scene, beat }); setScriptOpen(true); }}
         />
       )}
       {scriptOpen && doc && result.ok && (
@@ -153,7 +158,8 @@ export function EditorWindows({
               }),
             })),
           })}
-          onClose={() => setScriptOpen(false)}
+          at={scriptAt ?? undefined}
+          onClose={() => { setScriptOpen(false); setScriptAt(null); }}
         />
       )}
       {libraryOpen && (

@@ -123,14 +123,15 @@ export async function projectVoice(): Promise<{ baseURL: string; model: string; 
 }
 
 /**
- * On a computer whose browser has no voice of yours yet, use the project's. A browser already using the project's
- * sample follows the project's model and speaking style when they change there (e.g. a pull).
+ * The project's voice (the avatar in use, voice/my-voice.json) is the one to speak in: a browser follows it when the
+ * app starts, its sample, model and speaking style, so a sample remembered from another computer, or replaced since,
+ * is never used. A browser with a sample of its own from a recording (not a voice sample) keeps it.
  */
 export async function adoptProjectVoice() {
   const here = loadVoicer();
   if (here.sample && !here.sample.upload.startsWith('voice-sample-')) return;
   const v = await projectVoice();
-  if (!v || (here.sample && here.sample.upload !== v.sample.upload)) return;
+  if (!v) return;
   const next: Voicer = { ...here, baseURL: v.baseURL, model: v.model, instructions: v.instructions, sample: v.sample };
   if (JSON.stringify(next) !== JSON.stringify(here)) saveVoicer(next);
 }
