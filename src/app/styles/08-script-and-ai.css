@@ -74,3 +74,15 @@
 .scene-ask-live, .scene-ask-done { flex-basis: 100%; font-size: 12px; display: flex; flex-direction: column; gap: 2px; }
 .scene-ask-live .activity { max-height: 140px; overflow: auto; }
 .activity details { color: var(--text); }
+/* How to direct your voice: rules, then the samples to listen to. Above other windows (it opens from 🎙 Me). */
+.voice-directions-back { z-index: 70; }
+.voice-directions { max-width: 760px; max-height: 88vh; overflow: auto; }
+.voice-directions .modal-head { gap: 10px; align-items: baseline; }
+.voice-directions-rules { margin: 6px 0 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; }
+.voice-directions-rules code { font-size: 12px; }
+.voice-directions-samples { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.voice-directions-samples li { display: flex; gap: 10px; align-items: flex-start; padding: 8px 10px; border-radius: 8px; background: var(--panel); border: 1px solid transparent; }
+.voice-directions-samples li.playing { border-color: var(--accent); }
+.voice-directions-samples .hint { font-size: 12px; margin: 2px 0 0; }
+.voice-directions-line { margin-top: 2px; }
+

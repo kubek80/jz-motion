@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { MyAvatar } from './MyAvatar';
 import { MyVoice } from './MyVoice';
+import { VoiceDirections } from './VoiceDirections';
 import { ACCENTS, loadVoicer, saveVoicer, VOICERS } from './settingsStore';
 
 // "🎙 Me": your avatars and voices in one window. Each avatar is a look (its picture, style, how it moves) and the
@@ -24,13 +25,15 @@ export function Me({ onClose }: { onClose: () => void }) {
   const [version, setVersion] = useState(0);
   const [part, setPart] = useState<'look' | 'voice'>('look');
   const [error, setError] = useState<string | null>(null);
+  const [help, setHelp] = useState(false);
   const load = async () => setList(await (await fetch('/api/me')).json());
   useEffect(() => { void load(); }, [version]);
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape' && !(e.target as HTMLElement).closest('input, textarea, select')) { e.stopPropagation(); onClose(); } };
+    // Not while the directions window is open on top: Esc closes that one.
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape' && !help && !(e.target as HTMLElement).closest('input, textarea, select')) { e.stopPropagation(); onClose(); } };
     window.addEventListener('keydown', onKey, true);
     return () => window.removeEventListener('keydown', onKey, true);
-  }, [onClose]);
+  }, [onClose, help]);
 
   const post = async (what: string, body: object) => {
     setError(null);
@@ -60,6 +63,7 @@ export function Me({ onClose }: { onClose: () => void }) {
           <h2>🎙 Me</h2>
           <span className="muted">your avatars, each with its voice, for every presentation</span>
           <span className="spacer" />
+          <button onClick={() => setHelp(true)} title="How to steer how your voice says a line, with samples to listen to">🎚 How to direct your voice</button>
           <button onClick={onClose} title="Close (Esc)">✕</button>
         </div>
         <section>
@@ -89,6 +93,7 @@ export function Me({ onClose }: { onClose: () => void }) {
           <button role="tab" aria-selected={part === 'voice'} className={part === 'voice' ? 'on' : ''} onClick={() => setPart('voice')}>🎙 Voice</button>
           <span className="muted">of {list.avatars.find((a) => a.id === list.current)?.name ?? 'the avatar in use'}</span>
         </div>
+        {help && <VoiceDirections onClose={() => setHelp(false)} />}
         {part === 'look' ? <MyAvatar key={`look-${version}`} embedded version={version} onClose={onClose} /> : <MyVoice key={`voice-${version}`} embedded onClose={onClose} />}
       </div>
     </div>
