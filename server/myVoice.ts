@@ -33,7 +33,12 @@ export async function saveMyVoice(v: MyVoice): Promise<MyVoice> {
     await copyFile(`${uploadPath(from)}.transcript.json`, `${uploadPath(upload)}.transcript.json`).catch(() => undefined);
   }
   const saved: MyVoice = { baseURL: v.baseURL, model: v.model, ...(v.instructions ? { instructions: v.instructions } : {}), sample: { ...v.sample, upload } };
-  await mkdir(join(MY_VOICE_FILE, '..'), { recursive: true });
-  await writeFile(MY_VOICE_FILE, `${JSON.stringify(saved, null, 2)}\n`);
+  await writeMyVoice(saved);
   return saved;
+}
+
+/** Writes the voice in use as it is (its sample already kept): choosing an avatar switches to its voice this way. */
+export async function writeMyVoice(v: MyVoice) {
+  await mkdir(join(MY_VOICE_FILE, '..'), { recursive: true });
+  await writeFile(MY_VOICE_FILE, `${JSON.stringify(v, null, 2)}\n`);
 }

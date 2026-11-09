@@ -21,7 +21,7 @@ import { createPresentation, deletePresentation, listPresentations, readPresenta
 import { addTrack, createTake, deleteTake, getTake, listTakes, TAKES_DIR, trackPath, updateTake } from './takes';
 import { generateTts, readSidecar as readTtsSidecar, serveTts, speechVoices } from './tts';
 import { joinVoiceRequest } from './voiceJoin';
-import { buildAvatarTrack } from './avatar';
+import { buildAvatarTrack, rememberVoice } from './avatar';
 import { myAvatarRoutes } from './myAvatarRoutes';
 
 // The local server side of the app, mounted into the Vite dev and preview servers:
@@ -287,11 +287,16 @@ export function jzmServer(): Plugin {
         if (parts[0] === 'api' && parts[1] === 'presentations') return await presentations(req, res, parts[2]);
         if (parts[0] === 'api' && parts[1] === 'takes') return await takes(req, res, parts.slice(2), url.searchParams);
         if (url.pathname === '/api/my-voice' && req.method === 'GET') return send(res, 200, (await readMyVoice()) ?? {});
-        if (url.pathname === '/api/my-voice' && req.method === 'POST') return send(res, 200, await saveMyVoice(await readJson(req)));
+        if (url.pathname === '/api/my-voice' && req.method === 'POST') {
+          // The voice in use, and the avatar in use speaks in it from now on.
+          const saved = await saveMyVoice(await readJson(req));
+          await rememberVoice(saved);
+          return send(res, 200, saved);
+        }
         if (url.pathname === '/api/tts-voices' && req.method === 'GET') return send(res, 200, await speechVoices(url.searchParams.get('model') ?? ''));
         if (parts[0] === 'api' && parts[1] === 'tts' && parts[2] && req.method === 'GET') return send(res, 200, await readTtsSidecar(parts[2]));
         if (url.pathname === '/api/tts' && req.method === 'POST') return send(res, 200, await generateTts(await readJson(req)));
-        if ((url.pathname.startsWith('/api/my-avatar') || url.pathname.startsWith('/api/avatar')) && (await myAvatarRoutes(req, res, url, send))) return;
+        if ((url.pathname.startsWith('/api/my-avatar') || url.pathname.startsWith('/api/avatar') || url.pathname.startsWith('/api/me')) && (await myAvatarRoutes(req, res, url, send))) return;
         if (url.pathname === '/api/voice/join' && req.method === 'POST') return send(res, 200, await joinVoiceRequest(await readJson(req)));
         if (parts[0] === 'tts' && parts[1] && parts[2] && req.method === 'GET' && (await serveTts(res, parts[1], parts[2]))) return;
         if (url.pathname === '/api/export' && req.method === 'POST') return send(res, 200, startExport(await readJson(req), appUrl()));

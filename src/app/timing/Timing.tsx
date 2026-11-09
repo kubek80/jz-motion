@@ -3,7 +3,7 @@
 import { useCleanVoice } from './useCleanVoice';
 import type { RawBeat, RawDoc } from '../editor/doc';
 import { BeatDrawer } from './BeatDrawer';
-import { MyVoice } from '../MyVoice';
+import { Me } from '../Me';
 import { ClipDetail } from './ClipDetail';
 import { TranscriptWindow } from './TranscriptWindow';
 import { TimelineMinimap } from './TimelineMinimap';
@@ -24,7 +24,6 @@ import { AvatarBoard } from './AvatarBoard';
 import { avatarRows } from './AvatarLane';
 import { AvatarDrawer, type Placement } from './AvatarDrawer';
 import { onAvatarDone, startAvatar, useAvatarJobs } from './avatarJobs';
-import { MyAvatar } from '../MyAvatar';
 import { useClipEditing } from './useClipEditing';
 import { useClock } from './useClock';
 import { useCueDragging } from './useCueDragging';
@@ -129,8 +128,7 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
     const i = clips.findIndex((c) => c.id === openAt.id);
     return i >= 0 ? i : clips.findIndex((c) => c.lane === openAt.lane && openAt.t >= c.offset && openAt.t < c.offset + (c.trimEnd - c.trimStart));
   })();
-  const [myVoice, setMyVoice] = useState(false);
-  const [myAvatar, setMyAvatar] = useState(false);
+  const [me, setMe] = useState(false);
   // Your avatar's videos: made in the background (avatarJobs.ts), each put on its clip (and the pieces it was cut
   // into) when it's ready, without stopping playback.
   const jobs = useAvatarJobs();
@@ -206,8 +204,7 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
         missingCount={clips.filter((c) => missing.has(c.upload)).length}
         removeMissing={() => setClips(clips.filter((c) => !missing.has(c.upload)))}
         onTranscript={() => setTranscribing(clips.filter((c) => !missing.has(c.upload)))}
-        onMyVoice={() => setMyVoice(true)}
-        onMyAvatar={() => setMyAvatar(true)}
+        onMe={() => setMe(true)}
         onClose={close}
       />
       <div className="timing-body prompter">
@@ -316,7 +313,7 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
         <ClipDetail
           key={openAt!.id}
           presentationId={presentationId}
-          onMyAvatar={() => setMyAvatar(true)}
+          onMyAvatar={() => setMe(true)}
           clip={clips[openClip]}
           index={openClip}
           clips={clips}
@@ -338,8 +335,7 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
           onClose={() => setOpenClipId(null)}
         />
       )}
-      {myVoice && <MyVoice onClose={() => setMyVoice(false)} />}
-      {myAvatar && <MyAvatar onClose={() => setMyAvatar(false)} />}
+      {me && <Me onClose={() => setMe(false)} />}
       {transcribing && (
         <TranscriptWindow
           clips={transcribing}

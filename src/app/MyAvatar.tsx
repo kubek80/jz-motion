@@ -15,7 +15,8 @@ type Info = { avatar: Avatar | null; models: Model[]; defaultStyle: string; hasS
 /** Your OpenRouter key: the voice's when it uses OpenRouter, or OpenRouter's under Models. */
 const openRouterKey = () => { const v = loadVoicer(); return (v.baseURL === OR ? withKey(v).apiKey : '') || sharedKey({ baseURL: OR }) || ''; };
 
-export function MyAvatar({ onClose }: { onClose: () => void }) {
+/** `embedded`: its parts only, inside another window (🎙 Me); `version` changes when another avatar is chosen there. */
+export function MyAvatar({ onClose, embedded, version = 0 }: { onClose: () => void; embedded?: boolean; version?: number }) {
   const [info, setInfo] = useState<Info | null>(null);
   const [source, setSource] = useState<string | null>(null);
   const [style, setStyle] = useState('');
@@ -31,7 +32,7 @@ export function MyAvatar({ onClose }: { onClose: () => void }) {
     setStyle((s) => s || i.avatar?.style || i.defaultStyle);
     setPrompt(i.avatar?.prompt ?? '');
   };
-  useEffect(() => { void load(); }, []);
+  useEffect(() => { setStyle(''); setSource(null); setCandidate(null); setPrompt(''); void load(); }, [version]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape' && !(e.target as HTMLElement).closest('input, textarea, select')) { e.stopPropagation(); onClose(); } };
     window.addEventListener('keydown', onKey, true);
@@ -76,15 +77,8 @@ export function MyAvatar({ onClose }: { onClose: () => void }) {
 
   const a = info?.avatar;
   const model = info?.models.find((m) => m.model === a?.model) ?? info?.models[0];
-  return (
-    <div className="modal-back my-voice-back" onPointerDown={(e) => e.target === e.currentTarget && !busy && onClose()}>
-      <div className="modal wide my-voice my-avatar">
-        <div className="modal-head">
-          <h2>My avatar</h2>
-          <span className="muted">the picture that says your clips in the video</span>
-          <span className="spacer" />
-          <button onClick={onClose} title="Close (Esc)">✕</button>
-        </div>
+  const content = (
+      <>
 
         <section>
           <h4>The avatar in use</h4>
@@ -148,6 +142,19 @@ export function MyAvatar({ onClose }: { onClose: () => void }) {
         </section>
         {busy && <p className="muted">{busy}</p>}
         {error && <p className="note-text">{error}</p>}
+      </>
+  );
+  if (embedded) return <div className="my-voice my-avatar embedded">{content}</div>;
+  return (
+    <div className="modal-back my-voice-back" onPointerDown={(e) => e.target === e.currentTarget && !busy && onClose()}>
+      <div className="modal wide my-voice my-avatar">
+        <div className="modal-head">
+          <h2>My avatar</h2>
+          <span className="muted">the picture that says your clips in the video</span>
+          <span className="spacer" />
+          <button onClick={onClose} title="Close (Esc)">✕</button>
+        </div>
+        {content}
       </div>
     </div>
   );

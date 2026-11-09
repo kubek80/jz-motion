@@ -4,6 +4,7 @@ import { join, resolve } from 'node:path';
 import { tmpdir } from 'node:os';
 import { FFMPEG, probe, run } from './media';
 import { uploadPath } from './transcribe';
+import { readMyVoice, writeMyVoice, type MyVoice } from './myVoice';
 
 // Your avatar: a photo of you that says a voice clip, as a talking-head video (Kling AI Avatar on fal.ai). The photo
 // and how to make it are kept with the project in voice/my-avatar.json (the photo in uploads/avatar-photo-*); each
@@ -35,8 +36,82 @@ export const AVATAR_PRICE = AVATAR_MODELS[0].price;
 export const avatarPrice = (model?: string) => AVATAR_MODELS.find((m) => m.model === model)?.price ?? AVATAR_PRICE;
 const SUBTLE = 'A calm man speaking to the camera with subtle, small mouth movements and a relaxed face; minimal head movement.';
 
-export async function readMyAvatar(): Promise<MyAvatar | null> {
-  try { return JSON.parse(await readFile(AVATAR_FILE, 'utf8')); } catch { return null; }
+/** One of your avatars: a look, how it moves, and the voice it speaks in. */
+export interface Avatar extends MyAvatar { id: string; name: string; voice?: MyVoice }
+export interface Avatars { current: string; avatars: Avatar[] }
+
+/** Your avatars (voice/my-avatar.json); a file from before several avatars is one avatar with the voice in use. */
+export async function readAvatars(): Promise<Avatars | null> {
+  let raw: (Avatars & Partial<MyAvatar>) | null = null;
+  try { raw = JSON.parse(await readFile(AVATAR_FILE, 'utf8')); } catch { return null; }
+  if (raw && Array.isArray(raw.avatars) && raw.avatars.length) return { current: raw.current, avatars: raw.avatars };
+  if (raw?.photo) {
+    const { current: _c, avatars: _a, ...one } = raw;
+    return { current: 'avatar-1', avatars: [{ id: 'avatar-1', name: 'My avatar', ...(one as MyAvatar), voice: (await readMyVoice()) ?? undefined }] };
+  }
+  return null;
+}
+async function writeAvatars(f: Avatars) {
+  await mkdir(join(AVATAR_FILE, '..'), { recursive: true });
+  await writeFile(AVATAR_FILE, `${JSON.stringify(f, null, 2)}\n`);
+}
+
+/** The avatar in use. */
+export async function readMyAvatar(): Promise<Avatar | null> {
+  const f = await readAvatars();
+  return f ? f.avatars.find((a) => a.id === f.current) ?? f.avatars[0] : null;
+}
+
+/** A new avatar, starting as a copy of the one in use (look, movement, voice), and in use from now on. */
+export async function newAvatar(name: string): Promise<Avatars> {
+  const f = await readAvatars();
+  if (!f) throw new Error('No avatar yet: choose a picture for the first one');
+  const from = f.avatars.find((a) => a.id === f.current) ?? f.avatars[0];
+  const id = `avatar-${Date.now().toString(36)}`;
+  f.avatars.push({ ...from, id, name: name || 'New avatar' });
+  f.current = id;
+  await writeAvatars(f);
+  return f;
+}
+
+/** Use avatar `id` from now on: its voice becomes the voice in use (voice/my-voice.json). */
+export async function useAvatar(id: string): Promise<Avatar> {
+  const f = await readAvatars();
+  const a = f?.avatars.find((x) => x.id === id);
+  if (!f || !a) throw new Error('no such avatar');
+  f.current = id;
+  await writeAvatars(f);
+  if (a.voice) await writeMyVoice(a.voice);
+  return a;
+}
+
+export async function renameAvatar(id: string, name: string): Promise<Avatars> {
+  const f = await readAvatars();
+  const a = f?.avatars.find((x) => x.id === id);
+  if (!f || !a) throw new Error('no such avatar');
+  a.name = name.trim() || a.name;
+  await writeAvatars(f);
+  return f;
+}
+
+/** Remove avatar `id` (not the last one); when it was in use, the first one left is used. */
+export async function deleteAvatar(id: string): Promise<Avatars> {
+  const f = await readAvatars();
+  if (!f || !f.avatars.some((x) => x.id === id)) throw new Error('no such avatar');
+  if (f.avatars.length === 1) throw new Error('This is your only avatar');
+  f.avatars = f.avatars.filter((x) => x.id !== id);
+  if (f.current === id) { f.current = f.avatars[0].id; if (f.avatars[0].voice) await writeMyVoice(f.avatars[0].voice); }
+  await writeAvatars(f);
+  return f;
+}
+
+/** The voice in use changed (My voice saved it): the avatar in use speaks in it from now on. */
+export async function rememberVoice(v: MyVoice) {
+  const f = await readAvatars();
+  const a = f?.avatars.find((x) => x.id === f.current);
+  if (!f || !a) return;
+  a.voice = v;
+  await writeAvatars(f);
 }
 
 /** `file` (a picture) as an avatar photo in uploads/: landscape 16:9 (a band `top` of the way down), 1920 wide at most. */
@@ -50,12 +125,14 @@ export async function makeAvatarPicture(file: string, opts: { top?: number } = {
 
 /** Change your avatar's settings (kept with the project, for every presentation). */
 export async function updateMyAvatar(patch: Partial<MyAvatar>): Promise<MyAvatar> {
-  const was = await readMyAvatar();
-  const next = { model: AVATAR_MODEL, prompt: SUBTLE, calm: true, ...was, ...patch } as MyAvatar;
-  if (!next.photo) throw new Error('no avatar photo yet');
-  await mkdir(join(AVATAR_FILE, '..'), { recursive: true });
-  await writeFile(AVATAR_FILE, `${JSON.stringify(next, null, 2)}\n`);
-  return next;
+  const f = (await readAvatars()) ?? { current: 'avatar-1', avatars: [] };
+  let a = f.avatars.find((x) => x.id === f.current);
+  if (!a) { a = { id: f.current, name: 'My avatar', model: AVATAR_MODEL, prompt: SUBTLE, calm: true, photo: '', voice: (await readMyVoice()) ?? undefined }; f.avatars.push(a); }
+  Object.assign(a, patch);
+  for (const k of Object.keys(patch) as (keyof MyAvatar)[]) if (patch[k] === undefined) delete a[k];
+  if (!a.photo) throw new Error('no avatar photo yet');
+  await writeAvatars(f);
+  return a;
 }
 
 /** Keep `file` (a picture) as the avatar photo, as it is. */

@@ -18,7 +18,8 @@ Some topics take two minutes; others need ten. Does that sound simple? Mostly, y
 
 const CLONERS = VOICERS.filter((v) => v.clones);
 
-export function MyVoice({ onClose }: { onClose: () => void }) {
+/** `embedded`: its parts only, inside another window (🎙 Me). */
+export function MyVoice({ onClose, embedded }: { onClose: () => void; embedded?: boolean }) {
   const voicer = useVoicer();
   const [text, setText] = useState(SAMPLE_TEXT);
   const [device, setDevice] = useState(micDevice());
@@ -99,15 +100,8 @@ export function MyVoice({ onClose }: { onClose: () => void }) {
     }
   };
 
-  return (
-    <div className="modal-back my-voice-back" onPointerDown={(e) => e.target === e.currentTarget && t.state !== 'recording' && onClose()}>
-      <div className="modal wide my-voice">
-        <div className="modal-head">
-          <h2>My voice</h2>
-          <span className="muted">what generated speech copies, for prompter timings and new scenes</span>
-          <span className="spacer" />
-          <button onClick={onClose} title="Close (Esc)">✕</button>
-        </div>
+  const content = (
+      <>
 
         <section>
           <h4>The sample in use</h4>
@@ -184,6 +178,19 @@ export function MyVoice({ onClose }: { onClose: () => void }) {
         {busy && <p className="muted">{busy}</p>}
         {error && <p className="note-text">{error}</p>}
         <p className="muted hint">It uses the OpenRouter key in Settings → Voice generation (about 1.5¢ per 1,000 characters). The sample stays on this computer and is sent with each line to the model you chose.</p>
+      </>
+  );
+  if (embedded) return <div className="my-voice embedded">{content}</div>;
+  return (
+    <div className="modal-back my-voice-back" onPointerDown={(e) => e.target === e.currentTarget && t.state !== 'recording' && onClose()}>
+      <div className="modal wide my-voice">
+        <div className="modal-head">
+          <h2>My voice</h2>
+          <span className="muted">what generated speech copies, for prompter timings and new scenes</span>
+          <span className="spacer" />
+          <button onClick={onClose} title="Close (Esc)">✕</button>
+        </div>
+        {content}
       </div>
     </div>
   );

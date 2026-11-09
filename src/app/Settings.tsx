@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
-import { MyAvatar } from './MyAvatar';
-import { MyVoice } from './MyVoice';
+import { Me } from './Me';
 import { loadProfiles, type ModelProfile } from '../ai/profiles';
 import { rate } from '../ai/recommend';
 import { ModelSelect } from './ModelSelect';
@@ -51,7 +50,7 @@ export function VoicerFields({ value, onChange }: { value: Voicer; onChange: (v:
           <span>your voice</span>
           <span>
             {s ? <>{s.name ?? s.upload}, {(s.end - s.start).toFixed(0)} s <button className="small" onClick={() => onChange({ ...value, sample: undefined })}>Clear</button></>
-              : <span className="note-text">Not chosen yet: record a sample in <b>🎙 My voice</b> (home screen or Timing).</span>}
+              : <span className="note-text">Not chosen yet: record a sample in <b>🎙 Me</b> → Voice (home screen or Timing).</span>}
           </span>
         </div>
       ) : (
@@ -84,8 +83,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
   const [profiles, setProfiles] = useState<ModelProfile[]>(loadProfiles);
   const [transcriber, setTranscriber] = useState(loadTranscriber);
   const [voicer, setVoicer] = useState(loadVoicer);
-  const [myVoice, setMyVoice] = useState(false);
-  const [myAvatar, setMyAvatar] = useState(false);
+  const [me, setMe] = useState(false);
   // Changes made in My voice show here too.
   useEffect(() => {
     const changed = () => setVoicer(loadVoicer());
@@ -128,14 +126,13 @@ export function Settings({ onClose }: { onClose: () => void }) {
           <h3>Voice generation (for the prompter and takes)</h3>
           <p className="muted hint">Turns each sentence of a beat's speaker notes into a short clip, so the prompter can show how long each line should take, and gives new scenes a voice until you record them. Any OpenAI-compatible /audio/speech service. Through OpenRouter (one key): ElevenLabs is the most natural, Gemini follows a style, and Fish Audio or HeyGen speak in <b>your voice</b>, copied from one of your clips.</p>
           <VoicerFields value={voicer} onChange={(v) => { setVoicer(v); saveVoicer(v); keepProjectVoice(v); }} />
-          <div className="row"><button onClick={() => setMyVoice(true)} title="Your voice sample for cloning: record it, hear it, choose the model">🎙 My voice…</button></div>
-          {myVoice && <MyVoice onClose={() => setMyVoice(false)} />}
+          <div className="row"><button onClick={() => setMe(true)} title="Your avatars, each with its voice: the sample, the model, the accent">🎙 Me…</button></div>
+          {me && <Me onClose={() => setMe(false)} />}
         </section>
         <section className="settings-section">
           <h3>My avatar</h3>
           <p className="muted hint">A picture of you, or a styled version of it, that says your voice clips wherever a scene's layout shows the camera (Kling AI Avatar on fal.ai, about 6¢ a second of video). Make one for a clip from its window in Timing, or right-click the clip.</p>
-          <div className="row"><button onClick={() => setMyAvatar(true)}>🧑 My avatar…</button></div>
-          {myAvatar && <MyAvatar onClose={() => setMyAvatar(false)} />}
+          <div className="row"><button onClick={() => setMe(true)}>🎙 Me…</button></div>
         </section>
       </div>
     </div>

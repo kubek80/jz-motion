@@ -3,14 +3,16 @@ import { readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { extname, join } from 'node:path';
 import type { IncomingMessage, ServerResponse } from 'node:http';
-import { AVATAR_MODELS, avatarJob, avatarPrice, makeAvatarPicture, readMyAvatar, startAvatarJob, updateMyAvatar } from './avatar';
+import { AVATAR_MODELS, avatarJob, avatarPrice, deleteAvatar, makeAvatarPicture, newAvatar, readAvatars, readMyAvatar, renameAvatar, startAvatarJob, updateMyAvatar, useAvatar } from './avatar';
 import { uploadPath } from './transcribe';
 
 // My avatar's server side: the picture you start from (uploads/avatar-source-*), a styled version of it made by an
 // image model through OpenRouter, the photo in use and how it moves (voice/my-avatar.json, for every presentation),
 // and the talking-head videos made of clips (jobs the app follows).
 //
-//   GET  /api/my-avatar               the avatar, the models, the default style
+//   GET  /api/me                      your avatars (each with its voice) and the one in use
+//   POST /api/me/use|new|rename|delete   { id?, name? }: choose (its voice comes with it), add a copy, rename, remove
+//   GET  /api/my-avatar               the avatar in use, the models, the default style
 //   POST /api/my-avatar               change it: { photo?, model?, prompt?, calm?, source?, style? }
 //   POST /api/my-avatar/source        a picture to start from (body: the file; ?name=photo.jpg) → { source }
 //   POST /api/my-avatar/photo         { source } as it is → { photo }   (not in use until POST /api/my-avatar)
@@ -55,7 +57,17 @@ export async function styleAvatar(source: string, style: string, apiKey?: string
 export async function myAvatarRoutes(req: IncomingMessage, res: ServerResponse, url: URL, send: (res: ServerResponse, code: number, data: unknown) => void): Promise<boolean> {
   const p = url.pathname;
   const m = req.method;
-  if (p === '/api/my-avatar' && m === 'GET') {
+  if (p === '/api/me' && m === 'GET') {
+    send(res, 200, (await readAvatars()) ?? { current: null, avatars: [] });
+  } else if (p.startsWith('/api/me/') && m === 'POST') {
+    const { id, name } = await json(req);
+    const what = p.slice('/api/me/'.length);
+    if (what === 'use') send(res, 200, await useAvatar(String(id)));
+    else if (what === 'new') send(res, 200, await newAvatar(String(name ?? '')));
+    else if (what === 'rename') send(res, 200, await renameAvatar(String(id), String(name ?? '')));
+    else if (what === 'delete') send(res, 200, await deleteAvatar(String(id)));
+    else return false;
+  } else if (p === '/api/my-avatar' && m === 'GET') {
     const avatar = await readMyAvatar();
     send(res, 200, { avatar, models: AVATAR_MODELS, pricePerSecond: avatarPrice(avatar?.model), defaultStyle: DEFAULT_STYLE, hasServerKey: !!process.env.FAL_KEY });
   } else if (p === '/api/my-avatar' && m === 'POST') {

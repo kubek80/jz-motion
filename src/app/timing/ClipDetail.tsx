@@ -41,7 +41,7 @@ interface Props {
   onTranscribe: (i: number) => void;
   deleteClip: (i: number) => void;
   onClose: () => void;
-  /** Opens My avatar (its picture, style and how it moves). */
+  /** Opens 🎙 Me (your avatars, each with its voice). */
   onMyAvatar?: () => void;
 }
 
