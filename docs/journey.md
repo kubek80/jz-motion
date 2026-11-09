@@ -1195,3 +1195,15 @@ Jakub asked to generate a scene's voice from Timing (beside Record, and from the
 ![Timing: Generate beside Record, 📜 Script in the header; the Script page opened at the beat Timing was on](journey/136-timing-generate-script.jpg)
 
 **Checked by:** Playwright on a copy, with the browser holding the old missing sample: the app switched to the project's sample at start; the server, given the missing sample, spoke in the project's; Timing's button named the scene at the playhead; the clip menu had Generate this scene again; 📜 Script opened at "Logo", marked, Esc back to Timing; Generate made a new reading of scene 1 and put it in place; typecheck, tests, build.
+
+## Step 97: Scene 3 with rhythm, and the avatar holding still in Timing
+
+Jakub found scene 3 ("Why I built it") off in its timing, and saw the avatar flicker at the end of its clip in Timing's preview.
+
+- **Why it felt off:** each beat drew its picture in its first 1–3 seconds, then the board sat still while the words ran on for 4–7 seconds (beat 4: 1.2 s of drawing under 7.4 s of "Recording, drawing, editing, publishing: between my work and family, I never have enough time to do it").
+- **Now:** one sentence a beat (eight beats, the words barely changed), and each drawing lands on the word that names it: the brain on "ideas", the script on "script", the play button on "video", the wall on "stops", four words (recording, drawing, editing, publishing: new on the board, beside "no time") popping in one by one as they are said, "no time" on "never … time", the light bulb on "a model". Each sentence was generated in his voice, its phrases found from its pauses and its words placed by their letters, and the actions given delays so they start just before their word (`scratch/rhythm-why.ts`); then `npm run voice -- again` joined the same sentences into the scene's clip and cued the beats. The drawing now fills about 80% of every beat's words (it was under half). The scene is 0.3 s longer; everything after moved by that. The old clip is gone.
+- **The avatar flicker (Timing only):** an avatar's video file runs a little past the part its clip uses (17.33 s against 17.0). Where the clip ends, the video should hold its last frame, but Timing let it play on, pulled it back when it had run 0.3 s ahead, and it played on again: a jump back every few frames. The plan now says when a frame is held (`still`), and the preview pauses on it. The export was never affected (it places every frame).
+
+![Scene 3 exported with its voice: each drawing as its word is said](journey/137-scene3-rhythm.jpg)
+
+**Checked by:** `npm run voice -- time` (animation against words per beat, before and after); scene 3 exported with its new voice and frames looked at on the words; the avatar in Timing sampled every 40 ms across the end of scene 1's clip (before: playing on and pulled back twice; after: paused on its last frame); `npm run check`; typecheck, tests, build.
