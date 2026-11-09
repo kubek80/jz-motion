@@ -21,6 +21,7 @@ describe('directions for the voice', () => {
     expect(withoutDirections('[warm] Every step is on screen: [emphasis] what was asked.')).toBe('Every step is on screen: what was asked.');
     expect(withoutDirections('Said plainly [short pause] , then on.')).toBe('Said plainly, then on.');
     expect(withoutDirections('No directions here.')).toBe('No directions here.');
+    expect(withoutDirections('We shipped it (long-break) on Friday (as planned).')).toBe('We shipped it on Friday (as planned).');
   });
 });
 

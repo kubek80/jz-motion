@@ -1158,3 +1158,15 @@ Jakub found the search on the home screen in an odd spot, wanted 🎙 Me called 
 ![The home screen's search and ⛶; the Avatar window's Look in two columns](journey/134-avatar-window-home.jpg)
 
 **Checked by:** Playwright at 1220 and 1600 px wide: the home screen, the Avatar window's Look and Voice tabs, no scrolling area inside the window; typecheck, tests, build.
+
+## Step 94: Directions you can hear
+
+Listening to the samples, Jakub heard little difference between most of them, and thought the sentence was too long to tell.
+
+- **He was right.** Measured, the first samples differed only slightly. A test with a short sentence ("We shipped it on Friday."), each direction with and without his accent's style, showed why: mild single words (`[excited]`) barely change the reading, while descriptive, strong ones do: `[very excited, shouting with joy]` is 6–7 dB louder and higher, `[sad, disappointed, slow]` about 30 Hz lower, `[strong emphasis]` before a word swings its pitch, and the pause cue `(long-break)` adds a real pause of about a second (round brackets: Fish's cues for pauses and breaths). The accent's style hardly damps them. `[whispering quietly]` is unreliable in a cloned voice: in five readings it whispered once.
+- **New samples**: the short sentence, plain, `[excited]` next to `[very excited, shouting with joy]`, `[whispering quietly]`, `[sad, disappointed, slow]`, `[strong emphasis]` on one word, `(long-break)`, and `[curious, rising]` on the question form; each tip says what to listen for. The window's advice now leads with "say more, and stronger", where a direction starts, pauses, and short sentences.
+- **Pause cues**: `(break)`, `(long-break)` and `(breath)` are directions too: left out of the prompter, shown small on the Script page, never sent to other voices, and they keep a sentence's pauses.
+
+![How to direct your voice with the new advice and samples](journey/135-stronger-directions.jpg)
+
+**Checked by:** 16 test readings measured (loudness, pitch, pitch range, length), the new samples measured against the plain one; Playwright: the window, 8 samples, one playing; a test for the pause cues; typecheck, tests, build.

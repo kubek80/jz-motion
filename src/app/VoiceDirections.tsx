@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { clones, useVoicer } from './settingsStore';
-import { voiceKey } from './tts';
+import { splitDirections, voiceKey } from './tts';
 import { DIRECTION_SAMPLES } from './directionSampleList';
 
 // "How to direct your voice": what directions in [brackets] in the speaker notes do, with the same sentence said
@@ -11,7 +11,7 @@ type List = { voice: string; samples: { id: string; upload: string; duration: nu
 
 /** The sentence with its direction picked out. */
 const Line = ({ text }: { text: string }) => (
-  <>{text.split(/(\[[^\]\n]*\])/).map((p, i) => (/^\[.*\]$/.test(p) ? <span key={i} className="script-direction">{p}</span> : p))}</>
+  <>{splitDirections(text).map(({ part, direction }, i) => (direction ? <span key={i} className="script-direction">{part}</span> : part))}</>
 );
 
 export function VoiceDirections({ onClose }: { onClose: () => void }) {
@@ -76,15 +76,15 @@ export function VoiceDirections({ onClose }: { onClose: () => void }) {
         <section>
           <p>When a line comes out flat or stressed oddly, write how it should sound in square brackets in the notes, then <b>✨ Generate again</b> (Script page, or the clip’s window in Timing).</p>
           <ul className="voice-directions-rules">
-            <li><b>Before a word</b> to change just that word: <code>and [emphasis] what the checker found</code>.</li>
-            <li><b>At the start</b> of a sentence for the whole of it: <code>[warm, slower] Every step is on screen.</code></li>
-            <li><b>Any words</b> work, not only a fixed list: <code>[curious, rising]</code>, <code>[short pause]</code>, <code>[serious, professional broadcast tone]</code>.</li>
-            <li>They are <b>not read out</b> and never show in the prompter. Only your cloned voice (Fish Audio) follows them; other voices never get them.</li>
-            <li>The effect is usually gentle, and the voice’s own style (<b>🧑 Avatar → Voice</b>, how to speak) still applies. Use them sparingly; generating again also gives a new reading by itself.</li>
+            <li><b>Say more, and stronger:</b> one mild word (<code>[excited]</code>) changes little; <code>[very excited, shouting with joy]</code> changes a lot. Up to three things at once: <code>[sad, disappointed, slow]</code>.</li>
+            <li><b>Where it starts:</b> a direction changes what follows it. Before one word for just that word (<code>on [strong emphasis] Friday</code>), at the start for the sentence.</li>
+            <li><b>Pauses</b> with round brackets, where you want them: <code>(break)</code>, <code>(long-break)</code> (about a second), <code>(breath)</code>.</li>
+            <li><b>Short sentences</b> show it best: in a long one the effect spreads thin. Split a line to direct part of it.</li>
+            <li>Directions are <b>not read out</b> and never show in the prompter. Only your cloned voice (Fish Audio) follows them; other voices never get them. Each reading differs a little: <b>✨ Generate again</b> if one misses.</li>
           </ul>
         </section>
         <section>
-          <h4>Listen: the same sentence, directed differently</h4>
+          <h4>Listen: the same short sentence, directed differently</h4>
           {list && !list.samples.length && <p className="muted">No samples yet: make them below, in the voice in use.</p>}
           <ol className="voice-directions-samples">
             {DIRECTION_SAMPLES.map((s) => {
