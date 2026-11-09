@@ -57,6 +57,8 @@ export const BoxElement = z.object({
   width: z.number().positive(),
   height: z.number().positive(),
   radius: z.number().min(0).default(18),
+  /** The outline: a (rounded) rectangle, an ellipse, or a diamond (a decision in a flowchart). */
+  shape: z.enum(['rect', 'ellipse', 'diamond']).default('rect'),
   label: z.string().optional(),
   /** Border: solid, dashed or dotted. */
   line: z.enum(['solid', 'dashed', 'dotted']).optional(),

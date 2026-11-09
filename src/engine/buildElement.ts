@@ -117,10 +117,10 @@ export function buildElement(ctx: BuildContext, el: CompiledElement, lookup: (id
     case 'box': {
       const w = el.width / 2;
       const h = el.height / 2;
-      const r = Math.min(el.radius, w, h);
-      const d = `M${-w + r} ${-h}H${w - r}Q${w} ${-h} ${w} ${-h + r}V${h - r}Q${w} ${h} ${w - r} ${h}H${-w + r}Q${-w} ${h} ${-w} ${h - r}V${-h + r}Q${-w} ${-h} ${-w + r} ${-h}Z`;
+      const d = boxOutline(el.shape, w, h, el.radius);
       stroke(d, board.stroke * (el.weight === 'bold' ? 1.8 : 1), fx, lineOf(el));
-      if (el.label) write(el.label, 0, 0, Math.min(56, el.height * 0.4), 'middle', 'label');
+      // A diamond's middle is narrower: its label is smaller.
+      if (el.label) write(el.label, 0, 0, Math.min(el.shape === 'diamond' ? 46 : 56, el.height * (el.shape === 'diamond' ? 0.3 : 0.4)), 'middle', 'label');
       break;
     }
     case 'arrow': {
@@ -236,4 +236,23 @@ function hash(s: string): number {
   let h = 2166136261;
   for (let i = 0; i < s.length; i++) h = Math.imul(h ^ s.charCodeAt(i), 16777619);
   return h >>> 0;
+}
+
+/** A box's outline around its middle, `w` × `h` being half its width and height: drawn from the top, clockwise. */
+export function boxOutline(shape: 'rect' | 'ellipse' | 'diamond', w: number, h: number, radius: number): string {
+  if (shape === 'ellipse') return `M0 ${-h}A${w} ${h} 0 0 1 ${w} 0A${w} ${h} 0 0 1 0 ${h}A${w} ${h} 0 0 1 ${-w} 0A${w} ${h} 0 0 1 0 ${-h}Z`;
+  if (shape === 'diamond') {
+    // Slightly rounded corners, like the marker's other shapes.
+    const k = Math.min(0.08, radius / Math.max(1, Math.hypot(w, h)));
+    const pts: [number, number][] = [[0, -h], [w, 0], [0, h], [-w, 0]];
+    const at = (a: [number, number], b: [number, number], f: number) => `${a[0] + (b[0] - a[0]) * f} ${a[1] + (b[1] - a[1]) * f}`;
+    let d = `M${at(pts[0], pts[1], k)}`;
+    for (let i = 0; i < 4; i++) {
+      const a = pts[i], b = pts[(i + 1) % 4], c = pts[(i + 2) % 4];
+      d += `L${at(a, b, 1 - k)}Q${b[0]} ${b[1]} ${at(b, c, k)}`;
+    }
+    return `${d}Z`;
+  }
+  const r = Math.min(radius, w, h);
+  return `M${-w + r} ${-h}H${w - r}Q${w} ${-h} ${w} ${-h + r}V${h - r}Q${w} ${h} ${w - r} ${h}H${-w + r}Q${-w} ${h} ${-w} ${h - r}V${-h + r}Q${-w} ${-h} ${-w + r} ${-h}Z`;
 }

@@ -61,6 +61,12 @@ export function newElement(r: AddRequest, doc: RawDoc, sceneIndex: number, cam: 
     case 'box':
       el = { id: uniqueId(doc, sceneIndex, 'box'), type: 'box', ...at, width: 280, height: 150, color: 'green', label: 'box' };
       break;
+    case 'ellipse':
+      el = { id: uniqueId(doc, sceneIndex, 'ellipse'), type: 'box', shape: 'ellipse', ...at, width: 300, height: 170, color: 'green', label: 'ellipse' };
+      break;
+    case 'diamond':
+      el = { id: uniqueId(doc, sceneIndex, 'decision'), type: 'box', shape: 'diamond', ...at, width: 320, height: 200, color: 'yellow', label: 'yes?' };
+      break;
     case 'chart':
       el = {
         id: uniqueId(doc, sceneIndex, 'chart'), type: 'chart', kind: 'bar', ...at, width: 640, height: 380, color: 'cyan',

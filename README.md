@@ -34,7 +34,7 @@ Presentations, your library and your pictures, recordings and sounds are plain f
 
 | Do | How |
 |---|---|
-| Add | Left panel: **Text**, **Box**, **Chart**, **Arrow** (click it, then the start element, then the end), **Image**, **Area**, and any icon, logo, clipart or 3D model (fold a section away by clicking its heading; searching shows every match). **⤢** opens the whole library, including **Media**: your pictures, recordings and sounds, ready to put on the board. |
+| Add | Left panel: **Text**, **Box**, **Ellipse**, **Diamond** (a box's shape, which you can change in its properties), **Chart**, **Arrow** (click it, then the start element, then the end), **Image**, **Area**, and any icon, logo, clipart or 3D model (fold a section away by clicking its heading; searching shows every match). **⤢** opens the whole library, including **Media**: your pictures, recordings and sounds, ready to put on the board. |
 | Select, move, resize | Click and drag; corner handles resize. Shift+click selects several. |
 | Edit text in place | Double-click a text, label or chart title (or select it and press Enter). Enter keeps it, Esc cancels. Code text takes several lines: Ctrl+Enter keeps it. |
 | Properties | Right panel: position and size like a drawing program (drag a label such as **W** sideways to change it), colours as marker tips, styles as pictures (text: marker, bold, code; lines: solid, dashed, dotted; thickness; arrowheads; chart types). Hover **?** for help. Ids and rarely needed fields are under *Advanced*. |

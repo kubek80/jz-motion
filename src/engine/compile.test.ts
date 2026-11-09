@@ -348,3 +348,29 @@ describe('docs/format.md', () => {
     ok(JSON.parse(example));
   });
 });
+
+describe('box shapes', () => {
+  it('attaches arrows to the outline of an ellipse or a diamond, corners included', async () => {
+    const { arrowEnds, ARROW_GAP } = await import('./geometry');
+    const p = ok(deck({
+      elements: [
+        { id: 'd', type: 'box', shape: 'diamond', x: 0, y: 0, width: 400, height: 200 },
+        { id: 'e', type: 'box', shape: 'ellipse', x: 0, y: 0, width: 400, height: 200 },
+        { id: 'r', type: 'box', x: 1000, y: 0, width: 100, height: 100 },
+        { id: 'a', type: 'arrow', from: 'd.top-right', to: 'r' },
+        { id: 'b', type: 'arrow', from: 'e.bottom-left', to: 'r' },
+        { id: 'c', type: 'arrow', from: 'd', to: 'r' },
+      ],
+    }));
+    const els = p.scenes[0].elements;
+    const lookup = (id: string) => els.find((x) => x.id === id);
+    const end = (id: string) => arrowEnds(lookup(id) as never, lookup).start;
+    const g = ARROW_GAP * Math.SQRT1_2;
+    // A diamond's corner anchor is the middle of its edge; an ellipse's is on its curve at 45°.
+    expect(end('a')).toMatchObject({ x: expect.closeTo(100 + g), y: expect.closeTo(-50 - g) });
+    expect(end('b')).toMatchObject({ x: expect.closeTo(-200 * Math.SQRT1_2 - g), y: expect.closeTo(100 * Math.SQRT1_2 + g) });
+    // Facing the next box, it leaves from the diamond's tip.
+    expect(end('c')).toMatchObject({ x: expect.closeTo(200 + ARROW_GAP), y: expect.closeTo(0) });
+    expect(compile(deck({ elements: [{ id: 'x', type: 'box', shape: 'star', x: 0, y: 0, width: 1, height: 1 }] })).ok).toBe(false);
+  });
+});
