@@ -5,6 +5,8 @@ import { svgEl } from './dom';
 import { projectIso, type IsoPart } from './iso';
 import { board, palette } from './palette';
 import type { Spotlight } from './compile';
+import type { VideoStill } from './videoStill';
+import type { PlannedPlay } from './videoClock';
 
 /** One step of drawing an element: a stroke traced along its length, or text revealed left to right. */
 export type DrawPart =
@@ -76,6 +78,8 @@ export interface PlayState {
 export interface VideoNodes {
   src: string;
   video: HTMLVideoElement;
+  /** Export: the video's frame painted on a canvas over it, so the exported picture always has it. */
+  copy: VideoStill;
   /** The foreignObject that holds the video (and a cross-fade's), clipped like the picture. */
   box: SVGForeignObjectElement;
   loop: boolean;
@@ -86,6 +90,8 @@ export interface VideoNodes {
   state: PlayState;
   /** While scheduling plays in order: the state so far, and where the clip will be (to know what a cross-fade starts from). */
   planned: PlayState & { t: number; clip: number; holding: boolean };
+  /** Every play scheduled so far, in order (the first: how it starts); export works out the clip from these. */
+  plays: PlannedPlay[];
   epoch: number;
   seq: number;
   /** Seconds into the recording now; where this play holds (-1: nowhere) and its own speed to get there (null: the play's). */
@@ -95,9 +101,7 @@ export interface VideoNodes {
   /** Cross-fades: from the picture at `from` seconds, starting at timeline time `t`, over `dur` seconds. */
   fades: { t: number; dur: number; from: number }[];
   /** The second video that shows what a cross-fade starts from (made when a play first fades). */
-  fade?: { video: HTMLVideoElement; target: number; busy: Promise<void> | null; ready: Promise<boolean> };
-  /** Timeline time this board first saw it standing at its stop or end (undefined while it moves). */
-  stillSince?: number;
+  fade?: { video: HTMLVideoElement; copy: VideoStill; target: number; busy: Promise<void> | null; ready: Promise<boolean> };
   /** Export: the time last asked of the video, and the wait until that frame is shown. */
   target: number;
   busy: Promise<void> | null;

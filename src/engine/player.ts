@@ -288,6 +288,11 @@ export class StagePlayer {
     this.emit();
   }
 
+  /** Export: whether a recording's play was hooked up after the frame was drawn (it loaded since), so draw it again. */
+  redrawNeeded(): boolean {
+    return this.animations.redrawNeeded();
+  }
+
   /** Resolves when every animated picture has loaded and drawn the frame asked for (export waits for this). */
   settled() {
     return this.animations.settled();
