@@ -1092,3 +1092,12 @@ Jakub wanted his avatar and his voice in one window, with more than one avatar t
 ![🎙 Me: the avatar in use with its voice, and its Look](journey/128-me.jpg)
 
 **Checked by:** Playwright: the migrated file shows one card (Fish Audio S2.1 Pro · Neutral British, in use); a new avatar added, renamed, used, switched back and removed; the Voice tab of each shows its voice; `voice/my-voice.json` unchanged at the end; typecheck, tests, build.
+
+## Step 89: No more flicker where recordings start
+
+Jakub saw some exports flicker in the first frames of screen recordings. The exporter draws frames on several browser pages at once, each taking every few frames, and two things made those pages disagree:
+
+- **Empty boxes.** A recording that had just loaded or come into view could still be missing from the screen when its frame was photographed, so one page's frame showed an empty browser frame between two good ones. Export now paints each recording frame (and the avatar's) on a canvas over the video (`src/engine/videoStill.ts`), which is always in the picture.
+- **The wrong moment of the recording.** Each page moved a recording on by the time since *its own* last frame, so when a play started between two of its frames it counted the whole gap as playing, and a play hooked up after the recording loaded showed the frame from before it. In export the recording's moment now comes from the plays themselves (`clipAtTime`), the same on every page, and a frame is drawn again when a play is hooked up after it was drawn. The "nothing moved, repeat the last frame" check uses the same sum, so exports skip as many frames as before.
+
+![Before: frame 1396 empty between two good ones; after: the same frames](journey/129-recording-flicker.jpg)

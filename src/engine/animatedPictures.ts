@@ -4,7 +4,7 @@
 // the right picture and `until` knows where to stop. videoPictures.ts shows them.
 import type { CompiledScene, Op } from './compile';
 import type { ImageNodes, VideoNodes } from './stageNodes';
-import { isVideoSrc } from './videoClock';
+import { isVideoSrc, plannedClip } from './videoClock';
 import { frameAt, VideoPictures } from './videoPictures';
 
 type PlayOp = Extract<Op, { kind: 'play' }>;
@@ -15,6 +15,8 @@ export class AnimatedPictures {
   /** Plays waiting for their recording to load (or for its frame list), in order. */
   private queued = new Map<ImageNodes, PlayOp[]>();
   private videos = new VideoPictures();
+  /** A play was hooked up after the last frame was drawn (its recording finished loading): draw that frame again. */
+  private scheduledSinceRender = false;
 
   /** `timeline` is the current scene's timeline; `builtFor` the scene currently on the board. */
   constructor(private timeline: () => gsap.core.Timeline, private builtFor: () => CompiledScene | undefined) {}
@@ -63,7 +65,7 @@ export class AnimatedPictures {
     const p = v.planned;
     const tl = this.timeline();
     // Where the clip is when this play starts, following the plays before it.
-    let clip = clipAt(p, op.t, v);
+    let clip = plannedClip(p, op.t, v.duration, v.loop);
     const before = pick(p, op.from ?? 0);
     const seekTo = op.seekFrame !== undefined ? frameAt(v, op.seekFrame) : op.seek;
     if (op.fade && seekTo !== undefined) v.fades.push({ t: op.t, dur: op.fade, from: clip });
@@ -81,6 +83,8 @@ export class AnimatedPictures {
     // `until` only plays forwards: if the clip is already past it, the stop doesn't apply.
     p.holding = p.stopAt >= 0 && clip <= p.stopAt + 1e-6;
     if (!p.holding) p.stopAt = -1;
+    v.plays.push({ ...p });
+    this.scheduledSinceRender = true;
     tl.fromTo(v.state, before, { ...pick(p, p.speed), duration: 0.001, immediateRender: false }, op.t);
     // Apply it now if the timeline is already past it (the recording finished loading after a jump).
     tl.time(tl.time(), true);
@@ -88,6 +92,7 @@ export class AnimatedPictures {
 
   /** Advances every recording by `dt` seconds of the board's clock; `manual` when drawing export frames. */
   render(dt: number, manual = false) {
+    this.scheduledSinceRender = false;
     this.videos.render(dt, manual, this.timeline().time());
   }
 
@@ -104,6 +109,11 @@ export class AnimatedPictures {
     if (v?.frames) v.clip = frameAt(v, index);
   }
 
+  /** Export: whether a play was hooked up since the frame was drawn, so it should be drawn again. */
+  redrawNeeded(): boolean {
+    return this.scheduledSinceRender;
+  }
+
   /** Whether any recording can change between two timeline moments (playing, or cross-fading). */
   moving(from: number, to: number): boolean {
     return this.videos.moving(from, to) || this.queued.size > 0;
@@ -118,13 +128,3 @@ export class AnimatedPictures {
 
 /** The numbers the timeline tweens, from a plan. */
 const pick = (p: VideoNodes['planned'], speed: number) => ({ speed, epoch: p.epoch, seekTo: p.seekTo, seq: p.seq, stopAt: p.stopAt, arrive: p.arrive });
-
-/** Where a planned clip is at timeline time `t`: moving at its speed since the last play, held at its stop or end. */
-function clipAt(p: VideoNodes['planned'], t: number, v: VideoNodes): number {
-  if (t <= p.t) return p.clip;
-  const speed = p.holding && p.arrive > 0 ? Math.max(0, (p.stopAt - p.clip) / p.arrive) : p.speed;
-  let clip = p.clip + (t - p.t) * speed;
-  if (p.holding) clip = Math.min(clip, p.stopAt);
-  if (clip >= v.duration) clip = v.loop ? clip % v.duration : v.duration;
-  return clip;
-}

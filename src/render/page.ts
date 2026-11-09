@@ -56,6 +56,11 @@ window.jzmRender = {
     stage.renderAt(st.scene, st.time, time);
     // Recordings seek asynchronously; wait so the capture shows the right frame.
     await stage.settled();
+    // A recording that finished loading meanwhile has its plays hooked up only now: draw the frame again with them.
+    for (let i = 0; i < 3 && stage.redrawNeeded(); i++) {
+      stage.renderAt(st.scene, st.time, time);
+      await stage.settled();
+    }
     if (previous === undefined) return false;
     const before = stateAt(perf, previous);
     const avatarSame = !plan || AvatarLayer.key(avatarFrame(plan, previous)) === AvatarLayer.key(af!);

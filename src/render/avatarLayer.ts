@@ -1,8 +1,10 @@
 import type { AvatarFrame, Rect } from '../video/avatarPlan';
+import { VideoStill } from '../engine/videoStill';
 
 // Draws an avatar frame (src/video/avatarPlan.ts) in a 16:9 frame element: places the board's container and your
 // avatar's video where the plan says, and shows the right moment of the video. Used by the export's render page
-// (every frame, waiting for the video to get there) and Timing's board (live, following the playhead).
+// (every frame, waiting for the video to get there, then painting it on a canvas: videoStill.ts) and Timing's board
+// (live, following the playhead).
 
 const FRAME_COLOR = '#3ef0ff';
 const pct = (r: Rect) => ({ left: `${r.x * 100}%`, top: `${r.y * 100}%`, width: `${r.w * 100}%`, height: `${r.h * 100}%` });
@@ -10,6 +12,7 @@ const full = (r: Rect) => r.x <= 0.001 && r.y <= 0.001 && r.w >= 0.999 && r.h >=
 
 export class AvatarLayer {
   readonly video: HTMLVideoElement;
+  private copy: VideoStill;
   private file = '';
 
   constructor(frame: HTMLElement, private board: HTMLElement, private src = (file: string) => `/uploads/${file}`) {
@@ -21,6 +24,8 @@ export class AvatarLayer {
     this.video.preload = 'auto';
     Object.assign(this.video.style, { position: 'absolute', objectFit: 'cover', boxSizing: 'border-box', background: '#000', display: 'none', pointerEvents: 'none' });
     frame.appendChild(this.video);
+    this.copy = new VideoStill(this.video);
+    frame.appendChild(this.copy.canvas);
   }
 
   /** Places everything for `f`. `exact`: wait until the video shows that moment (export); otherwise it may drift a little while playing. */
@@ -30,11 +35,16 @@ export class AvatarLayer {
     const v = this.video;
     if (!f.video || f.opacity <= 0.001) {
       v.style.display = 'none';
+      this.copy.hide();
       if (!v.paused) v.pause();
       return;
     }
     const avatarFull = full(f.avatar);
-    Object.assign(v.style, pct(f.avatar), { display: 'block', opacity: String(f.opacity), zIndex: f.avatarOnTop ? '2' : '1', outline: avatarFull ? 'none' : `4px solid ${FRAME_COLOR}` });
+    const look = { ...pct(f.avatar), opacity: String(f.opacity), zIndex: f.avatarOnTop ? '2' : '1', outline: avatarFull ? 'none' : `4px solid ${FRAME_COLOR}` };
+    Object.assign(v.style, look, { display: 'block' });
+    // Export shows the canvas copy (painted below, once the video is at that moment); live, the video itself.
+    if (opts.exact) Object.assign(this.copy.canvas.style, look);
+    else this.copy.hide();
     if (this.file !== f.video.file) {
       this.file = f.video.file;
       v.src = this.src(f.video.file);
@@ -48,6 +58,8 @@ export class AvatarLayer {
         v.currentTime = want;
         await Promise.race([seeked, new Promise((ok) => setTimeout(ok, 3000))]);
       }
+      if (v.readyState < 2) await Promise.race([new Promise((ok) => v.addEventListener('loadeddata', ok, { once: true })), new Promise((ok) => setTimeout(ok, 3000))]);
+      this.copy.paint();
       return;
     }
     const holding = f.video.time >= (v.duration || Infinity) - 0.06;
