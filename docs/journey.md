@@ -1101,3 +1101,9 @@ Jakub saw some exports flicker in the first frames of screen recordings. The exp
 - **The wrong moment of the recording.** Each page moved a recording on by the time since *its own* last frame, so when a play started between two of its frames it counted the whole gap as playing, and a play hooked up after the recording loaded showed the frame from before it. In export the recording's moment now comes from the plays themselves (`clipAtTime`), the same on every page, and a frame is drawn again when a play is hooked up after it was drawn. The "nothing moved, repeat the last frame" check uses the same sum, so exports skip as many frames as before.
 
 ![Four frames where a recording draws in: before, every other one empty; after, it draws in smoothly](journey/129-recording-flicker.jpg)
+
+The voice scene ("Finding my voice", the one Jakub noticed most: eight plays of one recording) shows both: before, frame 59 is empty between two good ones, and for the next frames some pages showed the recording ahead of where it was (396 of its 1430 frames differed from the fixed export).
+
+![The voice scene, old (top) and fixed (bottom): frame 59 empty, then the recording running ahead](journey/130-voice-scene-flicker.jpg)
+
+**Checked by:** real exports with the app's exporter (scenes 6–7 and the voice scene, several pages at once as in the app), every frame compared with the frames either side of it: old code 1 + 1 flickers, new 0, and the recording draws in smoothly; the "nothing moved" check repeats as many frames as before (1116 of 2464); a test for `clipAtTime`; typecheck, tests, build.
