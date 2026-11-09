@@ -1,5 +1,5 @@
 {
-  "voice": "my voice (voice-sample-bcb1670058.webm 0.0–29.0 s) · Speak in a neutral, standard British English accent, clear and calm, as a native speaker would, keeping the same voice.",
+  "voice": "my voice (voice-sample-bcb1670058.webm 0.0\u201329.0 s) \u00b7 Speak in a neutral, standard British English accent, clear and calm, as a native speaker would, keeping the same voice.",
   "samples": [
     {
       "id": "plain",
@@ -30,11 +30,6 @@
       "id": "emphasis",
       "upload": "direction-sample-emphasis.mp3",
       "duration": 1.78
-    },
-    {
-      "id": "break",
-      "upload": "direction-sample-break.mp3",
-      "duration": 2.77
     },
     {
       "id": "question",
