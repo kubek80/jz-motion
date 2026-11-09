@@ -18,7 +18,7 @@ Some topics take two minutes; others need ten. Does that sound simple? Mostly, y
 
 const CLONERS = VOICERS.filter((v) => v.clones);
 
-/** `embedded`: its parts only, inside another window (🎙 Me). */
+/** `embedded`: its parts only, inside another window (🧑 Avatar). */
 export function MyVoice({ onClose, embedded }: { onClose: () => void; embedded?: boolean }) {
   const voicer = useVoicer();
   const [text, setText] = useState(SAMPLE_TEXT);
@@ -40,7 +40,7 @@ export function MyVoice({ onClose, embedded }: { onClose: () => void; embedded?:
     const onKey = (e: KeyboardEvent) => {
       if ((e.target as HTMLElement).closest('input, textarea, select')) return;
       if (t.state === 'recording' && (e.key === ' ' || e.key === 'Escape')) { e.preventDefault(); e.stopPropagation(); void take.stop(); }
-      // Inside 🎙 Me, Me closes on Esc (and not while a window is open on top of it).
+      // Inside 🧑 Avatar, it closes on Esc (and not while a window is open on top of it).
       else if (!embedded && t.state !== 'recording' && e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); onClose(); }
     };
     window.addEventListener('keydown', onKey, true);

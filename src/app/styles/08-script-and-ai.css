@@ -74,7 +74,7 @@
 .scene-ask-live, .scene-ask-done { flex-basis: 100%; font-size: 12px; display: flex; flex-direction: column; gap: 2px; }
 .scene-ask-live .activity { max-height: 140px; overflow: auto; }
 .activity details { color: var(--text); }
-/* How to direct your voice: rules, then the samples to listen to. Above other windows (it opens from 🎙 Me). */
+/* How to direct your voice: rules, then the samples to listen to. Above other windows (it opens from 🧑 Avatar). */
 .voice-directions-back { z-index: 70; }
 .voice-directions { max-width: 760px; max-height: 88vh; overflow: auto; }
 .voice-directions .modal-head { gap: 10px; align-items: baseline; }

@@ -3,10 +3,11 @@ import { compile } from '../engine/compile';
 import { cuePerformance } from '../video/performance';
 import { CreateWithAi, type RecordingSource } from './CreateWithAi';
 import { Settings } from './Settings';
-import { Me } from './Me';
+import { AvatarWindow } from './AvatarWindow';
 import { LibraryManager } from './LibraryManager';
 import { Creator, type CreateRequest } from './Creator';
 import { confirmDialog } from './confirm';
+import { toggleAppFullscreen, useFullscreen } from './fullscreen';
 import { StartBox, type Start } from './StartBox';
 import { examples } from './examples';
 import { Preview } from './Preview';
@@ -22,6 +23,7 @@ const ago = (iso: string) => {
 
 /** All presentations: open, create (blank or from an example), rename, duplicate, delete. */
 export function Home({ store, onOpen }: { store: Store; onOpen: (id: string) => void }) {
+  const full = useFullscreen();
   const [items, setItems] = useState<(PresentationInfo & { text?: string })[] | null>(null);
   const [query, setQuery] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -83,7 +85,7 @@ export function Home({ store, onOpen }: { store: Store; onOpen: (id: string) => 
         <CreateWithAi kind={start.mode} initialText={start.text} initialFile={start.file} modelId={start.modelId} onClose={() => setStart(null)} onCreate={createFromAi} />
       )}
       {settings && <Settings onClose={() => setSettings(false)} />}
-      {me && <Me onClose={() => setMe(false)} />}
+      {me && <AvatarWindow onClose={() => setMe(false)} />}
       {library && <LibraryManager onClose={() => setLibrary(false)} onCreate={(kind, start) => setCreating({ kind, start })} version={libraryVersion} />}
       {creating && (
         <Creator
@@ -96,8 +98,9 @@ export function Home({ store, onOpen }: { store: Store; onOpen: (id: string) => 
       <header className="home-bar">
         <span className="spacer" />
         <button onClick={() => setLibrary(true)} title="Icons, logos, clipart, 3D models, and your pictures, recordings and sounds">Library</button>
-        <button onClick={() => setMe(true)} title="Your avatars, each with its voice: choose the one you use, its look and its voice">🎙 Me</button>
+        <button onClick={() => setMe(true)} title="Your avatars, each with its voice: choose the one you use, its look and its voice">🧑 Avatar</button>
         <button onClick={() => setSettings(true)} title="Models, API keys, transcription">⚙ Settings</button>
+        <button className={full ? 'on' : ''} onClick={() => void toggleAppFullscreen()} aria-pressed={full} title={full ? 'Leave full screen (Esc)' : 'The whole app full screen'}>⛶</button>
       </header>
       <div className="hero">
         <img src="/logo.svg" alt="jz-motion" className="hero-logo" />
@@ -120,8 +123,8 @@ export function Home({ store, onOpen }: { store: Store; onOpen: (id: string) => 
       </div>
       <div className="home-list-head">
         <h2>Your presentations</h2>
-        <span className="spacer" />
-        <input className="search" placeholder="Search…" value={query} onChange={(e) => setQuery(e.target.value)} />
+        {/* Right by the list it filters. */}
+        <input className="search" type="search" aria-label="Search your presentations" placeholder="🔍  Search by title…" value={query} onChange={(e) => setQuery(e.target.value)} />
       </div>
       <p className="muted store-note">
         {store.kind === 'files' ? 'Saved as files in presentations/ (on this computer).' : 'Saved in this browser only. Run the app with npm run dev to save presentations as files.'}

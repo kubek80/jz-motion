@@ -25,7 +25,7 @@ interface Props {
   removeMissing: () => void;
   /** Opens the transcript of every clip whose recording is here. */
   onTranscript: () => void;
-  /** Opens 🎙 Me (your avatars, each with its voice). */
+  /** Opens 🧑 Avatar (your avatars, each with its voice). */
   onMe: () => void;
   onClose: () => void;
 }
@@ -61,7 +61,7 @@ export function TimingHeader({ clickCount, cuedCount, primary, clips, voiceDurat
       >
         {generating ? `Generating voice ${generating.done}/${generating.total}…` : missingSentences.length ? `Generate voice (${missingSentences.length})` : 'Voice up to date'}
       </button>
-        <button onClick={onMe} disabled={recording} title="Your avatars, each with its voice: choose the one you use, its look and its voice">🎙 Me</button>
+        <button onClick={onMe} disabled={recording} title="Your avatars, each with its voice: choose the one you use, its look and its voice">🧑 Avatar</button>
       <button onClick={() => onCues([], true)} disabled={!cuedCount || recording} title="Forget every cue: clicks go back to even pauses">Clear cues</button>
       <button className="primary" disabled={!primary || !!busy} onClick={() => void makeTake()} title="A take with this timing and the voice-over as its sound, ready to export in the Video tab">
         Make a take for export

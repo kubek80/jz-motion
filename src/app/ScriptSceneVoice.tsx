@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { clones, useVoicer, VOICERS } from './settingsStore';
 
 // Beside a scene on the Script page: its voice clip (play it), and Generate / Generate again, which says the scene's
-// notes in the voice in use (🎙 Me) as one clip in place of the scene's clip and moves what follows by the difference
+// notes in the voice in use (🧑 Avatar) as one clip in place of the scene's clip and moves what follows by the difference
 // (server/sceneVoice.ts). Directions in brackets in the notes ([emphasis], [warmer, slower]) steer how it is said.
 
 export interface SceneClip { id: string; scene?: string; upload: string; offset: number; trimStart: number; trimEnd: number; name?: string; avatar?: unknown }

@@ -320,7 +320,7 @@
 .avatar-lane .lane-empty { position: absolute; left: 26px; top: 9px; font-size: 11px; }
 
 .timing-board .avatar-problem-note { position: absolute; right: 2.5%; bottom: 4.4%; width: 26%; aspect-ratio: 16 / 9; z-index: 3; font-size: 13px; }
-/* 🎙 Me: your avatars, each with its voice */
+/* 🧑 Avatar: your avatars, each with its voice */
 .me .me-avatars { display: flex; gap: 12px; flex-wrap: wrap; align-items: stretch; }
 .me .me-avatar { display: flex; flex-direction: column; gap: 6px; width: 210px; padding: 8px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
 .me .me-avatar.in-use { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
@@ -333,4 +333,13 @@
 .me .me-add { width: 140px; border-style: dashed; }
 .me .me-tabs { display: flex; gap: 6px; align-items: center; border-top: 1px solid var(--line); padding-top: 10px; }
 .me .me-tabs button.on { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, var(--panel)); }
-.my-voice.embedded { display: flex; flex-direction: column; gap: 12px; }
+.my-voice.embedded { display: flex; flex-direction: column; gap: 12px; width: auto; max-height: none; overflow: visible; }
+/* The Avatar window: wide, one scrollbar (the window's), its tabs using the whole width. */
+.modal.me { width: min(1180px, 96vw); }
+/* Look: what it looks like and where it comes from on the left, the style and how it moves on the right. */
+.my-avatar.embedded { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px 28px; align-items: start; }
+.my-avatar.embedded > p { grid-column: 1 / -1; }
+.avatar-col { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.my-avatar.embedded .avatar-in-use { flex-direction: column; align-items: stretch; }
+.my-avatar.embedded .avatar-in-use img { width: 100%; max-width: 480px; height: auto; }
+@media (max-width: 900px) { .my-avatar.embedded { grid-template-columns: minmax(0, 1fr); } }

@@ -3,7 +3,7 @@
 import { useCleanVoice } from './useCleanVoice';
 import type { RawBeat, RawDoc } from '../editor/doc';
 import { BeatDrawer } from './BeatDrawer';
-import { Me } from '../Me';
+import { AvatarWindow } from '../AvatarWindow';
 import { ClipDetail } from './ClipDetail';
 import { TranscriptWindow } from './TranscriptWindow';
 import { TimelineMinimap } from './TimelineMinimap';
@@ -335,7 +335,7 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
           onClose={() => setOpenClipId(null)}
         />
       )}
-      {me && <Me onClose={() => setMe(false)} />}
+      {me && <AvatarWindow onClose={() => setMe(false)} />}
       {transcribing && (
         <TranscriptWindow
           clips={transcribing}

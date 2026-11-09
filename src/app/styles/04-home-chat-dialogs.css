@@ -2,7 +2,7 @@
 .home { min-height: 100vh; padding: 0 28px 40px; overflow: auto; height: 100vh; box-sizing: border-box; }
 .home-bar { display: flex; gap: 10px; align-items: center; padding: 18px 0 6px; }
 .home-logo { height: 96px; }
-.home .search { width: 240px; }
+.home .search { width: 260px; }
 .store-note { margin: 0 0 18px; font-size: 12px; }
 .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; }
 .card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; }
@@ -105,7 +105,7 @@
 .attach.has { color: var(--text); border-style: solid; }
 .attach input { display: none; }
 .hero-links { display: flex; gap: 10px; align-items: center; font-size: 14px; }
-.home-list-head { display: flex; align-items: center; gap: 10px; }
+.home-list-head { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
 .home-list-head h2 { margin: 0; font-size: 18px; }
 .settings-section { display: flex; flex-direction: column; gap: 8px; padding-top: 8px; border-top: 1px solid var(--line); }
 .settings-section h3 { margin: 0; font-size: 15px; }
