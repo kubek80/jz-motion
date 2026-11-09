@@ -1,8 +1,27 @@
 {
-  "model": "fal-ai/kling-video/ai-avatar/v2/standard",
-  "prompt": "A calm man speaking to the camera with subtle, small mouth movements and a relaxed face; minimal head movement.",
-  "calm": true,
-  "photo": "avatar-photo-6738ede7a5.jpg",
-  "source": "avatar-source-aeb2cbc1d7.webp",
-  "style": "Turn this photo of me into a flat 2D cartoon illustration in a retro mid-century adult-animation style: bold clean black outlines, flat cel shading with one shadow tone, limited muted palette, slightly angular stylised features, like a 1960s spy-comic TV cartoon. Keep it clearly recognisable as me: same face, eyes, nose, beard, long dark hair. Make me slightly slimmer. A talking head, head and shoulders, centred, facing the camera and looking into the lens, relaxed and friendly, mouth gently closed (it will be animated to speak), a calm casual look, not dramatic. Setting: a cosy home YouTube studio behind me, softly out of focus: a podcast microphone on a boom arm at the edge of frame, a soft LED panel glow, shelves with a few books and a plant, warm lamp light with teal accent lighting. Wide 16:9 frame with me in the middle third. No text, no logos. Clothes: a plain dark charcoal t-shirt."
+  "current": "avatar-1",
+  "avatars": [
+    {
+      "id": "avatar-1",
+      "name": "Cartoon (t-shirt)",
+      "model": "fal-ai/kling-video/ai-avatar/v2/standard",
+      "prompt": "A calm man speaking to the camera with subtle, small mouth movements and a relaxed face; minimal head movement.",
+      "calm": true,
+      "photo": "avatar-photo-6738ede7a5.jpg",
+      "source": "avatar-source-aeb2cbc1d7.webp",
+      "style": "Turn this photo of me into a flat 2D cartoon illustration in a retro mid-century adult-animation style: bold clean black outlines, flat cel shading with one shadow tone, limited muted palette, slightly angular stylised features, like a 1960s spy-comic TV cartoon. Keep it clearly recognisable as me: same face, eyes, nose, beard, long dark hair. Make me slightly slimmer. A talking head, head and shoulders, centred, facing the camera and looking into the lens, relaxed and friendly, mouth gently closed (it will be animated to speak), a calm casual look, not dramatic. Setting: a cosy home YouTube studio behind me, softly out of focus: a podcast microphone on a boom arm at the edge of frame, a soft LED panel glow, shelves with a few books and a plant, warm lamp light with teal accent lighting. Wide 16:9 frame with me in the middle third. No text, no logos. Clothes: a plain dark charcoal t-shirt.",
+      "voice": {
+        "baseURL": "https://openrouter.ai/api/v1",
+        "model": "fish-audio/s2.1-pro",
+        "instructions": "Speak in a neutral, standard British English accent, clear and calm, as a native speaker would, keeping the same voice.",
+        "sample": {
+          "upload": "voice-sample-bcb1670058.webm",
+          "start": 0,
+          "end": 28.96,
+          "name": "my voice sample · 08/11/2026",
+          "text": "Hi, I'm Jakub. I make short explainer videos about software, drawn on a dark board with glowing markers.\n\nEach one starts with a single sentence. Then I sketch the idea, point at the parts that matter, and talk you through it, step by step.\n\nSome topics take two minutes; others need ten. Does that sound simple? Mostly, yes. The tricky part is choosing what to leave out, and that's exactly what I'd like to show you today."
+        }
+      }
+    }
+  ]
 }

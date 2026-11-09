@@ -1082,3 +1082,13 @@ Jakub saw his avatar go black at the end of its clips. The export laid the avata
 ![Exported: full frame; mid-glide; side by side; the last frame held](journey/127-avatar-glides-and-holds.jpg)
 
 **Checked by:** tests (plays in the corner, holds the last frame, glides corner → full frame, a beat action moves it, hiding fades it); an export of scenes 23 and 24 (full frame, the glide, side by side, the last frame held, no black); Timing's board on scene 24 the same as the export; typecheck, tests, build.
+
+## Step 88: 🎙 Me: several avatars, each with its voice
+
+Jakub wanted his avatar and his voice in one window, with more than one avatar to choose from. **🎙 Me** replaces My voice and My avatar everywhere (home screen, Timing, Settings, a clip's avatar section). At the top, **My avatars**: a card for each (its picture, its name to edit, its voice: model and accent), **in use** on the one being used, **Use** on the others, ✕ to remove one, and **＋ New avatar** (a copy of the one in use, to change). Below, **Look** and **Voice** tabs: the old two windows, for the avatar in use.
+
+- **Each avatar has its voice.** `voice/my-avatar.json` now holds the avatars and the one in use; the old single-avatar file becomes the first one ("My avatar", with the voice in `voice/my-voice.json`) the first time it is read. Choosing an avatar writes its voice to `voice/my-voice.json` (so `npm run voice` and the app speak in it) and to the browser's voice settings; saving the voice remembers it on the avatar in use. Avatar videos already made keep the look they were made with.
+
+![🎙 Me: the avatar in use with its voice, and its Look](journey/128-me.jpg)
+
+**Checked by:** Playwright: the migrated file shows one card (Fish Audio S2.1 Pro · Neutral British, in use); a new avatar added, renamed, used, switched back and removed; the Voice tab of each shows its voice; `voice/my-voice.json` unchanged at the end; typecheck, tests, build.

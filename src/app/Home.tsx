@@ -3,8 +3,7 @@ import { compile } from '../engine/compile';
 import { cuePerformance } from '../video/performance';
 import { CreateWithAi, type RecordingSource } from './CreateWithAi';
 import { Settings } from './Settings';
-import { MyVoice } from './MyVoice';
-import { MyAvatar } from './MyAvatar';
+import { Me } from './Me';
 import { LibraryManager } from './LibraryManager';
 import { Creator, type CreateRequest } from './Creator';
 import { confirmDialog } from './confirm';
@@ -29,8 +28,7 @@ export function Home({ store, onOpen }: { store: Store; onOpen: (id: string) => 
   const [start, setStart] = useState<Start | null>(null);
   const [settings, setSettings] = useState(false);
   const [library, setLibrary] = useState(false);
-  const [myVoice, setMyVoice] = useState(false);
-  const [myAvatar, setMyAvatar] = useState(false);
+  const [me, setMe] = useState(false);
   const [creating, setCreating] = useState<CreateRequest | null>(null);
   const [libraryVersion, setLibraryVersion] = useState(0);
 
@@ -85,8 +83,7 @@ export function Home({ store, onOpen }: { store: Store; onOpen: (id: string) => 
         <CreateWithAi kind={start.mode} initialText={start.text} initialFile={start.file} modelId={start.modelId} onClose={() => setStart(null)} onCreate={createFromAi} />
       )}
       {settings && <Settings onClose={() => setSettings(false)} />}
-      {myVoice && <MyVoice onClose={() => setMyVoice(false)} />}
-      {myAvatar && <MyAvatar onClose={() => setMyAvatar(false)} />}
+      {me && <Me onClose={() => setMe(false)} />}
       {library && <LibraryManager onClose={() => setLibrary(false)} onCreate={(kind, start) => setCreating({ kind, start })} version={libraryVersion} />}
       {creating && (
         <Creator
@@ -99,8 +96,7 @@ export function Home({ store, onOpen }: { store: Store; onOpen: (id: string) => 
       <header className="home-bar">
         <span className="spacer" />
         <button onClick={() => setLibrary(true)} title="Icons, logos, clipart, 3D models, and your pictures, recordings and sounds">Library</button>
-        <button onClick={() => setMyVoice(true)} title="Your voice for generated speech: record your sample, hear it, choose the model">🎙 My voice</button>
-        <button onClick={() => setMyAvatar(true)} title="Your avatar: the picture that says your clips in the video, its style and how it moves">🧑 My avatar</button>
+        <button onClick={() => setMe(true)} title="Your avatars, each with its voice: choose the one you use, its look and its voice">🎙 Me</button>
         <button onClick={() => setSettings(true)} title="Models, API keys, transcription">⚙ Settings</button>
       </header>
       <div className="hero">
