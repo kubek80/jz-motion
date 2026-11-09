@@ -1170,3 +1170,15 @@ Listening to the samples, Jakub heard little difference between most of them, an
 ![How to direct your voice with the new advice and samples](journey/135-stronger-directions.jpg)
 
 **Checked by:** 16 test readings measured (loudness, pitch, pitch range, length), the new samples measured against the plain one; Playwright: the window, 8 samples, one playing; a test for the pause cues; typecheck, tests, build.
+
+## Step 95: A correction, and what ElevenLabs would cost
+
+Jakub suspected the pause advice came from another model's documentation. It did: the round-bracket cues (`(long-break)`) came from a third-party guide. Measured on his voice, the `(long-break)` sample is 1.3 s longer than the plain one but has hardly more silence (the cue is spoken, not a pause), and `[long pause]` leaves no longer silence than no direction at all. The pause cues, their sample and the advice are gone; the window now says to end the sentence where a pause belongs (the app always leaves one between sentences). The other directions stand: their effect on loudness and pitch was measured.
+
+His question, ElevenLabs instead of Fish Audio, checked against OpenRouter's prices and a test call:
+
+- **Price per 1,000 characters** (OpenRouter): Fish Audio S2.1 Pro (now) 1.5¢; ElevenLabs v3 / v4 8¢ (5.3×); ElevenLabs v4 Turbo 4¢. This presentation's narration is 9,395 characters: about 14¢ a full reading now, about 75¢ with ElevenLabs v4.
+- **But not in his voice**: through OpenRouter ElevenLabs refuses a reference recording ("No endpoints supporting voice cloning found for this model"); only its stock voices work. His own cloned voice on ElevenLabs means an ElevenLabs account with voice cloning and calling ElevenLabs directly.
+- Fish Audio's new **Drama 3** (built for directed performances, 0.2¢ per 1,000 characters for now) took his sample but came out an octave higher (364 Hz against his 155–167): not his voice through OpenRouter.
+
+**Checked by:** silences measured in the pause samples; the test calls above; typecheck, tests, build.

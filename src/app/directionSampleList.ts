@@ -13,6 +13,5 @@ export const DIRECTION_SAMPLES: DirectionSample[] = [
   { id: 'whisper', label: '[whispering quietly]', text: `[whispering quietly] ${LINE}`, tip: 'Flatter and softer, but your cloned voice rarely truly whispers (it keeps to its sample): it can take a few tries.' },
   { id: 'sad', label: '[sad, disappointed, slow]', text: `[sad, disappointed, slow] ${LINE}`, tip: 'A mood and a pace together: up to three things at once.' },
   { id: 'emphasis', label: '[strong emphasis] on one word', text: 'We shipped it on [strong emphasis] Friday.', tip: 'Right before the word to stress: only that word changes.' },
-  { id: 'break', label: '(long-break) a pause', text: 'We shipped it (long-break) on Friday.', tip: 'A real pause where you put it (about a second). Round brackets: (break), (long-break), (breath).' },
   { id: 'question', label: '[curious, rising]', text: '[curious, rising] Did we ship it on Friday?', tip: 'Helps a question sound like one.' },
 ];

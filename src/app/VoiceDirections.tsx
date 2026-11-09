@@ -78,7 +78,7 @@ export function VoiceDirections({ onClose }: { onClose: () => void }) {
           <ul className="voice-directions-rules">
             <li><b>Say more, and stronger:</b> one mild word (<code>[excited]</code>) changes little; <code>[very excited, shouting with joy]</code> changes a lot. Up to three things at once: <code>[sad, disappointed, slow]</code>.</li>
             <li><b>Where it starts:</b> a direction changes what follows it. Before one word for just that word (<code>on [strong emphasis] Friday</code>), at the start for the sentence.</li>
-            <li><b>Pauses</b> with round brackets, where you want them: <code>(break)</code>, <code>(long-break)</code> (about a second), <code>(breath)</code>.</li>
+            <li><b>Pauses:</b> directions don’t make reliable pauses in this voice. End the sentence where you want one: the app always leaves a pause between sentences, and a longer one between beats.</li>
             <li><b>Short sentences</b> show it best: in a long one the effect spreads thin. Split a line to direct part of it.</li>
             <li>Directions are <b>not read out</b> and never show in the prompter. Only your cloned voice (Fish Audio) follows them; other voices never get them. Each reading differs a little: <b>✨ Generate again</b> if one misses.</li>
           </ul>
