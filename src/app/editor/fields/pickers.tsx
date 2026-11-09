@@ -69,8 +69,9 @@ export const CHOICE_ICONS: Record<string, Record<string, React.ReactNode>> = {
     browser: g(<><rect x="3" y="2.5" width="26" height="17" rx="3" /><path d="M3 7.5H29" strokeWidth="1.4" /><circle cx="6.2" cy="5" r="0.6" fill="currentColor" /><circle cx="8.6" cy="5" r="0.6" fill="currentColor" /><circle cx="11" cy="5" r="0.6" fill="currentColor" /><rect x="7" y="10" width="18" height="7" rx="1" fill="currentColor" opacity="0.35" stroke="none" /></>),
   },
   shape: {
-    rect: g(<rect x="5" y="4" width="22" height="14" rx="2" strokeDasharray="3 2.5" />),
-    ellipse: g(<ellipse cx="16" cy="11" rx="11.5" ry="7.5" strokeDasharray="3 2.5" />),
+    rect: g(<rect x="5" y="4" width="22" height="14" rx="2" />),
+    ellipse: g(<ellipse cx="16" cy="11" rx="11.5" ry="7.5" />),
+    diamond: g(<path d="M16 2.5L28 11L16 19.5L4 11Z" />),
   },
   line: {
     solid: g(<path d="M4 11H28" strokeWidth="2.2" />),

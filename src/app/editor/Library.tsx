@@ -9,7 +9,7 @@ import { isImageFile, uploadImage, type PlacedImage } from '../images';
 export type AddRequest =
   | { kind: 'icon'; name: string }
   | { kind: 'iso'; name: string }
-  | { kind: 'text' | 'box' | 'arrow' | 'chart' | 'area' }
+  | { kind: 'text' | 'box' | 'ellipse' | 'diamond' | 'arrow' | 'chart' | 'area' }
   | { kind: 'image'; image: PlacedImage };
 
 /** Palette of things to put on the board. Clicking adds the item in the middle of the view. */
@@ -44,6 +44,8 @@ export function Library({ onAdd, arrowActive, onCreate, onBrowse, version }: { o
       <div className="basics">
         <button className="tool" style={ink.yellow} onClick={() => onAdd({ kind: 'text' })} title="Handwritten, bold or code text">{TOOL_ICONS.text}<span>Text</span></button>
         <button className="tool" style={ink.cyan} onClick={() => onAdd({ kind: 'box' })} title="A box with a label">{TOOL_ICONS.box}<span>Box</span></button>
+        <button className="tool" style={ink.cyan} onClick={() => onAdd({ kind: 'ellipse' })} title="An ellipse with a label (a start or end, a group)">{TOOL_ICONS.ellipse}<span>Ellipse</span></button>
+        <button className="tool" style={ink.cyan} onClick={() => onAdd({ kind: 'diamond' })} title="A diamond with a label (a decision in a flowchart)">{TOOL_ICONS.diamond}<span>Diamond</span></button>
         <button className="tool" style={ink.green} onClick={() => onAdd({ kind: 'chart' })} title="Bar, line or pie chart">{TOOL_ICONS.chart}<span>Chart</span></button>
         <button
           className={arrowActive ? 'tool on' : 'tool'}
@@ -130,6 +132,8 @@ const svg = (body: React.ReactNode) => (
 export const TOOL_ICONS = {
   text: <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden><text x="12" y="18" textAnchor="middle" fontFamily="Caveat, cursive" fontWeight="700" fontSize="19" fill="currentColor">Aa</text></svg>,
   box: svg(<rect x="3.5" y="6" width="17" height="12" rx="3" />),
+  ellipse: svg(<ellipse cx="12" cy="12" rx="8.5" ry="6" />),
+  diamond: svg(<path d="M12 4.5L20.5 12L12 19.5L3.5 12Z" />),
   chart: svg(<><path d="M4 20h16" opacity="0.6" /><path d="M7 20v-6M12 20V7M17 20v-9" strokeWidth="2.6" /></>),
   arrow: svg(<><path d="M4 17C9 17 12 9 19 8" /><path d="M15 5l4 3-3.5 3.5" /></>),
   image: svg(<><rect x="3" y="4.5" width="18" height="15" rx="2.5" /><path d="M3 8.5h18" opacity="0.7" /><path d="M6.5 16.5l4-4 3 3 2-2 2.5 3" /></>),

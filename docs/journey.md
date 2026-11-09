@@ -1120,3 +1120,15 @@ Jakub wanted to see each scene's recording on the Script page and generate it (a
 ![The Script page: each scene's voice beside it, a direction in a line, the hint while editing](journey/131-script-voice.jpg)
 
 **Checked by:** Playwright on a copy: 22 voice panels, playing scene 1, a direction added and shown, Generate again (17.0 → 18.2 s; every later clip and cue moved by +1.2 s; the avatar note shown; the sentence lengths updated), Generate for a scene without voice (placed, cued, later scenes moved); the narrow layout; the longest pause inside a sentence in the new clip 0.47 s; `npm run voice -- time` after the move; tests for `withoutDirections`; typecheck, tests, build.
+
+## Step 91: Ellipses and diamonds
+
+Jakub could only add boxes to the board, and wanted ellipses and diamonds too, to draw explainers (flowcharts above all) more easily.
+
+- A box now has a `shape`: `rect` (the rounded box, as before), `ellipse` or `diamond`, drawn in the same marker style and drawn in stroke by stroke like the rest. Arrows attach to the outline: an ellipse's and a diamond's corner anchors (`top-right` …) sit on their edges, so a decision's "yes" and "no" can leave from its corners; facing another element, an arrow leaves from a diamond's tip. A diamond's label is a little smaller, as its middle is narrower.
+- The editor has **Ellipse** and **Diamond** beside **Box**, and a box's properties have a **shape** picker (rectangle, ellipse, diamond) to change it.
+- `docs/format.md` and `docs/style.md` tell the models (the app's own included): a diamond for a decision, an ellipse for where a process starts or ends.
+
+![A small flowchart with the three shapes; the editor with the new tools and the shape picker](journey/132-box-shapes.jpg)
+
+**Checked by:** a snapshot of a flowchart using all three shapes, corner anchors and a curved arrow back; Playwright: the Diamond tool adds a diamond and the properties show the shape picker; a test for the anchors (a diamond's edge middle, an ellipse's curve at 45°, a diamond's tip) and an unknown shape refused; typecheck, tests, build.

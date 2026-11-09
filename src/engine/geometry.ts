@@ -128,6 +128,12 @@ export function parseRef(ref: string): { id: string; anchor?: string } {
 /** Where an anchor sits: on the shape, except that bottom anchors go below an icon's label. */
 function attachPoint(el: Element, anchor: AnchorName, lookup: (id: string) => Element | undefined): Point {
   const shape = shapeBox(el, lookup);
+  // An ellipse's or diamond's corners are on its outline, not the corners of the box around it.
+  if (el.type === 'box' && el.shape !== 'rect' && anchor.includes('-')) {
+    const o = outward[anchor];
+    const k = el.shape === 'ellipse' ? Math.SQRT1_2 : 0.5;
+    return { x: el.x + Math.sign(o.x) * (el.width / 2) * k, y: el.y + Math.sign(o.y) * (el.height / 2) * k };
+  }
   const p = anchorPoint(shape, anchor);
   if (anchor.startsWith('bottom')) {
     const full = fullBox(el, lookup);

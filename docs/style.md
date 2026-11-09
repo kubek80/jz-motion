@@ -12,6 +12,7 @@ How a jz-motion presentation should look and flow. Every model that writes prese
 
 - 3 to 7 beats per scene. A beat is one idea the presenter talks over; give each a short title.
 - Draw things in the order you explain them. Connect components with labelled arrows; use `flow` to show data moving.
+- In a process or flowchart, a box's `shape` says what a step is: `rect` for a step, `diamond` for a decision (its branches leave from its corners, labelled "yes" / "no"), `ellipse` for where it starts or ends.
 - Put the exact words the presenter says during a beat in its `notes`. They are the script: the Timing window shows them as a teleprompter.
 - Use numbers as charts and comparisons side by side. See below for drawing attention.
 
