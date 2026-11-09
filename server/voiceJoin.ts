@@ -2,7 +2,7 @@ import { randomBytes } from 'node:crypto';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { splitSentences } from '../src/app/tts';
+import { hasDirections, splitSentences } from '../src/app/tts';
 import { FFMPEG, probe, run } from './media';
 import { TTS_DIR, generateTts, type TtsRequest } from './tts';
 import { uploadPath } from './transcribe';
@@ -44,7 +44,7 @@ export async function joinVoice(presentationId: string, upload: string, parts: J
       const gap = k < lines.length - 1 ? SENTENCE_GAP : BEAT_GAP;
       const audio = join(tmp, `${pieces.length}.wav`);
       // A sentence with directions keeps its pauses: they may be the ones asked for ([short pause]).
-      const duration = await tighten(join(TTS_DIR, presentationId, r.audio), audio, /\[[^\]\n]*\]/.test(text) ? 60 : MAX_PAUSE);
+      const duration = await tighten(join(TTS_DIR, presentationId, r.audio), audio, hasDirections(text) ? 60 : MAX_PAUSE);
       pieces.push({ audio, gap });
       t += duration + gap;
     }

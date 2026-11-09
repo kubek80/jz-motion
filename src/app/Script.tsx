@@ -3,7 +3,7 @@ import type { CompiledPresentation } from '../engine/compile';
 import { ScriptSceneVoice, type SceneClip } from './ScriptSceneVoice';
 import { VoiceDirections } from './VoiceDirections';
 import { useVoicer } from './settingsStore';
-import { entryFor, loadSidecar, requestTts, sentencesOf, splitSentences, type TtsSidecar } from './tts';
+import { entryFor, loadSidecar, requestTts, sentencesOf, splitDirections, splitSentences, type TtsSidecar } from './tts';
 
 interface Props {
   presentation: CompiledPresentation;
@@ -17,7 +17,7 @@ interface Props {
 
 /** A sentence as written, its directions for the voice ([emphasis]) shown small. */
 const Said = ({ said }: { said: string }) => (
-  <>{said.split(/(\[[^\]\n]*\])/).map((part, i) => (/^\[.*\]$/.test(part) ? <span key={i} className="script-direction" title="A direction for the voice: not read out, not in the prompter">{part}</span> : part))}</>
+  <>{splitDirections(said).map(({ part, direction }, i) => (direction ? <span key={i} className="script-direction" title="A direction for the voice: not read out, not in the prompter">{part}</span> : part))}</>
 );
 
 const fmtDuration = (s: number) => s >= 60 ? `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}` : `${s.toFixed(1)}s`;

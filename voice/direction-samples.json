@@ -4,42 +4,42 @@
     {
       "id": "plain",
       "upload": "direction-sample-plain.mp3",
-      "duration": 5.22
-    },
-    {
-      "id": "emphasis",
-      "upload": "direction-sample-emphasis.mp3",
-      "duration": 5.59
-    },
-    {
-      "id": "warm",
-      "upload": "direction-sample-warm.mp3",
-      "duration": 5.28
+      "duration": 1.46
     },
     {
       "id": "excited",
       "upload": "direction-sample-excited.mp3",
-      "duration": 5.9
+      "duration": 1.59
     },
     {
-      "id": "serious",
-      "upload": "direction-sample-serious.mp3",
-      "duration": 5.9
-    },
-    {
-      "id": "pause",
-      "upload": "direction-sample-pause.mp3",
-      "duration": 5.3
+      "id": "very-excited",
+      "upload": "direction-sample-very-excited.mp3",
+      "duration": 1.88
     },
     {
       "id": "whisper",
       "upload": "direction-sample-whisper.mp3",
-      "duration": 5.59
+      "duration": 1.72
+    },
+    {
+      "id": "sad",
+      "upload": "direction-sample-sad.mp3",
+      "duration": 1.54
+    },
+    {
+      "id": "emphasis",
+      "upload": "direction-sample-emphasis.mp3",
+      "duration": 1.78
+    },
+    {
+      "id": "break",
+      "upload": "direction-sample-break.mp3",
+      "duration": 2.77
     },
     {
       "id": "question",
       "upload": "direction-sample-question.mp3",
-      "duration": 1.7
+      "duration": 1.88
     }
   ]
 }
