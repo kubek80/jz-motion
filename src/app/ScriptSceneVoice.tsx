@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { clones, useVoicer, VOICERS } from './settingsStore';
+import { generateSceneVoice, sceneVoiceNote } from './sceneVoice';
+import { useVoicer, VOICERS } from './settingsStore';
 
 // Beside a scene on the Script page: its voice clip (play it), and Generate / Generate again, which says the scene's
 // notes in the voice in use (🧑 Avatar) as one clip in place of the scene's clip and moves what follows by the difference
@@ -32,22 +33,15 @@ export function ScriptSceneVoice({ presentationId, sceneId, clips, hasNotes, doc
   const voiceName = (VOICERS.find((x) => x.baseURL === voicer.baseURL && x.model === voicer.model)?.label ?? voicer.model).replace(/^OpenRouter · /, '').replace(/[;(].*$/, '').trim();
 
   const generate = async () => {
-    if (!voicer.apiKey) { setError(`No key for ${voicer.baseURL}: add it in Settings → Voice generation.`); return; }
     player.stop();
     setBusy(true);
     setError(null);
     setNote(null);
     try {
-      const res = await fetch('/api/voice/scene', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ presentation: doc, presentationId, scene: sceneId, fresh: true, voice: voicer.voice, model: voicer.model, baseURL: voicer.baseURL, apiKey: voicer.apiKey, instructions: voicer.instructions, sample: clones(voicer) ? voicer.sample : undefined }),
-      });
-      const j = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(j.error ?? res.statusText);
-      onDoc(j.presentation);
+      const r = await generateSceneVoice(doc, presentationId, sceneId, voicer);
+      onDoc(r.presentation);
       onVoiced?.();
-      setNote(j.avatar ? `${j.note}. Its avatar said the old words: make it again in Timing (right-click the clip).` : j.note);
+      setNote(sceneVoiceNote(r));
     } catch (e) {
       setError((e as Error).message);
     } finally {

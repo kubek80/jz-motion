@@ -1,5 +1,5 @@
-// The control bar under the board: record narration, play/pause and clock, tap
-// mode, split, and the timeline zoom.
+// The control bar under the board: record narration or generate the scene at the playhead, play/pause and clock,
+// tap mode, split, and the timeline zoom.
 import type { Click } from '../../video/performance';
 import { fmt } from './format';
 
@@ -26,6 +26,11 @@ interface Props {
   hasClips: boolean;
   pps: number;
   setPps: (pps: number) => void;
+  /** The scene at the playhead, whether it has a voice clip, and generating it (again). */
+  sceneName: string;
+  sceneHasVoice: boolean;
+  generatingScene: boolean;
+  onGenerateScene: () => void;
 }
 
 export function TimingControls(p: Props) {
@@ -37,6 +42,9 @@ export function TimingControls(p: Props) {
       ) : (
         <button className="rec-btn" disabled={!!busy} onClick={() => void startRecording()} title="Record narration from the playhead onward: a new clip is added at the current timeline position (lane 0 if free, else lane 1). → places each beat's cue, Space holds the prompter still, Esc stops.">● Record narration</button>
       )}
+      <button className="gen-scene" disabled={recording || p.generatingScene} onClick={p.onGenerateScene} title={`“${p.sceneName}” (the scene at the playhead) said in the voice in use: ${p.sceneHasVoice ? 'a new reading in place of its clip; what follows moves by the difference' : 'its clip goes where it plays; what follows moves on'}`}>
+        {p.generatingScene ? 'Generating…' : `✨ ${p.sceneHasVoice ? 'Generate again' : 'Generate'}: ${p.sceneName.length > 22 ? `${p.sceneName.slice(0, 21)}…` : p.sceneName}`}
+      </button>
       <button className="play" disabled={recording} onClick={() => (playing ? pause() : play())} title="Play / pause (Space)">{playing ? '❚❚' : '▶'}</button>
       <span className="clock">{fmt(time)} / {fmt(total)}</span>
       <button

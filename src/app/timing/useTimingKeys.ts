@@ -27,7 +27,7 @@ export function useTimingKeys(handlers: TimingKeys) {
     const onKey = (e: KeyboardEvent) => {
       if ((e.target as HTMLElement).closest('input, textarea, select')) return;
       // A right-click menu is open: Esc closes it, not the Timing window.
-      if (document.querySelector('.context-menu, .transcript-window, .clip-detail, .my-voice')) return;
+      if (document.querySelector('.context-menu, .transcript-window, .clip-detail, .my-voice, .script, .voice-directions')) return;
       // Esc with the beat drawer open closes the drawer (it handles that itself).
       if (e.key === 'Escape' && document.querySelector('.beat-drawer')) return;
       const k = keys.current;

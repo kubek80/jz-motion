@@ -27,10 +27,12 @@ interface Props {
   onTranscript: () => void;
   /** Opens 🧑 Avatar (your avatars, each with its voice). */
   onMe: () => void;
+  /** Opens the Script page at the beat at the playhead. */
+  onScript: () => void;
   onClose: () => void;
 }
 
-export function TimingHeader({ clickCount, cuedCount, primary, clips, voiceDuration, loadVoiceover, onVoiceover, voicer, missingSentences, generating, generateVoice, onCues, recording, busy, makeTake, missingCount, removeMissing, onTranscript, onMe, onClose }: Props) {
+export function TimingHeader({ clickCount, cuedCount, primary, clips, voiceDuration, loadVoiceover, onVoiceover, voicer, missingSentences, generating, generateVoice, onCues, recording, busy, makeTake, missingCount, removeMissing, onTranscript, onMe, onScript, onClose }: Props) {
   return (
     <header className="timing-head">
       <h2>Timing</h2>
@@ -61,6 +63,7 @@ export function TimingHeader({ clickCount, cuedCount, primary, clips, voiceDurat
       >
         {generating ? `Generating voice ${generating.done}/${generating.total}…` : missingSentences.length ? `Generate voice (${missingSentences.length})` : 'Voice up to date'}
       </button>
+        <button onClick={onScript} disabled={recording} title="The whole script, at the line you're on here (close it to come back)">📜 Script</button>
         <button onClick={onMe} disabled={recording} title="Your avatars, each with its voice: choose the one you use, its look and its voice">🧑 Avatar</button>
       <button onClick={() => onCues([], true)} disabled={!cuedCount || recording} title="Forget every cue: clicks go back to even pauses">Clear cues</button>
       <button className="primary" disabled={!primary || !!busy} onClick={() => void makeTake()} title="A take with this timing and the voice-over as its sound, ready to export in the Video tab">

@@ -85,4 +85,5 @@
 .voice-directions-samples li.playing { border-color: var(--accent); }
 .voice-directions-samples .hint { font-size: 12px; margin: 2px 0 0; }
 .voice-directions-line { margin-top: 2px; }
-
+/* The beat Timing was at when the Script page was opened from there. */
+.script-beat.here { border-color: color-mix(in srgb, var(--accent) 60%, var(--line)); box-shadow: inset 3px 0 0 var(--accent); }

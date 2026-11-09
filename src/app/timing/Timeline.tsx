@@ -45,6 +45,10 @@ interface Props {
   selectedAvatar: string | null;
   /** Make your avatar say a clip (right-click menu). */
   onMakeAvatar: (index: number) => void;
+  /** Generate (again) the voice of scene `index`, its index in the presentation; busy while one is being made. */
+  onSceneVoice: (scene: number) => void;
+  sceneVoiceBusy: boolean;
+  sceneIndexOf: (id: string) => number;
   /** Removes a clip's background noise (a cleaned copy), or goes back to the original recording. */
   onClean: (index: number) => void;
   onRestore: (index: number) => void;
@@ -64,7 +68,7 @@ interface Props {
 const FLAG_ROW = 24;
 const FLAG_MAX = 160;
 
-export function Timeline({ laneRef, missing, height, rec, seek, time, total, pps, width, clips, primary, clipDrag, startDragClip, startTrimClip, deleteClip, splitClipAt, canSplitAt, setClipLane, playFrom, onTranscribe, onOpenClip, avatars, onMakeAvatar, onSelectAvatar, selectedAvatar, onClean, onRestore, onEditBeat, drawClipPeaks, np, tapping, tapIndex, startDrag, onCue, beatDrag }: Props) {
+export function Timeline({ laneRef, missing, height, rec, seek, time, total, pps, width, clips, primary, clipDrag, startDragClip, startTrimClip, deleteClip, splitClipAt, canSplitAt, setClipLane, playFrom, onTranscribe, onOpenClip, avatars, onMakeAvatar, onSceneVoice, sceneVoiceBusy, sceneIndexOf, onSelectAvatar, selectedAvatar, onClean, onRestore, onEditBeat, drawClipPeaks, np, tapping, tapIndex, startDrag, onCue, beatDrag }: Props) {
   const { shown, currentIndex, beatOf, sceneTitle } = np;
   // Beat labels go in rows above their lines: as many rows as the timeline's height allows, each label in the
   // lowest row where it doesn't run into the label before it (a short timeline keeps two rows).
@@ -206,6 +210,7 @@ export function Timeline({ laneRef, missing, height, rec, seek, time, total, pps
               { label: '⚙ Details: volume, microphone, record again…', onClick: () => onOpenClip(menu.index) },
               { label: c.avatar ? '🧑 Make my avatar again for this clip' : '🧑 Make my avatar for this clip', onClick: () => onMakeAvatar(menu.index), disabled: missing.has(c.upload) || avatars.some((r) => r.index === menu.index && r.making !== undefined), hint: 'Your avatar says this clip (a few minutes on fal.ai); it appears in the video lane under it' },
               { label: '▶ Play from here', onClick: () => playFrom(menu.t), disabled: missing.has(c.upload) },
+              ...(c.scene && sceneIndexOf(c.scene) >= 0 ? [{ label: '✨ Generate this scene again', onClick: () => onSceneVoice(sceneIndexOf(c.scene!)), disabled: sceneVoiceBusy, hint: 'Its notes said in the voice in use, a new reading in place of this scene’s clip; what follows moves by the difference' }] : []),
               c.cleanedFrom
                 ? { label: '↺ Back to the original recording', onClick: () => onRestore(menu.index), hint: 'Use the recording as it was, with its background noise (the cleaned copy stays on disk)' }
                 : { label: '✨ Clean up voice', onClick: () => onClean(menu.index), disabled: missing.has(c.upload), hint: 'Remove background noise (fan, hum, room, keyboard) with RNNoise, on this computer; the original is kept' },
@@ -229,6 +234,7 @@ export function Timeline({ laneRef, missing, height, rec, seek, time, total, pps
             items={[
               { label: '✎ Edit this beat', onClick: () => onEditBeat(c.scene, c.beat), hint: 'Close Timing and open this beat in the editor (or double-click it)' },
               { label: '▶ Play from here', onClick: () => playFrom(c.t) },
+              { label: '✨ Generate this scene’s voice', onClick: () => onSceneVoice(c.scene), disabled: sceneVoiceBusy, hint: 'Its notes said in the voice in use: in place of its clip, or where it plays if it has none; what follows moves' },
               { label: '↺ Let it follow the one before', onClick: () => onCue(c.scene, c.beat, undefined), disabled: !c.cued, hint: 'Forget where it was placed: it plays right after the previous beat' },
             ]}
           />

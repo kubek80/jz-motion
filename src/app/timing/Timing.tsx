@@ -29,6 +29,7 @@ import { useClock } from './useClock';
 import { useCueDragging } from './useCueDragging';
 import { useNarrationRecording } from './useNarrationRecording';
 import { useNotesEditing } from './useNotesEditing';
+import { useSceneVoice } from './useSceneVoice';
 import { useNowPlaying } from './useNowPlaying';
 import { useTimingKeys } from './useTimingKeys';
 import { useVoiceGeneration } from './useVoiceGeneration';
@@ -65,13 +66,17 @@ interface Props {
   startScene?: number;
   /** Closes Timing; `scene` is the one at the playhead, for the editor to show. */
   onClose: (scene: number) => void;
+  /** The presentation replaced as a whole (a scene's voice generated: its clip and every cue after it). */
+  onDoc: (next: unknown) => void;
+  /** Opens the Script page at this beat (the one at the playhead), over Timing. */
+  onScript: (scene: number, beat: number) => void;
 }
 
 /**
  * Timing a presentation to a voice-over: the narration's waveform with every click placed on it. Drag a click
  * to move it, or play and tap T as each line starts. The board plays along, with the script line beside it.
  */
-export function Timing({ presentation, text, presentationId, voiceover, onVoiceover, onCues, onTimeline, onUndo, onNotes, onTake, onEditBeat, doc, onBeat, onSceneLayout, startScene = 0, onClose }: Props) {
+export function Timing({ presentation, text, presentationId, voiceover, onVoiceover, onCues, onTimeline, onUndo, onNotes, onTake, onEditBeat, doc, onBeat, onSceneLayout, startScene = 0, onClose, onDoc, onScript }: Props) {
   const onCue = (scene: number, beat: number, cue: number | undefined) => onCues([{ scene, beat, cue }]);
   const clicks = useMemo(() => cueClicks(presentation), [presentation]);
   // Voiceover is held either as a legacy single clip or as a multi-clip arrangement; `clipsOf()`
@@ -174,6 +179,9 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
   const { loadVoiceover, makeTake } = useVoiceoverFile({ clips, perf, text, presentationId, onVoiceover, onTake, seek, setPps, setBusy, setError });
 
   const np = useNowPlaying({ presentation, clicks, drag, time, total, now, tts, voicer });
+  const sceneVoice = useSceneVoice({ doc, presentationId, voicer, onDoc, setError });
+  const atScene = np.current?.scene ?? startScene;
+  const sceneName = (si: number) => presentation.scenes[si]?.title ?? doc.scenes[si]?.id ?? `scene ${si + 1}`;
 
   // Whose voice is heard at the playhead (or where the narration being recorded goes), for the prompter.
   const sounding = clips.filter((c) => time >= c.offset && time < c.offset + (c.trimEnd - c.trimStart));
@@ -205,6 +213,7 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
         removeMissing={() => setClips(clips.filter((c) => !missing.has(c.upload)))}
         onTranscript={() => setTranscribing(clips.filter((c) => !missing.has(c.upload)))}
         onMe={() => setMe(true)}
+        onScript={() => onScript(np.current?.scene ?? atScene, np.current?.beat ?? 0)}
         onClose={close}
       />
       <div className="timing-body prompter">
@@ -253,9 +262,15 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
         hasClips={!!clips.length}
         pps={pps}
         setPps={zoomTo}
+        sceneName={sceneName(atScene)}
+        sceneHasVoice={clips.some((c) => c.scene === doc.scenes[atScene]?.id)}
+        generatingScene={sceneVoice.generating !== null}
+        onGenerateScene={() => void sceneVoice.generate(atScene)}
       />
       {error && <p className="error-text">{error}</p>}
       {busy && <p className="muted">{busy}</p>}
+      {sceneVoice.generating !== null && <p className="muted">Generating the voice of “{sceneName(sceneVoice.generating)}” (about half a minute)…</p>}
+      {sceneVoice.note && sceneVoice.generating === null && <p className="muted">{sceneVoice.note}</p>}
       <Resizer
         orientation="horizontal"
         value={laneH.value}
@@ -301,6 +316,9 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
         }}
         selectedAvatar={openAvatar}
         onMakeAvatar={makeAvatar}
+        onSceneVoice={(si) => void sceneVoice.generate(si)}
+        sceneVoiceBusy={sceneVoice.generating !== null}
+        sceneIndexOf={(id) => doc.scenes.findIndex((s) => s.id === id)}
         drawClipPeaks={drawClipPeaks}
         np={np}
         tapping={tapping}
