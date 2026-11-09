@@ -338,9 +338,9 @@
           "id": "me",
           "type": "icon",
           "icon": "mood",
-          "x": 1608,
-          "y": 709,
-          "size": 180,
+          "x": 1700,
+          "y": 770,
+          "size": 170,
           "color": "orange",
           "label": "no time"
         },
@@ -348,10 +348,11 @@
           "id": "what-if",
           "type": "text",
           "text": "what if the board\ndrew itself?",
-          "x": 960,
-          "y": 920,
-          "size": 60,
-          "color": "cyan"
+          "x": 500,
+          "y": 800,
+          "size": 58,
+          "color": "cyan",
+          "align": "start"
         },
         {
           "id": "i-would-like",
@@ -373,67 +374,96 @@
           "id": "lightbulb",
           "type": "icon",
           "icon": "lightbulb",
-          "x": 644,
-          "y": 898,
-          "size": 520,
+          "x": 300,
+          "y": 800,
+          "size": 600,
           "color": "cyan"
+        },
+        {
+          "id": "todo",
+          "type": "box",
+          "x": 1320,
+          "y": 780,
+          "width": 330,
+          "height": 330,
+          "radius": 22,
+          "line": "dashed",
+          "color": "white"
+        },
+        {
+          "id": "todo-h",
+          "type": "text",
+          "text": "to do",
+          "x": 1320,
+          "y": 655,
+          "size": 40,
+          "color": "orange"
         },
         {
           "id": "rec",
           "type": "text",
-          "text": "recording",
-          "x": 1420,
-          "y": 598,
-          "size": 48,
-          "align": "end",
+          "text": "\u2013 recording",
+          "x": 1190,
+          "y": 720,
+          "size": 44,
+          "align": "start",
           "color": "white"
         },
         {
           "id": "drw",
           "type": "text",
-          "text": "drawing",
-          "x": 1420,
-          "y": 658,
-          "size": 48,
-          "align": "end",
+          "text": "\u2013 drawing",
+          "x": 1190,
+          "y": 776,
+          "size": 44,
+          "align": "start",
           "color": "white"
         },
         {
           "id": "edt",
           "type": "text",
-          "text": "editing",
-          "x": 1420,
-          "y": 718,
-          "size": 48,
-          "align": "end",
+          "text": "\u2013 editing",
+          "x": 1190,
+          "y": 832,
+          "size": 44,
+          "align": "start",
           "color": "white"
         },
         {
           "id": "pub",
           "type": "text",
-          "text": "publishing",
-          "x": 1420,
-          "y": 778,
-          "size": 48,
-          "align": "end",
+          "text": "\u2013 publishing",
+          "x": 1190,
+          "y": 888,
+          "size": 44,
+          "align": "start",
           "color": "white"
+        },
+        {
+          "id": "a-me",
+          "type": "arrow",
+          "from": "todo",
+          "to": "me",
+          "color": "orange",
+          "line": "dashed"
         }
       ],
       "beats": [
         {
           "title": "Why?",
           "notes": "Why did I build it?",
+          "cue": 23.6,
           "actions": [
             {
               "do": "draw",
               "target": "h"
             }
-          ],
-          "cue": 23.6
+          ]
         },
         {
           "title": "Ideas, more than videos",
           "notes": "I usually have far more ideas than videos.",
+          "cue": 25.56,
           "actions": [
             {
               "do": "draw",
@@ -446,12 +476,12 @@
               "start": "with",
               "delay": 0.97
             }
-          ],
-          "cue": 25.56
+          ]
         },
         {
           "title": "A script",
           "notes": "I write notes, sometimes even a full script.",
+          "cue": 28.77,
           "actions": [
             {
               "do": "draw",
@@ -464,12 +494,12 @@
               "start": "with",
               "delay": 1.39
             }
-          ],
-          "cue": 28.77
+          ]
         },
         {
           "title": "A video, planned",
           "notes": "Then I plan a video to go with the script.",
+          "cue": 32.51,
           "actions": [
             {
               "do": "draw",
@@ -488,12 +518,12 @@
               "start": "with",
               "delay": 1.16
             }
-          ],
-          "cue": 32.51
+          ]
         },
         {
           "title": "Where it stops",
           "notes": "And this is where it usually stops.",
+          "cue": 35.46,
           "actions": [
             {
               "do": "draw",
@@ -511,17 +541,39 @@
               "target": "i-would-like",
               "start": "with",
               "delay": 0.69
+            },
+            {
+              "do": "camera",
+              "focus": [
+                "todo",
+                "todo-h",
+                "me",
+                "i-would-like"
+              ],
+              "padding": 70,
+              "duration": 1,
+              "start": "with"
             }
-          ],
-          "cue": 35.46
+          ]
         },
         {
           "title": "All the work",
           "notes": "Recording, drawing, editing, publishing.",
+          "cue": 38.14,
           "actions": [
             {
+              "do": "draw",
+              "target": [
+                "todo",
+                "todo-h"
+              ],
+              "stagger": 0.1,
+              "duration": 0.5
+            },
+            {
               "do": "pop",
-              "target": "rec"
+              "target": "rec",
+              "start": "with"
             },
             {
               "do": "pop",
@@ -541,34 +593,49 @@
               "start": "with",
               "delay": 0.71
             }
-          ],
-          "cue": 38.14
+          ]
         },
         {
           "title": "No time",
           "notes": "Between my work and family, I never have enough time to do it.",
+          "cue": 41.77,
           "actions": [
             {
               "do": "draw",
+              "target": "a-me",
+              "duration": 0.5,
+              "delay": 0.95
+            },
+            {
+              "do": "draw",
               "target": "me",
-              "delay": 1.25
+              "start": "with",
+              "delay": 0.4
             },
             {
               "do": "pulse",
               "target": "me",
               "start": "with",
-              "delay": 1.26
+              "delay": 1.16
             }
-          ],
-          "cue": 41.77
+          ]
         },
         {
           "title": "What if the board drew itself?",
           "notes": "So the question became: what if the board could draw itself, and a model could help me do it?",
+          "cue": 45.87,
           "actions": [
+            {
+              "do": "camera",
+              "x": 960,
+              "y": 540,
+              "zoom": 1,
+              "duration": 1.2
+            },
             {
               "do": "pulse",
               "target": "ideas",
+              "start": "with",
               "delay": 0.33
             },
             {
@@ -589,8 +656,7 @@
               "start": "with",
               "delay": 0.88
             }
-          ],
-          "cue": 45.87
+          ]
         }
       ]
     },

@@ -1207,3 +1207,16 @@ Jakub found scene 3 ("Why I built it") off in its timing, and saw the avatar fli
 ![Scene 3 exported with its voice: each drawing as its word is said](journey/137-scene3-rhythm.jpg)
 
 **Checked by:** `npm run voice -- time` (animation against words per beat, before and after); scene 3 exported with its new voice and frames looked at on the words; the avatar in Timing sampled every 40 ms across the end of scene 1's clip (before: playing on and pulled back twice; after: paused on its last frame); `npm run check`; typecheck, tests, build.
+
+## Step 98: Scene 3's lower half, with the camera
+
+Jakub liked the rhythm but not the composition below the main flow (four loose words, the "no time" face, the light bulb and its question scattered over the bottom).
+
+- **The problem, bottom right:** a dashed "to do" list (recording, drawing, editing, publishing) with a short arrow to the "no time" face. As "…where it usually stops" ends, the camera glides down to frame the wall, the list and the face; the list is drawn and its four items pop in as they are said, then "no time".
+- **The question, bottom left:** on "So the question became…" the camera pulls back out to the whole board, and "what if the board drew itself?" is written beside a bigger light bulb, under the brain and the script: the flow on top, the question on the left, the reason on the right.
+- The words and the voice are as they were; every beat's drawing, camera moves included, still fits its words.
+- **Bug found (mine):** re-running the timing script rebuilt the beats without their cues, so the scene fell about 2 s behind its voice in a first export. The cues were put back from the approved version, and the script now keeps a beat's cue when its words haven't changed.
+
+![Scene 3 exported with its voice: the camera down to the to-do list and "no time", then back out for the question](journey/138-scene3-composition.jpg)
+
+**Checked by:** scene 3 exported with its voice twice, frames looked at on the words; `npm run voice -- time`; `npm run check`; the rest of the presentation compared with the approved version (unchanged).
