@@ -44,7 +44,8 @@ export async function exportVideo(opts: ExportOptions): Promise<{ file: string; 
   const width = 1920 * opts.scale;
   const height = 1080 * opts.scale;
   const frames = Math.ceil(perf.duration * fps);
-  const tracks = (opts.take?.tracks ?? []).map((t) => ({ ...t, path: trackPath(opts.take!.id, t), trimStart: t.trimStart, trimEnd: t.trimEnd, duration: t.duration }));
+  // Your avatar is drawn with the board by the render page; a take's old avatar track (made before) is left out.
+  const tracks = (opts.take?.tracks ?? []).filter((t) => !t.avatar).map((t) => ({ ...t, path: trackPath(opts.take!.id, t), trimStart: t.trimStart, trimEnd: t.trimEnd, duration: t.duration }));
 
   await mkdir(dirname(opts.out), { recursive: true });
   const args = buildFfmpegArgs({

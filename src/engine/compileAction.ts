@@ -42,6 +42,8 @@ function defaultDuration(action: Action, el?: CompiledElement): number {
       return 1.3;
     case 'wait':
       return 1;
+    case 'avatar':
+      return 0.8;
     case 'spotlight':
       return 0.6;
     case 'play':
@@ -319,6 +321,8 @@ export function compileAction(c: ActionContext): number | null {
       break;
     }
     case 'wait':
+    case 'avatar':
+      // Nothing on the board: a pause (the avatar's glide is drawn over the board, see src/video/avatarPlan.ts).
       end = start + dur();
       break;
   }

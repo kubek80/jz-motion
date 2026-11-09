@@ -13,12 +13,6 @@
 .timing-board { position: relative; container-type: size; }
 .timing-board .board-frame { position: absolute; inset: 0; margin: auto; width: min(100cqw, calc(100cqh * 16 / 9)); aspect-ratio: 16 / 9; height: auto; overflow: hidden; }
 .timing-board .board-host { position: absolute; inset: 0; }
-.timing-board .avatar-live { position: absolute; object-fit: cover; background: #000; }
-.timing-board.avatar-camera .avatar-live { inset: 0; width: 100%; height: 100%; }
-.timing-board.avatar-camera .board-host { inset: 2.5% 2.5% auto auto; width: 36%; height: 36%; z-index: 1; outline: 2px solid #67e8f9; background: #000; }
-.timing-board.avatar-pip .avatar-live, .timing-board.avatar-pip-left .avatar-live { bottom: 2.5%; width: 26%; aspect-ratio: 16 / 9; z-index: 1; outline: 2px solid #67e8f9; }
-.timing-board.avatar-pip .avatar-live { right: 2.5%; }
-.timing-board.avatar-pip-left .avatar-live { left: 2.5%; }
 .timing-script { flex: 0 0 var(--timing-script-w, 360px); min-width: 180px; display: flex; flex-direction: column; gap: 12px; overflow: auto; }
 .timing-script > div { display: flex; flex-direction: column; gap: 4px; padding: 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
 .timing-script .now { border-color: color-mix(in srgb, var(--accent) 50%, var(--line)); }
@@ -303,9 +297,6 @@
 .avatar-video-problem { display: flex; align-items: center; justify-content: center; text-align: center; padding: 4px 8px; background: #2a1d05; color: #ffd27a; font-size: 12px; line-height: 1.3; border: 1px dashed #ffb020; box-sizing: border-box; }
 .avatar-still .avatar-video-problem { width: 100%; height: 100%; }
 .avatar-block .avatar-video-problem { height: 100%; padding: 0 6px; font-size: 10px; white-space: nowrap; }
-.timing-board .avatar-video-problem.avatar-live { font-size: 14px; }
-.timing-board.avatar-side .avatar-live { left: 0; top: 0; width: 50%; height: 100%; }
-.timing-board.avatar-side .board-host { inset: 25% 0 auto 50%; width: 50%; height: 50%; z-index: 1; outline: 2px solid #67e8f9; background: #000; }
 
 /* The avatar drawer: where it shows in the video, as small pictures of the frame. */
 .avatar-block.selected { box-shadow: 0 0 0 2px var(--accent); }
@@ -327,3 +318,5 @@
 .mini-camera .a { inset: 0; }
 .mini-camera .b { inset: 6% 6% auto auto; width: 38%; height: 38%; z-index: 1; outline: 1px solid #67e8f9; }
 .avatar-lane .lane-empty { position: absolute; left: 26px; top: 9px; font-size: 11px; }
+
+.timing-board .avatar-problem-note { position: absolute; right: 2.5%; bottom: 4.4%; width: 26%; aspect-ratio: 16 / 9; z-index: 3; font-size: 13px; }

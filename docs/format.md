@@ -144,6 +144,7 @@ Actions with `target` accept one id or a list. With a list, targets start `stagg
 | `play` | `on`, `from` (seconds), `goto` (frame), `until` (frame), `fade`, `speed` (1) | instant; `duration` with `fade` (0.5) or `until` | Plays a recording (video, muted) and keeps it playing between beats until it ends (or loops, with the image's `"loop": true`); `"on": false` pauses it, `from` jumps to a second first. `goto: 5` jumps to frame 5 and **holds it** (add `"on": true` to play on from there); with `"fade": true` it cross-fades from what was showing over `duration`. `until: 9` plays on from where it is to frame 9 and holds it; with `duration` it gets there in exactly that time (the beat lasts that long). `goto` + `until` plays a stretch. Without `play` it shows its first frame. Recordings only. |
 | `camera` | `focus`, `padding` (120), `x`, `y`, `zoom` | 1.3 | `focus` is an id, a list of ids, or `"all"` (everything visible at that moment); the camera frames them with `padding` screen pixels around. Without `focus`, moves to `x`/`y`/`zoom` (any omitted value stays). `zoom` together with `focus` overrides the fitted zoom. |
 | `wait` | | 1 | Pause inside a beat. |
+| `avatar` | `layout` (`board`, `pip`, `pip-left`, `camera`, `side`) | 0.8 | Moves your avatar in the video (from the voice clips' `avatar`): hidden, a bottom corner, side by side with the board, or full frame with the board small, gliding there over `duration`. Draws nothing on the board. From then on in the scene it overrides the scene's and beat's `layout`. |
 
 ## Example
 

@@ -40,6 +40,7 @@ export const ACTIONS: Record<string, ActionInfo> = {
   explode: { icon: '✺', label: 'Explode', family: 'motion', on: ['iso'], onNote: '3D models', does: 'Pulls a 3D model apart to show its layers' },
   'set-values': { icon: '▤', label: 'New values', family: 'data', on: ['chart'], onNote: 'charts', does: 'Animates a chart to new numbers' },
   wait: { icon: '⋯', label: 'Pause', family: 'wait', on: null, does: 'Waits before the next action' },
+  avatar: { icon: '🧑', label: 'Move my avatar', family: 'camera', on: null, does: 'Moves your avatar in the video: hidden, a corner, side by side or full frame, gliding there' },
 };
 
 /** "+ action" sections, in the order people reach for them. */
@@ -49,7 +50,7 @@ export const GROUPS: { title: string; kinds: string[] }[] = [
   { title: 'Point at', kinds: ['circle', 'pulse', 'recolor', 'spotlight'] },
   { title: 'View', kinds: ['camera'] },
   { title: 'Move and play', kinds: ['move', 'play', 'goto-frame', 'play-to-frame', 'flow', 'rotate', 'spin', 'explode'] },
-  { title: 'Data and timing', kinds: ['set-values', 'wait'] },
+  { title: 'Data and timing', kinds: ['set-values', 'wait', 'avatar'] },
 ];
 
 export const actionInfo = (kind: string): ActionInfo => ACTIONS[kind] ?? { icon: '•', label: kind, family: 'wait', does: '' };
@@ -89,6 +90,7 @@ export function newAction(kind: string, picked: string[], data?: (id: string) =>
     case 'camera': return { do: 'camera', focus: picked.length ? target : 'all' };
     case 'move': return { do: 'move', target, to: { x: 960, y: 540 } };
     case 'wait': return { do: 'wait', duration: 1 };
+    case 'avatar': return { do: 'avatar', layout: 'camera', duration: 0.8 };
     case 'spotlight': return picked.length ? { do: 'spotlight', target } : { do: 'spotlight', on: false };
     case 'recolor': return { do: 'recolor', target, color: 'yellow' };
     case 'rotate': return { do: 'rotate', target, by: 90 };

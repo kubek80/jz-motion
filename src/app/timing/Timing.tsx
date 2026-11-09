@@ -211,7 +211,7 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
         onClose={close}
       />
       <div className="timing-body prompter">
-        <AvatarBoard host={host} clips={clips} presentation={presentation} perf={perf} now={now} playing={playing} />
+        <AvatarBoard host={host} doc={doc} clips={clips} presentation={presentation} perf={perf} now={now} playing={playing} />
         <Resizer orientation="vertical" value={scriptW.value} onChange={scriptW.setValue} onReset={scriptW.reset} min={320} max={1600} style={{ order: -1 }} />
         <ScriptPanel
           voiceNow={voiceNow}

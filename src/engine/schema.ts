@@ -252,6 +252,8 @@ export const Action = z.discriminatedUnion('do', [
     speed: z.number().positive().default(1),
   }),
   z.object({ do: z.literal('wait'), ...timing }),
+  /** Moves your avatar (video only) to a place in the frame, gliding over `duration` (default 0.8 s). */
+  z.object({ do: z.literal('avatar'), ...timing, layout: z.enum(['board', 'pip', 'pip-left', 'camera', 'side']) }),
 ]);
 
 /**
