@@ -36,9 +36,9 @@ export function AvatarSection({ clip, from, to, onMyAvatar }: { clip: Clip; from
           {busy ? 'Making…' : a ? '🧑 Make it again' : '🧑 Make my avatar'}
         </button>
         <span className="muted">{busy ? job.note ?? 'working' : `about $${cost.toFixed(2)} · a few minutes on fal.ai`}</span>
-        {onMyAvatar && <button onClick={onMyAvatar} title="Your avatars, each with its voice">🎙 Me…</button>}
+        {onMyAvatar && <button onClick={onMyAvatar} title="Your avatars, each with its voice">🧑 Avatar…</button>}
       </div>
-      {!info?.avatar && info && <p className="muted hint">No avatar yet: give one a picture in <b>🎙 Me</b>.</p>}
+      {!info?.avatar && info && <p className="muted hint">No avatar yet: give one a picture in <b>🧑 Avatar</b>.</p>}
       {stale && !busy && <p className="note-text">Made for an earlier cut of this clip: make it again so it says the same.</p>}
       {a && <p className="muted hint">Shown in the video where the scene's or beat's <b>layout</b> shows the camera (pip in a corner, camera full screen). It keeps the look it was made with until it's made again.</p>}
       {(error ?? job?.error) && <p className="note-text">{error ?? job?.error}</p>}

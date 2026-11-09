@@ -15,7 +15,7 @@ type Info = { avatar: Avatar | null; models: Model[]; defaultStyle: string; hasS
 /** Your OpenRouter key: the voice's when it uses OpenRouter, or OpenRouter's under Models. */
 const openRouterKey = () => { const v = loadVoicer(); return (v.baseURL === OR ? withKey(v).apiKey : '') || sharedKey({ baseURL: OR }) || ''; };
 
-/** `embedded`: its parts only, inside another window (🎙 Me); `version` changes when another avatar is chosen there. */
+/** `embedded`: its parts only, inside another window (🧑 Avatar); `version` changes when another avatar is chosen there. */
 export function MyAvatar({ onClose, embedded, version = 0 }: { onClose: () => void; embedded?: boolean; version?: number }) {
   const [info, setInfo] = useState<Info | null>(null);
   const [source, setSource] = useState<string | null>(null);
@@ -34,7 +34,7 @@ export function MyAvatar({ onClose, embedded, version = 0 }: { onClose: () => vo
   };
   useEffect(() => { setStyle(''); setSource(null); setCandidate(null); setPrompt(''); void load(); }, [version]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
-    // Inside 🎙 Me, Me closes on Esc.
+    // Inside 🧑 Avatar, it closes on Esc.
     if (embedded) return;
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape' && !(e.target as HTMLElement).closest('input, textarea, select')) { e.stopPropagation(); onClose(); } };
     window.addEventListener('keydown', onKey, true);
@@ -82,6 +82,8 @@ export function MyAvatar({ onClose, embedded, version = 0 }: { onClose: () => vo
   const content = (
       <>
 
+        {/* Two columns inside 🧑 Avatar: the look and where it comes from; the style and how it moves. */}
+        <div className="avatar-col">
         <section>
           <h4>The avatar in use</h4>
           {a ? (
@@ -101,7 +103,9 @@ export function MyAvatar({ onClose, embedded, version = 0 }: { onClose: () => vo
           </div>
           <p className="muted hint">Upload a new picture of you to make a new avatar from: facing the camera works best, head and shoulders, even light. It is framed 16:9.</p>
         </section>
+        </div>
 
+        <div className="avatar-col">
         <section>
           <h4>Make a styled version</h4>
           <textarea className="sample-text" rows={5} value={style} onChange={(e) => setStyle(e.target.value)} />
@@ -142,6 +146,7 @@ export function MyAvatar({ onClose, embedded, version = 0 }: { onClose: () => vo
             <input type="password" autoComplete="off" value={falKey} placeholder={info?.hasServerKey ? 'empty: the app’s server has one' : 'from fal.ai → Keys'} onChange={(e) => { setFalKey(e.target.value); saveFalKey(e.target.value); }} />
           </label>
         </section>
+        </div>
         {busy && <p className="muted">{busy}</p>}
         {error && <p className="note-text">{error}</p>}
       </>

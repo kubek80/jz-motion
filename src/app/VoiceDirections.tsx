@@ -5,7 +5,7 @@ import { DIRECTION_SAMPLES } from './directionSampleList';
 
 // "How to direct your voice": what directions in [brackets] in the speaker notes do, with the same sentence said
 // plainly and with different directions to listen to (made in the voice in use: server/directionSamples.ts).
-// Opened from 🎙 Me and the Script page.
+// Opened from 🧑 Avatar and the Script page.
 
 type List = { voice: string; samples: { id: string; upload: string; duration: number }[] };
 
@@ -80,7 +80,7 @@ export function VoiceDirections({ onClose }: { onClose: () => void }) {
             <li><b>At the start</b> of a sentence for the whole of it: <code>[warm, slower] Every step is on screen.</code></li>
             <li><b>Any words</b> work, not only a fixed list: <code>[curious, rising]</code>, <code>[short pause]</code>, <code>[serious, professional broadcast tone]</code>.</li>
             <li>They are <b>not read out</b> and never show in the prompter. Only your cloned voice (Fish Audio) follows them; other voices never get them.</li>
-            <li>The effect is usually gentle, and the voice’s own style (<b>🎙 Me → Voice</b>, how to speak) still applies. Use them sparingly; generating again also gives a new reading by itself.</li>
+            <li>The effect is usually gentle, and the voice’s own style (<b>🧑 Avatar → Voice</b>, how to speak) still applies. Use them sparingly; generating again also gives a new reading by itself.</li>
           </ul>
         </section>
         <section>

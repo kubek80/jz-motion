@@ -1146,3 +1146,15 @@ Jakub wanted a window explaining how to use directions, with samples to listen t
 ![How to direct your voice, from the Script page, a sample playing](journey/133-voice-directions.jpg)
 
 **Checked by:** Playwright: the window from the Script page and from 🎙 Me, 8 samples, one playing, Esc closing only the window on top (then Me with a second Esc); the samples' lengths, loudness, pitch and pauses measured; typecheck, tests, build.
+
+## Step 93: 🧑 Avatar, a calmer window, and the home screen's search and full screen
+
+Jakub found the search on the home screen in an odd spot, wanted 🎙 Me called Avatar, found the window's layout odd, and missed full screen on the home screen.
+
+- **🧑 Avatar** replaces 🎙 Me everywhere (home screen, Timing, Settings, a clip's avatar section, the docs); the window is `src/app/AvatarWindow.tsx`.
+- **The window**: its Look and Voice tabs were held to 820 px inside a 1180 px window, with a scrollbar of their own. They now use the whole width with one scrollbar (the window's). Look is in two columns: the avatar in use and the picture it comes from on the left, the style and how it moves on the right (one column on a narrow window).
+- **Home screen**: the search sits next to "Your presentations", the list it filters, instead of alone at the far right; and a ⛶ button puts the whole app full screen, as in the editor.
+
+![The home screen's search and ⛶; the Avatar window's Look in two columns](journey/134-avatar-window-home.jpg)
+
+**Checked by:** Playwright at 1220 and 1600 px wide: the home screen, the Avatar window's Look and Voice tabs, no scrolling area inside the window; typecheck, tests, build.

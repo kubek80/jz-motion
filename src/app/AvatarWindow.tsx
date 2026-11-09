@@ -4,7 +4,7 @@ import { MyVoice } from './MyVoice';
 import { VoiceDirections } from './VoiceDirections';
 import { ACCENTS, loadVoicer, saveVoicer, VOICERS } from './settingsStore';
 
-// "🎙 Me": your avatars and voices in one window. Each avatar is a look (its picture, style, how it moves) and the
+// "🧑 Avatar": your avatars and voices in one window. Each avatar is a look (its picture, style, how it moves) and the
 // voice it speaks in; choose the one you're using (its voice comes with it: generated speech, npm run voice),
 // add one (a copy of the one in use, to change), rename or remove. Below, the look and the voice of the one in use.
 // Kept with the project (voice/my-avatar.json, the voice in use in voice/my-voice.json), for every presentation.
@@ -20,7 +20,7 @@ const voiceSummary = (v?: Voice) => {
   return `${model} · ${accent}`;
 };
 
-export function Me({ onClose }: { onClose: () => void }) {
+export function AvatarWindow({ onClose }: { onClose: () => void }) {
   const [list, setList] = useState<{ current: string | null; avatars: Avatar[] }>({ current: null, avatars: [] });
   const [version, setVersion] = useState(0);
   const [part, setPart] = useState<'look' | 'voice'>('look');
@@ -60,7 +60,7 @@ export function Me({ onClose }: { onClose: () => void }) {
     <div className="modal-back my-voice-back" onPointerDown={(e) => e.target === e.currentTarget && onClose()}>
       <div className="modal wide my-voice me">
         <div className="modal-head">
-          <h2>🎙 Me</h2>
+          <h2>🧑 Avatar</h2>
           <span className="muted">your avatars, each with its voice, for every presentation</span>
           <span className="spacer" />
           <button onClick={() => setHelp(true)} title="How to steer how your voice says a line, with samples to listen to">🎚 How to direct your voice</button>
