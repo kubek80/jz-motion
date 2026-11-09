@@ -74,20 +74,6 @@ export function useVoiceoverFile({ clips, perf, text, presentationId, onVoiceove
         const res = await fetch(`/api/takes/${take.id}/tracks/${trackName}?${params.toString()}`, { method: 'PUT' });
         if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error ?? res.statusText);
       }
-      // Your avatar's videos become one camera track ("me"): each where its clip plays, once per video (a clip cut
-      // in pieces shares one).
-      const seen = new Set<string>();
-      const avatars = clips.flatMap((c) => {
-        if (!c.avatar || seen.has(c.avatar.video)) return [];
-        seen.add(c.avatar.video);
-        const at = c.offset - (c.trimStart - c.avatar.trimStart);
-        return [{ video: c.avatar.video, at: Math.max(0, at), from: Math.max(0, -at), to: c.avatar.trimEnd - c.avatar.trimStart }];
-      });
-      if (avatars.length) {
-        setBusy('Adding your avatar…');
-        const res = await fetch(`/api/takes/${take.id}/avatar`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(avatars) });
-        if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error ?? res.statusText);
-      }
       onTake(take.id);
     } catch (e) {
       setError((e as Error).message);

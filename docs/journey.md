@@ -1071,3 +1071,14 @@ Jakub wanted to click an avatar in Timing and get a drawer with positioning opti
 ![The avatar drawer: side by side chosen, the board showing it](journey/126-avatar-drawer.jpg)
 
 **Checked by:** Playwright on a copy: clicking scene 4's block opened the drawer on "Corner, right" with the board showing it; "Side by side" wrote `side` to the file and the board followed; Ctrl+Z put `pip` back; typecheck, tests, build.
+
+## Step 87: The avatar glides, and never goes black
+
+Jakub saw his avatar go black at the end of its clips. The export laid the avatar videos over the frame with FFmpeg, and where a video ended before its scene, nothing was left. He wanted it to hold its last frame to the end of the scene, to move and grow from one place to the next between scenes (a corner to full frame), and to move it with beats.
+
+- **Drawn with the board.** `src/video/avatarPlan.ts` works out, for any moment, where the avatar and the board are and which frame of which avatar video shows: the scene's and beats' layouts and the new beat action decide the place; a change glides there (0.8 s, eased); after a clip's avatar ends it holds the last frame to the end of the scene, and before a scene's avatar starts it shows that one's first frame; hidden means fading out in place. `src/render/avatarLayer.ts` draws it. The export's render page draws the avatar with the board in the browser (each frame waits for the video to reach that moment), so FFmpeg no longer overlays it (old takes' avatar tracks are left out); Timing's board uses the same plan and drawing.
+- **"Move my avatar"**: a beat action `{ "do": "avatar", "layout": "camera", "duration": 0.8 }` (hidden, a corner, side by side, full frame). The board treats it as a pause.
+
+![Exported: full frame; mid-glide; side by side; the last frame held](journey/127-avatar-glides-and-holds.jpg)
+
+**Checked by:** tests (plays in the corner, holds the last frame, glides corner → full frame, a beat action moves it, hiding fades it); an export of scenes 23 and 24 (full frame, the glide, side by side, the last frame held, no black); Timing's board on scene 24 the same as the export; typecheck, tests, build.
