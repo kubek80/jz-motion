@@ -1,7 +1,7 @@
 // Where your avatar and the board are in the video frame at any moment, and which frame of which avatar video shows:
 // the layout of the scene, its beats and its "avatar" actions decides the target; a change glides there (a corner
 // growing to full frame, …). An avatar video that ends before its scene does holds its last frame to the end of the
-// scene; one that starts after its scene does shows its first frame until then. Pure: the export's render page and
+// scene, unless it is about to be hidden: then it fades out over its last moving frames; one that starts after its scene does shows its first frame until then. Pure: the export's render page and
 // Timing's board both draw from it, so what Timing shows is what the video shows.
 import type { CompiledPresentation } from '../engine/compile';
 import { stateAt, type Performance } from './performance';
@@ -70,6 +70,18 @@ export function planAvatar(p: CompiledPresentation, source: AvatarSource, perf: 
     const { place, dur } = placeAt(p, source.scenes, st.scene, st.time);
     if (last === null) { first = place; last = place; continue; }
     if (place !== last) { changes.push({ t, from: last, to: place, dur }); last = place; }
+  }
+  // Fading out (to the board alone) after the avatar's video has ended: rather than holding its last frame and then
+  // fading, the fade moves earlier to end as the video does, over its last moving frames. Never before the move
+  // before it is over, and only when the video ended since then (not while it still speaks).
+  let prevEnd = 0;
+  for (const c of changes) {
+    const hides = !!PLACES[c.from].avatar && !PLACES[c.to].avatar;
+    const speaking = spans.some((s) => s.at < c.t - 1e-6 && s.at + s.length > c.t + 1e-6);
+    const ended = [...spans].reverse().find((s) => s.at + s.length <= c.t + 1e-6);
+    const end = ended ? ended.at + ended.length : -1;
+    if (hides && !speaking && ended && end > prevEnd + 1e-6) c.t = Math.min(c.t, Math.max(prevEnd, ended.at, end - c.dur));
+    prevEnd = c.t + c.dur;
   }
   return { spans, changes, first, perf, sceneIds: source.scenes.map((s) => s.id) };
 }
