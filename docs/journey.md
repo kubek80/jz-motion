@@ -1233,3 +1233,15 @@ Jakub wanted to open an exported video in the Video tab and go through it frame 
 ![An exported video frame by frame: the frame, its time, number, scene and beat; notes on frames](journey/139-frame-by-frame.jpg)
 
 **Checked by:** a small two-scene export made through the app; Playwright: → three times and the video was on frame 3, Shift+→ on 33, typing 120 and 200 landed on them (the video's own frame matching every time), the scene and beat right on each side of a beat change and a scene change, ← in the frame box, two notes added, copied and saved, the frame saved as `…-frame-40.png`, a note clicked back to its frame, Esc closing; tests for frames, scene and beat at a moment, notes as text; typecheck, tests, build.
+
+## Step 100: The avatar fades out while it still moves
+
+Jakub saw that where the avatar fades out in the export, it first holds its last frame and only then fades. He wanted the fade over its last moving frames.
+
+- **Why:** the avatar's place follows the layout, which hides it when the next scene (or beat) starts; its video usually ends a little earlier (in the LLM-first scene, 1.6 s earlier), and until the layout changed it held its last frame.
+- **Now:** when the avatar is about to be hidden and its video has ended, the fade moves earlier and ends as the video does (`planAvatar` in `src/video/avatarPlan.ts`), never before the move before it is over and never while it still speaks. A change to another place where it shows (a corner growing to full frame, side by side) still glides there from its held last frame, as before. Timing's board and the export both follow it.
+- In this presentation, three fade-outs moved: JZ-motion (now 16.21–17.01 s, its video ending at 17.01), My own video assistant (59.03–59.83) and LLM first (252.66–253.46, where it held a still for 1.6 s before).
+
+![The first scene's end exported: the avatar fades while it still talks and is gone as its video ends](journey/140-avatar-fades-while-moving.jpg)
+
+**Checked by:** tests (fades over its last moving frames when hidden next; still held when the next scene shows it again); every avatar change in the presentation listed before and after; scenes 1–2 exported and the frames around the avatar's end looked at; typecheck, tests, build.

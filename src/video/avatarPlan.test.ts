@@ -61,4 +61,33 @@ describe('your avatar in the video', () => {
     const plan = setup({ do: 'avatar', layout: 'board', duration: 0.5 });
     expect(avatarFrame(plan, 16).opacity).toBe(0);
   });
+
+  it('fades out over its last moving frames when it is hidden next, not after holding its last frame', () => {
+    // Scene "a" in a corner, its avatar ending at 6 s; scene "b" (from 10 s) shows the board alone.
+    const doc = {
+      version: 1, title: 't',
+      scenes: [
+        { id: 'a', layout: 'pip', elements: [{ id: 'x', type: 'text', text: 'A', x: 960, y: 540 }], beats: [{ cue: 0, actions: [{ do: 'draw', target: 'x' }] }] },
+        { id: 'b', layout: 'board', elements: [{ id: 'y', type: 'text', text: 'B', x: 960, y: 540 }], beats: [{ cue: 10, actions: [{ do: 'draw', target: 'y' }] }] },
+      ],
+      voiceover: { clips: [{ id: 'ca', upload: 'a.webm', sourceDuration: 6, offset: 0, lane: 0, trimStart: 0, trimEnd: 6, scene: 'a', avatar: { video: 'av-a.mp4', trimStart: 0, trimEnd: 6 } }] },
+    };
+    const r = compile(doc);
+    if (!r.ok) throw new Error(r.errors.join('\n'));
+    const plan = planAvatar(r.presentation, doc as never, cuePerformance(r.presentation, 14));
+    // Fading while it still moves (0.8 s, ending at 6 s), gone after, never held.
+    expect(avatarFrame(plan, 5).opacity).toBe(1);
+    const fading = avatarFrame(plan, 5.6);
+    expect(fading.opacity).toBeGreaterThan(0);
+    expect(fading.opacity).toBeLessThan(1);
+    expect(fading.video).toEqual({ file: 'av-a.mp4', time: expect.closeTo(5.6) });
+    expect(avatarFrame(plan, 6.1).opacity).toBe(0);
+    expect(avatarFrame(plan, 9).opacity).toBe(0);
+  });
+
+  it('still holds its last frame when the next scene shows it again (it glides there instead)', () => {
+    const plan = setup();
+    expect(avatarFrame(plan, 9).opacity).toBe(1);
+  });
 });
+
