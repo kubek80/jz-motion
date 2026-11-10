@@ -1220,3 +1220,16 @@ Jakub liked the rhythm but not the composition below the main flow (four loose w
 ![Scene 3 exported with its voice: the camera down to the to-do list and "no time", then back out for the question](journey/138-scene3-composition.jpg)
 
 **Checked by:** scene 3 exported with its voice twice, frames looked at on the words; `npm run voice -- time`; `npm run check`; the rest of the presentation compared with the approved version (unchanged).
+
+## Step 99: Exported videos, frame by frame
+
+Jakub wanted to open an exported video in the Video tab and go through it frame by frame, as in editing, to share what he sees in more detail.
+
+- **Exported videos** (Video tab): the exports of this presentation, newest first (all of them with a tick, or when none are this presentation's). 🔍 opens one in a window: the video, a scrubber, ⏮, −1 s, ◀ frame, ▶ / ❚❚, frame ▶, +1 s, and the frame number to type; ←/→ step a frame, Shift+←/→ a second, Space plays, Home/End. Under it: the time to the hundredth, the frame number, and the scene and beat that frame shows.
+- **Notes on frames:** write what you see (N to start, Ctrl+Enter to add), each note kept with its time, frame, scene and beat in `exports/<file>.notes.json`; click one to go back to its frame; **📋 Copy notes** gives them all as text to paste into a message ("0:06.67 · frame 200 · scene 2 “Second” › beat 1 “ellipse”: …"). **⬇ Save this frame** downloads it as a PNG.
+- **Each export now keeps its own timing and scenes** (`exports/<file>.json`, written when it is made), so a frame is named by the scene and beat it really shows, even after the presentation changes. Older exports use the presentation's timing now (the window says so).
+- **Bug found:** exported videos were served without range requests, so a player couldn't seek in them reliably (frame stepping needs it); they now are, as uploads are.
+
+![An exported video frame by frame: the frame, its time, number, scene and beat; notes on frames](journey/139-frame-by-frame.jpg)
+
+**Checked by:** a small two-scene export made through the app; Playwright: → three times and the video was on frame 3, Shift+→ on 33, typing 120 and 200 landed on them (the video's own frame matching every time), the scene and beat right on each side of a beat change and a scene change, ← in the frame box, two notes added, copied and saved, the frame saved as `…-frame-40.png`, a note clicked back to its frame, Esc closing; tests for frames, scene and beat at a moment, notes as text; typecheck, tests, build.

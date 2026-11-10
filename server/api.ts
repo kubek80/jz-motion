@@ -22,6 +22,7 @@ import { addTrack, createTake, deleteTake, getTake, listTakes, TAKES_DIR, trackP
 import { generateTts, readSidecar as readTtsSidecar, serveTts, speechVoices } from './tts';
 import { joinVoiceRequest } from './voiceJoin';
 import { sceneVoiceRequest } from './sceneVoice';
+import { exportFileRoutes, writeExportInfo } from './exportFiles';
 import { makeDirectionSamples, readDirectionSamples } from './directionSamples';
 import { buildAvatarTrack, rememberVoice } from './avatar';
 import { myAvatarRoutes } from './myAvatarRoutes';
@@ -42,6 +43,7 @@ import { myAvatarRoutes } from './myAvatarRoutes';
 //   /api/media    the media library: add (converted), list with where each is used, rename, delete, a recording's frame times (/frames); served at /media/<file>
 //   /api/images   screenshots and pictures for the board (images/<hash>.<ext>), served at /images/<file>
 //   /api/export   render a presentation (and a take) to MP4; /exports/<file> to download it
+//   /api/exports  the exported videos, their timing and notes on their frames (server/exportFiles.ts)
 
 export const EXPORTS_DIR = resolve(process.env.JZM_EXPORTS_DIR ?? 'exports');
 
@@ -189,11 +191,13 @@ function startExport(body: any, appUrl: string): Job { // eslint-disable-line @t
       const title = String((take?.presentation as { title?: string } | undefined)?.title ?? body.presentation?.title ?? 'video');
       const slug = title.toLowerCase().replace(/[^\w]+/g, '-').replace(/^-|-$/g, '').slice(0, 40) || 'video';
       const out = join(EXPORTS_DIR, `${slug}-${new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-')}.mp4`);
-      await exportVideo({
+      const made = await exportVideo({
         presentation: body.presentation, take, useTakePresentation: body.useTakePresentation !== false,
         fps: body.fps === 60 ? 60 : 30, scale: body.scale === 2 ? 2 : 1, timing: body.timing, out, appUrl, normalizeAudio: body.normalizeAudio !== false,
         onProgress: (done, total) => Object.assign(job, { done, total }),
       });
+      // Its timing, kept next to it, so a frame can be named by its scene and beat (the Video tab's frame viewer).
+      await writeExportInfo(EXPORTS_DIR, basename(out), { presentationId: typeof body.presentationId === 'string' ? body.presentationId : undefined, title, fps: body.fps === 60 ? 60 : 30, performance: made.performance, outline: made.outline, made: new Date().toISOString() });
       Object.assign(job, { status: 'done', file: basename(out) });
     } catch (e) {
       Object.assign(job, { status: 'failed', error: (e as Error).message });
@@ -232,15 +236,6 @@ async function serveUpload(req: IncomingMessage, res: ServerResponse, file: stri
   createReadStream(path).pipe(res);
 }
 
-async function serveExport(res: ServerResponse, file: string) {
-  if (!/^[\w.-]+\.mp4$/.test(file)) return send(res, 404, { error: 'not found' });
-  const path = join(EXPORTS_DIR, file);
-  const info = await stat(path);
-  res.setHeader('content-type', 'video/mp4');
-  res.setHeader('content-length', String(info.size));
-  res.setHeader('content-disposition', `inline; filename="${file}"`);
-  createReadStream(path).pipe(res);
-}
 
 export function jzmServer(): Plugin {
   const mount = (server: ViteDevServer | PreviewServer) => {
@@ -307,7 +302,7 @@ export function jzmServer(): Plugin {
         if (parts[0] === 'tts' && parts[1] && parts[2] && req.method === 'GET' && (await serveTts(res, parts[1], parts[2]))) return;
         if (url.pathname === '/api/export' && req.method === 'POST') return send(res, 200, startExport(await readJson(req), appUrl()));
         if (parts[0] === 'api' && parts[1] === 'export' && parts[2]) return send(res, jobs.has(parts[2]) ? 200 : 404, jobs.get(parts[2]) ?? { error: 'no such export' });
-        if (parts[0] === 'exports' && parts[1]) return await serveExport(res, parts[1]);
+        if ((url.pathname.startsWith('/api/exports') || parts[0] === 'exports') && (await exportFileRoutes(req, res, url, EXPORTS_DIR, send))) return;
       } catch (e) {
         return send(res, 500, { error: (e as Error).message });
       }
