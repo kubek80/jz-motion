@@ -92,6 +92,7 @@ Presentation
 | Deleting a scene in a timed presentation (closing the gap) | `src/app/editor/closeGap.ts` (used by `removeScene` in `useEditActions.ts`) |
 | The media library (pictures, recordings, sounds) | `server/mediaStore.ts` (conversion, trim, index, where used, a recording's frames), `src/app/MediaPanel.tsx`, `MediaDetail.tsx`, `ScreenRecorder.tsx` (Record screen), `media.ts` |
 | Export | `server/export.ts`, `src/render/page.ts`, `src/video/` |
+| Looking at an exported video frame by frame, notes on frames | `src/app/ExportViewer.tsx` (the window), `src/app/exportFrames.ts` (frames, times, scene and beat at a moment, notes as text; tested), `server/exportFiles.ts` (the list, seeking, `exports/<file>.json`: an export's timing and scenes, written when it is made; `exports/<file>.notes.json`) |
 
 ## Phases
 

@@ -9,6 +9,9 @@ import { registerLibrary } from './library';
 import { FFMPEG, ffmpegMissing } from './media';
 import { trackPath, type Take } from './takes';
 
+/** A presentation's scenes and beats by name, and where each beat starts in its scene's timeline. */
+export interface Outline { scenes: { id: string; title?: string; beats: { title?: string; start: number }[] }[] }
+
 export interface ExportOptions {
   presentation: unknown;
   take?: Take;
@@ -33,7 +36,7 @@ export interface ExportOptions {
  * Renders a presentation to MP4: a headless browser draws every frame exactly (no screen recording),
  * FFmpeg encodes them and lays recorded camera tracks out according to each beat's layout.
  */
-export async function exportVideo(opts: ExportOptions): Promise<{ file: string; duration: number; frames: number; repeated: number }> {
+export async function exportVideo(opts: ExportOptions): Promise<{ file: string; duration: number; frames: number; repeated: number; performance: Performance; outline: Outline }> {
   const source = opts.take && opts.useTakePresentation !== false ? opts.take.presentation : opts.presentation;
   // Icons and models made in the app are checked like built-in ones (the render page loads them too).
   await registerLibrary();
@@ -120,5 +123,7 @@ export async function exportVideo(opts: ExportOptions): Promise<{ file: string; 
   }
   ffmpeg.stdin.end();
   await finished;
-  return { file: opts.out, duration: frames / fps, frames, repeated };
+  // Its scenes and beats (titles and where each beat starts), so a frame can be named by them later.
+  const outline: Outline = { scenes: compiled.presentation.scenes.map((s) => ({ id: s.id, title: s.title, beats: s.beats.map((b) => ({ title: b.title, start: b.start })) })) };
+  return { file: opts.out, duration: frames / fps, frames, repeated, performance: perf, outline };
 }

@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Performance } from '../video/performance';
 import { confirmDialog } from './confirm';
+import { ExportViewer } from './ExportViewer';
 
 interface Track { name: string; file: string; offset: number; hasVideo: boolean; hasAudio: boolean; duration: number }
 interface Take { id: string; name: string; created: string; performance: Performance; tracks: Track[]; presentationId?: string }
+interface Exported { file: string; size: number; modified: string; fps: number; duration: number; presentationId?: string; timed: boolean }
 interface Job { id: string; status: 'running' | 'done' | 'failed'; done: number; total: number; file?: string; error?: string; started: number }
 
 const api = async (url: string, init?: RequestInit) => {
@@ -29,6 +31,11 @@ export function VideoPanel({ presentation, presentationId, refreshKey, select }:
   const [job, setJob] = useState<Job | null>(null);
   const [newTrack, setNewTrack] = useState('friend');
   const poll = useRef<number>(0);
+  const [exported, setExported] = useState<Exported[]>([]);
+  const [allExports, setAllExports] = useState(false);
+  const [viewing, setViewing] = useState<Exported | null>(null);
+  const loadExports = useCallback(async () => { setExported(await api('/api/exports').catch(() => [])); }, []);
+  useEffect(() => void loadExports(), [loadExports, refreshKey]);
 
   const load = useCallback(async () => {
     try {
@@ -66,7 +73,7 @@ export function VideoPanel({ presentation, presentationId, refreshKey, select }:
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({
-          presentation: JSON.parse(presentation), takeId: take?.id, useTakePresentation: asRecorded, fps, scale, normalizeAudio: evenOut,
+          presentation: JSON.parse(presentation), presentationId, takeId: take?.id, useTakePresentation: asRecorded, fps, scale, normalizeAudio: evenOut,
           timing: { lead: 0.8, gap, tail: 2 },
         }),
       });
@@ -75,7 +82,7 @@ export function VideoPanel({ presentation, presentationId, refreshKey, select }:
       poll.current = window.setInterval(async () => {
         const j: Job = await api(`/api/export/${started.id}`).catch(() => ({ ...started, status: 'failed', error: 'lost the export job' }));
         setJob(j);
-        if (j.status !== 'running') clearInterval(poll.current);
+        if (j.status !== 'running') { clearInterval(poll.current); void loadExports(); }
       }, 1000);
     } catch (e) {
       setError((e as Error).message);
@@ -172,13 +179,41 @@ export function VideoPanel({ presentation, presentationId, refreshKey, select }:
             {job.status === 'done' && job.file && (
               <>
                 <video src={`/exports/${job.file}`} controls className="preview" />
-                <a href={`/exports/${job.file}`} download={job.file}>Download {job.file}</a>
+                <div className="row">
+                  <a href={`/exports/${job.file}`} download={job.file}>Download {job.file}</a>
+                  {exported.find((x) => x.file === job.file) && <button onClick={() => setViewing(exported.find((x) => x.file === job.file)!)}>🔍 Frame by frame</button>}
+                </div>
               </>
             )}
             {job.status === 'failed' && <p className="error-text">{job.error}</p>}
           </div>
         )}
       </section>
+      <section>
+        <h3>Exported videos</h3>
+        <p className="muted hint">Open one to go through it frame by frame, see which scene and beat each frame shows, and write notes on frames to share.</p>
+        {(() => {
+          const mine = exported.filter((x) => x.presentationId === presentationId);
+          const shown = allExports || !mine.length ? exported : mine;
+          return (
+            <>
+              {!shown.length && <p className="muted">None yet: export one above.</p>}
+              <ul className="exports-list">
+                {shown.slice(0, allExports ? undefined : 8).map((x) => (
+                  <li key={x.file}>
+                    <button className="link" onClick={() => setViewing(x)} title="Open frame by frame">🔍 {x.file}</button>
+                    <span className="muted">{mmss(x.duration)} · {new Date(x.modified).toLocaleString()}</span>
+                  </li>
+                ))}
+              </ul>
+              {mine.length > 0 && mine.length < exported.length && (
+                <label className="check"><input type="checkbox" checked={allExports} onChange={(e) => setAllExports(e.target.checked)} /> other presentations' videos too</label>
+              )}
+            </>
+          );
+        })()}
+      </section>
+      {viewing && <ExportViewer file={viewing.file} fps={viewing.fps} duration={viewing.duration} presentation={presentation} onClose={() => setViewing(null)} />}
       {busy && <p className="muted">Working: {busy}…</p>}
       {error && <p className="error-text">{error}</p>}
     </div>

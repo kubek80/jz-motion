@@ -87,3 +87,27 @@
 .voice-directions-line { margin-top: 2px; }
 /* The beat Timing was at when the Script page was opened from there. */
 .script-beat.here { border-color: color-mix(in srgb, var(--accent) 60%, var(--line)); box-shadow: inset 3px 0 0 var(--accent); }
+/* Exported videos frame by frame (Video tab). */
+.exports-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.exports-list li { display: flex; flex-direction: column; gap: 0; }
+.exports-list .muted { font-size: 11px; padding-left: 22px; }
+.export-viewer { width: min(1500px, 97vw); max-height: 94vh; overflow: auto; }
+.export-viewer .modal-head { gap: 10px; align-items: baseline; }
+.export-viewer-body { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 16px; align-items: start; }
+.export-viewer-main { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.export-viewer-main video { width: 100%; aspect-ratio: 16 / 9; background: #000; border-radius: 6px; cursor: pointer; }
+.export-viewer-scrub { width: 100%; }
+.export-viewer-controls { align-items: center; gap: 6px; }
+.export-viewer-at { font-variant-numeric: tabular-nums; }
+.export-viewer-at input { width: 76px; }
+.export-viewer-where { margin: 0; }
+.export-viewer-notes { display: flex; flex-direction: column; gap: 8px; }
+.export-viewer-notes h4 { margin: 0; }
+.export-viewer-notes ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; max-height: 46vh; overflow: auto; }
+.export-viewer-notes li { display: grid; grid-template-columns: 1fr auto; gap: 2px 6px; padding: 6px 8px; border-radius: 8px; background: var(--panel); border: 1px solid transparent; font-size: 13px; }
+.export-viewer-notes li.here { border-color: var(--accent); }
+.export-viewer-notes li > :not(button.small) { grid-column: 1; }
+.export-viewer-notes li > button.small { grid-column: 2; grid-row: 1 / span 3; align-self: start; }
+.export-viewer-notes li .muted { font-size: 11px; }
+@media (max-width: 1000px) { .export-viewer-body { grid-template-columns: minmax(0, 1fr); } }
+
