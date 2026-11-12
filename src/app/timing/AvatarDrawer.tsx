@@ -45,7 +45,7 @@ export function AvatarDrawer({ doc, clip, scene, onPlace, onOpenClip, onClose }:
   const current = ((s as { layout?: Placement }).layout ?? 'board') as Placement;
   const ownBeats = (s.beats ?? []).map((b, i) => [i, (b as { layout?: string }).layout] as const).filter(([, l]) => l);
   const busy = !!job && !job.error;
-  const make = () => void startAvatar(clip.id, { upload: clip.upload, trimStart: clip.trimStart, trimEnd: clip.trimEnd, name: clip.scene ?? clip.name }).catch(() => undefined);
+  const make = () => void startAvatar(clip.id, { upload: clip.upload, trimStart: clip.trimStart, trimEnd: clip.trimEnd, name: clip.scene ?? clip.name, speaker: clip.speaker }).catch(() => undefined);
   return (
     <aside className="beat-drawer avatar-drawer" onPointerDown={(e) => e.stopPropagation()}>
       <div className="drawer-head">

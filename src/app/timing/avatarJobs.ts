@@ -40,8 +40,15 @@ async function poll() {
 }
 
 /** Start your avatar saying part of a clip's recording. */
-export async function startAvatar(clipId: string, req: { upload: string; trimStart: number; trimEnd: number; name?: string }) {
-  const res = await fetch('/api/avatar', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ ...req, apiKey: loadFalKey() || undefined }) });
+/** The presentation's cast (Timing sets it), so a speaker's clip is said by their own avatar. */
+let cast: { id: string; avatar: string }[] = [];
+export const setCast = (c: { id: string; avatar: string }[] | undefined) => { cast = c ?? []; };
+
+/** `speaker`: whose clip it is (a podcast): their avatar says it; otherwise the avatar in use. */
+export async function startAvatar(clipId: string, req: { upload: string; trimStart: number; trimEnd: number; name?: string; speaker?: string }) {
+  const { speaker, ...rest } = req;
+  const avatar = cast.find((m) => m.id === speaker)?.avatar;
+  const res = await fetch('/api/avatar', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ ...rest, ...(avatar ? { avatar } : {}), apiKey: loadFalKey() || undefined }) });
   if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error ?? res.statusText);
   const { id } = await res.json();
   set({ ...jobs, [clipId]: { id, note: 'sending to fal.ai' } });

@@ -1286,3 +1286,19 @@ Jakub wanted to record a terminal sometimes, from Claude Code on his own compute
 ![A terminal recording in a scene, in the window frame, paused while a command is typed](journey/143-terminal-recording.jpg)
 
 **Checked by:** the example steps recorded here (real `npm run check` and coloured `git log` output, typed comments, a set output), frames looked at; the kept `.cast` drawn again at 80 columns and 24 px; the recording in a scene in the window frame (snapshot); `npm run record` still recording after the move; typecheck, tests, build.
+
+## Step 104: A podcast: a cast, each with their own voice and avatar (part 1)
+
+**Asked:** the next videos go up a notch: two kinds of presentation, just him or a podcast with 2 or 3 people (him included, guests are real people), each with their own voice and front-facing avatar, one or two on screen or all of them in a studio wide shot, chosen per beat; working on presentations as now. Built in three parts; this is the first: who speaks.
+
+- **A cast** (`cast` in the format: `{ id, name, avatar }`, each person one of the avatars in 🧑 Avatar, with its look and its voice) and **a speaker** on a scene or a beat (`speaker`; a beat without one takes its scene's, a scene without one the first in the cast). A speaker not in the cast is an error.
+- **The Script page** has a Cast bar (add a person from your avatars, rename, change their avatar, remove: their beats go back to the first person) and a coloured label on each scene and beat saying who says it (dashed when it comes from the scene).
+- **Generated voice** (Script page, Timing, `npm run voice`) says each run of beats by one person in that person's voice: one clip per run, each tagged with its `speaker`, one after another; the cues still land where each beat's words start.
+- **Avatar videos** (Make my avatar, `npm run avatar -- make`) use each clip's speaker's avatar.
+- **The prompter** in Timing names who says the current and the next line, in their colour.
+- Without a cast nothing changes: you, in the voice and avatar in use.
+- **Fixed while building it:** a turn could start before the previous turn's file ended (the next turn now starts after both its words and its file).
+
+![The Script page with a cast of two and a speaker on each beat; Timing's prompter naming who speaks now and next, three clips on the lanes](journey/144-podcast-cast.jpg)
+
+**Checked by:** in a browser on a test copy: two people added, one renamed, a beat given to the second; the scene generated as three clips (two voices, each with its speaker) with the cues at each turn; the prompter naming both; asking for an avatar that doesn't exist refused; compile tests for the speaker rules; typecheck, tests, build. The test copy, its clips and the test avatar deleted after.

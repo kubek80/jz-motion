@@ -38,7 +38,7 @@ if (cmd === 'photo' && file && value('style')) {
   if (layout && !['camera', 'pip', 'pip-left'].includes(layout)) { console.error('--layout is camera, pip or pip-left'); process.exit(2); }
   if (!(await readMyAvatar())) { console.error('No avatar photo yet: npm run avatar -- photo <picture>'); process.exit(2); }
   const path = resolve(file);
-  type Doc = { scenes: { id: string; title?: string; layout?: string }[]; voiceover?: { clips: { id: string; upload: string; trimStart: number; trimEnd: number; scene?: string; avatar?: unknown }[] } };
+  type Doc = { cast?: { id: string; avatar: string }[]; scenes: { id: string; title?: string; layout?: string }[]; voiceover?: { clips: { id: string; upload: string; trimStart: number; trimEnd: number; scene?: string; speaker?: string; avatar?: unknown }[] } };
   const doc: Doc = JSON.parse(await readFile(path, 'utf8'));
   const missing = wanted.filter((id) => !doc.scenes.some((s) => s.id === id));
   if (missing.length) { console.error(`no scene with id ${missing.join(', ')}`); process.exit(2); }
@@ -48,7 +48,9 @@ if (cmd === 'photo' && file && value('style')) {
   // All at once: fal.ai works on them side by side.
   const made = new Map<string, { video: string; trimStart: number; trimEnd: number }>();
   await Promise.all(clips.map(async (c) => {
-    const a = await makeAvatar({ upload: c.upload, trimStart: c.trimStart, trimEnd: c.trimEnd, name: c.scene });
+    // In a podcast, each clip in its speaker's avatar.
+    const avatar = doc.cast?.find((m) => m.id === c.speaker)?.avatar;
+    const a = await makeAvatar({ upload: c.upload, trimStart: c.trimStart, trimEnd: c.trimEnd, name: c.speaker ? `${c.scene}-${c.speaker}` : c.scene, avatar });
     made.set(c.id, { video: a.video, trimStart: a.trimStart, trimEnd: a.trimEnd });
     console.log(`${c.scene}: uploads/${a.video} (${a.duration.toFixed(1)} s)`);
   }));

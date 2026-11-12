@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { CompiledPresentation } from '../engine/compile';
+import { CastBar, SpeakerLabel, type CastMember } from './ScriptCast';
 import { ScriptSceneVoice, type SceneClip } from './ScriptSceneVoice';
 import { VoiceDirections } from './VoiceDirections';
 import { useVoicer } from './settingsStore';
@@ -10,7 +11,7 @@ interface Props {
   presentationId: string;
   onNotes: (scene: number, beat: number, notes: string) => void;
   /** The presentation as saved, and a way to replace it (a scene's voice generated). */
-  doc: { scenes: { id: string }[]; voiceover?: { clips: SceneClip[] } };
+  doc: { cast?: CastMember[]; scenes: { id: string; speaker?: string; beats?: { speaker?: string }[] }[]; voiceover?: { clips: SceneClip[] } };
   onDoc: (next: unknown) => void;
   /** Open at this beat (from Timing: the one at the playhead), scrolled to and marked. */
   at?: { scene: number; beat: number };
@@ -87,6 +88,12 @@ export function Script({ presentation, presentationId, onNotes, doc, onDoc, at, 
     return { dur, beats, sentences, clips };
   }, [presentation, tts, voicer]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // A podcast's cast, and who says a scene (bi null) or a beat; none: back to the scene's, or the first in the cast.
+  const cast = doc.cast ?? [];
+  const setSpeaker = (si: number, bi: number | null, id: string | undefined) => {
+    const put = <T extends { speaker?: string }>(x: T): T => { const { speaker: _s, ...rest } = x; return (id ? { ...rest, speaker: id } : rest) as T; };
+    onDoc({ ...doc, scenes: doc.scenes.map((s, j) => (j !== si ? s : bi === null ? put(s) : { ...s, beats: (s.beats ?? []).map((b, k) => (k === bi ? put(b) : b)) })) });
+  };
   const start = (scene: number, beat: number, notes: string | undefined) => { setDraft(notes ?? ''); setEditing({ scene, beat }); };
   const save = () => { if (editing) onNotes(editing.scene, editing.beat, draft); setEditing(null); };
   const cancel = () => setEditing(null);
@@ -128,6 +135,7 @@ export function Script({ presentation, presentationId, onNotes, doc, onDoc, at, 
         <button onClick={onClose} title="Close (Esc)">✕</button>
       </header>
       {help && <VoiceDirections onClose={() => setHelp(false)} />}
+      <CastBar doc={doc} onDoc={onDoc} />
       {error && <p className="error-text">{error}</p>}
       <div className="script-body">
         {presentation.scenes.map((scene, si) => {
@@ -139,6 +147,7 @@ export function Script({ presentation, presentationId, onNotes, doc, onDoc, at, 
               <header className="script-scene-head">
                 <span className="muted">Scene {si + 1}</span>
                 <h3>{scene.title ?? scene.id}</h3>
+                {cast.length > 0 && <SpeakerLabel cast={cast} speaker={doc.scenes[si]?.speaker ?? cast[0].id} own={doc.scenes[si]?.speaker} onChange={(id) => setSpeaker(si, null, id)} />}
                 <span className="spacer" />
                 <span className="muted script-scene-total">{sceneHasClip ? '' : '~'}{fmtDuration(sceneDur)}</span>
               </header>
@@ -152,6 +161,7 @@ export function Script({ presentation, presentationId, onNotes, doc, onDoc, at, 
                     <li key={bi} data-beat={`${si}-${bi}`} className={['script-beat', isEditing ? 'editing' : '', at && at.scene === si && at.beat === bi ? 'here' : ''].join(' ')}>
                       <div className="script-beat-head">
                         <b>{beat.title ?? `Beat ${bi + 1}`}</b>
+                        {cast.length > 0 && <SpeakerLabel cast={cast} speaker={beat.speaker} own={doc.scenes[si]?.beats?.[bi]?.speaker} onChange={(id) => setSpeaker(si, bi, id)} />}
                         <span className="muted script-beat-dur">{sentences.length ? `${anyClip ? '' : '~'}${fmtDuration(dur)}` : 'no notes'}</span>
                       </div>
                       {isEditing ? (

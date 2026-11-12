@@ -274,6 +274,15 @@ const videoLayout = {
   track: z.string().optional(),
 };
 
+/** Who says the notes: the id of someone in the presentation's `cast` (default: the scene's, else the first). */
+const speaker = { speaker: Id.optional() };
+
+/**
+ * Someone who speaks in the presentation (a podcast: you and your guests): `avatar` is the id of one of the avatars
+ * in voice/my-avatar.json (the Avatar window), whose look and voice they speak with; `name` is shown in the script.
+ */
+export const CastMember = z.object({ id: Id, name: z.string(), avatar: z.string() });
+
 export const Beat = z.object({
   title: z.string().optional(),
   /** Speaker notes. */
@@ -283,6 +292,7 @@ export const Beat = z.object({
   /** Seconds into a recording at which this beat starts (presentations made from a recording). */
   cue: z.number().min(0).optional(),
   ...videoLayout,
+  ...speaker,
   actions: z.array(Action),
 });
 
@@ -298,6 +308,8 @@ export const Scene = z.object({
   camera: Camera.optional(),
   /** Video layout for the scene's beats that don't set their own. */
   ...videoLayout,
+  /** Who speaks in the scene's beats that don't say. */
+  ...speaker,
   elements: z.array(Element).default([]),
   beats: z.array(Beat).default([]),
 });
@@ -323,6 +335,8 @@ const Clip = z.object({
   gain: z.number().min(-24).max(24).optional(),
   /** The scene this narration belongs to (its id): it moves with the scene, and is left out with it. */
   scene: z.string().optional(),
+  /** Who speaks in it (an id in the `cast`): their avatar says it. */
+  speaker: z.string().optional(),
   /**
    * Your avatar saying this clip: a talking-head video in uploads/ made from the clip's `trimStart`–`trimEnd` (those
    * at the time), shown in the video wherever a layout shows the camera.
@@ -333,6 +347,8 @@ const Clip = z.object({
 export const Presentation = z.object({
   version: z.literal(1),
   title: z.string(),
+  /** The people who speak (a podcast); none: just you, as before. */
+  cast: z.array(CastMember).optional(),
   scenes: z.array(Scene).min(1),
   /**
    * The narration beats are timed to: each beat's `cue` is seconds into the whole timeline.
@@ -366,4 +382,5 @@ export type Camera = z.infer<typeof Camera>;
 export type Scene = z.infer<typeof Scene>;
 export type Presentation = z.infer<typeof Presentation>;
 export type Clip = z.infer<typeof Clip>;
+export type CastMember = z.infer<typeof CastMember>;
 export type Voiceover = NonNullable<Presentation['voiceover']>;

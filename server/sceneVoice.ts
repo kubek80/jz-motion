@@ -3,20 +3,35 @@ import { compile } from '../src/engine/compile';
 import { cueClicks } from '../src/video/performance';
 import { freeLane, makeRoom, type TimelineClip } from '../src/video/makeRoom';
 import { access } from 'node:fs/promises';
+import { readAvatars } from './avatar';
 import { registerLibrary } from './library';
 import { uploadPath } from './transcribe';
 import { joinVoice, type Voicer } from './voiceJoin';
 
 // A scene's generated narration on the timeline: one clip per scene, bound to it (`scene`), its beats cued where
-// their sentences start. Shared by `npm run voice` (place, again, rebuild) and the Script page (POST /api/voice/scene).
+// their sentences start; in a presentation with a cast (a podcast), one clip per turn (beats in a row with the same
+// speaker), each in its speaker's voice (their avatar's, voice/my-avatar.json) and tagged with them (`speaker`).
+// Shared by `npm run voice` (place, again, rebuild), the Script page and Timing (POST /api/voice/scene).
 // Everything here changes the presentation in memory; the caller saves it.
 
 const SCENE_TAIL = 0.9;
 
 export type VoiceDoc = {
+  cast?: { id: string; name: string; avatar: string }[];
   scenes: { id: string; title?: string; skip?: boolean; beats: { title?: string; notes?: string; cue?: number; auto?: boolean }[] }[];
-  voiceover?: { clips: (TimelineClip & { scene?: string; name?: string; avatar?: unknown; gain?: number; cleanedFrom?: string; sourceDuration?: number })[] };
+  voiceover?: { clips: (TimelineClip & { scene?: string; speaker?: string; name?: string; avatar?: unknown; gain?: number; cleanedFrom?: string; sourceDuration?: number })[] };
 };
+
+/** The voice `speaker` speaks with: their avatar's (the Avatar window), with the key and options of `base`; else `base`. */
+export async function voicerFor(doc: VoiceDoc, speaker: string | undefined, base: Voicer): Promise<Voicer> {
+  const member = doc.cast?.find((c) => c.id === speaker);
+  if (!member) return base;
+  const avatar = (await readAvatars())?.avatars.find((a) => a.id === member.avatar);
+  if (!avatar) throw new Error(`${member.name}'s avatar ("${member.avatar}") isn't in the Avatar window: choose another for them in the cast`);
+  if (!avatar.voice) throw new Error(`${member.name}'s avatar has no voice yet: record or upload one in 🧑 Avatar → Voice`);
+  const v = avatar.voice;
+  return { ...base, baseURL: v.baseURL, model: v.model, instructions: v.instructions, sample: v.sample };
+}
 export type SceneVoice = NonNullable<Awaited<ReturnType<typeof voiceScene>>>;
 
 export function compiled(d: VoiceDoc) {
@@ -26,30 +41,44 @@ export function compiled(d: VoiceDoc) {
 }
 
 /**
- * A scene's narration as one clip (uploads/<upload>): its sentences with short pauses, longer where a beat's
- * animation (with the wordless auto beats after it) outlasts its words. `cues`: where each beat starts in it;
- * `length`: how much timeline the scene takes, its tail included. Null when it has no notes.
+ * A scene's narration: one clip per turn (all of it when one person speaks), in uploads/: its sentences with short
+ * pauses, longer where a beat's animation (with the wordless auto beats after it) outlasts its words; turns one after
+ * another. `pieces`: each clip, where it starts in the scene and who speaks; `cues`: where each beat starts;
+ * `duration`: to the end of the last clip; `length`: how much timeline the scene takes, its tail included. Null
+ * when it has no notes.
  */
-export async function voiceScene(doc: VoiceDoc, presentationId: string, si: number, voicer: Voicer, upload?: string) {
+export async function voiceScene(doc: VoiceDoc, presentationId: string, si: number, voicer: Voicer) {
   const scene = doc.scenes[si];
-  // A new file every time: another presentation (or a copy of this one) may still play one by the same name.
-  upload ??= await freeName(`generated-${scene.id}`);
-  const anim = compiled(doc).scenes[si].beats.map((b) => b.end - b.start);
-  const parts: { notes?: string; need: number }[] = [];
-  const beats: number[] = [];
+  const c = compiled(doc).scenes[si];
+  const anim = c.beats.map((b) => b.end - b.start);
+  const turns: { speaker?: string; parts: { notes?: string; need: number }[]; beats: number[] }[] = [];
   for (const [bi, b] of scene.beats.entries()) {
     const words = splitSentences(b.notes ?? '').length;
     if (!words && b.auto) continue;
     // The time this beat needs on screen: its animation and that of the wordless auto beats right after it.
     let need = anim[bi];
     for (let k = bi + 1; k < scene.beats.length && scene.beats[k].auto && !splitSentences(scene.beats[k].notes ?? '').length; k++) need += anim[k];
-    parts.push({ notes: b.notes, need });
-    beats.push(bi);
+    const speaker = words ? c.beats[bi].speaker : turns.at(-1)?.speaker ?? c.beats[bi].speaker;
+    if (!turns.length || turns.at(-1)!.speaker !== speaker) turns.push({ speaker, parts: [], beats: [] });
+    turns.at(-1)!.parts.push({ notes: b.notes, need });
+    turns.at(-1)!.beats.push(bi);
   }
-  const r = await joinVoice(presentationId, upload, parts, voicer);
-  if (!r) return null;
-  const cues = beats.map((bi, k) => [bi, r.starts[k]] as [number, number]);
-  return { upload: r.upload, duration: r.duration, lead: 0, cues, length: Math.round(Math.max(r.length + SCENE_TAIL, r.duration + 0.4) * 1000) / 1000 };
+  const pieces: { upload: string; duration: number; at: number; speaker?: string }[] = [];
+  const cues: [number, number][] = [];
+  let at = 0;
+  for (const [k, turn] of turns.entries()) {
+    // A new file every time: another presentation (or a copy of this one) may still play one by the same name.
+    const upload = await freeName(`generated-${scene.id}${turns.length > 1 ? `-${k + 1}${turn.speaker ? `-${turn.speaker}` : ''}` : ''}`);
+    const r = await joinVoice(presentationId, upload, turn.parts, await voicerFor(doc, turn.speaker, voicer));
+    if (!r) continue;
+    turn.beats.forEach((bi, j) => cues.push([bi, at + r.starts[j]]));
+    pieces.push({ upload: r.upload, duration: r.duration, at: Math.round(at * 1000) / 1000, speaker: turn.speaker });
+    // The next turn starts after this one's words and pause, and never before its file ends.
+    at += Math.max(r.length, r.duration + 0.05);
+  }
+  if (!pieces.length) return null;
+  const duration = pieces.at(-1)!.at + pieces.at(-1)!.duration;
+  return { pieces, duration, lead: 0, cues, length: Math.round(Math.max(at + SCENE_TAIL, duration + 0.4) * 1000) / 1000 };
 }
 
 /** `<base>.webm` in uploads/, or `<base>-<time>.webm` when that is taken. */
@@ -58,14 +87,18 @@ async function freeName(base: string): Promise<string> {
   return taken ? `${base}-${Date.now().toString(36)}.webm` : `${base}.webm`;
 }
 
-/** Put a scene's clip on the timeline at `at`, bound to the scene, and cue its beats. */
+/** Put a scene's clips on the timeline from `at`, bound to the scene (and each to its speaker), and cue its beats. */
 export function putClip(doc: VoiceDoc, si: number, at: number, v: SceneVoice) {
   const scene = doc.scenes[si];
   doc.voiceover ??= { clips: [] };
   const clips = doc.voiceover.clips;
-  const from = Math.round((at + v.lead) * 1000) / 1000;
-  const id = clips.some((c) => c.id === `gen-${scene.id}`) ? `gen-${scene.id}-${Date.now().toString(36)}` : `gen-${scene.id}`;
-  clips.push({ id, scene: scene.id, upload: v.upload, sourceDuration: v.duration, offset: from, lane: freeLane(clips, from, from + v.duration) ?? 0, trimStart: 0, trimEnd: v.duration, name: `generated voice · ${scene.title ?? scene.id}` });
+  for (const [k, p] of v.pieces.entries()) {
+    const from = Math.round((at + v.lead + p.at) * 1000) / 1000;
+    const base = `gen-${scene.id}${k ? `-${k + 1}` : ''}`;
+    const id = clips.some((c) => c.id === base) ? `${base}-${Date.now().toString(36)}` : base;
+    const who = doc.cast?.find((c) => c.id === p.speaker)?.name;
+    clips.push({ id, scene: scene.id, ...(p.speaker ? { speaker: p.speaker } : {}), upload: p.upload, sourceDuration: p.duration, offset: from, lane: freeLane(clips, from, from + p.duration) ?? 0, trimStart: 0, trimEnd: p.duration, name: `generated voice · ${scene.title ?? scene.id}${who ? ` · ${who}` : ''}` });
+  }
   clips.sort((a, b) => a.offset - b.offset || a.lane - b.lane);
   for (const [bi, off] of v.cues) scene.beats[bi].cue = Math.round((at + off) * 100) / 100;
 }
@@ -112,12 +145,10 @@ export async function sayAgain(doc: VoiceDoc, presentationId: string, si: number
   for (const x of clips) if (!own.includes(x) && x.offset >= oldEnd - 1e-3) x.offset = Math.round((x.offset + delta) * 1000) / 1000;
   for (const [sj, s] of doc.scenes.entries()) if (sj !== si) for (const b of s.beats) if (b.cue !== undefined && b.cue >= oldEnd - 0.05) b.cue = Math.round((b.cue + delta) * 100) / 100;
   for (const b of scene.beats) delete b.cue;
-  for (const [bi, off] of v.cues) scene.beats[bi].cue = Math.round((start + off) * 100) / 100;
   const avatar = own.some((c) => c.avatar);
-  const [c] = own;
-  doc.voiceover!.clips = clips.filter((x) => x === c || !own.includes(x));
-  Object.assign(c, { offset: start, upload: v.upload, sourceDuration: v.duration, trimStart: 0, trimEnd: v.duration, name: `generated voice · ${scene.title ?? scene.id}` });
-  delete c.avatar; delete c.gain; delete c.cleanedFrom;
+  // The scene's clips give way to the new ones (one per turn), from where the first started.
+  doc.voiceover!.clips = clips.filter((x) => !own.includes(x));
+  putClip(doc, si, start, v);
   return { note: `${scene.title ?? scene.id}: ${v.duration.toFixed(1)} s (${delta >= 0 ? '+' : ''}${delta.toFixed(1)} s); everything after moves by that`, avatar };
 }
 

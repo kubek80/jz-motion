@@ -146,9 +146,11 @@ const dataUri = async (file: string, type: string) => `data:${type};base64,${(aw
  * A talking-head video of the avatar saying `upload` from `trimStart` to `trimEnd` (seconds): made on fal.ai (a few
  * minutes), kept as uploads/avatar-<name>-<id>.mp4 without sound (the clip itself is the sound).
  */
-export async function makeAvatar(req: { upload: string; trimStart: number; trimEnd: number; name?: string; apiKey?: string }, onStatus: (s: string) => void = () => undefined) {
-  const me = await readMyAvatar();
-  if (!me) throw new Error('No avatar yet: choose one in My avatar (or npm run avatar -- photo <picture>)');
+export async function makeAvatar(req: { upload: string; trimStart: number; trimEnd: number; name?: string; apiKey?: string; avatar?: string }, onStatus: (s: string) => void = () => undefined) {
+  // `avatar`: whose avatar says it (a podcast's speaker, by their avatar's id); else the avatar in use.
+  const me = req.avatar ? (await readAvatars())?.avatars.find((a) => a.id === req.avatar) ?? null : await readMyAvatar();
+  if (!me) throw new Error(req.avatar ? `No avatar "${req.avatar}" in the Avatar window` : 'No avatar yet: choose one in 🧑 Avatar (or npm run avatar -- photo <picture>)');
+  if (!me.photo) throw new Error(`${me.name} has no picture yet: give them one in 🧑 Avatar → Look`);
   const key = req.apiKey || process.env.FAL_KEY;
   if (!key) throw new Error('No fal.ai key: add it in My avatar (or set FAL_KEY).');
   const work = join(tmpdir(), `jzm-avatar-${randomUUID()}`);

@@ -53,6 +53,15 @@ npm run avatar -- make presentations/<id>.json --scenes id,id --layout camera  #
 - Ask the person before changing their avatar's picture, style or model: it is theirs, like their voice.
 - In a Claude cloud session: `FAL_KEY=proxy-injected OPENROUTER_API_KEY=proxy-injected NODE_USE_ENV_PROXY=1 npm run avatar -- …`; fal's files come from `fal.media` hosts, which the environment must allow.
 
+## A podcast: several people
+
+A presentation can have a **cast** (docs/format.md, Cast): you and your guests, each one of the avatars in 🧑 Avatar (its look and its voice). Set it on the **Script** page (the Cast bar: add a person from your avatars, rename, remove) and say who speaks with the coloured label on each scene and beat (a beat without one takes its scene's; a scene without one, the first in the cast). When writing a dialogue, one beat per turn with its `speaker`.
+
+- **Generate** (Script page, Timing, `npm run voice`) says each run of beats by one person in that person's avatar voice: one clip per run, each with its `speaker`, one after another (so a scene can have several clips, on the lanes).
+- **Make my avatar** and `npm run avatar -- make` make each clip's talking head with its speaker's avatar.
+- The prompter in Timing names who says the current and the next line.
+- An avatar in the cast needs a voice (🧑 Avatar → its voice); generating says which one has none.
+
 ## Recordings belong to scenes
 
 Every clip names its scene (`scene` on the clip): recording in Timing tags it with the scene playing at that moment, re-recording keeps it, `place` and `rebuild` set it. When scenes are moved, added, deleted, left out or put back, the app lays the playing scenes out again in their order, each keeping its own timing inside and the pauses between them, and moves each scene's clips and cues with it; the clips of a left-out scene stay in the file but are not on the timeline. Prefer one clip per scene: a clip that runs across two scenes moves with the first. Older presentations without `scene` on their clips keep the absolute timeline (nothing moves by itself).

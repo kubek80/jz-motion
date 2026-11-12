@@ -57,6 +57,8 @@ export interface CompiledBeat {
   /** Video layout and camera track, with the scene's defaults applied. */
   layout?: LayoutName;
   track?: string;
+  /** Who says the notes (an id in the cast), for presentations with a cast. */
+  speaker?: string;
   /** Seconds into the recording at which it starts, if made from a recording. */
   cue?: number;
   /** When each action runs, in seconds from the start of the beat (same order as the actions). */
