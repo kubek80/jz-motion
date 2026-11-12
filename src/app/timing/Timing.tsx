@@ -21,9 +21,9 @@ import { TimingControls } from './TimingControls';
 import { TimingHeader } from './TimingHeader';
 import { useBoardFollowsClock } from './useBoardFollowsClock';
 import { AvatarBoard } from './AvatarBoard';
-import { avatarRows } from './AvatarLane';
 import { AvatarDrawer, type Placement } from './AvatarDrawer';
-import { onAvatarDone, setCast, startAvatar, useAvatarJobs } from './avatarJobs';
+import { startAvatar } from './avatarJobs';
+import { useAvatarResults } from './useAvatarResults';
 import { useClipEditing } from './useClipEditing';
 import { useClock } from './useClock';
 import { useCueDragging } from './useCueDragging';
@@ -138,22 +138,7 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
     return i >= 0 ? i : clips.findIndex((c) => c.lane === openAt.lane && openAt.t >= c.offset && openAt.t < c.offset + (c.trimEnd - c.trimStart));
   })();
   const [me, setMe] = useState(false);
-  // Your avatar's videos: made in the background (avatarJobs.ts), each put on its clip (and the pieces it was cut
-  // into) when it's ready, without stopping playback.
-  const jobs = useAvatarJobs();
-  const avatars = useMemo(() => avatarRows(clips, doc, jobs), [clips, doc, jobs]);
-  const latest = useRef({ clips, onVoiceover });
-  latest.current = { clips, onVoiceover };
-  useEffect(() => onAvatarDone((clipId, a) => {
-    const cs = latest.current.clips;
-    const c = cs.find((x) => x.id === clipId);
-    if (!c) return false;
-    const next = cs.map((x) => (x.id === clipId || (x.upload === c.upload && x.trimStart >= a.trimStart - 0.05 && x.trimEnd <= a.trimEnd + 0.05) ? { ...x, avatar: a } : x));
-    latest.current.onVoiceover({ clips: next });
-    return true;
-  }), []);
-  // A podcast's speakers each have their own avatar: the avatar jobs need to know whose is whose.
-  setCast((doc as { cast?: { id: string; avatar: string }[] }).cast);
+  const { avatars, onStudio } = useAvatarResults({ clips, doc, onVoiceover, onDoc });
   const makeAvatar = (i: number) => {
     const c = clips[i];
     if (c) startAvatar(c.id, { upload: c.upload, trimStart: c.trimStart, trimEnd: c.trimEnd, name: c.scene ?? c.name, speaker: c.speaker }).catch((e) => setError(`Avatar: ${(e as Error).message}`));
@@ -243,7 +228,7 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
           const c = openAvatar ? clips.find((x) => x.id === openAvatar) : undefined;
           const si = c ? doc.scenes.findIndex((s) => s.id === c.scene) : -1;
           return c && si >= 0 && !openBeat ? (
-            <AvatarDrawer doc={doc} clip={c} scene={si} onPlace={onSceneLayout} onOpenClip={() => setOpenClipId(c.id)} onClose={() => setOpenAvatar(null)} />
+            <AvatarDrawer doc={doc} clip={c} scene={si} onPlace={onSceneLayout} onOpenClip={() => setOpenClipId(c.id)} onClose={() => setOpenAvatar(null)} studio={{ clips, presentation, perf, onStudio }} />
           ) : null;
         })()}
         {openBeat && (

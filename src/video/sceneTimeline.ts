@@ -4,7 +4,7 @@
 
 export interface TimedClip { id: string; offset: number; trimStart: number; trimEnd: number; scene?: string; [k: string]: unknown }
 export interface TimedScene { id: string; skip?: boolean; beats?: { cue?: number; [k: string]: unknown }[]; [k: string]: unknown }
-export interface TimedDoc { scenes: TimedScene[]; voiceover?: { clips: TimedClip[]; [k: string]: unknown }; [k: string]: unknown }
+export interface TimedDoc { scenes: TimedScene[]; voiceover?: { clips: TimedClip[]; studio?: { offset: number; scene?: string; [k: string]: unknown }[]; [k: string]: unknown }; [k: string]: unknown }
 
 const GAP = 0.8;
 const r = (n: number, d = 3) => Math.round(n * 10 ** d) / 10 ** d;
@@ -54,13 +54,15 @@ export function layoutScenes(prev: TimedDoc, next: TimedDoc, length: (sceneId: s
     cursor += span.end - span.start + (pause.get(id) ?? GAP);
   }
   if ([...shift.values()].every((d) => Math.abs(d) < 1e-6)) return next;
+  // A scene's clips and studio shots move with it.
+  const moved = <T extends { offset: number; scene?: string }>(c: T): T => { const d = c.scene ? shift.get(c.scene) : undefined; return d ? { ...c, offset: r(c.offset + d) } : c; };
   return {
     ...next,
     scenes: next.scenes.map((s) => {
       const d = shift.get(s.id);
       return d ? { ...s, beats: s.beats?.map((b) => (b.cue !== undefined ? { ...b, cue: r(b.cue + d, 2) } : b)) } : s;
     }),
-    ...(next.voiceover ? { voiceover: { ...next.voiceover, clips: next.voiceover.clips.map((c) => { const d = c.scene ? shift.get(c.scene) : undefined; return d ? { ...c, offset: r(c.offset + d) } : c; }) } } : {}),
+    ...(next.voiceover ? { voiceover: { ...next.voiceover, clips: next.voiceover.clips.map(moved), ...(next.voiceover.studio ? { studio: next.voiceover.studio.map(moved) } : {}) } } : {}),
   };
 }
 

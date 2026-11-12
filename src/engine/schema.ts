@@ -258,16 +258,17 @@ export const Action = z.discriminatedUnion('do', [
   }),
   z.object({ do: z.literal('wait'), ...timing }),
   /** Moves your avatar (video only) to a place in the frame, gliding over `duration` (default 0.8 s). */
-  z.object({ do: z.literal('avatar'), ...timing, layout: z.enum(['board', 'pip', 'pip-left', 'camera', 'side']) }),
+  z.object({ do: z.literal('avatar'), ...timing, layout: z.enum(['board', 'pip', 'pip-left', 'camera', 'side', 'pair', 'studio']) }),
 ]);
 
 /**
  * How the video frame is laid out while a beat plays (video export only):
  * board = board only; pip / pip-left = board with a small camera bottom-right / bottom-left;
  * camera = camera full screen with the board small; side = two cameras side by side, or with one camera
- * (your avatar) the camera on the left half and the board on the right.
+ * (your avatar) the camera on the left half and the board on the right; pair = the first two in the cast side by
+ * side, full frame; studio = the studio wide shot of the cast talking (voiceover.studio), full frame.
  */
-export const layoutNames = ['board', 'pip', 'pip-left', 'camera', 'side'] as const;
+export const layoutNames = ['board', 'pip', 'pip-left', 'camera', 'side', 'pair', 'studio'] as const;
 const videoLayout = {
   layout: z.enum(layoutNames).optional(),
   /** Which recorded track the camera layouts show, e.g. "me" (default) or "friend". */
@@ -349,6 +350,8 @@ export const Presentation = z.object({
   title: z.string(),
   /** The people who speak (a podcast); none: just you, as before. */
   cast: z.array(CastMember).optional(),
+  /** The cast together in a studio: the picture the studio wide shots are made from (uploads/), and their sharpness. */
+  studio: z.object({ picture: z.string(), resolution: z.enum(['480p', '720p']).default('480p') }).optional(),
   scenes: z.array(Scene).min(1),
   /**
    * The narration beats are timed to: each beat's `cue` is seconds into the whole timeline.
@@ -363,6 +366,11 @@ export const Presentation = z.object({
     duration: z.number().positive().optional(),
     name: z.string().optional(),
     clips: z.array(Clip).optional(),
+    /**
+     * Studio wide shots: videos of the cast talking together (uploads/), each placed at `offset` seconds on the
+     * timeline for `length` seconds (at most about 9.6 s each), shown where the layout is `studio`.
+     */
+    studio: z.array(z.object({ video: z.string(), offset: z.number().min(0), length: z.number().positive(), scene: z.string().optional() })).optional(),
   }).optional(),
 });
 

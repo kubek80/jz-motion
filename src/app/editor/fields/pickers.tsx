@@ -50,6 +50,8 @@ export const CHOICE_ICONS: Record<string, Record<string, React.ReactNode>> = {
     pip: g(<>{frame}<path d="M6 10L10 6L14 9" /><rect x="18" y="12" width="10" height="6.5" rx="1" fill="currentColor" stroke="none" /></>),
     'pip-left': g(<>{frame}<path d="M18 10L22 6L26 9" /><rect x="4" y="12" width="10" height="6.5" rx="1" fill="currentColor" stroke="none" /></>),
     camera: g(<>{frame}<circle cx="13" cy="10" r="3" /><path d="M7 19C7 15 19 15 19 19" /><rect x="21" y="3.5" width="7.5" height="5" rx="1" strokeWidth="1.2" /></>),
+    pair: g(<>{frame}<path d="M16 2V20" /><circle cx="8.5" cy="9" r="2.4" fill="currentColor" /><path d="M4.5 18C4.5 14.5 12.5 14.5 12.5 18" fill="currentColor" /><circle cx="23.5" cy="9" r="2.4" fill="currentColor" /><path d="M19.5 18C19.5 14.5 27.5 14.5 27.5 18" fill="currentColor" /></>),
+    studio: g(<>{frame}<path d="M4 17H28" opacity="0.6" /><circle cx="10" cy="9" r="2.3" /><path d="M6.5 16C6.5 13 13.5 13 13.5 16" /><circle cx="22" cy="9" r="2.3" /><path d="M18.5 16C18.5 13 25.5 13 25.5 16" /><path d="M15 9V14M17 9V14" opacity="0.7" /></>),
     side: g(<>{frame}<path d="M16 2V20" opacity="0.6" /><circle cx="8.5" cy="9" r="2.4" /><path d="M4.5 18C4.5 14.5 12.5 14.5 12.5 18" /><circle cx="23.5" cy="9" r="2.4" /><path d="M19.5 18C19.5 14.5 27.5 14.5 27.5 18" /></>),
   },
   align: {

@@ -1302,3 +1302,18 @@ Jakub wanted to record a terminal sometimes, from Claude Code on his own compute
 ![The Script page with a cast of two and a speaker on each beat; Timing's prompter naming who speaks now and next, three clips on the lanes](journey/144-podcast-cast.jpg)
 
 **Checked by:** in a browser on a test copy: two people added, one renamed, a beat given to the second; the scene generated as three clips (two voices, each with its speaker) with the cues at each turn; the prompter naming both; asking for an avatar that doesn't exist refused; compile tests for the speaker rules; typecheck, tests, build. The test copy, its clips and the test avatar deleted after.
+
+## Step 105: A podcast on screen: two of you side by side, and the studio wide shot (part 2)
+
+**Asked:** one or two avatars on screen, or the two of them together in a YouTube studio, chosen per beat; a paid test of the studio shot first (he chose 480p, and one of his own avatars as the second person for now).
+
+- **The test:** the image model drew his two avatars together at a podcast desk in the cartoon style (14¢); fal.ai's multi-person avatar model animated it from two voice tracks, each person's lines on their own track (about $1.60 for 6.4 s at 480p). Each talked on their own line, the listener stayed still and both turned to each other: he liked it. Learned on the way: the model wants files as links (it refuses them sent inline), takes at most 241 frames at 25 a second (about 9.6 s) and makes its video 2:1.
+- **`pair`**: the first two in the cast side by side, full frame, each their own avatar video; whoever is listening holds still (their last frame, or their first before they speak). The avatar plan has a second slot for the second person, and the drawing layer two videos.
+- **`studio`**: the wide shot, full frame, from `voiceover.studio`: shots placed on the timeline (at most 9.6 s each, a longer stretch is several); until one is made, whoever is talking shows instead. They move with their scene, are left out with it, and saying a scene again drops its shots.
+- **Making them** (Timing → click an avatar block → Studio wide shot, with a cast of two): draw the studio picture once (`studio.picture`, 2:1, drawn from the first two avatars), choose 480p or 720p, then **Make the shot**: the scene's studio stretches, cut into shots, each person's voice pieces from the clips, with the price before you press it. Shots are followed in the background and land on the timeline when ready.
+- Both layouts are in the avatar drawer, the editor's layout picker and `avatar` actions; with recorded cameras `pair` is two side by side and `studio` full frame.
+- **Fixed while building it:** Timing's clip edits replaced the whole voice-over, which would have dropped the studio shots; they are kept now. Timing.tsx's avatar results moved to `useAvatarResults.ts` (the file is shorter than before part 1).
+
+![Timing's board: the two of them side by side (each speaking in turn), the studio wide shot, back to the board with the speaker in the corner; the avatar drawer's Studio wide shot section](journey/145-podcast-pair-studio.jpg)
+
+**Checked by:** a test copy with a cast of two and the test's real studio shot: Timing's board at four moments (who plays, who holds, where); a take exported to MP4 and looked at second by second (pair, studio, the glide back to the corner, sound); tests for the pair and studio frames, finding and cutting studio stretches, each person's pieces and the price; typecheck, tests, build. The test copy, its files and the test avatar deleted after.

@@ -3,18 +3,26 @@ import type { Clip } from '../../engine/schema';
 import type { RawDoc } from '../editor/doc';
 import { AvatarVideo } from '../AvatarVideo';
 import { startAvatar, useAvatarJobs } from './avatarJobs';
+import { StudioSection } from './StudioSection';
+import type { CompiledPresentation } from '../../engine/compile';
+import type { Performance } from '../../video/performance';
 
 // Your avatar for one clip, without leaving Timing (click its block in the video lane): the video, and where it shows
 // in the video, for the clip's scene: not at all (the board alone), in a bottom corner, beside the board, or full
 // frame with the board small. Make it (again), or open the clip's window.
 
-export type Placement = 'board' | 'pip' | 'pip-left' | 'side' | 'camera';
+export type Placement = 'board' | 'pip' | 'pip-left' | 'side' | 'camera' | 'pair' | 'studio';
 const PLACES: { value: Placement; label: string; hint: string }[] = [
   { value: 'board', label: 'Hidden', hint: 'The board alone' },
   { value: 'pip', label: 'Corner, right', hint: 'Bottom-right, over the board' },
   { value: 'pip-left', label: 'Corner, left', hint: 'Bottom-left, over the board' },
   { value: 'side', label: 'Side by side', hint: 'You on the left half, the board on the right' },
   { value: 'camera', label: 'Full frame', hint: 'You fill the frame, the board small in the top right' },
+];
+// A podcast's (two or more in the cast): the first two side by side; the studio wide shot of everyone.
+const CAST_PLACES: typeof PLACES = [
+  { value: 'pair', label: 'Two of you', hint: 'The first two in the cast side by side, each their own avatar (the one listening holds still)' },
+  { value: 'studio', label: 'Studio', hint: 'The wide shot: the cast together in the studio, talking in turn (make it in the Studio section)' },
 ];
 
 interface Props {
@@ -26,9 +34,11 @@ interface Props {
   onPlace: (scene: number, layout: Placement, beatsToo: boolean) => void;
   onOpenClip: () => void;
   onClose: () => void;
+  /** For the studio wide shot (a podcast). */
+  studio: { clips: Clip[]; presentation: CompiledPresentation; perf: Performance; onStudio: (s: NonNullable<RawDoc['studio']>) => void };
 }
 
-export function AvatarDrawer({ doc, clip, scene, onPlace, onOpenClip, onClose }: Props) {
+export function AvatarDrawer({ doc, clip, scene, onPlace, onOpenClip, onClose, studio }: Props) {
   const job = useAvatarJobs()[clip.id];
   useEffect(() => {
     const esc = (e: KeyboardEvent) => {
@@ -64,7 +74,7 @@ export function AvatarDrawer({ doc, clip, scene, onPlace, onOpenClip, onClose }:
         </div>
         <h4>Where it shows in the video</h4>
         <div className="placements" role="radiogroup">
-          {PLACES.map((p) => (
+          {[...PLACES, ...((doc.cast?.length ?? 0) > 1 ? CAST_PLACES : [])].map((p) => (
             <button key={p.value} role="radio" aria-checked={current === p.value} className={`placement ${current === p.value ? 'on' : ''}`} onClick={() => onPlace(scene, p.value, false)} title={p.hint}>
               <span className={`mini mini-${p.value}`}><i className="b" /><i className="a" /></span>
               {p.label}
@@ -78,6 +88,7 @@ export function AvatarDrawer({ doc, clip, scene, onPlace, onOpenClip, onClose }:
             <button className="small" onClick={() => onPlace(scene, current, true)}>Make {ownBeats.length === 1 ? 'it' : 'them'} follow the scene</button>
           </p>
         )}
+        {(doc.cast?.length ?? 0) > 1 && <StudioSection doc={doc} scene={scene} {...studio} />}
       </div>
     </aside>
   );

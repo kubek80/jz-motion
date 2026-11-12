@@ -1,37 +1,44 @@
 // Where your avatar and the board are in the video frame at any moment, and which frame of which avatar video shows:
 // the layout of the scene, its beats and its "avatar" actions decides the target; a change glides there (a corner
 // growing to full frame, …). An avatar video that ends before its scene does holds its last frame to the end of the
-// scene, unless it is about to be hidden: then it fades out over its last moving frames; one that starts after its scene does shows its first frame until then. Pure: the export's render page and
+// scene, unless it is about to be hidden: then it fades out over its last moving frames; one that starts after its scene does shows its first frame until then.
+// A podcast: `pair` shows the first two in the cast side by side (each their own clips' avatar; the one listening holds
+// a frame), `studio` the studio wide shot (voiceover.studio) full frame. Pure: the export's render page and
 // Timing's board both draw from it, so what Timing shows is what the video shows.
 import type { CompiledPresentation } from '../engine/compile';
 import { stateAt, type Performance } from './performance';
 
 /** A rectangle as fractions of the 16:9 frame. */
 export interface Rect { x: number; y: number; w: number; h: number }
-type Place = 'board' | 'pip' | 'pip-left' | 'camera' | 'side';
+type Place = 'board' | 'pip' | 'pip-left' | 'camera' | 'side' | 'pair' | 'studio';
 
 const FULL: Rect = { x: 0, y: 0, w: 1, h: 1 };
 // The same sizes the export always used: margins 2.5 % of the width, a corner 26 % wide, the board small 36 %.
 const MX = 0.025, MY = 0.025 * 16 / 9;
 const PIP = 0.26, SMALL = 0.36;
-const PLACES: Record<Place, { avatar: Rect | null; board: Rect; avatarOnTop: boolean }> = {
+const LEFT: Rect = { x: 0, y: 0, w: 0.5, h: 1 };
+const PLACES: Record<Place, { avatar: Rect | null; second?: Rect; board: Rect; avatarOnTop: boolean }> = {
   board: { avatar: null, board: FULL, avatarOnTop: true },
   pip: { avatar: { x: 1 - MX - PIP, y: 1 - MY - PIP, w: PIP, h: PIP }, board: FULL, avatarOnTop: true },
   'pip-left': { avatar: { x: MX, y: 1 - MY - PIP, w: PIP, h: PIP }, board: FULL, avatarOnTop: true },
   camera: { avatar: FULL, board: { x: 1 - MX - SMALL, y: MY, w: SMALL, h: SMALL }, avatarOnTop: false },
-  side: { avatar: { x: 0, y: 0, w: 0.5, h: 1 }, board: { x: 0.5, y: 0.25, w: 0.5, h: 0.5 }, avatarOnTop: true },
+  side: { avatar: LEFT, board: { x: 0.5, y: 0.25, w: 0.5, h: 0.5 }, avatarOnTop: true },
+  pair: { avatar: LEFT, second: { x: 0.5, y: 0, w: 0.5, h: 1 }, board: FULL, avatarOnTop: true },
+  studio: { avatar: FULL, board: FULL, avatarOnTop: true },
 };
 const GLIDE = 0.8;
 
-interface RawScene { id: string; layout?: string; beats?: { layout?: string; actions?: { do: string; layout?: string; duration?: number }[] }[] }
-interface RawClip { scene?: string; offset: number; trimStart: number; avatar?: { video: string; trimStart: number; trimEnd: number } }
-export interface AvatarSource { scenes: RawScene[]; voiceover?: { clips?: RawClip[] } }
+interface RawScene { id: string; skip?: boolean; layout?: string; beats?: { layout?: string; actions?: { do: string; layout?: string; duration?: number }[] }[] }
+interface RawClip { scene?: string; speaker?: string; offset: number; trimStart: number; avatar?: { video: string; trimStart: number; trimEnd: number } }
+interface RawStudio { video: string; offset: number; length: number; scene?: string }
+export interface AvatarSource { scenes: RawScene[]; cast?: { id: string }[]; voiceover?: { clips?: RawClip[]; studio?: RawStudio[] } }
 
-interface Span { video: string; at: number; length: number; scene?: string }
+/** A stretch of the timeline an avatar video covers: one person's (`speaker`), or a studio wide shot of everyone. */
+interface Span { video: string; at: number; length: number; scene?: string; speaker?: string; studio?: boolean }
 interface Change { t: number; from: Place; to: Place; dur: number }
-export interface AvatarPlan { spans: Span[]; changes: Change[]; first: Place; perf: Performance; sceneIds: string[] }
+export interface AvatarPlan { spans: Span[]; changes: Change[]; first: Place; perf: Performance; sceneIds: string[]; cast: string[] }
 
-const isPlace = (l: unknown): l is Place => l === 'board' || l === 'pip' || l === 'pip-left' || l === 'camera' || l === 'side';
+const isPlace = (l: unknown): l is Place => typeof l === 'string' && Object.hasOwn(PLACES, l);
 
 /** The layout at scene time `time`, and how long a change to it glides (an "avatar" action's own duration). */
 function placeAt(p: CompiledPresentation, raw: RawScene[], scene: number, time: number): { place: Place; dur: number } {
@@ -55,11 +62,15 @@ function placeAt(p: CompiledPresentation, raw: RawScene[], scene: number, time: 
 export function planAvatar(p: CompiledPresentation, source: AvatarSource, perf: Performance): AvatarPlan {
   const spans: Span[] = [];
   const seen = new Set<string>();
+  const cast = (source.cast ?? []).map((c) => c.id);
   for (const c of source.voiceover?.clips ?? []) {
     if (!c.avatar || seen.has(c.avatar.video)) continue;
     seen.add(c.avatar.video);
-    spans.push({ video: c.avatar.video, at: c.offset - (c.trimStart - c.avatar.trimStart), length: c.avatar.trimEnd - c.avatar.trimStart, scene: c.scene });
+    spans.push({ video: c.avatar.video, at: c.offset - (c.trimStart - c.avatar.trimStart), length: c.avatar.trimEnd - c.avatar.trimStart, scene: c.scene, speaker: c.speaker ?? cast[0] });
   }
+  // Studio shots of scenes left out don't show.
+  const out = new Set(source.scenes.filter((s) => s.skip).map((s) => s.id));
+  for (const s of (source.voiceover?.studio ?? []).filter((x) => !x.scene || !out.has(x.scene))) spans.push({ video: s.video, at: s.offset, length: s.length, scene: s.scene, studio: true });
   spans.sort((a, b) => a.at - b.at);
   const changes: Change[] = [];
   let last: Place | null = null;
@@ -77,26 +88,46 @@ export function planAvatar(p: CompiledPresentation, source: AvatarSource, perf: 
   let prevEnd = 0;
   for (const c of changes) {
     const hides = !!PLACES[c.from].avatar && !PLACES[c.to].avatar;
-    const speaking = spans.some((s) => s.at < c.t - 1e-6 && s.at + s.length > c.t + 1e-6);
-    const ended = [...spans].reverse().find((s) => s.at + s.length <= c.t + 1e-6);
+    const speaking = spans.some((s) => !s.studio && s.at < c.t - 1e-6 && s.at + s.length > c.t + 1e-6);
+    const ended = [...spans].reverse().find((s) => !s.studio && s.at + s.length <= c.t + 1e-6);
     const end = ended ? ended.at + ended.length : -1;
     if (hides && !speaking && ended && end > prevEnd + 1e-6) c.t = Math.min(c.t, Math.max(prevEnd, ended.at, end - c.dur));
     prevEnd = c.t + c.dur;
   }
-  return { spans, changes, first, perf, sceneIds: source.scenes.map((s) => s.id) };
+  return { spans, changes, first, perf, sceneIds: source.scenes.map((s) => s.id), cast };
 }
 
 const ease = (k: number) => (k < 0.5 ? 2 * k * k : 1 - (-2 * k + 2) ** 2 / 2);
 const mix = (a: Rect, b: Rect, k: number): Rect => ({ x: a.x + (b.x - a.x) * k, y: a.y + (b.y - a.y) * k, w: a.w + (b.w - a.w) * k, h: a.h + (b.h - a.h) * k });
 
+type Shown = { file: string; time: number; still?: boolean };
+
 export interface AvatarFrame {
   /** The avatar video and the second of it to show, or null when nothing shows; `still`: a held frame (its last before
    * the scene ends, or its first before it starts), so a player shows that frame instead of playing on. */
-  video: { file: string; time: number; still?: boolean } | null;
+  video: Shown | null;
   avatar: Rect;
   opacity: number;
   board: Rect;
   avatarOnTop: boolean;
+  /** The second person, in `pair` (the right half): their video, where, how visible. */
+  second?: { video: Shown; rect: Rect; opacity: number };
+}
+
+/** Of `spans`, the picture at `t`: the one saying this moment; else, in the same scene, the last frame of one that
+ * ended or the first frame of one still to come; else the last one shown (fading out), else the next. */
+function pick(spans: Span[], t: number, scene: string | undefined): Shown | null {
+  if (!spans.length) return null;
+  const now = spans.find((s) => t >= s.at && t < s.at + s.length);
+  const before = [...spans].reverse().find((s) => s.at + s.length <= t);
+  const after = spans.find((s) => s.at > t);
+  const end = (s: Span): Shown => ({ file: s.video, time: Math.max(0, s.length - 0.05), still: true });
+  if (now) return { file: now.video, time: t - now.at };
+  if (before && before.scene === scene) return end(before);
+  if (after && after.scene === scene) return { file: after.video, time: 0, still: true };
+  if (before) return end(before);
+  if (after) return { file: after.video, time: 0, still: true };
+  return null;
 }
 
 /** The frame at `t` seconds into the video. */
@@ -116,19 +147,23 @@ export function avatarFrame(plan: AvatarPlan, t: number): AvatarFrame {
   const board = mix(a.board, b.board, e);
   const avatarOnTop = e < 0.5 ? a.avatarOnTop : b.avatarOnTop;
 
-  // Which picture: the avatar saying this moment; else, in the same scene, the last frame of one that ended or the
-  // first frame of one still to come; else (fading out) the last one shown.
-  let video: AvatarFrame['video'] = null;
-  if (opacity > 0.001 && plan.spans.length) {
-    const scene = plan.sceneIds[stateAt(plan.perf, t).scene];
-    const now = plan.spans.find((s) => t >= s.at && t < s.at + s.length);
-    const before = [...plan.spans].reverse().find((s) => s.at + s.length <= t);
-    const after = plan.spans.find((s) => s.at > t);
-    if (now) video = { file: now.video, time: t - now.at };
-    else if (before && before.scene === scene) video = { file: before.video, time: Math.max(0, before.length - 0.05), still: true };
-    else if (after && after.scene === scene) video = { file: after.video, time: 0, still: true };
-    else if (before) video = { file: before.video, time: Math.max(0, before.length - 0.05), still: true };
-    else if (after) video = { file: after.video, time: 0, still: true };
+  // Which picture: the studio shot in `studio` (anyone talking, until one is made), the first in the cast in `pair`,
+  // else whoever is talking. The place nearer in the glide decides.
+  const place = e < 0.5 ? from : to;
+  const scene = plan.sceneIds[stateAt(plan.perf, t).scene];
+  const people = plan.spans.filter((s) => !s.studio);
+  const whose = (id: string | undefined) => people.filter((s) => s.speaker === id);
+  let video: Shown | null = null;
+  if (opacity > 0.001) {
+    const studio = plan.spans.filter((s) => s.studio);
+    video = place === 'studio' && studio.length ? pick(studio, t, scene) : place === 'pair' && plan.cast.length > 1 ? pick(whose(plan.cast[0]), t, scene) : pick(people, t, scene);
   }
-  return { video, avatar, opacity: video ? opacity : 0, board, avatarOnTop };
+  const frame: AvatarFrame = { video, avatar, opacity: video ? opacity : 0, board, avatarOnTop };
+  // The second person (pair): fades in and out with the layout.
+  const secondOpacity = (a.second ? 1 : 0) + ((b.second ? 1 : 0) - (a.second ? 1 : 0)) * e;
+  if (secondOpacity > 0.001 && plan.cast.length > 1) {
+    const v = pick(whose(plan.cast[1]), t, scene);
+    if (v) frame.second = { video: v, rect: mix(a.second ?? b.second!, b.second ?? a.second!, e), opacity: secondOpacity };
+  }
+  return frame;
 }

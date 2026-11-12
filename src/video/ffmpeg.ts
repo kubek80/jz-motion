@@ -37,13 +37,15 @@ const BG = '0x0d1114';
 const FRAME_COLOR = '0x3ef0ff';
 const even = (n: number) => Math.round(n / 2) * 2;
 
-type Placement = { layout: Exclude<LayoutName, 'side'> | 'side'; track: string; second?: string };
+type Placement = { layout: Exclude<LayoutName, 'pair' | 'studio'>; track: string; second?: string };
 
 /** A segment's layout made concrete for the tracks that exist (no camera → board). */
 export function resolveLayout(seg: { layout: LayoutName; track: string }, videoTracks: string[]): Placement {
   if (seg.layout === 'board' || !videoTracks.length) return { layout: 'board', track: '' };
   const main = videoTracks.includes(seg.track) ? seg.track : videoTracks[0];
-  if (seg.layout === 'side') {
+  // A podcast's layouts with recorded cameras: two people side by side; the wide shot, the camera full frame.
+  if (seg.layout === 'studio') return { layout: 'camera', track: main };
+  if (seg.layout === 'side' || seg.layout === 'pair') {
     const other = videoTracks.find((t) => t !== main);
     // One camera (your avatar): it on the left half, the board on the right.
     return other ? { layout: 'side', track: main, second: other } : { layout: 'side', track: main };

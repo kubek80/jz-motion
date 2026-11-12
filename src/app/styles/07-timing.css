@@ -317,6 +317,10 @@
 .mini-side .b { inset: 25% 0 25% 50%; }
 .mini-camera .a { inset: 0; }
 .mini-camera .b { inset: 6% 6% auto auto; width: 38%; height: 38%; z-index: 1; outline: 1px solid #67e8f9; }
+.mini-pair .a { left: 0; top: 0; width: 50%; height: 100%; }
+.mini-pair .b { left: 50%; top: 0; width: 50%; height: 100%; background: #f2cc60; }
+.mini-studio .a { inset: 0; background: linear-gradient(90deg, #3dff8b 0 40%, #1c2a33 40% 60%, #f2cc60 60%); }
+.mini-studio .b { display: none; }
 .avatar-lane .lane-empty { position: absolute; left: 26px; top: 9px; font-size: 11px; }
 
 .timing-board .avatar-problem-note { position: absolute; right: 2.5%; bottom: 4.4%; width: 26%; aspect-ratio: 16 / 9; z-index: 3; font-size: 13px; }
@@ -345,3 +349,10 @@
 @media (max-width: 900px) { .my-avatar.embedded { grid-template-columns: minmax(0, 1fr); } }
 .timing-controls .gen-scene { white-space: nowrap; }
 .prompter-speaker { margin-left: 8px; font-size: 13px; }
+
+/* The studio wide shot (a podcast), in the avatar drawer. */
+.studio-section { display: flex; flex-direction: column; gap: 8px; border-top: 1px solid var(--line); padding-top: 10px; }
+.studio-section .studio-picture { width: 100%; aspect-ratio: 2 / 1; object-fit: cover; border-radius: 6px; border: 1px solid var(--line); }
+.studio-section .studio-shots { margin: 0; padding-left: 18px; font-size: 12px; display: flex; flex-direction: column; gap: 3px; }
+.studio-section .ok { color: #7ee787; }
+.studio-section .busy { color: #f2cc60; }
