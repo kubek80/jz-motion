@@ -14,6 +14,7 @@ Skills in `.claude/skills/` cover the work you'll be asked for. Use them:
 | `voiceover-and-video` | Narration, timing, takes, MP4 export |
 | `demo-interactions` | Explainers about an app or UI: real screenshots and screen recordings (WebM video), camera zooms, pinned explanations |
 | `external-clipart` | Import SVG illustrations from external libraries (UnDraw today), restyled to our palette, as scene `image` elements |
+| `terminal-recording` | Film a terminal session (commands run for real, or an asciinema recording of Claude Code or any interactive program) as a screen recording for a scene |
 
 The rules every generator follows (the app's own models too) are in `docs/style.md`, `docs/format.md` and `docs/library.md`. Four commands keep you honest:
 
@@ -22,6 +23,7 @@ npm run check -- presentations/<id>.json          # valid? (also library/<name>.
 npm run snapshot -- presentations/<id>.json       # PNGs of each scene in snapshots/<id>/ — look at them
 npm run snap -- <url> <name>                      # scripts/snap.mjs: screenshot a web page into the media library (WebP); prints its /media/… src
 npm run record -- <url> <name> <scenario.mjs>     # scripts/record.mjs: record a scripted interaction into the media library (WebM video)
+npm run terminal -- <steps.json|session.cast> <name>  # scripts/terminal.mjs: film a terminal session (commands typed and run, or an asciinema recording) into the media library
 npm run media -- import <file…>                   # add any picture, recording or sound to the media library (converted); prints its /media/… src
 npm run media -- frames <file>                    # a recording's frames (its distinct pictures), for play's goto / until
 npm run assets                                    # what's in media/, images/ and uploads/, how big, and which presentations use it

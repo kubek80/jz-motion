@@ -1,0 +1,26 @@
+{
+  "title": "jz-motion",
+  "cwd": ".",
+  "cols": 92,
+  "rows": 22,
+  "steps": [
+    "# Is the presentation valid?",
+    "npm run check -- presentations/9df1df97.json",
+    {
+      "pause": 1
+    },
+    "# The last few changes",
+    "git log --oneline --color=always -5",
+    {
+      "pause": 0.6
+    },
+    {
+      "type": "git status --short",
+      "run": false,
+      "output": " M presentations/9df1df97.json\n?? uploads/generated-why-mw9b50ie.webm"
+    },
+    {
+      "pause": 1.2
+    }
+  ]
+}

@@ -1270,3 +1270,19 @@ Jakub wanted a refresh to bring him back where he was: in Timing if he was in Ti
 ![After a reload: the Script over Timing, at the line it was opened at](journey/142-reload-keeps-place.jpg)
 
 **Checked by:** Playwright, each with a real reload: scene 5 and the Video tab came back; Timing at 1:05.9 came back at 1:05.9; the Script over Timing came back at "The reference"; closing both left `#/p/9df1df97?scene=5&tab=video`; a `/settings` address opened Settings; tests for reading and writing the address; typecheck, tests, build.
+
+## Step 103: Recording a terminal
+
+Jakub wanted to record a terminal sometimes, from Claude Code on his own computer too, with a skill for it.
+
+- **`npm run terminal -- <steps.json|session.cast> <name>`** (`scripts/terminal.mjs`) films a terminal session into the media library as a WebM recording, sharp for camera zooms (filmed at 2×), and prints its src and the height for a given width.
+  - **From steps** (`scripts/terminalSession.mjs`): each command is typed at a natural pace at a prompt and run for real in a pseudo-terminal (the system's `script`, on macOS and Linux) in his shell, so colours and progress bars come out as in his terminal; long waits in the output are shortened (1.5 s by default); `# comments` are typed in grey; a step can show set output instead of running (a push, a deploy). The session is kept as an asciinema `.cast` in `scratch/captures/`, to draw again at another size without running anything.
+  - **From an asciinema recording**: for interactive programs (Claude Code itself, a REPL), recorded by hand with `asciinema rec`.
+  - Drawn by xterm.js (the terminal VS Code uses) in JetBrains Mono, with a dark theme, the same on every computer; best in a scene in the new `window` frame.
+- The filming moved to `scripts/screencast.mjs`, shared with `npm run record`.
+- **A skill, `terminal-recording`** (Claude Code on his computer, and the app's AI): the two ways, the steps, sizes for the board, playing it in step with the narration, and checks (nothing secret on screen).
+- **Fixed while building it:** the cursor showed as a faint outline (the terminal wasn't focused); now the solid block.
+
+![A terminal recording in a scene, in the window frame, paused while a command is typed](journey/143-terminal-recording.jpg)
+
+**Checked by:** the example steps recorded here (real `npm run check` and coloured `git log` output, typed comments, a set output), frames looked at; the kept `.cast` drawn again at 80 columns and 24 px; the recording in a scene in the window frame (snapshot); `npm run record` still recording after the move; typecheck, tests, build.
