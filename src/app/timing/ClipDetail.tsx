@@ -132,7 +132,7 @@ export function ClipDetail(p: Props) {
       const made = { ...r.clips[others.length], name: `generated voice · ${(c.name ?? 'clip').replace(/^(generated voice|re-recorded) · /, '')}` };
       p.setTimeline(r.clips.map((x, i) => (i === others.length ? made : x)), r.cues);
       // An avatar saying the old words is made again for the new ones (the new clip's window picks it up).
-      if (c.avatar) await startAvatar(made.id, { upload: g.upload, trimStart: 0, trimEnd: g.duration, name: c.scene ?? c.name }).catch((e) => setError(`Avatar: ${(e as Error).message}`));
+      if (c.avatar) await startAvatar(made.id, { upload: g.upload, trimStart: 0, trimEnd: g.duration, name: c.scene ?? c.name, speaker: c.speaker }).catch((e) => setError(`Avatar: ${(e as Error).message}`));
       p.onReplaced(made.id);
     } catch (e) {
       setError((e as Error).message);

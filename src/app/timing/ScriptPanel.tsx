@@ -6,6 +6,7 @@ import { ScriptLine } from './ScriptLine';
 import type { NotesEditing } from './useNotesEditing';
 import type { NowPlaying } from './useNowPlaying';
 
+import { speakerColor, type CastMember } from '../ScriptCast';
 interface Props {
   width: number;
   recording: boolean;
@@ -15,9 +16,17 @@ interface Props {
   notes: NotesEditing;
   /** Which lane's voice is heard now (or is being recorded), for the Now card. */
   voiceNow?: { text: string; lane: number | null; live: boolean };
+  /** A podcast's cast: whose line it is shows by the beat. */
+  cast?: CastMember[];
 }
 
-export function ScriptPanel({ width, recording, recPaused, time, np, notes, voiceNow }: Props) {
+export function ScriptPanel({ width, recording, recPaused, time, np, notes, voiceNow, cast }: Props) {
+  /** Who says a beat (a podcast), as a coloured name. */
+  const who = (c: { scene: number; beat: number } | undefined) => {
+    const id = c ? np.beatOf(c as never)?.speaker : undefined;
+    const m = cast?.find((x) => x.id === id);
+    return m ? <b className="prompter-speaker" style={{ color: speakerColor(cast, id) }}>{m.name}</b> : null;
+  };
   const { current, next, prev, prevLines, beatOf, sceneTitle, nowLines, nextLines, budget, anyClip, beatElapsed, playDur, activeLine, getBeatElapsed } = np;
   const { editingThis, startEditing, saveEditing, setEditingBeat, draftNotes, setDraftNotes } = notes;
   return (
@@ -47,7 +56,7 @@ export function ScriptPanel({ width, recording, recPaused, time, np, notes, voic
       )}
       <div className="now">
         <div className="now-head">
-          <span className="muted">Now · {sceneTitle(current)}</span>
+          <span className="muted">Now · {sceneTitle(current)}</span>{who(current)}
           {voiceNow && <span className={['voice-now', voiceNow.lane !== null ? `lane-${voiceNow.lane}` : '', voiceNow.live ? 'live' : ''].join(' ')} title="Which lane's voice is heard here">{voiceNow.text}</span>}
           {budget > 0 && !editingThis(current) && (
             <span className={['beat-budget', beatElapsed > budget + 0.2 ? 'over' : '', anyClip ? '' : 'estimated'].join(' ')} title={anyClip ? 'Seconds into this beat vs. the total length of its generated voice clips' : 'Seconds into this beat vs. an estimate from word count at ~150 wpm (generate voice for the real pace)'}>
@@ -92,7 +101,7 @@ export function ScriptPanel({ width, recording, recPaused, time, np, notes, voic
       {next && (
         <div className="next">
           <div className="now-head">
-            <span className="muted">Next at {fmt(next.t)} · {sceneTitle(next)}</span>
+            <span className="muted">Next at {fmt(next.t)} · {sceneTitle(next)}</span>{who(next)}
             {!editingThis(next) && <button className="small edit-notes" onClick={() => startEditing(next.scene, next.beat, beatOf(next)?.notes)} title="Edit this beat's speaker notes">✎ Edit</button>}
           </div>
           <b>{beatOf(next)?.title ?? `Beat ${next.beat + 1}`}</b>

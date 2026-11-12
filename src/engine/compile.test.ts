@@ -374,3 +374,19 @@ describe('box shapes', () => {
     expect(compile(deck({ elements: [{ id: 'x', type: 'box', shape: 'star', x: 0, y: 0, width: 1, height: 1 }] })).ok).toBe(false);
   });
 });
+
+describe('cast', () => {
+  const cast = [{ id: 'jakub', name: 'Jakub', avatar: 'a1' }, { id: 'anna', name: 'Anna', avatar: 'a2' }];
+  const beats = [{ actions: [] }, { speaker: 'anna', actions: [] }];
+  it('gives each beat its own speaker, else the scene’s, else the first in the cast', () => {
+    const p = ok({ version: 1, title: 't', cast, scenes: [{ id: 's', elements: [], beats }, { id: 'u', speaker: 'anna', elements: [], beats: [{ actions: [] }] }] });
+    expect(p.scenes.map((s) => s.beats.map((b) => b.speaker))).toEqual([['jakub', 'anna'], ['anna']]);
+  });
+  it('without a cast, beats have no speaker', () => {
+    expect(ok(deck({ elements: [], beats: [{ actions: [] }] })).scenes[0].beats[0].speaker).toBeUndefined();
+  });
+  it('rejects a speaker who is not in the cast', () => {
+    const r = compile({ version: 1, title: 't', cast, scenes: [{ id: 's', elements: [], beats: [{ speaker: 'marek', actions: [] }] }] });
+    expect(r.ok ? '' : r.errors.join()).toMatch(/"marek" is not in the cast/);
+  });
+});
