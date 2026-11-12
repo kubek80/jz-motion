@@ -62,7 +62,7 @@ export function shapeBox(el: Element, lookup: (id: string) => Element | undefine
  * centered on (x, y); the picture is `width` × `height` and the bar sits on top of it.
  */
 export function imageFrame(el: { x: number; y: number; width: number; height: number; frame?: string }) {
-  const bar = el.frame === 'browser' ? Math.min(90, Math.max(34, el.width * 0.055)) : 0;
+  const bar = el.frame === 'browser' ? Math.min(90, Math.max(34, el.width * 0.055)) : el.frame === 'window' ? Math.min(64, Math.max(28, el.width * 0.04)) : 0;
   const top = el.y - (el.height + bar) / 2;
   return { bar, top, imageTop: top + bar };
 }

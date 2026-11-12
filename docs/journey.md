@@ -1245,3 +1245,16 @@ Jakub saw that where the avatar fades out in the export, it first holds its last
 ![The first scene's end exported: the avatar fades while it still talks and is gone as its video ends](journey/140-avatar-fades-while-moving.jpg)
 
 **Checked by:** tests (fades over its last moving frames when hidden next; still held when the next scene shows it again); every avatar change in the presentation listed before and after; scenes 1–2 exported and the frames around the avatar's end looked at; typecheck, tests, build.
+
+## Step 101: A neutral window around screenshots and recordings
+
+Jakub wanted, for some explainers, a more neutral frame around screen recordings, in the Apple style (a black bar, a shadow behind the window), and to choose between it and the marker browser.
+
+- A picture's **frame** has a third choice, `window`: a solid dark title bar with the red, yellow and green buttons and the address in a quiet grey field, rounded corners all round (a recording plays inside them), a hairline edge and a soft blurred shadow under it. It doesn't take the element's colour. The bar is a little slimmer than the marker browser's.
+- It is revealed with its picture: the bar, the picture and the shadow wipe in together from the left (the bar and picture share one rounded clip; the shadow has a clip of its own that grows with the wipe).
+- In the editor, the frame picker shows none, browser and window; a new picture gets the frame chosen last. `docs/format.md`, `docs/style.md` and the demo-interactions skill tell the models when to use which (one of them per presentation).
+- **Bug found while building it:** the shadow, faded in with the picture, showed as a dark box ahead of the wipe; it now grows with it.
+
+![Marker browser and neutral window side by side; a recording in a window; the frame picker](journey/141-window-frame.jpg)
+
+**Checked by:** snapshots of a test scene (both frames side by side, a recording in a window); a short export of it, frames looked at during the reveal; Playwright: the picker offers none, browser and window, and switching writes the file; typecheck, tests, build.

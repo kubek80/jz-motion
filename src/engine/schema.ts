@@ -141,9 +141,12 @@ export const ImageElement = z.object({
   /** Size of the picture itself; the browser frame adds a bar above it. */
   width: z.number().positive(),
   height: z.number().positive(),
-  /** "browser": a browser window outline drawn around it, in the element's colour. */
-  frame: z.enum(['none', 'browser']).default('none'),
-  /** Text in the browser frame's address bar. */
+  /**
+   * "browser": a browser window outline drawn around it in marker, in the element's colour. "window": a neutral,
+   * solid window (a dark title bar with the three coloured buttons, rounded corners, a soft shadow), as on a Mac.
+   */
+  frame: z.enum(['none', 'browser', 'window']).default('none'),
+  /** Text in the frame's address bar. */
   url: z.string().optional(),
   /** Animated pictures and videos (APNG, GIF, animated WebP, WebM, MP4): start again at the end instead of stopping on the last frame. */
   loop: z.boolean().default(false),

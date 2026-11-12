@@ -68,9 +68,9 @@ export function imageFrom(data: DataTransfer | null): File | null {
 
 const FRAME_KEY = 'jzm.imageFrame';
 /** The frame chosen last time, used for the next picture. */
-export function lastFrame(): 'none' | 'browser' {
-  try { return localStorage.getItem(FRAME_KEY) === 'browser' ? 'browser' : 'none'; } catch { return 'none'; }
+export function lastFrame(): 'none' | 'browser' | 'window' {
+  try { const f = localStorage.getItem(FRAME_KEY); return f === 'browser' || f === 'window' ? f : 'none'; } catch { return 'none'; }
 }
 export function rememberFrame(frame: unknown) {
-  try { localStorage.setItem(FRAME_KEY, frame === 'browser' ? 'browser' : 'none'); } catch { /* no storage */ }
+  try { localStorage.setItem(FRAME_KEY, frame === 'browser' || frame === 'window' ? frame : 'none'); } catch { /* no storage */ }
 }

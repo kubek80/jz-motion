@@ -27,7 +27,7 @@ Read `docs/style.md` first (the big table of "which action, when" — the row fo
 ```
 
 - `src` must be a file in the media library (`/media/<file>`): see what is there in `media/index.json` (each entry has a `name`, a `kind` — picture or recording — and its `src`). New ones come in converted: the user pastes, drops or records them in the app, or you run `npm run snap` / `npm run record` / `npm run media -- import <file>`, which print the `src`. Never invent paths, and never copy files into `images/` (that folder is from before the media library).
-- `"frame": "browser"` makes it look like a window of your app, with the URL in the address bar — so the viewer knows what app this is.
+- `"frame": "browser"` makes it look like a window of your app, with the URL in the address bar — so the viewer knows what app this is. It is drawn in marker, in the element's colour. `"frame": "window"` is the neutral alternative: a solid dark title bar with the three coloured buttons, rounded corners and a soft shadow, as on a Mac; choose it when the person wants the app to look as it really is. Use the same one for every screenshot and recording in a presentation.
 - `color` is the frame colour; use the scene's accent.
 
 ### 2. A camera zoom into the detail
