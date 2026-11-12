@@ -61,6 +61,8 @@ A presentation can have a **cast** (docs/format.md, Cast): you and your guests, 
 - **Make my avatar** and `npm run avatar -- make` make each clip's talking head with its speaker's avatar.
 - The prompter in Timing names who says the current and the next line.
 - An avatar in the cast needs a voice (🧑 Avatar → its voice); generating says which one has none.
+- **On screen**, per scene or beat (`layout`, or an `avatar` action): `pip` (the board, whoever is talking in a corner), `pair` (the first two in the cast side by side, full frame; the one listening holds still), `studio` (the wide shot of them together, talking in turn). Cut between them as a podcast would: mostly the board or the two of you, the studio as a short cut-away (an intro, a reaction, a change of topic).
+- **The studio wide shot**: in Timing, click an avatar block in a studio scene → **Studio wide shot**: **Draw the studio picture** once (the first two in the cast together, drawn from their avatars, about 14¢), choose its sharpness (480p, or 720p at twice the price), then **Make the shot** for the scene: where it shows the studio, in pieces of at most 9.6 s, each person saying their own lines (fal.ai: about 20¢ a second at 480p; several minutes a shot). Ask the person before making shots: they cost money. Saying a scene again drops its shots (make them again). The model animates two people: a third in the cast isn't in the studio shot.
 
 ## Recordings belong to scenes
 

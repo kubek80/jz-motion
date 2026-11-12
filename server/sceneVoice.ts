@@ -143,6 +143,12 @@ export async function sayAgain(doc: VoiceDoc, presentationId: string, si: number
   if (!v) return { note: `${scene.title ?? scene.id}: no speaker notes, left as it was`, avatar: false };
   const delta = Math.round((v.duration - (oldEnd - start)) * 1000) / 1000;
   for (const x of clips) if (!own.includes(x) && x.offset >= oldEnd - 1e-3) x.offset = Math.round((x.offset + delta) * 1000) / 1000;
+  // Studio shots: the scene's no longer match its words (made again from the new ones); later ones move on.
+  const vo = doc.voiceover as { studio?: { offset: number; scene?: string }[] };
+  if (vo.studio) {
+    vo.studio = vo.studio.filter((s) => s.scene !== scene.id);
+    for (const s of vo.studio) if (s.offset >= oldEnd - 1e-3) s.offset = Math.round((s.offset + delta) * 1000) / 1000;
+  }
   for (const [sj, s] of doc.scenes.entries()) if (sj !== si) for (const b of s.beats) if (b.cue !== undefined && b.cue >= oldEnd - 0.05) b.cue = Math.round((b.cue + delta) * 100) / 100;
   for (const b of scene.beats) delete b.cue;
   const avatar = own.some((c) => c.avatar);

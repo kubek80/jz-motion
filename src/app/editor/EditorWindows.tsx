@@ -39,8 +39,10 @@ function shownVoiceover(doc: RawDoc): RawDoc['voiceover'] {
 }
 
 /** The document with Timing's voice-over, keeping the narration of scenes left out. */
-function withVoiceover(doc: RawDoc, v: RawDoc['voiceover'] | undefined): RawDoc {
+function withVoiceover(doc: RawDoc, given: RawDoc['voiceover'] | undefined): RawDoc {
   const { hidden } = doc.voiceover?.clips ? splitHidden(doc as unknown as TimedDoc) : { hidden: [] };
+  // Studio shots stay unless Timing says otherwise (its clip edits don't carry them).
+  const v = given && !('studio' in given) && doc.voiceover?.studio ? { ...given, studio: doc.voiceover.studio } : given;
   const next = { ...doc };
   if (!hidden.length) {
     if (v) next.voiceover = v; else delete next.voiceover;

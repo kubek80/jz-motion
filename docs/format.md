@@ -111,6 +111,8 @@ A presentation with several people speaking (you and your guests) lists them in 
 
 A scene or a beat says who speaks with `"speaker": "<cast id>"`; a beat without one takes its scene's, and a scene without one the first in the cast. Generated speech says each beat in that person's voice (one voice clip per run of beats by the same person, each clip with its `speaker`), and their talking-head video shows their avatar. Without a `cast`, everything is said by you in the voice and avatar in use, as before. Write a dialogue as beats, one per turn: `{ "speaker": "anna", "notes": "So how does it work?", "actions": [ ... ] }`.
 
+A podcast's video can cut between the board (with whoever is talking in a corner, `pip`), the two of them side by side (`pair`) and the studio wide shot (`studio`), per scene or beat (see Video layout); the studio is best kept to short cut-aways. A top-level `"studio": { "picture", "resolution" }` is the picture of the first two in the cast together in a studio (`uploads/avatar-studio-*.jpg`, drawn in the app from their avatars) and the shots' sharpness (`480p`, default, or `720p`). `voiceover.studio` lists the shots made of it: `[ { "video", "offset", "length", "scene" } ]`, each a video of them talking in turn placed at `offset` seconds on the timeline for `length` seconds (at most about 9.6 s; a longer studio stretch is several shots); made in Timing (a clip's avatar drawer → Studio wide shot), never by hand. They move with their scene like its clips.
+
 ## Video layout
 
 For video export, a beat or a scene can say where the recorded camera goes while it plays. A beat without one uses its scene's; the default is `pip`.
@@ -122,6 +124,8 @@ For video export, a beat or a scene can say where the recorded camera goes while
 | `pip-left` | The same, bottom-left. |
 | `camera` | The camera full screen, with the board small in the top-right corner. |
 | `side` | Two cameras side by side (the `track` one on the left); with one camera (your avatar), it on the left half and the board on the right. |
+| `pair` | A podcast (a `cast` of two or more): the first two in the cast side by side, full frame, each their own avatar; whoever is listening holds still. |
+| `studio` | A podcast: the studio wide shot, full frame: the cast together in the studio, talking in turn (`voiceover.studio`; until a shot is made, whoever is talking). |
 
 `track` names the recording to show, for example `"me"` (default) or `"friend"`. Layouts fall back gracefully: without a camera recording every layout shows the board.
 
@@ -155,7 +159,7 @@ Actions with `target` accept one id or a list. With a list, targets start `stagg
 | `play` | `on`, `from` (seconds), `goto` (frame), `until` (frame), `fade`, `speed` (1) | instant; `duration` with `fade` (0.5) or `until` | Plays a recording (video, muted) and keeps it playing between beats until it ends (or loops, with the image's `"loop": true`); `"on": false` pauses it, `from` jumps to a second first. `goto: 5` jumps to frame 5 and **holds it** (add `"on": true` to play on from there); with `"fade": true` it cross-fades from what was showing over `duration`. `until: 9` plays on from where it is to frame 9 and holds it; with `duration` it gets there in exactly that time (the beat lasts that long). `goto` + `until` plays a stretch. Without `play` it shows its first frame. Recordings only. |
 | `camera` | `focus`, `padding` (120), `x`, `y`, `zoom` | 1.3 | `focus` is an id, a list of ids, or `"all"` (everything visible at that moment); the camera frames them with `padding` screen pixels around. Without `focus`, moves to `x`/`y`/`zoom` (any omitted value stays). `zoom` together with `focus` overrides the fitted zoom. |
 | `wait` | | 1 | Pause inside a beat. |
-| `avatar` | `layout` (`board`, `pip`, `pip-left`, `camera`, `side`) | 0.8 | Moves your avatar in the video (from the voice clips' `avatar`): hidden, a bottom corner, side by side with the board, or full frame with the board small, gliding there over `duration`. Draws nothing on the board. From then on in the scene it overrides the scene's and beat's `layout`. |
+| `avatar` | `layout` (`board`, `pip`, `pip-left`, `camera`, `side`, `pair`, `studio`) | 0.8 | Moves your avatar in the video (from the voice clips' `avatar`): hidden, a bottom corner, side by side with the board, or full frame with the board small, gliding there over `duration`. Draws nothing on the board. From then on in the scene it overrides the scene's and beat's `layout`. |
 
 ## Example
 

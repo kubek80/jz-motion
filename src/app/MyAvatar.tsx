@@ -13,7 +13,7 @@ type Avatar = { photo: string; model: string; prompt?: string; calm?: boolean; s
 type Info = { avatar: Avatar | null; models: Model[]; defaultStyle: string; hasServerKey: boolean };
 
 /** Your OpenRouter key: the voice's when it uses OpenRouter, or OpenRouter's under Models. */
-const openRouterKey = () => { const v = loadVoicer(); return (v.baseURL === OR ? withKey(v).apiKey : '') || sharedKey({ baseURL: OR }) || ''; };
+export const openRouterKey = () => { const v = loadVoicer(); return (v.baseURL === OR ? withKey(v).apiKey : '') || sharedKey({ baseURL: OR }) || ''; };
 
 /** `embedded`: its parts only, inside another window (🧑 Avatar); `version` changes when another avatar is chosen there. */
 export function MyAvatar({ onClose, embedded, version = 0 }: { onClose: () => void; embedded?: boolean; version?: number }) {

@@ -7,7 +7,7 @@ import type { RawDoc } from '../editor/doc';
 // shows the camera but has no avatar yet gets a dashed place. Double-click either: the clip's window, to make it
 // (again).
 
-const showsCamera = (l: unknown) => l === 'camera' || l === 'pip' || l === 'pip-left' || l === 'side';
+const showsCamera = (l: unknown) => l === 'camera' || l === 'pip' || l === 'pip-left' || l === 'side' || l === 'pair' || l === 'studio';
 
 export interface AvatarRow { index: number; at: number; length: number; video?: string; stale?: boolean; scene?: string; /** Being made: how it's going. */ making?: string }
 

@@ -149,7 +149,7 @@ export function VideoPanel({ presentation, presentationId, refreshKey, select }:
             <button className="danger" onClick={async () => (await confirmDialog({ title: 'Delete this take?', message: 'Its recordings are deleted too. This can\'t be undone.', confirm: 'Delete', danger: true })) && act('delete', async () => { await api(`/api/takes/${take.id}`, { method: 'DELETE' }); setSelected(''); })}>Delete take</button>
           </>
         )}
-        <p className="muted hint">Layouts are set per beat or scene (properties: <b>layout</b>, <b>track</b>): board, pip, pip-left, camera, side.</p>
+        <p className="muted hint">Layouts are set per beat or scene (properties: <b>layout</b>, <b>track</b>): board, pip, pip-left, camera, side; with a cast of two or more, pair and studio.</p>
       </section>
 
       <section>

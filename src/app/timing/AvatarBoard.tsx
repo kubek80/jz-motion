@@ -16,21 +16,23 @@ export function AvatarBoard({ host, doc, clips, presentation, perf, now, playing
   const frame = useRef<HTMLDivElement>(null);
   const layer = useRef<AvatarLayer | null>(null);
   const [problem, setProblem] = useState<string | null>(null);
-  const plan = useMemo(() => planAvatar(presentation, { scenes: doc.scenes as never, voiceover: { clips } }, perf), [presentation, doc.scenes, clips, perf]);
+  const plan = useMemo(() => planAvatar(presentation, { scenes: doc.scenes as never, cast: doc.cast, voiceover: { clips, studio: doc.voiceover?.studio } }, perf), [presentation, doc.scenes, doc.cast, doc.voiceover?.studio, clips, perf]);
 
   useEffect(() => {
     if (!frame.current || !host.current || layer.current) return;
     const l = new AvatarLayer(frame.current, host.current);
     layer.current = l;
     // A video that can't play says why (not downloaded, not on this computer) instead of a black box.
-    l.video.addEventListener('error', () => {
-      const file = l.video.src.split('/uploads/')[1]?.split('#')[0] ?? '';
-      void fetch(`/uploads/${file}`, { headers: { range: 'bytes=0-0' } }).then(async (r) => {
-        const j = r.ok ? {} : await r.json().catch(() => ({}));
-        setProblem(j.lfs ? 'avatar video not downloaded: run git lfs pull' : !r.ok ? 'avatar video not on this computer' : 'this browser can’t play the avatar video');
-      }).catch(() => setProblem('avatar video not available'));
-    });
-    l.video.addEventListener('loadeddata', () => setProblem(null));
+    for (const v of l.videos) {
+      v.addEventListener('error', () => {
+        const file = v.src.split('/uploads/')[1]?.split('#')[0] ?? '';
+        void fetch(`/uploads/${file}`, { headers: { range: 'bytes=0-0' } }).then(async (r) => {
+          const j = r.ok ? {} : await r.json().catch(() => ({}));
+          setProblem(j.lfs ? 'avatar video not downloaded: run git lfs pull' : !r.ok ? 'avatar video not on this computer' : 'this browser can’t play the avatar video');
+        }).catch(() => setProblem('avatar video not available'));
+      });
+      v.addEventListener('loadeddata', () => setProblem(null));
+    }
   }, [host]);
 
   useEffect(() => {
