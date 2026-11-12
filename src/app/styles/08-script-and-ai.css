@@ -110,4 +110,12 @@
 .export-viewer-notes li > button.small { grid-column: 2; grid-row: 1 / span 3; align-self: start; }
 .export-viewer-notes li .muted { font-size: 11px; }
 @media (max-width: 1000px) { .export-viewer-body { grid-template-columns: minmax(0, 1fr); } }
+/* A podcast's cast on the Script page, and who says each beat. */
+.cast-bar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 8px clamp(20px, 6vw, 80px); border-bottom: 1px solid var(--line); font-size: 13px; }
+.cast-person { display: inline-flex; align-items: center; gap: 6px; padding: 3px 6px; border: 1px solid; border-radius: 999px; }
+.cast-person img { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; }
+.cast-person input { width: 90px; background: transparent; border: 0; font-weight: 600; }
+.cast-person select { max-width: 150px; font-size: 12px; }
+.speaker-label { font-size: 12px; padding: 1px 4px; border: 1px solid; border-radius: 999px; background: transparent; font-weight: 600; }
+.speaker-label.inherited { opacity: 0.7; border-style: dashed; }
 

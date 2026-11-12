@@ -20,7 +20,7 @@ export function AvatarSection({ clip, from, to, onMyAvatar }: { clip: Clip; from
   const make = async () => {
     setError(null);
     clearAvatarJob(clip.id);
-    try { await startAvatar(clip.id, { upload: clip.upload, trimStart: from, trimEnd: to, name: clip.scene ?? clip.name }); } catch (e) { setError((e as Error).message); }
+    try { await startAvatar(clip.id, { upload: clip.upload, trimStart: from, trimEnd: to, name: clip.scene ?? clip.name, speaker: clip.speaker }); } catch (e) { setError((e as Error).message); }
   };
 
   const a = clip.avatar;

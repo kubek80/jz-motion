@@ -31,6 +31,8 @@ export function compile(input: unknown): CompileResult {
   const source = parsed.data;
   const errors: string[] = [];
   const scenes: CompiledScene[] = [];
+  const castIds = (source.cast ?? []).map((c) => c.id);
+  (source.cast ?? []).forEach((c, i) => { if (castIds.indexOf(c.id) !== i) errors.push(`cast.${i}: "${c.id}" is already in the cast`); });
 
   source.scenes.forEach((scene, si) => {
     try {
@@ -136,6 +138,11 @@ export function compile(input: unknown): CompileResult {
       return fullBox(shifted, lookup);
     };
 
+    // Who speaks: someone in the cast (a podcast), named by the beat, else the scene, else the first in the cast.
+    for (const [where2, who] of [[`${where}.speaker`, scene.speaker], ...scene.beats.map((b, i) => [`${where}.beats.${i}.speaker`, b.speaker])] as [string, string | undefined][]) {
+      if (who !== undefined && !castIds.includes(who)) errors.push(`${where2}: "${who}" is not in the cast (${castIds.length ? castIds.map((c) => `"${c}"`).join(', ') : 'the presentation has no cast'})`);
+    }
+
     scene.beats.forEach((beat, bi) => {
       const beatStart = time;
       let prevStart = beatStart;
@@ -165,6 +172,7 @@ export function compile(input: unknown): CompileResult {
       beats.push({
         title: beat.title, notes: beat.notes, auto: beat.auto, start: beatStart, end: beatEnd,
         layout: beat.layout ?? scene.layout, track: beat.track ?? scene.track, cue: beat.cue,
+        ...(castIds.length ? { speaker: beat.speaker ?? scene.speaker ?? castIds[0] } : {}),
         actions: Array.from({ length: beat.actions.length }, (_, i) => timing[i] ?? { start: 0, end: 0 }),
       });
       time = beatEnd;

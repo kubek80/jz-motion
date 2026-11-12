@@ -344,3 +344,4 @@
 .my-avatar.embedded .avatar-in-use img { width: 100%; max-width: 480px; height: auto; }
 @media (max-width: 900px) { .my-avatar.embedded { grid-template-columns: minmax(0, 1fr); } }
 .timing-controls .gen-scene { white-space: nowrap; }
+.prompter-speaker { margin-left: 8px; font-size: 13px; }

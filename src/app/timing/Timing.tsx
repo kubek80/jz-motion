@@ -23,7 +23,7 @@ import { useBoardFollowsClock } from './useBoardFollowsClock';
 import { AvatarBoard } from './AvatarBoard';
 import { avatarRows } from './AvatarLane';
 import { AvatarDrawer, type Placement } from './AvatarDrawer';
-import { onAvatarDone, startAvatar, useAvatarJobs } from './avatarJobs';
+import { onAvatarDone, setCast, startAvatar, useAvatarJobs } from './avatarJobs';
 import { useClipEditing } from './useClipEditing';
 import { useClock } from './useClock';
 import { useCueDragging } from './useCueDragging';
@@ -31,6 +31,7 @@ import { useNarrationRecording } from './useNarrationRecording';
 import { useNotesEditing } from './useNotesEditing';
 import { replaceRoute } from '../route';
 import { useSceneVoice } from './useSceneVoice';
+import type { CastMember } from '../ScriptCast';
 import { useNowPlaying } from './useNowPlaying';
 import { useTimingKeys } from './useTimingKeys';
 import { useVoiceGeneration } from './useVoiceGeneration';
@@ -151,9 +152,11 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
     latest.current.onVoiceover({ clips: next });
     return true;
   }), []);
+  // A podcast's speakers each have their own avatar: the avatar jobs need to know whose is whose.
+  setCast((doc as { cast?: { id: string; avatar: string }[] }).cast);
   const makeAvatar = (i: number) => {
     const c = clips[i];
-    if (c) startAvatar(c.id, { upload: c.upload, trimStart: c.trimStart, trimEnd: c.trimEnd, name: c.scene ?? c.name }).catch((e) => setError(`Avatar: ${(e as Error).message}`));
+    if (c) startAvatar(c.id, { upload: c.upload, trimStart: c.trimStart, trimEnd: c.trimEnd, name: c.scene ?? c.name, speaker: c.speaker }).catch((e) => setError(`Avatar: ${(e as Error).message}`));
   };
   /** The beat whose options are open in the drawer. */
   const [openBeat, setOpenBeat] = useState<{ scene: number; beat: number } | null>(null);
@@ -234,6 +237,7 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
           time={time}
           np={np}
           notes={notes}
+          cast={(doc as { cast?: CastMember[] }).cast}
         />
         {(() => {
           const c = openAvatar ? clips.find((x) => x.id === openAvatar) : undefined;
