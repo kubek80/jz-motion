@@ -80,7 +80,7 @@ export function newElement(r: AddRequest, doc: RawDoc, sceneIndex: number, cam: 
       el = {
         id: uniqueId(doc, sceneIndex, 'screenshot'), type: 'image', src: r.image.src, ...at,
         width: Math.round(r.image.width * k), height: Math.round(r.image.height * k), color: 'cyan',
-        ...(lastFrame() === 'browser' ? { frame: 'browser' } : {}),
+        ...(lastFrame() !== 'none' ? { frame: lastFrame() } : {}),
       };
       break;
     }

@@ -42,7 +42,7 @@ All elements take `id`, `color` and optionally `visible`. An element that a beat
 | `arrow` | `from`, `to`, `curve` (0), `head` (`end`, `start`, `both`, `none`), `label`, `line` (`solid`, `dashed`, `dotted`), `weight` (`normal`, `bold`: thicker, bigger head) | See below. |
 | `iso` | `model` or `parts`, `x`, `y`, `scale` (70), `rotate` (0), `label` | Isometric 3D object, see below. `x`, `y` is its middle. |
 | `chart` | `kind` (`bar`, `line`, `pie`), `data`, `x`, `y`, `width` (640), `height` (380), `title`, `unit` (""), `max`, `values` (true) | See below. `x`, `y` is its middle. |
-| `image` | `src`, `x`, `y`, `width`, `height`, `frame` (`none`, `browser`), `url`, `label` | A screenshot or picture. See below. |
+| `image` | `src`, `x`, `y`, `width`, `height`, `frame` (`none`, `browser`, `window`), `url`, `label` | A screenshot or picture. See below. |
 | `area` | `x`, `y`, `width`, `height`, `shape` (`rect`, `ellipse`) | A marked region, not drawn: target it with `circle`, `spotlight` or `camera`. `x`, `y` is its middle. |
 
 ### Arrows
@@ -81,7 +81,7 @@ A 3D object drawn in the same marker style: outlines in its color, faces filled 
 ```
 
 - `src` is a file in the **media library**: `/media/<file>` (pictures are WebP, screen recordings WebM video). Files get there converted: pasted, dropped or recorded in the app (Library → Media → Record screen), or with `npm run media -- import <file>`, `npm run snap` and `npm run record`. Every one is listed in `media/index.json` (name, kind, size, length). Don't invent a `src` and don't copy files into `images/` yourself (older `/images/…` srcs still work).
-- `width` × `height` is the picture itself; `"frame": "browser"` draws a browser window around it in marker (in the element's colour) with `url` in its address bar, adding a bar above the picture. The picture and its bar together are centered on `x`, `y`.
+- `width` × `height` is the picture itself; `"frame": "browser"` draws a browser window around it in marker (in the element's colour) with `url` in its address bar, adding a bar above the picture. `"frame": "window"` is a neutral, solid window instead, as on a Mac: a dark title bar with the red, yellow and green buttons and `url` in a quiet field, rounded corners and a soft shadow, revealed with the picture (the element's colour doesn't change it). Use `window` where the screenshot or recording should look like the real app, `browser` where it should belong to the marker drawing. The picture and its bar together are centered on `x`, `y`.
 - Pictures always sit under the marker drawing, so arrows, text and circles can be drawn on top of them.
 - `draw` draws the frame, then reveals the picture left to right.
 - A recording is a video (`.webm` from the media library, `/media/<file>.webm`; also `.mp4`, `.mov`). APNG and GIF are not shown animated: the media library turns them into WebM when they are added. A recording shows its first frame until a `play` action; `"loop": true` repeats it. Fades, `draw`, moves, `pinned` and spotlights work on it like on any picture. It plays **muted**: sound belongs to the narration (voice-over), not to the picture.

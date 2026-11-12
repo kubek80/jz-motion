@@ -168,12 +168,17 @@ export function buildElement(ctx: BuildContext, el: CompiledElement, lookup: (id
       const fx2 = svgEl('g', {}, outer2) as SVGGElement;
       const clipId = `${ctx.prefix}-c${nextUid()}`;
       const clipPath = svgEl('clipPath', { id: clipId, 'data-scene': '' }, ctx.defs);
-      const clip = svgEl('rect', { x: -w, y: it, width: el.width, height: el.height, rx: bar ? 0 : 8 }, clipPath) as SVGRectElement;
+      const win = el.frame === 'window';
+      // A "window" is solid: its bar and picture share one rounded clip (revealed together), with a shadow under it.
+      const winR = Math.min(16, bar * 0.42);
+      const shadow = win ? windowShadow(ctx, fx2, -w, t, el.width, el.height + bar, winR) : undefined;
+      const clip = svgEl('rect', win ? { x: -w, y: t, width: el.width, height: el.height + bar, rx: winR } : { x: -w, y: it, width: el.width, height: el.height, rx: bar ? 0 : 8 }, clipPath) as SVGRectElement;
       const img = svgEl('image', { href: el.src, x: -w, y: it, width: el.width, height: el.height, preserveAspectRatio: 'xMidYMid slice', 'clip-path': `url(#${clipId})` }, fx2) as SVGImageElement;
+      const chrome = win ? windowChrome(fx2, clipId, -w, t, el.width, el.height + bar, bar, winR, el.url) : undefined;
       const reveal = { v: 1 };
-      image = { outer: outer2, fx: fx2, clip, img, left: -w, width: el.width, reveal };
+      image = { outer: outer2, fx: fx2, clip, img, left: -w, width: el.width, reveal, chrome, shadow };
       ctx.watchAnimation(image, el.src, { x: -w, y: it, width: el.width, height: el.height, clipId, loop: el.loop, state: initial?.play });
-      if (bar) {
+      if (bar && !win) {
         // A browser window in marker: outline, the bar's bottom edge, three dots, the address field.
         const r = Math.min(18, bar * 0.45);
         stroke(`M${-w + r} ${t}H${w - r}Q${w} ${t} ${w} ${t + r}V${bottom - r}Q${w} ${bottom} ${w - r} ${bottom}H${-w + r}Q${-w} ${bottom} ${-w} ${bottom - r}V${t + r}Q${-w} ${t} ${-w + r} ${t}Z`, board.stroke);
@@ -256,3 +261,40 @@ export function boxOutline(shape: 'rect' | 'ellipse' | 'diamond', w: number, h: 
   const r = Math.min(radius, w, h);
   return `M${-w + r} ${-h}H${w - r}Q${w} ${-h} ${w} ${-h + r}V${h - r}Q${w} ${h} ${w - r} ${h}H${-w + r}Q${-w} ${h} ${-w} ${h - r}V${-h + r}Q${-w} ${-h} ${-w + r} ${-h}Z`;
 }
+
+/**
+ * A "window" frame's soft shadow: a blurred dark copy of its shape, a little below it, in a clip of its own that
+ * grows with the window's reveal (renderImage), so it never shows ahead of the window.
+ */
+function windowShadow(ctx: { defs: SVGElement; prefix: string }, parent: SVGElement, x: number, y: number, width: number, height: number, r: number) {
+  const id = `${ctx.prefix}-sh${nextUid()}`;
+  const blur = Math.max(12, width * 0.02);
+  const filter = svgEl('filter', { id, x: '-20%', y: '-20%', width: '140%', height: '150%', 'data-scene': '' }, ctx.defs);
+  svgEl('feGaussianBlur', { stdDeviation: blur }, filter);
+  const clipPath = svgEl('clipPath', { id: `${id}-c`, 'data-scene': '' }, ctx.defs);
+  const room = blur * 3;
+  const clip = svgEl('rect', { x: x - room, y: y - room, width: width + room * 2, height: height + room * 3 }, clipPath) as SVGRectElement;
+  const g = svgEl('g', { 'clip-path': `url(#${id}-c)` }, parent);
+  svgEl('rect', { x, y: y + blur * 0.9, width, height, rx: r, fill: '#000', opacity: 0.7, filter: `url(#${id})` }, g);
+  return { node: g, clip, width: width + room * 2 };
+}
+
+/** A "window" frame's title bar, as on a Mac: dark, the three coloured buttons, the address in a quiet field. */
+function windowChrome(parent: SVGElement, clipId: string, x: number, y: number, width: number, height: number, bar: number, r: number, url?: string): SVGGElement {
+  const g = svgEl('g', { 'clip-path': `url(#${clipId})` }, parent) as SVGGElement;
+  svgEl('rect', { x, y, width, height: bar, fill: '#1c1c1e' }, g);
+  svgEl('path', { d: `M${x} ${y + bar - 0.5}H${x + width}`, stroke: '#000', 'stroke-opacity': 0.6, 'stroke-width': 1 }, g);
+  const dot = bar * 0.13;
+  ['#ff5f57', '#febc2e', '#28c840'].forEach((fill, i) => svgEl('circle', { cx: x + bar * 0.62 + i * dot * 3.3, cy: y + bar / 2, r: dot, fill }, g));
+  if (url) {
+    const fw = Math.min(width * 0.42, Math.max(bar * 6, url.length * bar * 0.21 + bar));
+    const fh = bar * 0.56;
+    svgEl('rect', { x: x + width / 2 - fw / 2, y: y + (bar - fh) / 2, width: fw, height: fh, rx: fh * 0.3, fill: '#2c2c2e' }, g);
+    const text = svgEl('text', { x: x + width / 2, y: y + bar / 2, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: '#a1a1a6', 'font-size': bar * 0.3, 'font-family': "-apple-system, 'Helvetica Neue', Inter, Arial, sans-serif" }, g);
+    text.textContent = url;
+  }
+  // A hairline edge round the whole window, as a Mac window has.
+  svgEl('rect', { x: x + 0.5, y: y + 0.5, width: width - 1, height: height - 1, rx: r, fill: 'none', stroke: '#fff', 'stroke-opacity': 0.12, 'stroke-width': 1 }, g);
+  return g;
+}
+

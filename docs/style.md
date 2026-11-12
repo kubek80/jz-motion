@@ -48,4 +48,4 @@ Choose actions for what the viewer should do, not just to make things appear. Ev
 - Six marker colours: green, pink, yellow, cyan, orange, white. Use 2 to 4 per scene and keep their meaning consistent (for example one colour per kind of component).
 - Text: `marker` (handwriting) for labels and sentences; `bold` for a scene's headline (short, a few words); `code` for code and JSON, several lines allowed.
 - Only use icons, clipart and 3D models from the library; give icons a label. Lines: solid by default, `dashed` for optional or future paths, `dotted` for "not yet" or background links; `bold` arrows for the main path.
-- Screenshots (`image`) sit under the drawing; frame app screenshots with `"frame": "browser"`, point at parts with an `area` plus `spotlight` and `circle`, and draw notes beside them.
+- Screenshots (`image`) sit under the drawing; frame app screenshots with `"frame": "browser"` (in marker, part of the drawing) or `"frame": "window"` (a neutral dark window with a shadow, when the app should look as it really is; keep one of them per presentation), point at parts with an `area` plus `spotlight` and `circle`, and draw notes beside them.

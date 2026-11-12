@@ -57,6 +57,8 @@ export interface IdleNodes { g: SVGElement; rise: number; turn: number; cx: numb
  */
 export interface ImageNodes {
   outer: SVGGElement; fx: SVGGElement; clip: SVGRectElement; img: SVGImageElement; left: number; width: number; reveal: { v: number };
+  /** A "window" frame's title bar and shadow: they appear with the picture. */
+  chrome?: SVGGElement; shadow?: { node: SVGElement; clip: SVGRectElement; width: number };
   video?: VideoNodes;
 }
 
@@ -198,6 +200,12 @@ export function renderImage(n: ElementNodes) {
   const v = Math.max(0, Math.min(1, im.reveal.v));
   im.clip.setAttribute('width', String(im.width * v));
   im.img.style.opacity = String(Math.min(1, v * 2.5));
+  if (im.chrome) im.chrome.style.opacity = im.img.style.opacity;
+  // The shadow is revealed with the window (its clip grows with the wipe), so it never shows ahead of it.
+  if (im.shadow) {
+    im.shadow.clip.setAttribute('width', String(im.shadow.width * v));
+    im.shadow.node.style.opacity = String(Math.min(1, v * 2.5));
+  }
   if (im.video) im.video.box.style.opacity = im.img.style.opacity;
 }
 

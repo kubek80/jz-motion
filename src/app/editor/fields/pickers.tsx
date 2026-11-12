@@ -66,6 +66,7 @@ export const CHOICE_ICONS: Record<string, Record<string, React.ReactNode>> = {
   },
   frame: {
     none: g(<><rect x="5" y="4" width="22" height="14" rx="1.5" fill="currentColor" opacity="0.35" stroke="none" /><path d="M8 14L13 9L17 12L24 7" strokeWidth="1.4" /></>),
+    window: <svg viewBox="0 0 32 22" width="32" height="22"><rect x="3.5" y="4.5" width="26" height="17" rx="3" fill="#000" opacity="0.35" /><rect x="3" y="2.5" width="26" height="17" rx="3" fill="#3a3a3c" /><path d="M3 5.5A3 3 0 0 1 6 2.5H26A3 3 0 0 1 29 5.5V7H3Z" fill="#1c1c1e" /><circle cx="6.2" cy="4.8" r="0.9" fill="#ff5f57" /><circle cx="8.8" cy="4.8" r="0.9" fill="#febc2e" /><circle cx="11.4" cy="4.8" r="0.9" fill="#28c840" /></svg>,
     browser: g(<><rect x="3" y="2.5" width="26" height="17" rx="3" /><path d="M3 7.5H29" strokeWidth="1.4" /><circle cx="6.2" cy="5" r="0.6" fill="currentColor" /><circle cx="8.6" cy="5" r="0.6" fill="currentColor" /><circle cx="11" cy="5" r="0.6" fill="currentColor" /><rect x="7" y="10" width="18" height="7" rx="1" fill="currentColor" opacity="0.35" stroke="none" /></>),
   },
   shape: {
