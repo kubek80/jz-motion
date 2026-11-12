@@ -6,9 +6,10 @@ import { openStore, type Store } from './store';
 import { log } from './debug';
 import { loadUserLibrary } from './userLibrary';
 import { adoptProjectVoice } from './settingsStore';
+import { parseRoute } from './route';
 
-/** The id in the address (#/p/<id>), so a reload keeps the presentation open. */
-const idFromHash = () => location.hash.match(/^#\/p\/([\w-]+)/)?.[1] ?? null;
+/** The id in the address (#/p/<id>…, see route.ts), so a reload keeps the presentation open. */
+const idFromHash = () => parseRoute(location.hash).id;
 
 /** First run: the single draft older versions kept in the browser becomes a presentation, else the intro example. */
 async function seed(store: Store) {
@@ -39,7 +40,8 @@ export function Root() {
     // Your voice, kept with the project, for a browser that has none yet (another computer).
     void adoptProjectVoice();
     void getStore().then(setStore);
-    const onHash = () => setOpenId(idFromHash());
+    // Only another presentation reopens the editor (the rest of the address changes as you move about).
+    const onHash = () => setOpenId((was) => (idFromHash() === was ? was : idFromHash()));
     window.addEventListener('hashchange', onHash);
     return () => window.removeEventListener('hashchange', onHash);
   }, []);

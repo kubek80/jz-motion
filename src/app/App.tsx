@@ -21,6 +21,7 @@ import { InlineTextEditor, useInlineText } from './editor/InlineTextEditor';
 import { ModeSwitch } from './editor/ModeSwitch';
 import { Library } from './editor/Library';
 import { PlayControls } from './editor/PlayControls';
+import { currentRoute, useAddress } from './route';
 import { RightPanel, type Panel } from './editor/RightPanel';
 import { SceneAsk } from './editor/SceneAsk';
 import { SceneList } from './editor/SceneList';
@@ -47,6 +48,8 @@ interface EditorProps {
 /** One open presentation: board, editor panels, play mode, recording. */
 export function Editor({ id, initial, onSave, onHome }: EditorProps) {
   const history = useHistory(initial);
+  // Where you were before a reload (the address: route.ts): its windows, scene and tab open again.
+  const [start] = useState(currentRoute);
   const text = history.value;
   const [mode, setMode] = useState<Mode>('edit');
   // Panel sizes the user can drag; persisted per-key in localStorage, double-click resets.
@@ -56,13 +59,13 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
   // doesn't retroactively change the stored default.
   const playbackDefault = useMemo(() => Math.max(240, (typeof window !== 'undefined' ? window.innerHeight : 1000) - 260), []);
   const playbackH = useResizable('playback-h', playbackDefault, 240, 2000);
-  const [panel, setPanel] = useState<Panel>('props');
+  const [panel, setPanel] = useState<Panel>(start.tab ?? 'props');
   const [pos, setPos] = useState<StagePosition>({ scene: 0, beat: 0, time: 0, duration: 0, playing: false });
   const [picked, setPicked] = useState<string[]>([]);
   /** Arrow tool: click the start element, then the end element. */
   const [arrowFrom, setArrowFrom] = useState<string | null | undefined>(undefined);
   /** A scene to switch to when the presentation next reloads (just added). */
-  const openScene = useRef<number | null>(null);
+  const openScene = useRef<number | null>(start.scene ?? null);
   const arrowTool = arrowFrom !== undefined;
   const [selection, setSelection] = useState<Selection>(null);
   const stageHost = useRef<HTMLDivElement>(null);
@@ -76,10 +79,10 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
   /** The AI chat for this presentation, kept while it is open. */
   const [chatLog, setChatLog] = useState<ChatMessageView[]>([]);
   const [creating, setCreating] = useState<CreateRequest | null>(null);
-  const [settingsOpen, setSettingsOpen] = useState(false);
-  const [libraryOpen, setLibraryOpen] = useState(false);
-  const [timingOpen, setTimingOpen] = useState(false);
-  const [scriptOpen, setScriptOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(start.views.includes('settings'));
+  const [libraryOpen, setLibraryOpen] = useState(start.views.includes('library'));
+  const [timingOpen, setTimingOpen] = useState(start.views.includes('timing'));
+  const [scriptOpen, setScriptOpen] = useState(start.views.includes('script'));
   /** A take made in the Timing window, shown in the Video tab. */
   const [madeTake, setMadeTake] = useState<string | undefined>();
   /** Bumped when the library gains an item, so the palette shows it. */
@@ -110,6 +113,10 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
   }, [text]);
 
   docRef.current = doc;
+
+  // The address follows where you are (once the board shows the scene it opened at, so it isn't reset first).
+  const [placed, setPlaced] = useState(start.scene === undefined);
+  useAddress(placed, { timing: timingOpen, script: scriptOpen, settings: settingsOpen, library: libraryOpen }, pos.scene, panel);
   // The board can still be on a scene that was just deleted; keep to the scenes that exist.
   const sceneIndex = doc ? Math.min(pos.scene, doc.scenes.length - 1) : pos.scene;
   useEffect(() => {
@@ -176,11 +183,13 @@ export function Editor({ id, initial, onSave, onHome }: EditorProps) {
     const { beat } = posRef.current;
     // After adding a scene, open it once the presentation has it.
     const si = openScene.current ?? posRef.current.scene;
-    openScene.current = null;
     const at = Math.min(si, result.presentation.scenes.length - 1);
     void s.load(result.presentation, { scene: at, beat: mode === 'edit' ? 0 : beat }).then(() => {
-      // The stage may have been replaced while fonts loaded (React dev mode mounts twice).
+      // The stage may have been replaced while fonts loaded (React dev mode mounts twice): the scene to open is kept
+      // for the stage that stays.
       if (stage.current !== s) return;
+      if (openScene.current === si) openScene.current = null;
+      setPlaced(true);
       if (mode === 'edit') {
         s.showLayout(at, new Set((doc?.scenes[at]?.elements ?? []).map((e) => e.id)), editCams.current.get(at));
         editCams.current.set(at, s.camera);
