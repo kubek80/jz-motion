@@ -61,6 +61,8 @@ Rules for `pinned: true`:
 
 ## Capturing from a real app — don't hand-draw a UI you can open
 
+A terminal, a CLI or Claude Code at work: the **terminal-recording** skill (`npm run terminal`) films it as a recording that plays here like any other.
+
 Whenever the app being explained is reachable (local dev server, staging URL, public site), capture the real thing. Hand-drawn placeholders are for concepts the UI doesn't show, not for interactions you could record. Two tools live in `scripts/`:
 
 ### `npm run snap` — one static screenshot

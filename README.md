@@ -106,6 +106,7 @@ Then the **Video** tab: pick the take, add a friend's recording (with **Auto-syn
 | `npm run snapshot -- <file.json>` | PNG of each scene fully drawn (`--beats`: after every beat) in `snapshots/` |
 | `npm run snap -- <url> <name>` | Screenshots a web page (or one element, `--selector`) into the media library, sharp enough for camera zooms (2560×1600 at 125 % zoom by default; `--size`, `--zoom`, `--scale`) |
 | `npm run record -- <url> <name> <scenario.mjs>` | Records an interaction scripted in `scripts/scenarios/` into the media library as video, at the same sharpness as `snap` |
+| `npm run terminal -- <steps.json\|session.cast> <name>` | Films a terminal session into the media library as video: commands from a steps file typed at a natural pace and run for real in your shell (colours, progress bars, long waits shortened), or an `asciinema rec` recording of an interactive session such as Claude Code; drawn in JetBrains Mono, sharp for zooms; prints the src and the size to use. Example: `scripts/terminal/example.json`; see the terminal-recording skill |
 | `npm run media -- import <file…>` | Adds pictures, recordings or sounds to the media library, converted (WebP, WebM, Opus); `migrate` moves older `images/` files in; `frames <file>` lists a recording's frames |
 | `npm run assets` | Lists pictures, recordings and voice-overs with their size and the presentations that use them; `--unused` lists what nothing uses (deletes nothing) |
 | `npm run export -- <file.json>` | Renders to MP4 (`--take <id>`, `--4k`, `--fps 60`, `--gap 1.5`, `--out file.mp4`) |
