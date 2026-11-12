@@ -29,6 +29,7 @@ import { useClock } from './useClock';
 import { useCueDragging } from './useCueDragging';
 import { useNarrationRecording } from './useNarrationRecording';
 import { useNotesEditing } from './useNotesEditing';
+import { replaceRoute } from '../route';
 import { useSceneVoice } from './useSceneVoice';
 import { useNowPlaying } from './useNowPlaying';
 import { useTimingKeys } from './useTimingKeys';
@@ -64,6 +65,8 @@ interface Props {
   onSceneLayout: (scene: number, layout: Placement, beatsToo: boolean) => void;
   /** The scene being looked at in the editor: Timing opens with the playhead at its start. */
   startScene?: number;
+  /** Where the playhead was (from the address, after a reload): Timing opens there instead. */
+  startTime?: number;
   /** Closes Timing; `scene` is the one at the playhead, for the editor to show. */
   onClose: (scene: number) => void;
   /** The presentation replaced as a whole (a scene's voice generated: its clip and every cue after it). */
@@ -76,7 +79,7 @@ interface Props {
  * Timing a presentation to a voice-over: the narration's waveform with every click placed on it. Drag a click
  * to move it, or play and tap T as each line starts. The board plays along, with the script line beside it.
  */
-export function Timing({ presentation, text, presentationId, voiceover, onVoiceover, onCues, onTimeline, onUndo, onNotes, onTake, onEditBeat, doc, onBeat, onSceneLayout, startScene = 0, onClose, onDoc, onScript }: Props) {
+export function Timing({ presentation, text, presentationId, voiceover, onVoiceover, onCues, onTimeline, onUndo, onNotes, onTake, onEditBeat, doc, onBeat, onSceneLayout, startScene = 0, startTime, onClose, onDoc, onScript }: Props) {
   const onCue = (scene: number, beat: number, cue: number | undefined) => onCues([{ scene, beat, cue }]);
   const clicks = useMemo(() => cueClicks(presentation), [presentation]);
   // Voiceover is held either as a legacy single clip or as a multi-clip arrangement; `clipsOf()`
@@ -114,7 +117,7 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
   useEffect(() => {
     if (placed.current || !pps) return;
     placed.current = true;
-    const t = startScene > 0 ? clicks.find((c) => c.scene >= startScene)?.t ?? 0 : 0;
+    const t = startTime !== undefined ? Math.min(startTime, total) : startScene > 0 ? clicks.find((c) => c.scene >= startScene)?.t ?? 0 : 0;
     seek(t);
     centerOn(t);
   }, [pps]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -179,6 +182,10 @@ export function Timing({ presentation, text, presentationId, voiceover, onVoiceo
   const { loadVoiceover, makeTake } = useVoiceoverFile({ clips, perf, text, presentationId, onVoiceover, onTake, seek, setPps, setBusy, setError });
 
   const np = useNowPlaying({ presentation, clicks, drag, time, total, now, tts, voicer });
+  // The playhead in the address, so a reload opens Timing where it was: to the tenth of a second when it stands,
+  // each second while playing (browsers limit how often the address may change).
+  const mark = playing ? Math.floor(time) : Math.round(time * 10) / 10;
+  useEffect(() => { if (placed.current) replaceRoute({ t: mark }); }, [mark]);
   const sceneVoice = useSceneVoice({ doc, presentationId, voicer, onDoc, setError });
   const atScene = np.current?.scene ?? startScene;
   const sceneName = (si: number) => presentation.scenes[si]?.title ?? doc.scenes[si]?.id ?? `scene ${si + 1}`;

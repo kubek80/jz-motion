@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { currentRoute, replaceRoute } from '../route';
 // The windows that open over the editor: Settings, Timing, Script, the Library and the Creator
 // (new library item or new scene with AI), wired to the open presentation.
 import { splitHidden, type TimedDoc } from '../../video/sceneTimeline';
@@ -88,8 +89,12 @@ export function EditorWindows({
   settingsOpen, setSettingsOpen, timingOpen, setTimingOpen, scriptOpen, setScriptOpen, libraryOpen, setLibraryOpen,
   creating, setCreating, libraryVersion, setLibraryVersion, onTake,
 }: Props) {
-  // The beat the Script page opens at (from Timing: the one at the playhead); none from the top bar.
-  const [scriptAt, setScriptAt] = useState<{ scene: number; beat: number } | null>(null);
+  // The beat the Script page opens at (from Timing: the one at the playhead); none from the top bar. After a reload,
+  // the one in the address; and Timing's playhead from there too, the first time Timing opens.
+  const [start] = useState(currentRoute);
+  const [scriptAt, setScriptAt] = useState<{ scene: number; beat: number } | null>(start.views.includes('script') ? start.at ?? null : null);
+  const startTime = useRef(start.views.includes('timing') ? start.t : undefined);
+  useEffect(() => { replaceRoute({ at: scriptAt ?? undefined }); }, [scriptAt]);
   return (
     <>
       {settingsOpen && <Settings onClose={() => setSettingsOpen(false)} />}
@@ -136,7 +141,8 @@ export function EditorWindows({
             update(beatsToo ? updateBeats(d, si, (beats) => beats.map((b) => { const { layout: _l, ...rest } = b as typeof b & { layout?: string }; return rest; })) : d);
           }}
           startScene={sceneIndex}
-          onClose={(scene) => { setTimingOpen(false); onTimingClosed(scene); }}
+          startTime={startTime.current}
+          onClose={(scene) => { startTime.current = undefined; setTimingOpen(false); onTimingClosed(scene); }}
           onDoc={(next) => update(next as typeof doc)}
           onScript={(scene, beat) => { setScriptAt({ scene, beat }); setScriptOpen(true); }}
         />

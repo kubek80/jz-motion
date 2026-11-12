@@ -1258,3 +1258,15 @@ Jakub wanted, for some explainers, a more neutral frame around screen recordings
 ![Marker browser and neutral window side by side; a recording in a window; the frame picker](journey/141-window-frame.jpg)
 
 **Checked by:** snapshots of a test scene (both frames side by side, a recording in a window); a short export of it, frames looked at during the reveal; Playwright: the picker offers none, browser and window, and switching writes the file; typecheck, tests, build.
+
+## Step 102: A reload lands where you were
+
+Jakub wanted a refresh to bring him back where he was: in Timing if he was in Timing, and so on.
+
+- **The address says where you are** (`src/app/route.ts`): `#/p/<id>` as before, then the windows open over the editor (`/timing`, `/script`, both when the Script sits over Timing, `/settings`, `/library`), and `?scene=` (as the scene list numbers them), `tab=` (the right panel's tab when it isn't Properties), `t=` (Timing's playhead) and `at=` (the line the Script was opened at, scene.beat). A link to `…/9df1df97/timing/script?scene=5&t=65.9&at=5.2` opens the presentation on scene 5 with Timing at 1:05.9 and the Script over it at "The reference".
+- The editor opens what the address says, and the address follows as you move: it replaces itself (no new entries for the back button), and Timing's playhead is written each second while playing, to the tenth when it stands (browsers limit how often an address may change). Closing a window takes its part away.
+- **Bugs found:** in development the editor starts twice, and the first start used up the scene to open before the board was ready, so a reload landed on scene 1; the scene is now kept until the board that stays has opened it. The Script's line was written before the address knew the Script was open and was dropped; each window's part is now kept until that window closes.
+
+![After a reload: the Script over Timing, at the line it was opened at](journey/142-reload-keeps-place.jpg)
+
+**Checked by:** Playwright, each with a real reload: scene 5 and the Video tab came back; Timing at 1:05.9 came back at 1:05.9; the Script over Timing came back at "The reference"; closing both left `#/p/9df1df97?scene=5&tab=video`; a `/settings` address opened Settings; tests for reading and writing the address; typecheck, tests, build.

@@ -62,6 +62,8 @@ Every model reply is checked against the format and the drawing rules, and sent 
 
 ## Narration, timing and video
 
+**Reloading keeps your place.** The address says where you are: the presentation, the windows open over it (Timing, Script, Settings, Library), the scene, the right panel's tab, Timing's playhead and the line the Script was opened at (for example `#/p/9df1df97/timing/script?scene=5&t=65.9&at=5.2`), so a refresh, or the address pasted into another tab, opens it all again just there.
+
 **Script** (top bar) shows the whole narration on one page: every scene's beats with their speaker notes, editable in place, and how long each sentence takes to say (estimated, or measured once a voice has been generated). Beside each scene is its voice: play it, **✨ Generate** it (a scene without voice gets it where it plays, and what follows moves on) or **✨ Generate again** (a new reading of every line, in place of the scene's clip; what follows moves by the difference). To change how a line is said, put a direction for the voice in square brackets in the notes, like `[strong emphasis]` before a word or `[very excited, shouting with joy]` (strong, descriptive ones work best): your cloned voice follows it (for a pause, end the sentence there), and it never shows in the prompter. **🎚 How to direct your voice** (on the Script page and in 🧑 Avatar) explains it, with the same sentence said with different directions to listen to (made in the voice in use; **Make these again** after choosing another). Long pauses the voice leaves inside a sentence are shortened.
 
 **Timing** (top bar) times the presentation to your voice. Its timeline has two lanes of voice clips above the beats:
