@@ -324,35 +324,3 @@
 .avatar-lane .lane-empty { position: absolute; left: 26px; top: 9px; font-size: 11px; }
 
 .timing-board .avatar-problem-note { position: absolute; right: 2.5%; bottom: 4.4%; width: 26%; aspect-ratio: 16 / 9; z-index: 3; font-size: 13px; }
-/* 🧑 Avatar: your avatars, each with its voice */
-.me .me-avatars { display: flex; gap: 12px; flex-wrap: wrap; align-items: stretch; }
-.me .me-avatar { display: flex; flex-direction: column; gap: 6px; width: 210px; padding: 8px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
-.me .me-avatar.in-use { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
-.me .me-avatar img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 6px; }
-.me .me-avatar .me-name { font-weight: 600; background: transparent; border: 1px solid transparent; padding: 2px 4px; }
-.me .me-avatar .me-name:hover, .me .me-avatar .me-name:focus { border-color: var(--line); }
-.me .me-avatar .muted { font-size: 11px; }
-.me .me-avatar .row { display: flex; gap: 6px; align-items: center; justify-content: space-between; }
-.me .me-badge { color: var(--accent); font-size: 12px; }
-.me .me-add { width: 140px; border-style: dashed; }
-.me .me-tabs { display: flex; gap: 6px; align-items: center; border-top: 1px solid var(--line); padding-top: 10px; }
-.me .me-tabs button.on { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, var(--panel)); }
-.my-voice.embedded { display: flex; flex-direction: column; gap: 12px; width: auto; max-height: none; overflow: visible; }
-/* The Avatar window: wide, one scrollbar (the window's), its tabs using the whole width. */
-.modal.me { width: min(1180px, 96vw); }
-/* Look: what it looks like and where it comes from on the left, the style and how it moves on the right. */
-.my-avatar.embedded { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px 28px; align-items: start; }
-.my-avatar.embedded > p { grid-column: 1 / -1; }
-.avatar-col { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
-.my-avatar.embedded .avatar-in-use { flex-direction: column; align-items: stretch; }
-.my-avatar.embedded .avatar-in-use img { width: 100%; max-width: 480px; height: auto; }
-@media (max-width: 900px) { .my-avatar.embedded { grid-template-columns: minmax(0, 1fr); } }
-.timing-controls .gen-scene { white-space: nowrap; }
-.prompter-speaker { margin-left: 8px; font-size: 13px; }
-
-/* The studio wide shot (a podcast), in the avatar drawer. */
-.studio-section { display: flex; flex-direction: column; gap: 8px; border-top: 1px solid var(--line); padding-top: 10px; }
-.studio-section .studio-picture { width: 100%; aspect-ratio: 2 / 1; object-fit: cover; border-radius: 6px; border: 1px solid var(--line); }
-.studio-section .studio-shots { margin: 0; padding-left: 18px; font-size: 12px; display: flex; flex-direction: column; gap: 3px; }
-.studio-section .ok { color: #7ee787; }
-.studio-section .busy { color: #f2cc60; }

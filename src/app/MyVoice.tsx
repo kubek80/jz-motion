@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { ACCENTS, clones, keepVoiceInProject, projectVoice, saveVoicer, useVoicer, VOICERS, type Voicer } from './settingsStore';
+import { ACCENTS, clones, keepVoiceInProject, loadTranscriber, projectVoice, saveVoicer, useVoicer, VOICERS, type Voicer } from './settingsStore';
+import { VoiceFromFile } from './VoiceFromFile';
 import { requestTts } from './tts';
 import { MicCheck, LevelMeter } from './timing/MicCheck';
 import { micDevice } from './timing/micDevice';
@@ -18,8 +19,11 @@ Some topics take two minutes; others need ten. Does that sound simple? Mostly, y
 
 const CLONERS = VOICERS.filter((v) => v.clones);
 
-/** `embedded`: its parts only, inside another window (🧑 Avatar). */
-export function MyVoice({ onClose, embedded }: { onClose: () => void; embedded?: boolean }) {
+/**
+ * `embedded`: its parts only, inside another window (🧑 Avatar). `noVoice`: the avatar being set up (a guest) has no
+ * voice of its own yet, so the one this browser speaks in isn't shown as theirs. `onSaved`: a sample was kept for it.
+ */
+export function MyVoice({ onClose, embedded, noVoice, onSaved }: { onClose: () => void; embedded?: boolean; noVoice?: boolean; onSaved?: () => void }) {
   const voicer = useVoicer();
   const [text, setText] = useState(SAMPLE_TEXT);
   const [device, setDevice] = useState(micDevice());
@@ -47,7 +51,7 @@ export function MyVoice({ onClose, embedded }: { onClose: () => void; embedded?:
     return () => window.removeEventListener('keydown', onKey, true);
   }, [t.state]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const s = voicer.sample;
+  const s = noVoice ? undefined : voicer.sample;
   // Whether the sample in use is the one kept with the project (in git).
   const [inProject, setInProject] = useState<boolean | null>(null);
   useEffect(() => {
@@ -81,6 +85,29 @@ export function MyVoice({ onClose, embedded }: { onClose: () => void; embedded?:
       await keepVoiceInProject({ ...cloner, sample: { upload, start: 0, end: Math.min(t.duration, 30), name: `my voice sample · ${new Date().toLocaleDateString()}`, text: t.duration >= 15 && t.duration <= 31 ? text : undefined } });
       setInProject(true);
       take.discard();
+      onSaved?.();
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  // A sample cut from a recording you have: kept as the voice; what is said in it is transcribed when a
+  // transcription service is set up (it helps the copy; without it, the sound alone).
+  const fromFile = async (f: { upload: string; duration: number; name: string }) => {
+    setBusy('Saving the sample…');
+    setError(null);
+    try {
+      await keepVoiceInProject({ ...cloner, sample: { upload: f.upload, start: 0, end: Math.min(f.duration, 30), name: f.name } });
+      setInProject(true);
+      onSaved?.();
+      const tr = loadTranscriber();
+      if (tr.apiKey) {
+        setBusy('Writing down what is said in it…');
+        const q = new URLSearchParams({ upload: f.upload, baseURL: tr.baseURL, model: tr.model });
+        await fetch(`/api/transcribe?${q}`, { method: 'POST', headers: { 'x-api-key': tr.apiKey } }).catch(() => undefined);
+      }
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -119,7 +146,7 @@ export function MyVoice({ onClose, embedded }: { onClose: () => void; embedded?:
               ? <p className="muted hint">Kept with the project: <code>voice/my-voice.json</code> and <code>uploads/{s.upload}</code>. Commit and push them, and it works on your other computers (and for Claude working in the repository).</p>
               : <div className="row"><button onClick={() => void keepInProject()} disabled={!!busy} title="Keep the sample and these settings in the project (git), never the key">💾 Save in the project</button><span className="muted">so it works on your other computers, and for Claude in the repository</span></div>
           ) : null}
-          {!s && <p className="muted">None yet: record one below.</p>}
+          {!s && <p className="muted">None yet: record one below, or use a recording you have.</p>}
           <label className="field">
             <span>copied by</span>
             <select value={clones(voicer) ? voicer.model : ''} onChange={(e) => { const v = CLONERS.find((x) => x.model === e.target.value); if (v) set({ ...voicer, baseURL: v.baseURL, model: v.model }); }}>
@@ -167,6 +194,8 @@ export function MyVoice({ onClose, embedded }: { onClose: () => void; embedded?:
             </>}
           </div>
         </section>
+
+        <VoiceFromFile busy={!!busy || t.state === 'recording'} onSample={fromFile} />
 
         <section>
           <h4>Hear it</h4>

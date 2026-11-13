@@ -6,11 +6,12 @@ import { ACCENTS, loadVoicer, saveVoicer, VOICERS } from './settingsStore';
 
 // "🧑 Avatar": your avatars and voices in one window. Each avatar is a look (its picture, style, how it moves) and the
 // voice it speaks in; choose the one you're using (its voice comes with it: generated speech, npm run voice),
-// add one (a copy of the one in use, to change), rename or remove. Below, the look and the voice of the one in use.
+// add one (a copy of the one in use, to change) or a guest's (a podcast: their own picture and voice, from a
+// recording of them), rename or remove. Below, the look and the voice of the one in use.
 // Kept with the project (voice/my-avatar.json, the voice in use in voice/my-voice.json), for every presentation.
 
 type Voice = { baseURL: string; model: string; instructions?: string; sample: { upload: string; start: number; end: number; name?: string; text?: string } };
-type Avatar = { id: string; name: string; photo: string; voice?: Voice };
+type Avatar = { id: string; name: string; photo: string; voice?: Voice; guest?: boolean };
 
 const voiceSummary = (v?: Voice) => {
   if (!v) return 'no voice of its own';
@@ -49,6 +50,10 @@ export function AvatarWindow({ onClose }: { onClose: () => void }) {
     setVersion((v) => v + 1);
   };
   const add = async () => { if (await post('new', { name: `Avatar ${list.avatars.length + 1}` })) { setVersion((v) => v + 1); setPart('look'); } };
+  // A podcast guest: an empty avatar, set up below (their picture, then their voice).
+  const addGuest = async () => { if (await post('new', { name: 'Guest', guest: true })) { setVersion((v) => v + 1); setPart('look'); } };
+  const current = list.avatars.find((a) => a.id === list.current);
+  const yours = list.avatars.find((a) => !a.guest);
   const rename = async (id: string, name: string) => { if (await post('rename', { id, name })) await load(); };
   const remove = async (a: Avatar) => {
     if (!window.confirm(`Remove “${a.name}”? Its look and voice settings go; avatars already made in your videos stay.`)) return;
@@ -73,9 +78,9 @@ export function AvatarWindow({ onClose }: { onClose: () => void }) {
               const inUse = a.id === list.current;
               return (
                 <div key={a.id} className={`me-avatar ${inUse ? 'in-use' : ''}`}>
-                  <img src={`/uploads/${a.photo}`} alt={a.name} />
+                  {a.photo ? <img src={`/uploads/${a.photo}`} alt={a.name} /> : <div className="me-no-photo">no picture yet</div>}
                   <input className="me-name" defaultValue={a.name} onBlur={(e) => e.target.value !== a.name && void rename(a.id, e.target.value)} title="Its name" />
-                  <span className="muted">{voiceSummary(a.voice)}</span>
+                  <span className="muted">{a.guest ? 'guest · ' : ''}{voiceSummary(a.voice)}</span>
                   <div className="row">
                     {inUse ? <span className="me-badge">in use</span> : <button className="primary" onClick={() => void use(a.id)} title="Use this avatar and its voice from now on">Use</button>}
                     {list.avatars.length > 1 && <button className="small" onClick={() => void remove(a)} title="Remove this avatar">✕</button>}
@@ -83,18 +88,27 @@ export function AvatarWindow({ onClose }: { onClose: () => void }) {
                 </div>
               );
             })}
-            <button className="me-add" onClick={() => void add()} disabled={!list.avatars.length} title="A copy of the avatar in use, to give its own look and voice">＋ New avatar</button>
+            <div className="me-adds">
+              <button className="me-add" onClick={() => void add()} disabled={!list.avatars.length} title="A copy of the avatar in use, to give its own look and voice">＋ New avatar</button>
+              <button className="me-add" onClick={() => void addGuest()} disabled={!list.avatars.length} title="Someone else, for a podcast: their picture (made into an avatar in the same style) and their voice (from a recording of them)">＋ Add a guest</button>
+            </div>
           </div>
           {!list.avatars.length && <p className="muted">No avatar yet: give the first one a picture below (Look), and record your voice (Voice).</p>}
           {error && <p className="note-text">{error}</p>}
+          {current?.guest && (
+            <p className="note-text me-guest-note">
+              Setting up {current.name}: {current.photo ? 'their look' : 'give them a picture (Look: theirs, then a styled version)'}, {current.voice ? 'their voice' : 'then their voice (Voice: a recording of them, or have them read at your microphone)'}. Then add them to a presentation’s cast (Script page).
+              {yours && <> While {current.name} is in use, generated speech outside a podcast speaks as them: <button className="small" onClick={() => void use(yours.id)}>Use {yours.name} again</button></>}
+            </p>
+          )}
         </section>
         <div className="me-tabs" role="tablist">
           <button role="tab" aria-selected={part === 'look'} className={part === 'look' ? 'on' : ''} onClick={() => setPart('look')}>🧑 Look</button>
           <button role="tab" aria-selected={part === 'voice'} className={part === 'voice' ? 'on' : ''} onClick={() => setPart('voice')}>🎙 Voice</button>
-          <span className="muted">of {list.avatars.find((a) => a.id === list.current)?.name ?? 'the avatar in use'}</span>
+          <span className="muted">of {current?.name ?? 'the avatar in use'}</span>
         </div>
         {help && <VoiceDirections onClose={() => setHelp(false)} />}
-        {part === 'look' ? <MyAvatar key={`look-${version}`} embedded version={version} onClose={onClose} /> : <MyVoice key={`voice-${version}`} embedded onClose={onClose} />}
+        {part === 'look' ? <MyAvatar key={`look-${version}`} embedded version={version} onClose={onClose} /> : <MyVoice key={`voice-${version}`} embedded onClose={onClose} noVoice={!!current && !current.voice} onSaved={() => void load()} />}
       </div>
     </div>
   );

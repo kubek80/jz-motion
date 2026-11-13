@@ -1317,3 +1317,17 @@ Jakub wanted to record a terminal sometimes, from Claude Code on his own compute
 ![Timing's board: the two of them side by side (each speaking in turn), the studio wide shot, back to the board with the speaker in the corner; the avatar drawer's Studio wide shot section](journey/145-podcast-pair-studio.jpg)
 
 **Checked by:** a test copy with a cast of two and the test's real studio shot: Timing's board at four moments (who plays, who holds, where); a take exported to MP4 and looked at second by second (pair, studio, the glide back to the corner, sound); tests for the pair and studio frames, finding and cutting studio stretches, each person's pieces and the price; typecheck, tests, build. The test copy, its files and the test avatar deleted after.
+
+## Step 106: Guests: their avatar, their voice from a recording, narration tagged by who speaks (part 3)
+
+**Asked:** the podcast's other people are real: their avatar from their photo, their voice from a recording of them, and recording narration together.
+
+- **＋ Add a guest** (🧑 Avatar): an empty avatar marked `guest` (no picture, no voice, nothing about him copied), with a note on what to set up and a button to use his own avatar again when done (while a guest is in use, generated speech outside a podcast speaks as them).
+- **Their look**: their picture, as it is or styled; a guest's styled version gets his avatar's picture along as the style to match (only its style, not its face), so they look like the same show.
+- **Their voice from a recording he has** (Voice → Or use a recording you have): any sound or video file (an interview, a podcast), 30 s chosen with a slider and listened to in the browser; the server keeps only those 30 s, as sound (`uploads/voice-sample-*.webm`), so a long video never lands in the project; transcribed when a transcription service is set up (it helps the copy).
+- **Recording narration** in Timing: each take says who speaks (the beat's speaker); a take across lines by different people (him and a guest at one microphone) is cut at the cues placed with → into one clip per person, named after them, so each one's avatar says their own part.
+- **Fixed while building it:** the Look tab showed a broken picture for an avatar without one; Timing's styles were split (the Avatar window and studio styles in their own file).
+
+![Adding a guest in 🧑 Avatar; their voice from a recording (30 s chosen); a take recorded across two people, cut into one clip per person](journey/146-podcast-guests.jpg)
+
+**Checked by:** in a browser: a guest added (an empty card, the note); a 40 s test video chosen, 30 s from 0:08 used as their voice (a 30 s sound-only sample kept, saved on the guest, his own avatar untouched); a take recorded with a fake microphone across Jakub, the guest and Jakub again, cut into three clips with their speakers and names, the cues where → was pressed; tests for cutting a take by speaker; typecheck, tests, build. A guest's styled picture wasn't drawn (a paid call). The test guest, presentation and files deleted after.

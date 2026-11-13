@@ -1,8 +1,10 @@
 // Recording narration with the script as a prompter: start/stop the microphone, place each beat's
 // cue with → (or take it back with ←), hold the prompter still with Space, and add the finished
-// recording as a new clip on the timeline. Also releases the mic and the audio graph on close.
+// recording as a new clip on the timeline. In a podcast, the clip says who speaks (the beat's speaker); a take
+// across lines by different people (a guest in the room) is cut at the cues placed into one clip per person.
+// Also releases the mic and the audio graph on close.
 import { micConstraints } from './micDevice';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { Clip } from '../../engine/schema';
 import type { Click } from '../../video/performance';
 import { log } from '../debug';
@@ -19,14 +21,38 @@ interface Options {
   setError: (e: string | null) => void;
   /** The scene playing at a moment (its id): new narration belongs to the scene where it starts. */
   sceneIdAt: (t: number) => string | undefined;
+  /** Who says a beat (a podcast's cast; none otherwise). */
+  speakerOf?: (scene: number, beat: number) => string | undefined;
+  /** A speaker's name, for the clips' names. */
+  nameOf?: (speaker: string) => string;
 }
 
-export function useNarrationRecording({ clock, clips, clicks, setClips, onCue, onCues, setBusy, setError, sceneIdAt }: Options) {
+/** A recording cut where the speaker changes: [from, to) seconds into it, and who speaks. */
+export function speakerPieces(marks: { at: number; speaker?: string }[], duration: number): { from: number; to: number; speaker?: string }[] {
+  const out: { from: number; to: number; speaker?: string }[] = [];
+  for (const m of [...marks].sort((a, b) => a.at - b.at)) {
+    const at = Math.max(0, Math.min(duration, m.at));
+    const last = out.at(-1);
+    if (last && last.speaker === m.speaker) continue;
+    if (last) last.to = at;
+    if (last && last.to - last.from < 0.05) out.pop();
+    const prev = out.at(-1);
+    if (prev && prev.speaker === m.speaker) { prev.to = duration; continue; }
+    out.push({ from: at, to: duration, speaker: m.speaker });
+  }
+  if (!out.length) out.push({ from: 0, to: duration });
+  out[0].from = 0;
+  return out;
+}
+
+export function useNarrationRecording({ clock, clips, clicks, setClips, onCue, onCues, setBusy, setError, sceneIdAt, speakerOf, nameOf }: Options) {
   const { rec, now, realNow, pause, mixer, silent, setTime } = clock;
   const [recPaused, setRecPaused] = useState(false);
   // ---------------------------------------------------------------- recording narration, with the script as a prompter
   const [recording, setRecording] = useState(false);
   const [recIndex, setRecIndex] = useState(0);
+  // The lines placed during the take: seconds into the recording, and who says each (a podcast).
+  const marks = useRef<{ at: number; speaker?: string }[]>([]);
   const startRecording = async () => {
     setError(null);
     try {
@@ -51,6 +77,7 @@ export function useNarrationRecording({ clock, clips, clicks, setClips, onCue, o
       // first click past the playhead.
       const startIndex = Math.max(0, clicks.reduce((found, c, i) => (c.t <= clipOffset + 0.05 ? i : found), -1));
       setRecIndex(startIndex);
+      marks.current = clicks[startIndex] ? [{ at: 0, speaker: speakerOf?.(clicks[startIndex].scene, clicks[startIndex].beat) }] : [];
       setRecording(true);
       setRecPaused(false);
     } catch (e) {
@@ -65,6 +92,7 @@ export function useNarrationRecording({ clock, clips, clicks, setClips, onCue, o
     // said in the recording — pauses included. The display stays frozen for the user's comfort.
     const timelineT = (rec.current?.clipOffset ?? 0) + realNow();
     onCue(c.scene, c.beat, Math.round(timelineT * 20) / 20);
+    marks.current.push({ at: realNow(), speaker: speakerOf?.(c.scene, c.beat) });
     setRecIndex(i);
   };
   const previousLine = () => {
@@ -72,6 +100,7 @@ export function useNarrationRecording({ clock, clips, clicks, setClips, onCue, o
     if (recIndex === 0) return;
     const c = clicks[recIndex];
     onCue(c.scene, c.beat, undefined);
+    if (marks.current.length > 1) marks.current.pop();
     setRecIndex(recIndex - 1);
   };
   /**
@@ -127,18 +156,21 @@ export function useNarrationRecording({ clock, clips, clicks, setClips, onCue, o
       const lanes = [r.lane, r.lane === 0 ? 1 : 0] as const;
       const lane = lanes.find((l) => overlap(l) === 0) ?? (overlap(lanes[0]) <= overlap(lanes[1]) ? lanes[0] : lanes[1]);
       if (overlap(lane) > 0) setError(`The new recording overlaps another clip on lane ${lane + 1}; trim or move one of them so they don't play at once.`);
-      const newClip: Clip = {
-        id: `rec-${Date.now().toString(36)}`,
-        upload,
-        sourceDuration,
-        offset: r.clipOffset,
-        lane,
-        trimStart: 0,
-        trimEnd: sourceDuration,
-        name: `narration ${new Date().toLocaleString()}`,
-        ...(sceneIdAt(r.clipOffset) ? { scene: sceneIdAt(r.clipOffset) } : {}),
-      };
-      setClips([...clips, newClip]);
+      // One clip, or (a podcast take across people) one per person's stretch, each saying who speaks.
+      const id = `rec-${Date.now().toString(36)}`;
+      const name = `narration ${new Date().toLocaleString()}`;
+      const pieces = speakerPieces(marks.current, sourceDuration);
+      const newClips: Clip[] = pieces.map((p, i) => {
+        const offset = Math.round((r.clipOffset + p.from) * 1000) / 1000;
+        const scene = sceneIdAt(offset);
+        return {
+          id: i ? `${id}-${i + 1}` : id, upload, sourceDuration, offset, lane,
+          trimStart: Math.round(p.from * 1000) / 1000, trimEnd: Math.round(p.to * 1000) / 1000,
+          name: p.speaker && pieces.length > 1 ? `${name} · ${nameOf?.(p.speaker) ?? p.speaker}` : name,
+          ...(scene ? { scene } : {}), ...(p.speaker ? { speaker: p.speaker } : {}),
+        };
+      });
+      setClips([...clips, ...newClips]);
       // Park the playhead at the end of the just-finished recording so pressing Play picks up
       // where I stopped talking, instead of snapping back to where Record was pressed.
       const endT = r.clipOffset + sourceDuration;
