@@ -3,6 +3,7 @@ import { isoModels } from '../../engine/iso';
 import { palette } from '../../engine/palette';
 import type { Raw } from './doc';
 import { GeoField } from './fields/GeoField';
+import { KnotsField, PointEnd } from './fields/arrowFields';
 import { IdList, Json, NumberField, ProseField, RefField, Select, TextAreaField, TextField } from './fields/inputs';
 import { CHOICE_ICONS, IconChoice, Swatches } from './fields/pickers';
 
@@ -37,7 +38,9 @@ const FIELD_INFO: Record<string, FieldInfo> = {
   zoom: { help: '1 shows the whole board, 2 is twice as close.' },
   focus: { help: 'What the camera frames; "all" frames everything visible.' },
   padding: { help: 'Space around what the camera frames, in screen pixels.' },
-  curve: { help: 'Bends the arrow: positive bends left, negative right (0.2 is gentle).' },
+  curve: { help: 'Bends the arrow: positive bends left, negative right (0.2 is gentle). Not used once it has knots.' },
+  via: { label: 'knots', help: 'Points the arrow passes through, in order. On the board: drag a ＋ on the selected arrow to add one, drag a knot to move it, double-click it to remove it.' },
+  bends: { label: 'through knots', help: 'Smooth curves through the knots, or straight lines with rounded corners.' },
   values: { label: 'show values' },
   line: { label: 'line', help: 'Solid, dashed or dotted.' },
   weight: { label: 'thickness' },
@@ -51,6 +54,12 @@ const FIELD_INFO: Record<string, FieldInfo> = {
   style: { label: 'style', help: 'Text: handwritten marker, bold outlined capitals, or code (several lines allowed). Spotlight: what happens outside it, darker or faded.' },
   amount: { label: 'strength', help: 'How much darker or fainter, from 0 to 1.' },
   on: { help: 'Off turns it off (play: pauses). Play with "go to frame" stays still unless this is on.' },
+};
+
+/** An arrow's ends (the play action's `from` is something else). */
+const ARROW_INFO: Record<string, FieldInfo> = {
+  from: { label: 'from', help: 'Where it starts. On the board: drag the arrow\'s start onto a drawing (it snaps to the nearest side or corner) or onto the empty board.' },
+  to: { label: 'to', help: 'What it points at. On the board: drag the arrow\'s end onto a drawing (it snaps to the nearest side or corner) or onto the empty board.' },
 };
 
 /** Position and size fields, shown together as a compact grid with drawing-program style labels. */
@@ -75,7 +84,7 @@ export function Fields({ schema, value, ids, onChange, hide = [], currentView, a
   const entries = Object.entries(schema.properties).filter(([key, p]) => !hide.includes(key) && !ALWAYS_HIDDEN.includes(key) && p.const === undefined);
   const geometry = entries.filter(([k, p]) => GEOMETRY.includes(k) && p.type === 'number');
   const row = ([key, p]: [string, Prop]) => {
-    const info = FIELD_INFO[key] ?? {};
+    const info = (value.type === 'arrow' ? ARROW_INFO[key] : undefined) ?? FIELD_INFO[key] ?? {};
     return (
       <label key={key} className="field" title={info.help}>
         <span>{info.label ?? key}{info.help ? <i className="help">?</i> : null}</span>
@@ -168,8 +177,9 @@ function Field({ name, prop, value, ids, onChange }: { name: string; prop: Prop;
   if (prop.enum && prop.enum.every((c: string) => c in palette)) return <Swatches value={value as string | undefined} colors={prop.enum} fallback={prop.default} onChange={onChange} />;
   if (name === 'icon') return <Select value={value} options={Object.keys(icons).sort()} onChange={onChange} />;
   if (name === 'model') return <Select value={value} options={Object.keys(isoModels)} empty="(custom parts)" onChange={onChange} />;
+  if (name === 'via') return <KnotsField value={value as { x: number; y: number }[] | undefined} onChange={onChange} />;
   if (name === 'from' || name === 'to') {
-    if (typeof value === 'object' && value) return <Json value={value} onChange={onChange} />;
+    if (typeof value === 'object' && value) return <PointEnd value={value as { x: number; y: number }} ids={ids} onChange={onChange} />;
     if (prop.anyOf) return <RefField value={value as string | undefined} ids={ids} onChange={onChange} />;
   }
   if (name === 'target') return <IdList value={value} ids={ids} onChange={onChange} />;

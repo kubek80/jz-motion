@@ -33,7 +33,7 @@ npm run check -- presentations/<id>.json      # must print ✓; fix every error 
 npm run snapshot -- presentations/<id>.json   # PNG of every scene, fully drawn, in snapshots/<id>/
 ```
 
-Open the snapshots and look at them: overlapping elements, labels running into each other, text off the board, arrows crossing things, too much on one scene. Fix and run both again. Use `--beats` to see each beat, `--scene N` for one scene.
+Open the snapshots and look at them: overlapping elements, labels running into each other, text off the board, arrows crossing things (route them round with knots: `via`, see docs/format.md), too much on one scene. Fix and run both again. Use `--beats` to see each beat, `--scene N` for one scene.
 
 ## 5. Hand over
 

@@ -73,8 +73,12 @@ export const ArrowElement = z.object({
   type: z.literal('arrow'),
   from: Ref,
   to: Ref,
-  /** Bend as a fraction of the arrow length; positive bends to the left of the direction of travel. */
+  /** Bend as a fraction of the arrow length; positive bends to the left of the direction of travel (without `via`). */
   curve: z.number().default(0),
+  /** Knots: board points the arrow passes through on its way, in order (to go round things, to arrive straight). */
+  via: z.array(Point).optional(),
+  /** Through its knots: "smooth" curves, or "corners": straight lines with rounded corners. */
+  bends: z.enum(['smooth', 'corners']).default('smooth'),
   head: z.enum(['end', 'start', 'both', 'none']).default('end'),
   label: z.string().optional(),
   /** Solid, dashed or dotted line. */

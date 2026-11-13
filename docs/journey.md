@@ -1383,3 +1383,17 @@ Jakub wanted to record a terminal sometimes, from Claude Code on his own compute
 - **Found on the way:** fal.ai's finished videos come from `v3b.fal.media`, which the cloud environment had to allow; the first video was made before that and was fetched and converted by hand, the same way the app does it.
 
 **Checked by:** `npm run check`; a frame of the avatar video looked at; the corners checked against the element positions of each scene. A preview export with the voice was started but not finished or looked at when this was pushed.
+
+## Step 111: Arrows: drag their ends on the board, and knots to route them
+
+**Asked:** arrows sometimes miss the mark, and often look odd where they connect: change them on the board itself (drag an arrow's end where it should be), give them several knots where needed, and knots that can be moved there, with their values shown in the panel.
+
+- **Knots** (`via` in the format): points an arrow passes through, in order; `bends` says how: `smooth` (a curve through them, the default) or `corners` (straight lines with rounded corners, for tidy routes round things). An end attached by a plain id now leaves from, or arrives at, the side facing its nearest knot, so an arrow with a knot in line with a side arrives at it straight. The head aims along the line's last stretch; the label sits halfway along the line.
+- **On the board** (one arrow selected): its two ends (filled), its knots (hollow) and a faint ＋ halfway between each two points. Drag an end onto a drawing: its anchors light up, the nearest one larger, and it attaches there (`"b.bottom"`); elsewhere on the drawing, to its facing side (`"b"`); on the empty board, to that point. Drag a knot to move it, a ＋ to add one, double-click a knot to remove it. While dragging, the line as it will be is shown dashed.
+- **In the panel**: the knots as a list (x, y, remove each, remove all), "through knots" as two pictures (smooth, corners), a free end as x, y with "attach to…". The board and the panel change the same values, so each shows the other's change at once.
+- **Fixed while building it:** an arrow's `from` field was labelled "jump to (s)" (the play action's `from` label); arrows now have their own.
+- The format, style guide, presentation skill and code map say when to route an arrow through knots.
+
+![Selecting an arrow (its ends and a ＋), dragging its end onto "Finish" (its anchors, the nearest larger, the new line dashed), a knot added over the box in the way (the panel listing it), the same with corners; below, as presented: a smooth route over and a cornered one round the bottom](journey/150-arrow-knots.jpg)
+
+**Checked by:** in a browser on a test presentation: selecting an arrow, dragging its end onto another box's bottom (it became `b.bottom`), dragging a ＋ to add a knot (it landed exactly where released), switching to corners, double-clicking the knot away; snapshots of a smooth and a cornered arrow; tests for the line through knots, corners, the heads' aim, halfway, and the ends facing their knots; typecheck, tests, build. The test presentation deleted after.

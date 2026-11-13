@@ -52,7 +52,8 @@ All elements take `id`, `color` and optionally `visible`. An element that a beat
 - With a plain id, the arrow attaches to the side facing the other end.
 - Anchors: `center`, `top`, `bottom`, `left`, `right`, `top-left`, `top-right`, `bottom-left`, `bottom-right`. The bottom of an icon is below its label.
 - `curve` bends the arrow: `0.2` is a gentle bend to the left of the direction of travel, negative bends right.
-- The label sits above the arrow (to the side for vertical arrows).
+- `via`: knots, board points the arrow passes through in order, e.g. `"via": [{ "x": 960, "y": 160 }]` to go over something in the way. With knots, each end attached by a plain id leaves from (or arrives at) the side facing its nearest knot, and `curve` isn't used. `"bends": "smooth"` (default) curves through them; `"corners"` draws straight lines with rounded corners (two knots make a clean ⊐ route: `from` `"a.bottom"`, `via` below both, `to` `"b.bottom"`).
+- The label sits above the arrow halfway along it (to the side where it runs vertically).
 - `"dashed": true` (older files) is the same as `"line": "dashed"`.
 
 ### Isometric 3D (`iso`)

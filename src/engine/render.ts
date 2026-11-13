@@ -2,15 +2,18 @@
 // adds the editing view (everything drawn in place, nothing animated) and the editor's helpers, whose
 // work is done in editing.ts.
 import gsap from 'gsap';
+import { drawArrowHandles, handleAt as arrowHandleAt, type ArrowGeometry, type ArrowHandle } from './arrowHandles';
 import { BoardEditing } from './editing';
+import { anchorSpots, arrowEnds } from './geometry';
 import { changesBetween } from './stillness';
 import { StagePlayer } from './player';
-import type { Camera } from './schema';
+import type { Camera, Point } from './schema';
 import { partState, renderImage } from './stageNodes';
 
 export type { PerformState, StagePosition } from './player';
 export type { DrawPart } from './stageNodes';
 export type { Corner } from './editing';
+export type { ArrowGeometry, ArrowHandle } from './arrowHandles';
 
 /** Plays a compiled presentation into a container, and lays scenes out for editing. */
 export class Stage extends StagePlayer {
@@ -82,6 +85,37 @@ export class Stage extends StagePlayer {
     if (image) this.animations.showFrame(image, index);
   }
 
+  /** An arrow of the open scene as drawn: where its ends are, its knots, how it bends. */
+  arrowGeometry(id: string): ArrowGeometry | undefined {
+    const scene = this.presentation?.scenes[this.sceneIndex];
+    const el = scene?.elements.find((e) => e.id === id);
+    // (A pinned arrow is in screen coordinates: edited in the panel, not with handles on the board.)
+    if (!scene || el?.type !== 'arrow' || el.pinned) return undefined;
+    try {
+      const { start, end } = arrowEnds(el, (x) => scene.elements.find((e) => e.id === x));
+      return { start, end, via: el.via ?? [], curve: el.curve, bends: el.bends };
+    } catch { return undefined; }
+  }
+
+  /** Where an arrow's end can attach to element `id` (its anchors), in board coordinates. */
+  anchorSpots(id: string) {
+    const scene = this.presentation?.scenes[this.sceneIndex];
+    const el = scene?.elements.find((e) => e.id === id);
+    return scene && el && el.type !== 'arrow' ? anchorSpots(el, (x) => scene.elements.find((e) => e.id === x)) : [];
+  }
+
+  /** The handle of arrow `id` under a board point (its ends, knots, or a "+" to add a knot). */
+  arrowHandleAt(id: string, point: Point): ArrowHandle | undefined {
+    const g = this.arrowGeometry(id);
+    return g ? arrowHandleAt(g, this.unitsPerPixel, point) : undefined;
+  }
+
+  /** While an arrow's handle is dragged: the arrow selected, its line as it will be, and where an end can attach. */
+  showArrowDrag(id: string, g: ArrowGeometry, drag: { spots: Point[]; hot?: Point }) {
+    this.editing.setSelection([id]);
+    drawArrowHandles(this.overlay, this.unitsPerPixel, g, drag);
+  }
+
   // The rest of the editing API is in editing.ts (BoardEditing), documented there.
   fitCamera(padding?: number) { return this.editing.fitCamera(padding); }
   boardPoint(clientX: number, clientY: number) { return this.editing.boardPoint(clientX, clientY); }
@@ -91,7 +125,12 @@ export class Stage extends StagePlayer {
   elementAt(point: { x: number; y: number }, among: Set<string>, margin?: number) { return this.editing.elementAt(point, among, margin); }
   elementBox(id: string) { return this.editing.elementBox(id); }
   previewMove(id: string, x: number, y: number) { this.editing.previewMove(id, x, y); }
-  setSelection(ids: string[], secondary?: string[], opts?: { handles?: boolean }) { this.editing.setSelection(ids, secondary, opts); }
+  setSelection(ids: string[], secondary?: string[], opts?: { handles?: boolean }) {
+    this.editing.setSelection(ids, secondary, opts);
+    // One arrow selected: its ends and knots, to drag.
+    const g = ids.length === 1 ? this.arrowGeometry(ids[0]) : undefined;
+    if (g) drawArrowHandles(this.overlay, this.unitsPerPixel, g);
+  }
   textField(id: string, field: string) { return this.editing.textField(id, field); }
   setTextHidden(id: string, field: string, hidden: boolean) { this.editing.setTextHidden(id, field, hidden); }
   handleAt(point: { x: number; y: number }) { return this.editing.handleAt(point); }

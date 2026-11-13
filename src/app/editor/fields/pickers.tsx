@@ -66,6 +66,10 @@ export const CHOICE_ICONS: Record<string, Record<string, React.ReactNode>> = {
     dark: g(<><rect x="1.5" y="1.5" width="29" height="19" rx="2" fill="#000" stroke="none" /><rect x="10" y="6" width="12" height="10" rx="2" fill="currentColor" opacity="0.9" stroke="none" /></>),
     fade: g(<><rect x="1.5" y="1.5" width="29" height="19" rx="2" fill="currentColor" opacity="0.18" stroke="none" /><rect x="10" y="6" width="12" height="10" rx="2" fill="currentColor" opacity="0.9" stroke="none" /></>),
   },
+  bends: {
+    smooth: g(<><path d="M4 17C9 17 9 5 16 5S23 17 28 17" /><circle cx="16" cy="5" r="1.6" fill="currentColor" /></>),
+    corners: g(<><path d="M4 17H10Q12 17 12 15V7Q12 5 14 5H18Q20 5 20 7V15Q20 17 22 17H28" /></>),
+  },
   frame: {
     phone: <svg viewBox="0 0 32 22" width="32" height="22"><rect x="11" y="1" width="10.5" height="20" rx="2.6" fill="#08080a" stroke="#8a8d94" strokeWidth="0.8" /><rect x="12.2" y="2.2" width="8.1" height="17.6" rx="1.8" fill="currentColor" opacity="0.45" /><rect x="14.6" y="3" width="3.3" height="1" rx="0.5" fill="#000" /></svg>,
     none: g(<><rect x="5" y="4" width="22" height="14" rx="1.5" fill="currentColor" opacity="0.35" stroke="none" /><path d="M8 14L13 9L17 12L24 7" strokeWidth="1.4" /></>),
