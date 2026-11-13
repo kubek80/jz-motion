@@ -1373,3 +1373,13 @@ Jakub wanted to record a terminal sometimes, from Claude Code on his own compute
 ![Six beats: the map with your lane first, a step's details, the overdue banner, the flag form, the flagged card in the library, the form on the map](journey/149-process-manager-walkthroughs.jpg)
 
 **Checked by:** frames pulled from every recording at its step times; a snapshot of every beat of the four scenes looked at; `npm run check`; `npm run voice -- time`. Not exported to MP4 (beat snapshots can show a recording a frame behind). Process Manager's repository left unchanged.
+
+## Step 110: Process Manager: the avatar in four scenes
+
+**Asked:** generate the avatar where it fits, and place it so it sits well with what is on the board.
+
+- **Four scenes** where he talks to the viewer rather than explains a diagram (128 s, about $7.30 on fal.ai): the opening, the start of "how it stays alive" (life-cycle), "Writing it is cheap", the closing.
+- **Where it sits:** the opening starts full frame for the hook, glides to the bottom-right corner while the board explains, and goes side by side with the board for the title; life-cycle and "Writing it is cheap" have it bottom-left, the corner those boards leave free (one caption moved 140 to the right to clear it); the closing has it bottom-right during the recap and full frame for the goodbye.
+- **Found on the way:** fal.ai's finished videos come from `v3b.fal.media`, which the cloud environment had to allow; the first video was made before that and was fetched and converted by hand, the same way the app does it.
+
+**Checked by:** `npm run check`; a frame of the avatar video looked at; the corners checked against the element positions of each scene. A preview export with the voice was started but not finished or looked at when this was pushed.
