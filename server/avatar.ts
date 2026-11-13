@@ -37,7 +37,7 @@ export const avatarPrice = (model?: string) => AVATAR_MODELS.find((m) => m.model
 const SUBTLE = 'A calm man speaking to the camera with subtle, small mouth movements and a relaxed face; minimal head movement.';
 
 /** One of your avatars: a look, how it moves, and the voice it speaks in. */
-export interface Avatar extends MyAvatar { id: string; name: string; voice?: MyVoice }
+export interface Avatar extends MyAvatar { id: string; name: string; voice?: MyVoice; /** Someone else (a podcast guest), not you. */ guest?: boolean }
 export interface Avatars { current: string; avatars: Avatar[] }
 
 /** Your avatars (voice/my-avatar.json); a file from before several avatars is one avatar with the voice in use. */
@@ -63,12 +63,15 @@ export async function readMyAvatar(): Promise<Avatar | null> {
 }
 
 /** A new avatar, starting as a copy of the one in use (look, movement, voice), and in use from now on. */
-export async function newAvatar(name: string): Promise<Avatars> {
+export async function newAvatar(name: string, opts: { guest?: boolean } = {}): Promise<Avatars> {
   const f = await readAvatars();
   if (!f) throw new Error('No avatar yet: choose a picture for the first one');
   const from = f.avatars.find((a) => a.id === f.current) ?? f.avatars[0];
   const id = `avatar-${Date.now().toString(36)}`;
-  f.avatars.push({ ...from, id, name: name || 'New avatar' });
+  // A guest starts empty: their own picture and voice to come (how it moves and its model as yours, the style the
+  // default one, without anything about you).
+  if (opts.guest) f.avatars.push({ id, name: name || 'Guest', guest: true, photo: '', model: from.model, prompt: 'A calm person speaking to the camera with subtle, small mouth movements and a relaxed face; minimal head movement.', calm: from.calm });
+  else f.avatars.push({ ...from, id, name: name || 'New avatar' });
   f.current = id;
   await writeAvatars(f);
   return f;

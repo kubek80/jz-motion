@@ -1,6 +1,11 @@
 import { createHash } from 'node:crypto';
-import { copyFile, mkdir, readFile, stat, writeFile } from 'node:fs/promises';
+import { copyFile, mkdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
+import { createWriteStream } from 'node:fs';
+import { pipeline } from 'node:stream/promises';
+import { tmpdir } from 'node:os';
+import type { IncomingMessage } from 'node:http';
 import { join, resolve } from 'node:path';
+import { FFMPEG, probe, run } from './media';
 import { uploadPath } from './transcribe';
 
 // Your voice, kept with the project so it works on every computer (and for an assistant working in the repo):
@@ -41,4 +46,28 @@ export async function saveMyVoice(v: MyVoice): Promise<MyVoice> {
 export async function writeMyVoice(v: MyVoice) {
   await mkdir(join(MY_VOICE_FILE, '..'), { recursive: true });
   await writeFile(MY_VOICE_FILE, `${JSON.stringify(v, null, 2)}\n`);
+}
+
+/**
+ * A voice sample from a recording you have (a guest's interview, a podcast, a video): the 30 s from `start` kept as
+ * uploads/voice-sample-<id>.webm (sound only; the file itself isn't kept, so a long video never lands in the project).
+ */
+export async function sampleFromFile(req: IncomingMessage, ext: string, start: number): Promise<{ upload: string; duration: number }> {
+  const raw = join(tmpdir(), `jzm-voice-${Date.now()}.${ext.replace(/[^\w]/g, '') || 'webm'}`);
+  await pipeline(req, createWriteStream(raw));
+  try {
+    const info = await probe(raw);
+    if (!info.hasAudio) throw new Error('That file has no sound');
+    const from = Math.max(0, Math.min(start, Math.max(0, (info.duration ?? 0) - 5)));
+    const cut = join(tmpdir(), `jzm-voice-cut-${Date.now()}.webm`);
+    await run(FFMPEG, ['-y', '-v', 'error', '-ss', String(from), '-t', '30', '-i', raw, '-vn', '-ac', '1', '-ar', '48000', '-c:a', 'libopus', '-b:a', '96k', cut]);
+    const id = createHash('sha1').update(await readFile(cut)).digest('hex').slice(0, 10);
+    const upload = `voice-sample-${id}.webm`;
+    await copyFile(cut, uploadPath(upload));
+    await rm(cut, { force: true });
+    const { duration } = await probe(uploadPath(upload));
+    return { upload, duration: duration ?? 30 };
+  } finally {
+    await rm(raw, { force: true });
+  }
 }

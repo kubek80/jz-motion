@@ -8,7 +8,7 @@ import type { Plugin, PreviewServer, ViteDevServer } from 'vite';
 import { exportVideo } from './export';
 import { deleteIcon, readLibrary, saveIcon } from './library';
 import { measureLoudness } from './loudness';
-import { readMyVoice, saveMyVoice } from './myVoice';
+import { readMyVoice, sampleFromFile, saveMyVoice } from './myVoice';
 import { findOffset } from './media';
 import { logAi, readAiLog, shorten } from './aiLog';
 import { cleanVoice } from './cleanVoice';
@@ -287,6 +287,7 @@ export function jzmServer(): Plugin {
         }
         if (parts[0] === 'api' && parts[1] === 'presentations') return await presentations(req, res, parts[2]);
         if (parts[0] === 'api' && parts[1] === 'takes') return await takes(req, res, parts.slice(2), url.searchParams);
+        if (url.pathname === '/api/my-voice/from-file' && req.method === 'POST') return send(res, 200, await sampleFromFile(req, url.searchParams.get('ext') ?? 'webm', Number(url.searchParams.get('start')) || 0));
         if (url.pathname === '/api/my-voice' && req.method === 'GET') return send(res, 200, (await readMyVoice()) ?? {});
         if (url.pathname === '/api/my-voice' && req.method === 'POST') {
           // The voice in use, and the avatar in use speaks in it from now on.

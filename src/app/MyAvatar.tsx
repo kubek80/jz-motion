@@ -86,7 +86,7 @@ export function MyAvatar({ onClose, embedded, version = 0 }: { onClose: () => vo
         <div className="avatar-col">
         <section>
           <h4>The avatar in use</h4>
-          {a ? (
+          {a?.photo ? (
             <div className="avatar-in-use">
               <img src={`/uploads/${a.photo}`} alt="Your avatar" />
               <p className="muted hint">{a.style ? 'A styled version of your picture.' : 'Your picture, as it is.'} Kept with the project: <code>voice/my-avatar.json</code> and <code>uploads/{a.photo}</code>, for every presentation. Avatars already made keep the look they were made with: make them again from a clip (its window, or right-click it in Timing).</p>

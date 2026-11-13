@@ -35,8 +35,14 @@ const isPhoto = (s: unknown): s is string => typeof s === 'string' && /^avatar-p
 
 /** A styled version of `source`: the image model redraws it as `style` says (about 14¢ a picture). */
 export async function styleAvatar(source: string, style: string, apiKey?: string): Promise<string> {
+  // A guest is drawn in the same style as you: your avatar's picture goes with theirs, for its style only.
+  const f = await readAvatars();
+  const now = f?.avatars.find((x) => x.id === f.current);
+  const yours = now?.guest ? f?.avatars.find((x) => !x.guest && x.photo) : undefined;
+  const text = yours ? `${style}\n\nMatch the drawing style of the SECOND picture exactly (its lines, shading, colours and studio look): it shows someone else, so take only its style, never its face or person. The person to draw is in the FIRST picture.` : style;
+  const pictures = [await pictureUri(source), ...(yours ? [await pictureUri(yours.photo)] : [])];
   const tmp = join(tmpdir(), `jzm-avatar-styled-${Date.now()}.png`);
-  await writeFile(tmp, await drawPicture(style, [await pictureUri(source)], apiKey));
+  await writeFile(tmp, await drawPicture(text, pictures, apiKey));
   try { return await makeAvatarPicture(tmp, { top: 0.5 }); } finally { await rm(tmp, { force: true }); }
 }
 
@@ -47,10 +53,11 @@ export async function myAvatarRoutes(req: IncomingMessage, res: ServerResponse, 
   if (p === '/api/me' && m === 'GET') {
     send(res, 200, (await readAvatars()) ?? { current: null, avatars: [] });
   } else if (p.startsWith('/api/me/') && m === 'POST') {
-    const { id, name } = await json(req);
+    const body = await json(req);
+    const { id, name } = body;
     const what = p.slice('/api/me/'.length);
     if (what === 'use') send(res, 200, await useAvatar(String(id)));
-    else if (what === 'new') send(res, 200, await newAvatar(String(name ?? '')));
+    else if (what === 'new') send(res, 200, await newAvatar(String(name ?? ''), { guest: !!body.guest }));
     else if (what === 'rename') send(res, 200, await renameAvatar(String(id), String(name ?? '')));
     else if (what === 'delete') send(res, 200, await deleteAvatar(String(id)));
     else return false;

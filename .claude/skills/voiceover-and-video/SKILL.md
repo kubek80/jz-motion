@@ -57,6 +57,8 @@ npm run avatar -- make presentations/<id>.json --scenes id,id --layout camera  #
 
 A presentation can have a **cast** (docs/format.md, Cast): you and your guests, each one of the avatars in 🧑 Avatar (its look and its voice). Set it on the **Script** page (the Cast bar: add a person from your avatars, rename, remove) and say who speaks with the coloured label on each scene and beat (a beat without one takes its scene's; a scene without one, the first in the cast). When writing a dialogue, one beat per turn with its `speaker`.
 
+- **A guest** (a real person) is one of the avatars too: 🧑 Avatar → **＋ Add a guest** (an empty avatar marked as a guest), then **Look**: their picture, as it is or styled (a guest is drawn in the same style as your avatar), and **Voice**: **Or use a recording you have** (an interview, a podcast, a video of them: pick 30 s where they talk alone and clearly; only those 30 s are kept, as `uploads/voice-sample-*.webm`) or have them read at your microphone. Then **Use** your own avatar again, and add the guest to the cast on the Script page.
+- **Recording narration** in Timing with a cast: each take is tagged with who speaks (the beat's speaker); a take across lines by different people (recording together in the room) is cut at the cues you place with → into one clip per person, so each one's avatar says their part.
 - **Generate** (Script page, Timing, `npm run voice`) says each run of beats by one person in that person's avatar voice: one clip per run, each with its `speaker`, one after another (so a scene can have several clips, on the lanes).
 - **Make my avatar** and `npm run avatar -- make` make each clip's talking head with its speaker's avatar.
 - The prompter in Timing names who says the current and the next line.
