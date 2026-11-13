@@ -815,195 +815,439 @@
     },
     {
       "id": "views",
-      "title": "Two views of the same thing",
+      "title": "Reading a process",
+      "layout": "board",
       "elements": [
         {
           "id": "head",
           "type": "text",
-          "text": "TWO VIEWS OF THE SAME THING",
+          "text": "READING A PROCESS",
           "x": 960,
-          "y": 105,
-          "size": 64,
-          "color": "white",
-          "style": "bold"
-        },
-        {
-          "id": "shot",
-          "type": "image",
-          "src": "/media/822a8c4e3f66bdc4.webp",
-          "x": 530,
-          "y": 590,
-          "width": 920,
-          "height": 575,
-          "frame": "browser",
-          "url": "process-manager / onboard a site to Akamai",
-          "color": "cyan"
-        },
-        {
-          "id": "prereq",
-          "type": "area",
-          "x": 455,
-          "y": 572,
-          "width": 640,
-          "height": 50
-        },
-        {
-          "id": "c-head",
-          "type": "text",
-          "text": "the checklist",
-          "x": 1150,
-          "y": 300,
+          "y": 70,
           "size": 56,
-          "color": "cyan",
-          "align": "start"
-        },
-        {
-          "id": "c1",
-          "type": "text",
-          "text": "1  decide the project details",
-          "x": 1150,
-          "y": 400,
-          "size": 44,
           "color": "white",
-          "align": "start"
+          "style": "bold",
+          "pinned": true
         },
         {
-          "id": "c1a",
-          "type": "text",
-          "text": "a  choose dev, test or prod",
-          "x": 1210,
-          "y": 470,
-          "size": 40,
-          "color": "pink",
-          "align": "start"
+          "id": "rec",
+          "type": "image",
+          "src": "/media/cc9946c74de3a1ca.webm",
+          "x": 960,
+          "y": 560,
+          "width": 1200,
+          "height": 750,
+          "frame": "window",
+          "url": "Process Manager"
         },
         {
-          "id": "c1b",
-          "type": "text",
-          "text": "b  name it app-env",
-          "x": 1210,
-          "y": 535,
-          "size": 40,
-          "color": "pink",
-          "align": "start"
+          "id": "a1",
+          "type": "area",
+          "x": 804,
+          "y": 598,
+          "width": 844,
+          "height": 375
         },
         {
-          "id": "c1c",
+          "id": "cap1",
           "type": "text",
-          "text": "c  pick your folder",
-          "x": 1210,
-          "y": 600,
-          "size": 40,
-          "color": "pink",
-          "align": "start"
-        },
-        {
-          "id": "c2",
-          "type": "text",
-          "text": "2  raise the request",
-          "x": 1150,
-          "y": 690,
-          "size": 44,
-          "color": "white",
-          "align": "start"
-        },
-        {
-          "id": "c3",
-          "type": "text",
-          "text": "3  wait: the cloud team approves",
-          "x": 1150,
-          "y": 770,
-          "size": 44,
-          "color": "white",
-          "align": "start"
-        },
-        {
-          "id": "done",
-          "type": "text",
-          "text": "2 of 5 of your steps done",
-          "x": 1150,
-          "y": 880,
-          "size": 48,
-          "color": "green",
-          "align": "start"
-        },
-        {
-          "id": "exact",
-          "type": "text",
-          "text": "exact actions, not a vague paragraph",
-          "x": 1150,
-          "y": 970,
-          "size": 44,
+          "text": "search for what you need",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
           "color": "yellow",
-          "align": "start"
+          "pinned": true
+        },
+        {
+          "id": "a2",
+          "type": "area",
+          "x": 898,
+          "y": 377,
+          "width": 1031,
+          "height": 178
+        },
+        {
+          "id": "cap2",
+          "type": "text",
+          "text": "owner, your steps, how long, last review",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "yellow",
+          "pinned": true
+        },
+        {
+          "id": "a3",
+          "type": "area",
+          "x": 960,
+          "y": 772,
+          "width": 1155,
+          "height": 150
+        },
+        {
+          "id": "cap3",
+          "type": "text",
+          "text": "what must be in place first",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "yellow",
+          "pinned": true
+        },
+        {
+          "id": "a4",
+          "type": "area",
+          "x": 960,
+          "y": 528,
+          "width": 1155,
+          "height": 394
+        },
+        {
+          "id": "cap4",
+          "type": "text",
+          "text": "your lane first, the others below",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "yellow",
+          "pinned": true
+        },
+        {
+          "id": "a5",
+          "type": "area",
+          "x": 1326,
+          "y": 393,
+          "width": 469,
+          "height": 263
+        },
+        {
+          "id": "cap5",
+          "type": "text",
+          "text": "exactly what to do",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "yellow",
+          "pinned": true
+        },
+        {
+          "id": "a6",
+          "type": "area",
+          "x": 804,
+          "y": 467,
+          "width": 844,
+          "height": 347
+        },
+        {
+          "id": "cap6",
+          "type": "text",
+          "text": "the same process, as a list",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "yellow",
+          "pinned": true
+        },
+        {
+          "id": "a7",
+          "type": "area",
+          "x": 804,
+          "y": 368,
+          "width": 844,
+          "height": 206
+        },
+        {
+          "id": "cap7",
+          "type": "text",
+          "text": "1 of 5 of your steps done",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "yellow",
+          "pinned": true
         }
       ],
       "beats": [
         {
-          "title": "The map",
-          "notes": "In the app, the same description shows up in two ways. First, the map: the whole flow at a glance.",
+          "title": "Find it",
+          "notes": "Let me show you the real thing. Reading first. I search for what I need, GCP, and there's the process.",
           "actions": [
             {
               "do": "draw",
               "target": "head"
             },
             {
+              "do": "fade-in",
+              "target": "rec"
+            },
+            {
+              "do": "wait",
+              "duration": 0.8
+            },
+            {
+              "do": "fade-out",
+              "target": "head",
+              "duration": 0.4
+            },
+            {
+              "do": "spotlight",
+              "target": "a1",
+              "style": "dark",
+              "amount": 0.55
+            },
+            {
+              "do": "camera",
+              "focus": "a1",
+              "zoom": 1.78,
+              "duration": 1.2,
+              "start": "with"
+            },
+            {
               "do": "draw",
-              "target": "shot"
+              "target": "cap1",
+              "start": "with"
+            },
+            {
+              "do": "play",
+              "target": "rec",
+              "until": 11,
+              "duration": 3
             }
           ],
           "cue": 124.25
         },
         {
-          "title": "Before you start",
-          "notes": "At the top: what must be in place before you start. An approved cost centre, the right access. If you don't have it, it points you to the process that gets it.",
+          "title": "What you are in for",
+          "notes": "I open it. At the top: who owns it, how many of the steps are mine, how long it takes, and when it was last reviewed.",
           "actions": [
             {
-              "do": "circle",
-              "target": "prereq",
-              "color": "yellow"
+              "do": "fade-out",
+              "target": "cap1",
+              "duration": 0.3
+            },
+            {
+              "do": "play",
+              "target": "rec",
+              "goto": 13,
+              "fade": true,
+              "duration": 0.6
+            },
+            {
+              "do": "spotlight",
+              "target": "a2",
+              "style": "dark",
+              "amount": 0.55
+            },
+            {
+              "do": "camera",
+              "focus": "a2",
+              "zoom": 1.45,
+              "duration": 1.2,
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap2",
+              "start": "with"
             }
           ],
-          "cue": 131.81
+          "cue": 132.64
+        },
+        {
+          "title": "Before you start",
+          "notes": "Before I start: what must be in place. I tick what I already have. If something is missing, it links to the process that gets it.",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "cap2",
+              "duration": 0.3
+            },
+            {
+              "do": "spotlight",
+              "target": "a3",
+              "style": "dark",
+              "amount": 0.55
+            },
+            {
+              "do": "camera",
+              "focus": "a3",
+              "zoom": 1.35,
+              "duration": 1.2,
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap3",
+              "start": "with"
+            },
+            {
+              "do": "play",
+              "target": "rec",
+              "until": 17,
+              "duration": 2
+            }
+          ],
+          "cue": 141.37
+        },
+        {
+          "title": "The map",
+          "notes": "Then the map. My lane is on top, so I see my own steps first. Below it: who I'm waiting for.",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "cap3",
+              "duration": 0.3
+            },
+            {
+              "do": "spotlight",
+              "target": "a4",
+              "style": "dark",
+              "amount": 0.55
+            },
+            {
+              "do": "camera",
+              "focus": "a4",
+              "zoom": 1.35,
+              "duration": 1.2,
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap4",
+              "start": "with"
+            },
+            {
+              "do": "play",
+              "target": "rec",
+              "until": 23,
+              "duration": 2.5
+            }
+          ],
+          "cue": 150.52
+        },
+        {
+          "title": "One step",
+          "notes": "I click a step, and it tells me exactly what to do. Which environment, how to build the name, which folder.",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "cap4",
+              "duration": 0.3
+            },
+            {
+              "do": "spotlight",
+              "target": "a5",
+              "style": "dark",
+              "amount": 0.55
+            },
+            {
+              "do": "camera",
+              "focus": "a5",
+              "zoom": 2.1,
+              "duration": 1.2,
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap5",
+              "start": "with"
+            },
+            {
+              "do": "play",
+              "target": "rec",
+              "until": 28,
+              "duration": 2.5
+            }
+          ],
+          "cue": 157.95
         },
         {
           "title": "The checklist",
-          "notes": "Second, the checklist. Your steps, numbered, with the exact actions. Which field, which value, which command.",
+          "notes": "The checklist is the same process as a numbered list, with my steps written out.",
           "actions": [
             {
-              "do": "erase",
-              "target": "prereq-circle"
+              "do": "fade-out",
+              "target": "cap5",
+              "duration": 0.3
+            },
+            {
+              "do": "play",
+              "target": "rec",
+              "goto": 38,
+              "fade": true,
+              "duration": 0.6
+            },
+            {
+              "do": "spotlight",
+              "target": "a6",
+              "style": "dark",
+              "amount": 0.55
+            },
+            {
+              "do": "camera",
+              "focus": "a6",
+              "zoom": 1.78,
+              "duration": 1.2,
+              "start": "with"
             },
             {
               "do": "draw",
-              "target": [
-                "c-head",
-                "c1",
-                "c1a",
-                "c1b",
-                "c1c",
-                "c2",
-                "c3"
-              ],
-              "stagger": 0.35
+              "target": "cap6",
+              "start": "with"
             }
           ],
-          "cue": 142.86
+          "cue": 165.38
         },
         {
           "title": "Tick as you go",
-          "notes": "You tick as you go. No more guessing what step three really means.",
+          "notes": "I tick as I go, and it keeps count. No more guessing what step three really means.",
           "actions": [
             {
-              "do": "draw",
-              "target": "done"
+              "do": "fade-out",
+              "target": "cap6",
+              "duration": 0.3
             },
             {
-              "do": "pop",
-              "target": "exact"
+              "do": "spotlight",
+              "target": "a7",
+              "style": "dark",
+              "amount": 0.55
+            },
+            {
+              "do": "camera",
+              "focus": "a7",
+              "zoom": 1.78,
+              "duration": 1.2,
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap7",
+              "start": "with"
+            },
+            {
+              "do": "play",
+              "target": "rec",
+              "until": 49,
+              "duration": 2.5
+            },
+            {
+              "do": "wait",
+              "duration": 1.2
+            },
+            {
+              "do": "spotlight",
+              "target": "a7",
+              "on": false
+            },
+            {
+              "do": "camera",
+              "focus": "rec",
+              "padding": 60,
+              "start": "with"
             }
           ],
-          "cue": 151.77
+          "cue": 170.79
         }
       ]
     },
@@ -1171,7 +1415,7 @@
               "stagger": 0.4
             }
           ],
-          "cue": 157.51
+          "cue": 178.91
         },
         {
           "title": "Kinds of step",
@@ -1183,7 +1427,7 @@
               "times": 2
             }
           ],
-          "cue": 165.59
+          "cue": 186.99
         },
         {
           "title": "Shared lists",
@@ -1208,7 +1452,7 @@
               "stagger": 0.4
             }
           ],
-          "cue": 176.59
+          "cue": 197.99
         },
         {
           "title": "Change it once",
@@ -1224,7 +1468,7 @@
               "target": "once"
             }
           ],
-          "cue": 183.88
+          "cue": 205.28
         },
         {
           "title": "For your situation",
@@ -1243,7 +1487,7 @@
               "times": 2
             }
           ],
-          "cue": 193
+          "cue": 214.4
         }
       ]
     },
@@ -1369,7 +1613,7 @@
               "target": "head"
             }
           ],
-          "cue": 204.06
+          "cue": 225.46
         },
         {
           "title": "Draft",
@@ -1384,7 +1628,7 @@
               "target": "d-note"
             }
           ],
-          "cue": 210.35
+          "cue": 231.75
         },
         {
           "title": "Active",
@@ -1403,7 +1647,7 @@
               "target": "a-note"
             }
           ],
-          "cue": 218.01
+          "cue": 239.41
         },
         {
           "title": "Retired, not deleted",
@@ -1424,7 +1668,7 @@
               "target": "dead"
             }
           ],
-          "cue": 224.95
+          "cue": 246.35
         }
       ]
     },
@@ -1567,7 +1811,7 @@
               "stagger": 0.5
             }
           ],
-          "cue": 235.12
+          "cue": 256.52
         },
         {
           "title": "Still correct?",
@@ -1583,7 +1827,7 @@
               "stagger": 0.5
             }
           ],
-          "cue": 243.87
+          "cue": 265.27
         },
         {
           "title": "One click",
@@ -1602,7 +1846,7 @@
               ]
             }
           ],
-          "cue": 249.27
+          "cue": 270.67
         },
         {
           "title": "Reminders send themselves",
@@ -1617,7 +1861,7 @@
               "target": "cmd-note"
             }
           ],
-          "cue": 256.75
+          "cue": 278.15
         },
         {
           "title": "A date you can trust",
@@ -1633,7 +1877,331 @@
               "color": "yellow"
             }
           ],
-          "cue": 265.26
+          "cue": 286.66
+        }
+      ]
+    },
+    {
+      "id": "reviews-demo",
+      "title": "Reviewing, in the app",
+      "layout": "board",
+      "elements": [
+        {
+          "id": "head",
+          "type": "text",
+          "text": "REVIEWING A PROCESS",
+          "x": 960,
+          "y": 70,
+          "size": 56,
+          "color": "white",
+          "style": "bold",
+          "pinned": true
+        },
+        {
+          "id": "rec",
+          "type": "image",
+          "src": "/media/6d9818e7668b4184.webm",
+          "x": 960,
+          "y": 560,
+          "width": 1200,
+          "height": 750,
+          "frame": "window",
+          "url": "Process Manager · Editor"
+        },
+        {
+          "id": "a1",
+          "type": "area",
+          "x": 960,
+          "y": 543,
+          "width": 1155,
+          "height": 68
+        },
+        {
+          "id": "cap1",
+          "type": "text",
+          "text": "2 processes need a review",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "yellow",
+          "pinned": true
+        },
+        {
+          "id": "a2",
+          "type": "area",
+          "x": 804,
+          "y": 697,
+          "width": 844,
+          "height": 263
+        },
+        {
+          "id": "cap2",
+          "type": "text",
+          "text": "one overdue, one due soon",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "yellow",
+          "pinned": true
+        },
+        {
+          "id": "a3",
+          "type": "area",
+          "x": 960,
+          "y": 579,
+          "width": 1155,
+          "height": 178
+        },
+        {
+          "id": "cap3",
+          "type": "text",
+          "text": "since when, and what to do",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "yellow",
+          "pinned": true
+        },
+        {
+          "id": "a4",
+          "type": "area",
+          "x": 1016,
+          "y": 340,
+          "width": 525,
+          "height": 75
+        },
+        {
+          "id": "cap4",
+          "type": "text",
+          "text": "still correct: one click",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "yellow",
+          "pinned": true
+        },
+        {
+          "id": "a5",
+          "type": "area",
+          "x": 739,
+          "y": 518,
+          "width": 713,
+          "height": 75
+        },
+        {
+          "id": "cap5",
+          "type": "text",
+          "text": "reviewed today, the clock starts again",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "yellow",
+          "pinned": true
+        }
+      ],
+      "beats": [
+        {
+          "title": "What is due",
+          "notes": "Here's a review, as an owner sees it. The library tells me that two processes need one.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "head"
+            },
+            {
+              "do": "fade-in",
+              "target": "rec"
+            },
+            {
+              "do": "wait",
+              "duration": 0.8
+            },
+            {
+              "do": "fade-out",
+              "target": "head",
+              "duration": 0.4
+            },
+            {
+              "do": "spotlight",
+              "target": "a1",
+              "style": "dark",
+              "amount": 0.55
+            },
+            {
+              "do": "camera",
+              "focus": "a1",
+              "zoom": 1.35,
+              "duration": 1.2,
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap1",
+              "start": "with"
+            }
+          ],
+          "cue": 294.68
+        },
+        {
+          "title": "Only these",
+          "notes": "One click shows only those. One is overdue, one is due soon.",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "cap1",
+              "duration": 0.3
+            },
+            {
+              "do": "spotlight",
+              "target": "a2",
+              "style": "dark",
+              "amount": 0.55
+            },
+            {
+              "do": "camera",
+              "focus": "a2",
+              "zoom": 1.78,
+              "duration": 1.2,
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap2",
+              "start": "with"
+            },
+            {
+              "do": "play",
+              "target": "rec",
+              "until": 6,
+              "duration": 2.5
+            }
+          ],
+          "cue": 300.99
+        },
+        {
+          "title": "Overdue",
+          "notes": "I open the overdue one. A red banner says since when, and what to do: read it through, and correct what changed.",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "cap2",
+              "duration": 0.3
+            },
+            {
+              "do": "play",
+              "target": "rec",
+              "goto": 7,
+              "fade": true,
+              "duration": 0.6
+            },
+            {
+              "do": "spotlight",
+              "target": "a3",
+              "style": "dark",
+              "amount": 0.55
+            },
+            {
+              "do": "camera",
+              "focus": "a3",
+              "zoom": 1.35,
+              "duration": 1.2,
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap3",
+              "start": "with"
+            }
+          ],
+          "cue": 306.56
+        },
+        {
+          "title": "Mark as reviewed",
+          "notes": "I've read it, and it's still correct. So I press Mark as reviewed.",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "cap3",
+              "duration": 0.3
+            },
+            {
+              "do": "spotlight",
+              "target": "a4",
+              "style": "dark",
+              "amount": 0.55
+            },
+            {
+              "do": "camera",
+              "focus": "a4",
+              "zoom": 2.1,
+              "duration": 1.2,
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap4",
+              "start": "with"
+            },
+            {
+              "do": "play",
+              "target": "rec",
+              "until": 11,
+              "duration": 2.5
+            }
+          ],
+          "cue": 314.22
+        },
+        {
+          "title": "Today",
+          "notes": "The banner is gone, and the process carries today's date. That's the date every reader and every agent sees.",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "cap4",
+              "duration": 0.3
+            },
+            {
+              "do": "play",
+              "target": "rec",
+              "goto": 12,
+              "fade": true,
+              "duration": 0.6
+            },
+            {
+              "do": "spotlight",
+              "target": "a5",
+              "style": "dark",
+              "amount": 0.55
+            },
+            {
+              "do": "camera",
+              "focus": "a5",
+              "zoom": 2.1,
+              "duration": 1.2,
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap5",
+              "start": "with"
+            },
+            {
+              "do": "wait",
+              "duration": 1.2
+            },
+            {
+              "do": "spotlight",
+              "target": "a5",
+              "on": false
+            },
+            {
+              "do": "camera",
+              "focus": "rec",
+              "padding": 60,
+              "start": "with"
+            }
+          ],
+          "cue": 319.54
         }
       ]
     },
@@ -1773,7 +2341,7 @@
               "stagger": 0.5
             }
           ],
-          "cue": 273.28
+          "cue": 328.33
         },
         {
           "title": "Flag it",
@@ -1789,7 +2357,7 @@
               "start": "with"
             }
           ],
-          "cue": 280.4
+          "cue": 335.45
         },
         {
           "title": "Everyone sees it",
@@ -1809,7 +2377,7 @@
               "target": "warn"
             }
           ],
-          "cue": 286.33
+          "cue": 341.38
         },
         {
           "title": "The owner fixes it",
@@ -1840,7 +2408,7 @@
               "color": "cyan"
             }
           ],
-          "cue": 295.01
+          "cue": 350.07
         },
         {
           "title": "Agents too",
@@ -1855,7 +2423,445 @@
               "stagger": 0.5
             }
           ],
-          "cue": 300.85
+          "cue": 355.91
+        }
+      ]
+    },
+    {
+      "id": "feedback-demo",
+      "title": "Flagging, in the app",
+      "layout": "board",
+      "elements": [
+        {
+          "id": "head",
+          "type": "text",
+          "text": "FLAGGING A STEP",
+          "x": 960,
+          "y": 70,
+          "size": 56,
+          "color": "white",
+          "style": "bold",
+          "pinned": true
+        },
+        {
+          "id": "rec",
+          "type": "image",
+          "src": "/media/1f09b4a150ceff43.webm",
+          "x": 960,
+          "y": 560,
+          "width": 1200,
+          "height": 750,
+          "frame": "window",
+          "url": "Process Manager"
+        },
+        {
+          "id": "a1",
+          "type": "area",
+          "x": 795,
+          "y": 762,
+          "width": 825,
+          "height": 319
+        },
+        {
+          "id": "cap1",
+          "type": "text",
+          "text": "step 2 doesn't match what I see",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "yellow",
+          "pinned": true
+        },
+        {
+          "id": "a2",
+          "type": "area",
+          "x": 1335,
+          "y": 565,
+          "width": 450,
+          "height": 281
+        },
+        {
+          "id": "cap2",
+          "type": "text",
+          "text": "what kind, one sentence, send",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "yellow",
+          "pinned": true
+        },
+        {
+          "id": "a3",
+          "type": "area",
+          "x": 1288,
+          "y": 701,
+          "width": 544,
+          "height": 178
+        },
+        {
+          "id": "cap3",
+          "type": "text",
+          "text": "no ticket, no meeting",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "yellow",
+          "pinned": true
+        },
+        {
+          "id": "a4",
+          "type": "area",
+          "x": 716,
+          "y": 378,
+          "width": 675,
+          "height": 225
+        },
+        {
+          "id": "cap4",
+          "type": "text",
+          "text": "a red flag on the block, a count on the tab",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "yellow",
+          "pinned": true
+        },
+        {
+          "id": "a5",
+          "type": "area",
+          "x": 1350,
+          "y": 654,
+          "width": 394,
+          "height": 291
+        },
+        {
+          "id": "cap5",
+          "type": "text",
+          "text": "1 open feedback, before you even open it",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "yellow",
+          "pinned": true
+        },
+        {
+          "id": "a6",
+          "type": "area",
+          "x": 1162,
+          "y": 636,
+          "width": 778,
+          "height": 141
+        },
+        {
+          "id": "cap6",
+          "type": "text",
+          "text": "the owner sees every open flag",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "yellow",
+          "pinned": true
+        },
+        {
+          "id": "a7",
+          "type": "area",
+          "x": 1162,
+          "y": 636,
+          "width": 778,
+          "height": 141
+        },
+        {
+          "id": "cap7",
+          "type": "text",
+          "text": "0 open · 1 fixed",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "yellow",
+          "pinned": true
+        }
+      ],
+      "beats": [
+        {
+          "title": "Something is off",
+          "notes": "And here's flagging. I'm following the checklist, and step two doesn't match what I see in ServiceNow.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "head"
+            },
+            {
+              "do": "fade-in",
+              "target": "rec"
+            },
+            {
+              "do": "play",
+              "target": "rec",
+              "goto": 8
+            },
+            {
+              "do": "wait",
+              "duration": 0.8
+            },
+            {
+              "do": "fade-out",
+              "target": "head",
+              "duration": 0.4
+            },
+            {
+              "do": "spotlight",
+              "target": "a1",
+              "style": "dark",
+              "amount": 0.55
+            },
+            {
+              "do": "camera",
+              "focus": "a1",
+              "zoom": 1.82,
+              "duration": 1.2,
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap1",
+              "start": "with"
+            }
+          ],
+          "cue": 364.89
+        },
+        {
+          "title": "Flag it",
+          "notes": "I press the little flag on the step. What kind of problem? Out of date. Then one sentence, and my name if I like.",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "cap1",
+              "duration": 0.3
+            },
+            {
+              "do": "spotlight",
+              "target": "a2",
+              "style": "dark",
+              "amount": 0.55
+            },
+            {
+              "do": "camera",
+              "focus": "a2",
+              "zoom": 2.1,
+              "duration": 1.2,
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap2",
+              "start": "with"
+            },
+            {
+              "do": "play",
+              "target": "rec",
+              "until": 52,
+              "duration": 7
+            }
+          ],
+          "cue": 371.67
+        },
+        {
+          "title": "Sent",
+          "notes": "Send. No ticket, no meeting. And the flag is on the step straight away.",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "cap2",
+              "duration": 0.3
+            },
+            {
+              "do": "spotlight",
+              "target": "a3",
+              "style": "dark",
+              "amount": 0.55
+            },
+            {
+              "do": "camera",
+              "focus": "a3",
+              "zoom": 2.1,
+              "duration": 1.2,
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap3",
+              "start": "with"
+            },
+            {
+              "do": "play",
+              "target": "rec",
+              "until": 55,
+              "duration": 1.5
+            }
+          ],
+          "cue": 381.01
+        },
+        {
+          "title": "On the map",
+          "notes": "Everyone sees it. On the map, there's a red flag on the block, and a count on the Feedback tab.",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "cap3",
+              "duration": 0.3
+            },
+            {
+              "do": "play",
+              "target": "rec",
+              "goto": 62,
+              "fade": true,
+              "duration": 0.6
+            },
+            {
+              "do": "spotlight",
+              "target": "a4",
+              "style": "dark",
+              "amount": 0.55
+            },
+            {
+              "do": "camera",
+              "focus": "a4",
+              "zoom": 2.1,
+              "duration": 1.2,
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap4",
+              "start": "with"
+            }
+          ],
+          "cue": 386.84
+        },
+        {
+          "title": "In the library",
+          "notes": "And in the library, on the card. So the next person is warned before they waste their time.",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "cap4",
+              "duration": 0.3
+            },
+            {
+              "do": "play",
+              "target": "rec",
+              "goto": 73,
+              "fade": true,
+              "duration": 0.6
+            },
+            {
+              "do": "spotlight",
+              "target": "a5",
+              "style": "dark",
+              "amount": 0.55
+            },
+            {
+              "do": "camera",
+              "focus": "a5",
+              "zoom": 2.1,
+              "duration": 1.2,
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap5",
+              "start": "with"
+            }
+          ],
+          "cue": 393.25
+        },
+        {
+          "title": "The owner reads it",
+          "notes": "The owner switches to Editor, opens the Feedback tab, and reads it. They correct the step,",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "cap5",
+              "duration": 0.3
+            },
+            {
+              "do": "play",
+              "target": "rec",
+              "goto": 92,
+              "fade": true,
+              "duration": 0.6
+            },
+            {
+              "do": "spotlight",
+              "target": "a6",
+              "style": "dark",
+              "amount": 0.55
+            },
+            {
+              "do": "camera",
+              "focus": "a6",
+              "zoom": 1.93,
+              "duration": 1.2,
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap6",
+              "start": "with"
+            }
+          ],
+          "cue": 399.56
+        },
+        {
+          "title": "Fixed",
+          "notes": "and mark it as fixed. The flag goes away, everywhere.",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "cap6",
+              "duration": 0.3
+            },
+            {
+              "do": "spotlight",
+              "target": "a7",
+              "style": "dark",
+              "amount": 0.55
+            },
+            {
+              "do": "camera",
+              "focus": "a7",
+              "zoom": 1.93,
+              "duration": 1.2,
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap7",
+              "start": "with"
+            },
+            {
+              "do": "play",
+              "target": "rec",
+              "until": 95,
+              "duration": 1.5
+            },
+            {
+              "do": "wait",
+              "duration": 1.2
+            },
+            {
+              "do": "spotlight",
+              "target": "a7",
+              "on": false
+            },
+            {
+              "do": "camera",
+              "focus": "rec",
+              "padding": 60,
+              "start": "with"
+            }
+          ],
+          "cue": 406.05
         }
       ]
     },
@@ -1986,7 +2992,7 @@
               "target": "head"
             }
           ],
-          "cue": 309.83
+          "cue": 412.65
         },
         {
           "title": "Start with what you have",
@@ -2002,7 +3008,7 @@
               "stagger": 0.5
             }
           ],
-          "cue": 315.88
+          "cue": 418.7
         },
         {
           "title": "Any chat assistant",
@@ -2017,7 +3023,7 @@
               "stagger": 0.5
             }
           ],
-          "cue": 323.02
+          "cue": 425.83
         },
         {
           "title": "The checker",
@@ -2032,7 +3038,7 @@
               "stagger": 0.5
             }
           ],
-          "cue": 333.6
+          "cue": 436.41
         },
         {
           "title": "Fix, or done",
@@ -2055,7 +3061,388 @@
               "target": "mins"
             }
           ],
-          "cue": 344.68
+          "cue": 447.5
+        }
+      ]
+    },
+    {
+      "id": "editing-demo",
+      "title": "Editing, on the map",
+      "layout": "board",
+      "elements": [
+        {
+          "id": "head",
+          "type": "text",
+          "text": "EDITING ON THE MAP",
+          "x": 960,
+          "y": 70,
+          "size": 56,
+          "color": "white",
+          "style": "bold",
+          "pinned": true
+        },
+        {
+          "id": "rec",
+          "type": "image",
+          "src": "/media/85191f4d3d8305f3.webm",
+          "x": 960,
+          "y": 560,
+          "width": 1200,
+          "height": 750,
+          "frame": "window",
+          "url": "Process Manager · Editor"
+        },
+        {
+          "id": "a1",
+          "type": "area",
+          "x": 1363,
+          "y": 237,
+          "width": 394,
+          "height": 56
+        },
+        {
+          "id": "cap1",
+          "type": "text",
+          "text": "switch to Editor",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "yellow",
+          "pinned": true
+        },
+        {
+          "id": "a2",
+          "type": "area",
+          "x": 773,
+          "y": 495,
+          "width": 488,
+          "height": 328
+        },
+        {
+          "id": "cap2",
+          "type": "text",
+          "text": "plus, exactly where the step belongs",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "yellow",
+          "pinned": true
+        },
+        {
+          "id": "a3",
+          "type": "area",
+          "x": 773,
+          "y": 495,
+          "width": 488,
+          "height": 328
+        },
+        {
+          "id": "cap3",
+          "type": "text",
+          "text": "what happens, who does it, what kind",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "yellow",
+          "pinned": true
+        },
+        {
+          "id": "a4",
+          "type": "area",
+          "x": 829,
+          "y": 453,
+          "width": 600,
+          "height": 150
+        },
+        {
+          "id": "cap4",
+          "type": "text",
+          "text": "the new step, in the right lane",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "yellow",
+          "pinned": true
+        },
+        {
+          "id": "a5",
+          "type": "area",
+          "x": 1349,
+          "y": 847,
+          "width": 422,
+          "height": 225
+        },
+        {
+          "id": "cap5",
+          "type": "text",
+          "text": "one action per line",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "yellow",
+          "pinned": true
+        },
+        {
+          "id": "a6",
+          "type": "area",
+          "x": 904,
+          "y": 290,
+          "width": 525,
+          "height": 56
+        },
+        {
+          "id": "cap6",
+          "type": "text",
+          "text": "schema valid · saved",
+          "x": 960,
+          "y": 1025,
+          "size": 42,
+          "color": "yellow",
+          "pinned": true
+        }
+      ],
+      "beats": [
+        {
+          "title": "Editor",
+          "notes": "A small change doesn't need AI at all. I switch to Editor, and the map becomes editable.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "head"
+            },
+            {
+              "do": "fade-in",
+              "target": "rec"
+            },
+            {
+              "do": "play",
+              "target": "rec",
+              "goto": 7
+            },
+            {
+              "do": "wait",
+              "duration": 0.8
+            },
+            {
+              "do": "fade-out",
+              "target": "head",
+              "duration": 0.4
+            },
+            {
+              "do": "spotlight",
+              "target": "a1",
+              "style": "dark",
+              "amount": 0.55
+            },
+            {
+              "do": "camera",
+              "focus": "a1",
+              "zoom": 2.1,
+              "duration": 1.2,
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap1",
+              "start": "with"
+            }
+          ],
+          "cue": 458.3
+        },
+        {
+          "title": "Plus on an arrow",
+          "notes": "I press plus on an arrow, exactly where the new step belongs.",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "cap1",
+              "duration": 0.3
+            },
+            {
+              "do": "spotlight",
+              "target": "a2",
+              "style": "dark",
+              "amount": 0.55
+            },
+            {
+              "do": "camera",
+              "focus": "a2",
+              "zoom": 2.1,
+              "duration": 1.2,
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap2",
+              "start": "with"
+            },
+            {
+              "do": "play",
+              "target": "rec",
+              "until": 18,
+              "duration": 3
+            }
+          ],
+          "cue": 465.14
+        },
+        {
+          "title": "Three questions",
+          "notes": "A small form asks three things. What happens, who does it, and what kind of step it is.",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "cap2",
+              "duration": 0.3
+            },
+            {
+              "do": "spotlight",
+              "target": "a3",
+              "style": "dark",
+              "amount": 0.55
+            },
+            {
+              "do": "camera",
+              "focus": "a3",
+              "zoom": 2.1,
+              "duration": 1.2,
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap3",
+              "start": "with"
+            },
+            {
+              "do": "play",
+              "target": "rec",
+              "until": 45,
+              "duration": 4.5
+            }
+          ],
+          "cue": 470.9
+        },
+        {
+          "title": "On the map",
+          "notes": "And there it is, in my lane, wired in between the two steps.",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "cap3",
+              "duration": 0.3
+            },
+            {
+              "do": "spotlight",
+              "target": "a4",
+              "style": "dark",
+              "amount": 0.55
+            },
+            {
+              "do": "camera",
+              "focus": "a4",
+              "zoom": 2.1,
+              "duration": 1.2,
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap4",
+              "start": "with"
+            },
+            {
+              "do": "play",
+              "target": "rec",
+              "until": 50,
+              "duration": 2
+            }
+          ],
+          "cue": 478.16
+        },
+        {
+          "title": "What to do",
+          "notes": "In the panel I write exactly what to do. One action per line.",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "cap4",
+              "duration": 0.3
+            },
+            {
+              "do": "spotlight",
+              "target": "a5",
+              "style": "dark",
+              "amount": 0.55
+            },
+            {
+              "do": "camera",
+              "focus": "a5",
+              "zoom": 2.1,
+              "duration": 1.2,
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap5",
+              "start": "with"
+            },
+            {
+              "do": "play",
+              "target": "rec",
+              "until": 88,
+              "duration": 5
+            }
+          ],
+          "cue": 482.96
+        },
+        {
+          "title": "Save",
+          "notes": "Then Save changes. The checker runs the whole time, so I can't save something broken. Schema valid. Saved.",
+          "actions": [
+            {
+              "do": "fade-out",
+              "target": "cap5",
+              "duration": 0.3
+            },
+            {
+              "do": "spotlight",
+              "target": "a6",
+              "style": "dark",
+              "amount": 0.55
+            },
+            {
+              "do": "camera",
+              "focus": "a6",
+              "zoom": 2.1,
+              "duration": 1.2,
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "cap6",
+              "start": "with"
+            },
+            {
+              "do": "play",
+              "target": "rec",
+              "until": 98,
+              "duration": 2
+            },
+            {
+              "do": "wait",
+              "duration": 1.2
+            },
+            {
+              "do": "spotlight",
+              "target": "a6",
+              "on": false
+            },
+            {
+              "do": "camera",
+              "focus": "rec",
+              "padding": 60,
+              "start": "with"
+            }
+          ],
+          "cue": 489.7
         }
       ]
     },
@@ -2148,7 +3535,7 @@
               "target": "tree"
             }
           ],
-          "cue": 355.49
+          "cue": 499.16
         },
         {
           "title": "Every change is a commit",
@@ -2159,7 +3546,7 @@
               "target": "b1"
             }
           ],
-          "cue": 362.91
+          "cue": 506.58
         },
         {
           "title": "Reviewed and checked",
@@ -2174,7 +3561,7 @@
               "stagger": 0.8
             }
           ],
-          "cue": 369.51
+          "cue": 513.18
         },
         {
           "title": "Agents can write it",
@@ -2185,7 +3572,7 @@
               "target": "b4"
             }
           ],
-          "cue": 377.78
+          "cue": 521.45
         },
         {
           "title": "Yours",
@@ -2196,7 +3583,7 @@
               "target": "own"
             }
           ],
-          "cue": 386.23
+          "cue": 529.9
         }
       ]
     },
@@ -2347,7 +3734,7 @@
               "target": "soon"
             }
           ],
-          "cue": 392.45
+          "cue": 536.12
         },
         {
           "title": "Search and read",
@@ -2366,7 +3753,7 @@
               "stagger": 1
             }
           ],
-          "cue": 405.87
+          "cue": 549.54
         },
         {
           "title": "Only my steps",
@@ -2377,7 +3764,7 @@
               "target": "t3"
             }
           ],
-          "cue": 411.09
+          "cue": 554.76
         },
         {
           "title": "Report a problem",
@@ -2388,7 +3775,7 @@
               "target": "t4"
             }
           ],
-          "cue": 417.39
+          "cue": 561.06
         },
         {
           "title": "It knows how fresh",
@@ -2404,7 +3791,7 @@
               "color": "yellow"
             }
           ],
-          "cue": 421.62
+          "cue": 565.29
         }
       ]
     },
@@ -2551,7 +3938,7 @@
               "target": "what"
             }
           ],
-          "cue": 435.4
+          "cue": 579.08
         },
         {
           "title": "What and how",
@@ -2566,7 +3953,7 @@
               "target": "how"
             }
           ],
-          "cue": 442.15
+          "cue": 585.82
         },
         {
           "title": "Generated when needed",
@@ -2589,7 +3976,7 @@
               ]
             }
           ],
-          "cue": 451.61
+          "cue": 595.28
         },
         {
           "title": "Self-service",
@@ -2604,7 +3991,7 @@
               "stagger": 0.5
             }
           ],
-          "cue": 459.83
+          "cue": 603.5
         },
         {
           "title": "A skill that can't go stale",
@@ -2628,7 +4015,7 @@
               "color": "yellow"
             }
           ],
-          "cue": 467.28
+          "cue": 610.95
         }
       ]
     },
@@ -2776,7 +4163,7 @@
               "stagger": 0.5
             }
           ],
-          "cue": 479.56
+          "cue": 623.23
         },
         {
           "title": "The agent looks it up",
@@ -2795,7 +4182,7 @@
               "target": "look"
             }
           ],
-          "cue": 486.41
+          "cue": 630.08
         },
         {
           "title": "It does your steps",
@@ -2810,7 +4197,7 @@
               "stagger": 0.5
             }
           ],
-          "cue": 492.28
+          "cue": 635.96
         },
         {
           "title": "You approve",
@@ -2825,7 +4212,7 @@
               "stagger": 0.5
             }
           ],
-          "cue": 497.04
+          "cue": 640.71
         },
         {
           "title": "Approvals stay with people",
@@ -2849,7 +4236,7 @@
               "color": "yellow"
             }
           ],
-          "cue": 500.99
+          "cue": 644.66
         }
       ]
     },
@@ -2917,7 +4304,7 @@
               "target": "k1"
             }
           ],
-          "cue": 511.92
+          "cue": 655.59
         },
         {
           "title": "Kept alive",
@@ -2928,7 +4315,7 @@
               "target": "k2"
             }
           ],
-          "cue": 519.04
+          "cue": 662.71
         },
         {
           "title": "For people and agents",
@@ -2939,7 +4326,7 @@
               "target": "k3"
             }
           ],
-          "cue": 524.4
+          "cue": 668.07
         },
         {
           "title": "Thanks",
@@ -2954,7 +4341,7 @@
               "target": "sub"
             }
           ],
-          "cue": 532.72
+          "cue": 676.39
         }
       ]
     }
@@ -2964,7 +4351,7 @@
       {
         "id": "gen-opening",
         "scene": "opening",
-        "upload": "generated-opening.webm",
+        "upload": "generated-opening-mwei2imw.webm",
         "sourceDuration": 28.407,
         "offset": 0,
         "lane": 0,
@@ -2975,7 +4362,7 @@
       {
         "id": "gen-cost",
         "scene": "cost",
-        "upload": "generated-cost-mweg0nib.webm",
+        "upload": "generated-cost-mwei2k4h.webm",
         "sourceDuration": 27.107,
         "offset": 29.357,
         "lane": 0,
@@ -2986,7 +4373,7 @@
       {
         "id": "gen-idea",
         "scene": "idea",
-        "upload": "generated-idea.webm",
+        "upload": "generated-idea-mwei2ldq.webm",
         "sourceDuration": 29.407,
         "offset": 57.414,
         "lane": 0,
@@ -2997,7 +4384,7 @@
       {
         "id": "gen-map",
         "scene": "map",
-        "upload": "generated-map.webm",
+        "upload": "generated-map-mwei2mhx.webm",
         "sourceDuration": 35.527,
         "offset": 87.771,
         "lane": 0,
@@ -3008,20 +4395,20 @@
       {
         "id": "gen-views",
         "scene": "views",
-        "upload": "generated-views.webm",
-        "sourceDuration": 32.307,
+        "upload": "generated-views-mwei2oae.webm",
+        "sourceDuration": 53.707,
         "offset": 124.248,
         "lane": 0,
         "trimStart": 0,
-        "trimEnd": 32.307,
-        "name": "generated voice · Two views of the same thing"
+        "trimEnd": 53.707,
+        "name": "generated voice · Reading a process"
       },
       {
         "id": "gen-precise",
         "scene": "precise",
-        "upload": "generated-precise.webm",
+        "upload": "generated-precise-mwei36mh.webm",
         "sourceDuration": 45.607,
-        "offset": 157.505,
+        "offset": 178.905,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 45.607,
@@ -3030,9 +4417,9 @@
       {
         "id": "gen-lifecycle",
         "scene": "lifecycle",
-        "upload": "generated-lifecycle.webm",
+        "upload": "generated-lifecycle-mwei38di.webm",
         "sourceDuration": 30.107,
-        "offset": 204.062,
+        "offset": 225.462,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 30.107,
@@ -3041,42 +4428,75 @@
       {
         "id": "gen-reviews",
         "scene": "reviews",
-        "upload": "generated-reviews.webm",
+        "upload": "generated-reviews-mwei39uo.webm",
         "sourceDuration": 37.207,
-        "offset": 235.119,
+        "offset": 256.519,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 37.207,
         "name": "generated voice · Nothing stays unchecked"
       },
       {
+        "id": "gen-reviews-demo",
+        "scene": "reviews-demo",
+        "upload": "generated-reviews-demo.webm",
+        "sourceDuration": 32.707,
+        "offset": 294.676,
+        "lane": 0,
+        "trimStart": 0,
+        "trimEnd": 32.707,
+        "name": "generated voice · Reviewing, in the app"
+      },
+      {
         "id": "gen-feedback",
         "scene": "feedback",
-        "upload": "generated-feedback.webm",
+        "upload": "generated-feedback-mwei3m8w.webm",
         "sourceDuration": 35.607,
-        "offset": 273.276,
+        "offset": 328.333,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 35.607,
         "name": "generated voice · Every reader is a sensor"
       },
       {
+        "id": "gen-feedback-demo",
+        "scene": "feedback-demo",
+        "upload": "generated-feedback-demo.webm",
+        "sourceDuration": 46.807,
+        "offset": 364.89,
+        "lane": 0,
+        "trimStart": 0,
+        "trimEnd": 46.807,
+        "name": "generated voice · Flagging, in the app"
+      },
+      {
         "id": "gen-authoring",
         "scene": "authoring",
-        "upload": "generated-authoring.webm",
+        "upload": "generated-authoring-mwei45vu.webm",
         "sourceDuration": 44.707,
-        "offset": 309.833,
+        "offset": 412.647,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 44.707,
         "name": "generated voice · Writing it is cheap"
       },
       {
+        "id": "gen-editing-demo",
+        "scene": "editing-demo",
+        "upload": "generated-editing-demo.webm",
+        "sourceDuration": 39.907,
+        "offset": 458.304,
+        "lane": 0,
+        "trimStart": 0,
+        "trimEnd": 39.907,
+        "name": "generated voice · Editing, on the map"
+      },
+      {
         "id": "gen-files",
         "scene": "files",
-        "upload": "generated-files.webm",
+        "upload": "generated-files-mwei4md2.webm",
         "sourceDuration": 36.007,
-        "offset": 355.49,
+        "offset": 499.161,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 36.007,
@@ -3085,9 +4505,9 @@
       {
         "id": "gen-mcp",
         "scene": "mcp",
-        "upload": "generated-mcp.webm",
+        "upload": "generated-mcp-mwei4o5g.webm",
         "sourceDuration": 42.007,
-        "offset": 392.447,
+        "offset": 536.118,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 42.007,
@@ -3096,9 +4516,9 @@
       {
         "id": "gen-skills",
         "scene": "skills",
-        "upload": "generated-skills.webm",
+        "upload": "generated-skills-mwei4q2y.webm",
         "sourceDuration": 43.207,
-        "offset": 435.404,
+        "offset": 579.075,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 43.207,
@@ -3107,9 +4527,9 @@
       {
         "id": "gen-agent",
         "scene": "agent",
-        "upload": "generated-agent.webm",
+        "upload": "generated-agent-mwei4s8u.webm",
         "sourceDuration": 31.407,
-        "offset": 479.561,
+        "offset": 623.232,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 31.407,
@@ -3118,9 +4538,9 @@
       {
         "id": "gen-closing",
         "scene": "closing",
-        "upload": "generated-closing.webm",
+        "upload": "generated-closing-mwei4ttg.webm",
         "sourceDuration": 24.907,
-        "offset": 511.918,
+        "offset": 655.589,
         "lane": 0,
         "trimStart": 0,
         "trimEnd": 24.907,
