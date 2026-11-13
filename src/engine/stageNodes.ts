@@ -59,6 +59,8 @@ export interface ImageNodes {
   outer: SVGGElement; fx: SVGGElement; clip: SVGRectElement; img: SVGImageElement; left: number; width: number; reveal: { v: number };
   /** A "window" frame's title bar and shadow: they appear with the picture. */
   chrome?: SVGGElement; shadow?: { node: SVGElement; clip: SVGRectElement; width: number };
+  /** A "phone" frame's body, under the picture: it appears with it. (Its island and glass are the `chrome`.) */
+  under?: SVGGElement;
   video?: VideoNodes;
 }
 
@@ -201,6 +203,7 @@ export function renderImage(n: ElementNodes) {
   im.clip.setAttribute('width', String(im.width * v));
   im.img.style.opacity = String(Math.min(1, v * 2.5));
   if (im.chrome) im.chrome.style.opacity = im.img.style.opacity;
+  if (im.under) im.under.style.opacity = im.img.style.opacity;
   // The shadow is revealed with the window (its clip grows with the wipe), so it never shows ahead of it.
   if (im.shadow) {
     im.shadow.clip.setAttribute('width', String(im.shadow.width * v));

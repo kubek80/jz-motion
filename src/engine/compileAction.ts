@@ -14,7 +14,7 @@ function defaultDuration(action: Action, el?: CompiledElement): number {
       if (el.type === 'text') return Math.min(2.2, Math.max(0.5, el.text.length * 0.06));
       if (el.type === 'arrow') return 0.8;
       if (el.type === 'ring') return 0.7;
-      if (el.type === 'image') return el.frame === 'browser' ? 1.6 : el.frame === 'window' ? 1.1 : 0.9;
+      if (el.type === 'image') return el.frame === 'browser' ? 1.6 : el.frame === 'window' || el.frame === 'phone' ? 1.1 : 0.9;
       if (el.type === 'area') return 0;
       return 1.2;
     case 'fade-in':

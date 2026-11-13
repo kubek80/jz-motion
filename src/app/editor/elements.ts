@@ -80,7 +80,8 @@ export function newElement(r: AddRequest, doc: RawDoc, sceneIndex: number, cam: 
       el = {
         id: uniqueId(doc, sceneIndex, 'screenshot'), type: 'image', src: r.image.src, ...at,
         width: Math.round(r.image.width * k), height: Math.round(r.image.height * k), color: 'cyan',
-        ...(lastFrame() !== 'none' ? { frame: lastFrame() } : {}),
+        // A capture as tall as a phone's screen (npm run snap/record -- --phone) goes in the phone frame.
+        ...(r.image.height / r.image.width >= 1.7 ? { frame: 'phone' } : lastFrame() !== 'none' ? { frame: lastFrame() } : {}),
       };
       break;
     }

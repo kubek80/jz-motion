@@ -3,6 +3,7 @@ import { projectIso, resolveIsoParts } from './iso';
 import { iconHeight } from './library';
 import { board, type TextStyle } from './palette';
 import type { AnchorName, ArrowElement, Camera, Point, Ref } from './schema';
+import { phoneSizes } from './imageFrames';
 
 export const VIEW = { width: 1920, height: 1080 } as const;
 export const DEFAULT_CAMERA: Camera = { x: VIEW.width / 2, y: VIEW.height / 2, zoom: 1 };
@@ -38,8 +39,8 @@ export function shapeBox(el: Element, lookup: (id: string) => Element | undefine
     case 'area':
       return { x: el.x - el.width / 2, y: el.y - el.height / 2, width: el.width, height: el.height };
     case 'image': {
-      const { bar } = imageFrame(el);
-      return { x: el.x - el.width / 2, y: el.y - (el.height + bar) / 2, width: el.width, height: el.height + bar };
+      const { bar, pad, top } = imageFrame(el);
+      return { x: el.x - el.width / 2 - pad, y: top, width: el.width + pad * 2, height: el.height + bar + pad * 2 };
     }
     case 'iso': {
       const b = projectIso(resolveIsoParts(el), { rotate: el.rotate, explode: 0 }, el.scale).box;
@@ -58,13 +59,14 @@ export function shapeBox(el: Element, lookup: (id: string) => Element | undefine
 }
 
 /**
- * A framed image's browser bar: its height, and where the picture sits. The picture and bar together are
- * centered on (x, y); the picture is `width` × `height` and the bar sits on top of it.
+ * A framed image's bar (a browser's or window's, on top) and `pad` (a phone's body round its screen): where the
+ * frame starts (`top`) and where the picture sits. The whole is centered on (x, y); the picture is `width` × `height`.
  */
 export function imageFrame(el: { x: number; y: number; width: number; height: number; frame?: string }) {
-  const bar = el.frame === 'browser' ? Math.min(90, Math.max(34, el.width * 0.055)) : el.frame === 'window' ? Math.min(64, Math.max(28, el.width * 0.04)) : 0;
-  const top = el.y - (el.height + bar) / 2;
-  return { bar, top, imageTop: top + bar };
+  const bar = el.frame === 'browser' ? Math.min(90, Math.max(34, el.width * 0.055)) : el.frame === 'window' ? Math.min(64, Math.max(28, el.width * 0.04)) : el.frame === 'phone' ? phoneSizes(el.width).status : 0;
+  const pad = el.frame === 'phone' ? phoneSizes(el.width).pad : 0;
+  const top = el.y - (el.height + bar) / 2 - pad;
+  return { bar, pad, top, imageTop: top + pad + bar };
 }
 
 /** Everything the element draws, including its label. Used for camera framing. */

@@ -3,7 +3,7 @@
 // reference it by the "/media/…" src it prints and show the real UI instead of a hand-drawn placeholder.
 //
 // Usage:
-//   node scripts/snap.mjs <url> <name> [--size 1280x800] [--zoom 1.25] [--scale 2] [--selector ".foo"] [--wait 500]
+//   node scripts/snap.mjs <url> <name> [--phone] [--size 1280x800] [--zoom 1.25] [--scale 2] [--selector ".foo"] [--wait 500]
 // Captures are sharp enough for camera zooms: see scripts/capturePage.mjs.
 // or:
 //   npm run snap -- <url> <name> ...
@@ -20,10 +20,10 @@ import { spawnSync } from 'node:child_process';
 import { mkdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { captureOptions, fakeMic, openCapturePage } from './capturePage.mjs';
+import { captureOptions, fakeMic, openCapturePage, SWITCHES } from './capturePage.mjs';
 
 const args = process.argv.slice(2);
-const posArgs = args.filter((a, i) => !a.startsWith('--') && !args[i - 1]?.startsWith('--'));
+const posArgs = args.filter((a, i) => !a.startsWith('--') && !(args[i - 1]?.startsWith('--') && !SWITCHES.has(args[i - 1])));
 const value = (name, fallback) => {
   const i = args.indexOf(`--${name}`);
   return i >= 0 ? args[i + 1] : fallback;

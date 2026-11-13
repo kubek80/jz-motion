@@ -138,14 +138,16 @@ export const ImageElement = z.object({
   /** Center of the picture (with its frame). */
   x: z.number(),
   y: z.number(),
-  /** Size of the picture itself; the browser frame adds a bar above it. */
+  /** Size of the picture itself; the browser and window frames add a bar above it, the phone frame a body round it. */
   width: z.number().positive(),
   height: z.number().positive(),
   /**
    * "browser": a browser window outline drawn around it in marker, in the element's colour. "window": a neutral,
    * solid window (a dark title bar with the three coloured buttons, rounded corners, a soft shadow), as on a Mac.
+   * "phone": a phone round it (the picture is its screen: a dark body with a metal edge, rounded screen corners, the
+   * camera island and a faint glass sheen), for apps captured in phone format (npm run snap/record -- --phone).
    */
-  frame: z.enum(['none', 'browser', 'window']).default('none'),
+  frame: z.enum(['none', 'browser', 'window', 'phone']).default('none'),
   /** Text in the frame's address bar. */
   url: z.string().optional(),
   /** Animated pictures and videos (APNG, GIF, animated WebP, WebM, MP4): start again at the end instead of stopping on the last frame. */
