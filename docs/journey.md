@@ -1346,3 +1346,17 @@ Jakub wanted to record a terminal sometimes, from Claude Code on his own compute
 ![Two phones on the board (a screenshot, and a recording playing under the glass); a camera zoom into the top of one: status bar, island, metal edge, side buttons, glass](journey/147-phone-frame.jpg)
 
 **Checked by:** the app captured with `--phone` (a screenshot, and a scrolling recording at 1170×2532 in its phone layout); a scene with both in phone frames: snapshots, a camera zoom into the status bar, an export looked at frame by frame (the draw-in, the recording playing under the island and glass); typecheck, tests, build. The test presentation and its captures deleted after.
+
+## Step 108: A presentation about Process Manager, with generated voice
+
+**Asked:** an in-depth presentation about Process Manager (company knowledge that doesn't go stale: read by people in the app, by agents over MCP, and turned into skills generated from it), based on its documentation but drawn on the board, with the benefit said whenever a part is shown; the voice generated now, the avatar later, once the tempo is right.
+
+- **`presentations/process-manager.json`**: 15 scenes, 70 beats, about 9 minutes: the stale page and what it costs (a person loses days, an agent acts on it at once), one source and three ways out, a process as a map with lanes, the map and the checklist, a step precise enough to act on and the shared lists, the three things that keep it alive (life-cycle, reviews, feedback), writing one with any chat assistant and the checker, plain files in git, MCP, skills generated from the description, the agent that follows a process, the close.
+- Everything is drawn except one screenshot of the real map (from the app's documentation, in the media library). Colours keep one meaning: cyan the knowledge, pink people, green agents and skills, orange stale or a problem, yellow the benefit.
+- MCP and generated skills are said as what is being built next, as the documentation has them.
+- **Voice**: `npm run voice -- rebuild`, in his voice: one clip per scene, every beat cued where its words start. No avatar yet.
+- **Found on the way:** a fresh cloud checkout has Git LFS pointers instead of the voice sample (`git lfs pull --include uploads/voice-sample-…` fetches it); the session needed an environment with the OpenRouter key saved for `openrouter.ai`.
+
+![Six of the scenes: one source and three ways out, a process as a map, feedback, writing with AI, from description to skill, where this leads](journey/148-process-manager-explainer.jpg)
+
+**Checked by:** `npm run check`; snapshots of every scene looked at and overlapping labels fixed (reviews, feedback, the fix-request loop, boxes too narrow for their text); `npm run voice -- time` for words against animation per beat.
