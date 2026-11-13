@@ -1,0 +1,3131 @@
+{
+  "version": 1,
+  "title": "Process Manager: company knowledge that stays alive",
+  "scenes": [
+    {
+      "id": "opening",
+      "title": "Is this still true?",
+      "elements": [
+        {
+          "id": "page",
+          "type": "icon",
+          "icon": "file",
+          "x": 520,
+          "y": 400,
+          "size": 200,
+          "color": "orange",
+          "label": "how to get a cloud project"
+        },
+        {
+          "id": "stale",
+          "type": "text",
+          "text": "last updated: 2 years ago",
+          "x": 520,
+          "y": 680,
+          "size": 48,
+          "color": "orange"
+        },
+        {
+          "id": "team",
+          "type": "icon",
+          "icon": "users",
+          "x": 1380,
+          "y": 400,
+          "size": 180,
+          "color": "pink",
+          "label": "everyone who needs it"
+        },
+        {
+          "id": "reads",
+          "type": "arrow",
+          "from": "team",
+          "to": "page",
+          "color": "white",
+          "label": "opens it"
+        },
+        {
+          "id": "q",
+          "type": "text",
+          "text": "is this still true?",
+          "x": 1380,
+          "y": 680,
+          "size": 64,
+          "color": "yellow"
+        },
+        {
+          "id": "logo",
+          "type": "icon",
+          "icon": "checklist",
+          "x": 960,
+          "y": 300,
+          "size": 220,
+          "color": "cyan"
+        },
+        {
+          "id": "title",
+          "type": "text",
+          "text": "PROCESS MANAGER",
+          "x": 960,
+          "y": 580,
+          "size": 130,
+          "color": "cyan",
+          "style": "bold"
+        },
+        {
+          "id": "sub",
+          "type": "text",
+          "text": "company knowledge that stays alive",
+          "x": 960,
+          "y": 780,
+          "size": 60,
+          "color": "white"
+        }
+      ],
+      "beats": [
+        {
+          "title": "A page everyone uses",
+          "notes": "Every company has a page that explains how to get something done. How to get a cloud project. How to get a repository.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "page"
+            },
+            {
+              "do": "draw",
+              "target": [
+                "team",
+                "reads"
+              ],
+              "stagger": 0.6
+            }
+          ],
+          "cue": 0
+        },
+        {
+          "title": "Is it still true?",
+          "notes": "And every time somebody opens it, they ask the same question. Is this still true?",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "stale"
+            },
+            {
+              "do": "pop",
+              "target": "q"
+            }
+          ],
+          "cue": 7.84
+        },
+        {
+          "title": "It started to go stale",
+          "notes": "Usually, nobody knows. The page was right on the day it was written. After that, it slowly went stale.",
+          "actions": [
+            {
+              "do": "circle",
+              "target": "stale",
+              "color": "orange"
+            }
+          ],
+          "cue": 13.84
+        },
+        {
+          "title": "Process Manager",
+          "notes": "So we built Process Manager. It keeps company knowledge alive, for people and for AI agents.",
+          "actions": [
+            {
+              "do": "erase",
+              "target": [
+                "page",
+                "stale",
+                "team",
+                "reads",
+                "q"
+              ],
+              "stagger": 0.08
+            },
+            {
+              "do": "draw",
+              "target": "logo"
+            },
+            {
+              "do": "draw",
+              "target": "title"
+            },
+            {
+              "do": "draw",
+              "target": "sub"
+            }
+          ],
+          "cue": 21.16
+        }
+      ]
+    },
+    {
+      "id": "cost",
+      "title": "Stale knowledge costs twice",
+      "elements": [
+        {
+          "id": "head",
+          "type": "text",
+          "text": "STALE KNOWLEDGE COSTS TWICE",
+          "x": 960,
+          "y": 105,
+          "size": 64,
+          "color": "white",
+          "style": "bold"
+        },
+        {
+          "id": "old",
+          "type": "icon",
+          "icon": "file",
+          "x": 960,
+          "y": 320,
+          "size": 150,
+          "color": "orange",
+          "label": "the old page"
+        },
+        {
+          "id": "person",
+          "type": "icon",
+          "icon": "user",
+          "x": 380,
+          "y": 620,
+          "size": 150,
+          "color": "pink",
+          "label": "a person"
+        },
+        {
+          "id": "agent",
+          "type": "icon",
+          "icon": "robot",
+          "x": 1540,
+          "y": 620,
+          "size": 150,
+          "color": "green",
+          "label": "an AI agent"
+        },
+        {
+          "id": "a1",
+          "type": "arrow",
+          "from": "old",
+          "to": "person",
+          "color": "white"
+        },
+        {
+          "id": "a2",
+          "type": "arrow",
+          "from": "old",
+          "to": "agent",
+          "color": "white"
+        },
+        {
+          "id": "p-cost",
+          "type": "text",
+          "text": "loses a few days,\nthen asks a colleague",
+          "x": 380,
+          "y": 900,
+          "size": 46,
+          "color": "pink"
+        },
+        {
+          "id": "a-cost",
+          "type": "text",
+          "text": "acts on it at once,\na hundred times a day",
+          "x": 1540,
+          "y": 900,
+          "size": 46,
+          "color": "green"
+        },
+        {
+          "id": "never",
+          "type": "text",
+          "text": "an agent never\nasks a colleague",
+          "x": 960,
+          "y": 700,
+          "size": 54,
+          "color": "yellow"
+        }
+      ],
+      "beats": [
+        {
+          "title": "Twice",
+          "notes": "Stale knowledge costs us twice.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "head"
+            },
+            {
+              "do": "draw",
+              "target": "old"
+            }
+          ],
+          "cue": 29.36
+        },
+        {
+          "title": "A person",
+          "notes": "A person follows the old page, gets stuck on step three, loses a few days, and finally asks a colleague. Slow, but it corrects itself.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "a1",
+                "person"
+              ],
+              "stagger": 0.5
+            },
+            {
+              "do": "draw",
+              "target": "p-cost"
+            }
+          ],
+          "cue": 32.48
+        },
+        {
+          "title": "An agent",
+          "notes": "An AI agent reads the same page and simply acts on it. Straight away, and a hundred times a day.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "a2",
+                "agent"
+              ],
+              "stagger": 0.5
+            },
+            {
+              "do": "flow",
+              "target": "a2",
+              "start": "with"
+            },
+            {
+              "do": "draw",
+              "target": "a-cost"
+            }
+          ],
+          "cue": 42.29
+        },
+        {
+          "title": "Nobody to ask",
+          "notes": "It never asks a colleague. So the more work we hand over to agents, the more a stale page hurts.",
+          "actions": [
+            {
+              "do": "pop",
+              "target": "never"
+            },
+            {
+              "do": "circle",
+              "target": "never",
+              "color": "yellow"
+            }
+          ],
+          "cue": 49.82
+        }
+      ]
+    },
+    {
+      "id": "idea",
+      "title": "One source, three ways out",
+      "elements": [
+        {
+          "id": "head",
+          "type": "text",
+          "text": "ONE SOURCE, THREE WAYS OUT",
+          "x": 960,
+          "y": 105,
+          "size": 64,
+          "color": "white",
+          "style": "bold"
+        },
+        {
+          "id": "source",
+          "type": "box",
+          "x": 960,
+          "y": 520,
+          "width": 440,
+          "height": 200,
+          "color": "cyan",
+          "label": "each process,\ndescribed once",
+          "weight": "bold"
+        },
+        {
+          "id": "people",
+          "type": "icon",
+          "icon": "users",
+          "x": 300,
+          "y": 520,
+          "size": 160,
+          "color": "pink",
+          "label": "people"
+        },
+        {
+          "id": "agents",
+          "type": "icon",
+          "icon": "robot",
+          "x": 1620,
+          "y": 300,
+          "size": 150,
+          "color": "green",
+          "label": "agents"
+        },
+        {
+          "id": "skills",
+          "type": "icon",
+          "icon": "sparkles",
+          "x": 1620,
+          "y": 760,
+          "size": 150,
+          "color": "green",
+          "label": "skills"
+        },
+        {
+          "id": "to-people",
+          "type": "arrow",
+          "from": "source",
+          "to": "people",
+          "color": "pink",
+          "label": "the app"
+        },
+        {
+          "id": "to-agents",
+          "type": "arrow",
+          "from": "source",
+          "to": "agents",
+          "color": "green"
+        },
+        {
+          "id": "mcp-l",
+          "type": "text",
+          "text": "MCP",
+          "x": 1270,
+          "y": 350,
+          "size": 46,
+          "color": "green"
+        },
+        {
+          "id": "to-skills",
+          "type": "arrow",
+          "from": "source",
+          "to": "skills",
+          "color": "green"
+        },
+        {
+          "id": "gen-l",
+          "type": "text",
+          "text": "generated",
+          "x": 1250,
+          "y": 720,
+          "size": 46,
+          "color": "green"
+        },
+        {
+          "id": "one",
+          "type": "text",
+          "text": "one answer, whoever asks",
+          "x": 760,
+          "y": 900,
+          "size": 60,
+          "color": "yellow"
+        }
+      ],
+      "beats": [
+        {
+          "title": "Described once",
+          "notes": "The idea is simple. Every process is described once, in one place.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "head"
+            },
+            {
+              "do": "draw",
+              "target": "source"
+            }
+          ],
+          "cue": 57.41
+        },
+        {
+          "title": "People",
+          "notes": "People read it in the app, as a map and as a checklist.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "to-people",
+                "people"
+              ],
+              "stagger": 0.5
+            }
+          ],
+          "cue": 62.81
+        },
+        {
+          "title": "Agents",
+          "notes": "Agents read exactly the same description through MCP, the standard way to give an agent access to data.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "to-agents",
+                "mcp-l",
+                "agents"
+              ],
+              "stagger": 0.5
+            }
+          ],
+          "cue": 67.09
+        },
+        {
+          "title": "Skills",
+          "notes": "And when a step can be automated, the description becomes a skill: instructions an agent can run.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "to-skills",
+                "gen-l",
+                "skills"
+              ],
+              "stagger": 0.5
+            }
+          ],
+          "cue": 73.94
+        },
+        {
+          "title": "One answer",
+          "notes": "So the question, how do I get a cloud project, has one answer. Whoever asks.",
+          "actions": [
+            {
+              "do": "flow",
+              "target": [
+                "to-people",
+                "to-agents",
+                "to-skills"
+              ]
+            },
+            {
+              "do": "pop",
+              "target": "one"
+            },
+            {
+              "do": "circle",
+              "target": "one",
+              "color": "yellow"
+            }
+          ],
+          "cue": 80.78
+        }
+      ]
+    },
+    {
+      "id": "map",
+      "title": "A process is a map",
+      "elements": [
+        {
+          "id": "head",
+          "type": "text",
+          "text": "A PROCESS IS A MAP",
+          "x": 960,
+          "y": 105,
+          "size": 64,
+          "color": "white",
+          "style": "bold"
+        },
+        {
+          "id": "l-you",
+          "type": "text",
+          "text": "you",
+          "x": 70,
+          "y": 300,
+          "size": 50,
+          "color": "pink",
+          "align": "start"
+        },
+        {
+          "id": "l-cloud",
+          "type": "text",
+          "text": "cloud team",
+          "x": 70,
+          "y": 540,
+          "size": 50,
+          "color": "cyan",
+          "align": "start"
+        },
+        {
+          "id": "l-sec",
+          "type": "text",
+          "text": "security",
+          "x": 70,
+          "y": 780,
+          "size": 50,
+          "color": "cyan",
+          "align": "start"
+        },
+        {
+          "id": "sep1",
+          "type": "arrow",
+          "from": {
+            "x": 60,
+            "y": 420
+          },
+          "to": {
+            "x": 1860,
+            "y": 420
+          },
+          "color": "white",
+          "head": "none",
+          "line": "dotted"
+        },
+        {
+          "id": "sep2",
+          "type": "arrow",
+          "from": {
+            "x": 60,
+            "y": 660
+          },
+          "to": {
+            "x": 1860,
+            "y": 660
+          },
+          "color": "white",
+          "head": "none",
+          "line": "dotted"
+        },
+        {
+          "id": "s1",
+          "type": "box",
+          "x": 520,
+          "y": 300,
+          "width": 300,
+          "height": 110,
+          "color": "pink",
+          "label": "send the request"
+        },
+        {
+          "id": "s2",
+          "type": "box",
+          "x": 520,
+          "y": 780,
+          "width": 300,
+          "height": 110,
+          "color": "cyan",
+          "label": "review the access"
+        },
+        {
+          "id": "s3",
+          "type": "box",
+          "x": 1000,
+          "y": 540,
+          "width": 320,
+          "height": 200,
+          "color": "cyan",
+          "label": "approved?",
+          "shape": "diamond"
+        },
+        {
+          "id": "s4",
+          "type": "box",
+          "x": 1000,
+          "y": 300,
+          "width": 300,
+          "height": 110,
+          "color": "pink",
+          "label": "fix and resend"
+        },
+        {
+          "id": "s5",
+          "type": "box",
+          "x": 1500,
+          "y": 540,
+          "width": 320,
+          "height": 110,
+          "color": "cyan",
+          "label": "create the project"
+        },
+        {
+          "id": "s6",
+          "type": "box",
+          "x": 1500,
+          "y": 300,
+          "width": 300,
+          "height": 110,
+          "color": "pink",
+          "label": "check it works",
+          "shape": "ellipse"
+        },
+        {
+          "id": "f1",
+          "type": "arrow",
+          "from": "s1.bottom",
+          "to": "s2.top",
+          "color": "white"
+        },
+        {
+          "id": "f2",
+          "type": "arrow",
+          "from": "s2.right",
+          "to": "s3.bottom",
+          "color": "white",
+          "curve": 0.25
+        },
+        {
+          "id": "f3",
+          "type": "arrow",
+          "from": "s3.top",
+          "to": "s4.bottom",
+          "color": "orange",
+          "label": "no"
+        },
+        {
+          "id": "f4",
+          "type": "arrow",
+          "from": "s4.left",
+          "to": "s1.right",
+          "color": "orange",
+          "line": "dashed"
+        },
+        {
+          "id": "f5",
+          "type": "arrow",
+          "from": "s3.right",
+          "to": "s5.left",
+          "color": "white",
+          "label": "yes"
+        },
+        {
+          "id": "f6",
+          "type": "arrow",
+          "from": "s5.top",
+          "to": "s6.bottom",
+          "color": "white"
+        },
+        {
+          "id": "first",
+          "type": "text",
+          "text": "the first lane is always you",
+          "x": 1300,
+          "y": 900,
+          "size": 56,
+          "color": "yellow"
+        }
+      ],
+      "beats": [
+        {
+          "title": "Lanes",
+          "notes": "So what does a description look like? A process is a map with lanes. One lane for everyone who takes part.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "head"
+            },
+            {
+              "do": "draw",
+              "target": [
+                "l-you",
+                "sep1",
+                "l-cloud",
+                "sep2",
+                "l-sec"
+              ],
+              "stagger": 0.3
+            }
+          ],
+          "cue": 87.77
+        },
+        {
+          "title": "You first",
+          "notes": "The first lane is always you. So the first thing you see is your own part of the work.",
+          "actions": [
+            {
+              "do": "pulse",
+              "target": "l-you",
+              "times": 2
+            },
+            {
+              "do": "draw",
+              "target": "s1"
+            },
+            {
+              "do": "pop",
+              "target": "first"
+            }
+          ],
+          "cue": 95.79
+        },
+        {
+          "title": "One step, one action",
+          "notes": "Every step is one action by one person or team. A request. A review. An approval.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "f1",
+                "s2",
+                "f2",
+                "s3"
+              ],
+              "stagger": 0.6
+            }
+          ],
+          "cue": 102.02
+        },
+        {
+          "title": "Decisions and loops",
+          "notes": "Decisions split the flow, and the way back is drawn too. Rejected? Fix it, and send it again.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "f3",
+                "s4",
+                "f4"
+              ],
+              "stagger": 0.6
+            }
+          ],
+          "cue": 109.14
+        },
+        {
+          "title": "A result you can check",
+          "notes": "And it ends with a result you can check. You see the whole journey before you start, including the waiting.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "f5",
+                "s5",
+                "f6",
+                "s6"
+              ],
+              "stagger": 0.6
+            },
+            {
+              "do": "flow",
+              "target": [
+                "f1",
+                "f2",
+                "f5",
+                "f6"
+              ]
+            }
+          ],
+          "cue": 116.56
+        }
+      ]
+    },
+    {
+      "id": "views",
+      "title": "Two views of the same thing",
+      "elements": [
+        {
+          "id": "head",
+          "type": "text",
+          "text": "TWO VIEWS OF THE SAME THING",
+          "x": 960,
+          "y": 105,
+          "size": 64,
+          "color": "white",
+          "style": "bold"
+        },
+        {
+          "id": "shot",
+          "type": "image",
+          "src": "/media/822a8c4e3f66bdc4.webp",
+          "x": 530,
+          "y": 590,
+          "width": 920,
+          "height": 575,
+          "frame": "browser",
+          "url": "process-manager / onboard a site to Akamai",
+          "color": "cyan"
+        },
+        {
+          "id": "prereq",
+          "type": "area",
+          "x": 455,
+          "y": 572,
+          "width": 640,
+          "height": 50
+        },
+        {
+          "id": "c-head",
+          "type": "text",
+          "text": "the checklist",
+          "x": 1150,
+          "y": 300,
+          "size": 56,
+          "color": "cyan",
+          "align": "start"
+        },
+        {
+          "id": "c1",
+          "type": "text",
+          "text": "1  decide the project details",
+          "x": 1150,
+          "y": 400,
+          "size": 44,
+          "color": "white",
+          "align": "start"
+        },
+        {
+          "id": "c1a",
+          "type": "text",
+          "text": "a  choose dev, test or prod",
+          "x": 1210,
+          "y": 470,
+          "size": 40,
+          "color": "pink",
+          "align": "start"
+        },
+        {
+          "id": "c1b",
+          "type": "text",
+          "text": "b  name it app-env",
+          "x": 1210,
+          "y": 535,
+          "size": 40,
+          "color": "pink",
+          "align": "start"
+        },
+        {
+          "id": "c1c",
+          "type": "text",
+          "text": "c  pick your folder",
+          "x": 1210,
+          "y": 600,
+          "size": 40,
+          "color": "pink",
+          "align": "start"
+        },
+        {
+          "id": "c2",
+          "type": "text",
+          "text": "2  raise the request",
+          "x": 1150,
+          "y": 690,
+          "size": 44,
+          "color": "white",
+          "align": "start"
+        },
+        {
+          "id": "c3",
+          "type": "text",
+          "text": "3  wait: the cloud team approves",
+          "x": 1150,
+          "y": 770,
+          "size": 44,
+          "color": "white",
+          "align": "start"
+        },
+        {
+          "id": "done",
+          "type": "text",
+          "text": "2 of 5 of your steps done",
+          "x": 1150,
+          "y": 880,
+          "size": 48,
+          "color": "green",
+          "align": "start"
+        },
+        {
+          "id": "exact",
+          "type": "text",
+          "text": "exact actions, not a vague paragraph",
+          "x": 1150,
+          "y": 970,
+          "size": 44,
+          "color": "yellow",
+          "align": "start"
+        }
+      ],
+      "beats": [
+        {
+          "title": "The map",
+          "notes": "In the app, the same description shows up in two ways. First, the map: the whole flow at a glance.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "head"
+            },
+            {
+              "do": "draw",
+              "target": "shot"
+            }
+          ],
+          "cue": 124.25
+        },
+        {
+          "title": "Before you start",
+          "notes": "At the top: what must be in place before you start. An approved cost centre, the right access. If you don't have it, it points you to the process that gets it.",
+          "actions": [
+            {
+              "do": "circle",
+              "target": "prereq",
+              "color": "yellow"
+            }
+          ],
+          "cue": 131.81
+        },
+        {
+          "title": "The checklist",
+          "notes": "Second, the checklist. Your steps, numbered, with the exact actions. Which field, which value, which command.",
+          "actions": [
+            {
+              "do": "erase",
+              "target": "prereq-circle"
+            },
+            {
+              "do": "draw",
+              "target": [
+                "c-head",
+                "c1",
+                "c1a",
+                "c1b",
+                "c1c",
+                "c2",
+                "c3"
+              ],
+              "stagger": 0.35
+            }
+          ],
+          "cue": 142.86
+        },
+        {
+          "title": "Tick as you go",
+          "notes": "You tick as you go. No more guessing what step three really means.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "done"
+            },
+            {
+              "do": "pop",
+              "target": "exact"
+            }
+          ],
+          "cue": 151.77
+        }
+      ]
+    },
+    {
+      "id": "precise",
+      "title": "Precise enough to act on",
+      "elements": [
+        {
+          "id": "head",
+          "type": "text",
+          "text": "PRECISE ENOUGH TO ACT ON",
+          "x": 960,
+          "y": 105,
+          "size": 64,
+          "color": "white",
+          "style": "bold"
+        },
+        {
+          "id": "card",
+          "type": "box",
+          "x": 480,
+          "y": 580,
+          "width": 640,
+          "height": 520,
+          "color": "cyan"
+        },
+        {
+          "id": "st",
+          "type": "text",
+          "text": "open the pull request",
+          "x": 480,
+          "y": 400,
+          "size": 54,
+          "color": "white"
+        },
+        {
+          "id": "who",
+          "type": "text",
+          "text": "who:  you",
+          "x": 220,
+          "y": 510,
+          "size": 46,
+          "color": "pink",
+          "align": "start"
+        },
+        {
+          "id": "kind",
+          "type": "text",
+          "text": "kind:  change code",
+          "x": 220,
+          "y": 590,
+          "size": 46,
+          "color": "cyan",
+          "align": "start"
+        },
+        {
+          "id": "tool",
+          "type": "text",
+          "text": "tool:  GitHub",
+          "x": 220,
+          "y": 670,
+          "size": 46,
+          "color": "cyan",
+          "align": "start"
+        },
+        {
+          "id": "out",
+          "type": "text",
+          "text": "you get:  a pull request",
+          "x": 220,
+          "y": 750,
+          "size": 46,
+          "color": "green",
+          "align": "start"
+        },
+        {
+          "id": "lists",
+          "type": "text",
+          "text": "shared lists",
+          "x": 1380,
+          "y": 250,
+          "size": 56,
+          "color": "cyan"
+        },
+        {
+          "id": "teams",
+          "type": "icon",
+          "icon": "users",
+          "x": 1200,
+          "y": 440,
+          "size": 120,
+          "color": "cyan",
+          "label": "teams"
+        },
+        {
+          "id": "tools",
+          "type": "icon",
+          "icon": "laptop",
+          "x": 1560,
+          "y": 440,
+          "size": 120,
+          "color": "cyan",
+          "label": "tools"
+        },
+        {
+          "id": "tiers",
+          "type": "icon",
+          "icon": "queue",
+          "x": 1200,
+          "y": 760,
+          "size": 120,
+          "color": "cyan",
+          "label": "tiers"
+        },
+        {
+          "id": "langs",
+          "type": "icon",
+          "icon": "tag",
+          "x": 1560,
+          "y": 760,
+          "size": 120,
+          "color": "cyan",
+          "label": "languages"
+        },
+        {
+          "id": "picks",
+          "type": "arrow",
+          "from": "card.right",
+          "to": {
+            "x": 1080,
+            "y": 580
+          },
+          "color": "white",
+          "label": "picks from"
+        },
+        {
+          "id": "once",
+          "type": "text",
+          "text": "change it once,\nright everywhere",
+          "x": 1380,
+          "y": 980,
+          "size": 46,
+          "color": "yellow"
+        }
+      ],
+      "beats": [
+        {
+          "title": "One step, up close",
+          "notes": "Look closer at one step. It names who does it, what kind of step it is, which tool, and what you get at the end.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "head"
+            },
+            {
+              "do": "draw",
+              "target": [
+                "card",
+                "st",
+                "who",
+                "kind",
+                "tool",
+                "out"
+              ],
+              "stagger": 0.4
+            }
+          ],
+          "cue": 157.51
+        },
+        {
+          "title": "Kinds of step",
+          "notes": "There are thirteen kinds of step. A form, a code change, an approval, a wait. Each one tells the reader, or the agent, what sort of work this is.",
+          "actions": [
+            {
+              "do": "pulse",
+              "target": "kind",
+              "times": 2
+            }
+          ],
+          "cue": 165.59
+        },
+        {
+          "title": "Shared lists",
+          "notes": "Teams, tools, tiers and languages come from shared lists. Nobody types a team name by hand.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "picks"
+            },
+            {
+              "do": "draw",
+              "target": "lists"
+            },
+            {
+              "do": "draw",
+              "target": [
+                "teams",
+                "tools",
+                "tiers",
+                "langs"
+              ],
+              "stagger": 0.4
+            }
+          ],
+          "cue": 176.59
+        },
+        {
+          "title": "Change it once",
+          "notes": "Rename a team, or change its contact, once. Every process that uses it is right again. One less thing to go stale.",
+          "actions": [
+            {
+              "do": "circle",
+              "target": "teams",
+              "color": "yellow"
+            },
+            {
+              "do": "pop",
+              "target": "once"
+            }
+          ],
+          "cue": 183.88
+        },
+        {
+          "title": "For your situation",
+          "notes": "And a process can say it only applies to tier-zero applications, or only to Go. So you get the answer for your situation, not a generic one.",
+          "actions": [
+            {
+              "do": "erase",
+              "target": "teams-circle"
+            },
+            {
+              "do": "pulse",
+              "target": [
+                "tiers",
+                "langs"
+              ],
+              "times": 2
+            }
+          ],
+          "cue": 193
+        }
+      ]
+    },
+    {
+      "id": "lifecycle",
+      "title": "Every process has a life",
+      "elements": [
+        {
+          "id": "head",
+          "type": "text",
+          "text": "EVERY PROCESS HAS A LIFE",
+          "x": 960,
+          "y": 105,
+          "size": 64,
+          "color": "white",
+          "style": "bold"
+        },
+        {
+          "id": "draft",
+          "type": "box",
+          "x": 340,
+          "y": 430,
+          "width": 320,
+          "height": 160,
+          "color": "white",
+          "label": "draft",
+          "shape": "ellipse",
+          "line": "dashed"
+        },
+        {
+          "id": "active",
+          "type": "box",
+          "x": 960,
+          "y": 430,
+          "width": 320,
+          "height": 160,
+          "color": "green",
+          "label": "active",
+          "shape": "ellipse",
+          "weight": "bold"
+        },
+        {
+          "id": "retired",
+          "type": "box",
+          "x": 1580,
+          "y": 430,
+          "width": 320,
+          "height": 160,
+          "color": "orange",
+          "label": "retired",
+          "shape": "ellipse"
+        },
+        {
+          "id": "l1",
+          "type": "arrow",
+          "from": "draft",
+          "to": "active",
+          "color": "white",
+          "label": "checked"
+        },
+        {
+          "id": "l2",
+          "type": "arrow",
+          "from": "active",
+          "to": "retired",
+          "color": "white",
+          "label": "replaced"
+        },
+        {
+          "id": "d-note",
+          "type": "text",
+          "text": "only editors see it",
+          "x": 340,
+          "y": 610,
+          "size": 44,
+          "color": "white"
+        },
+        {
+          "id": "a-note",
+          "type": "text",
+          "text": "what people and\nagents are given",
+          "x": 960,
+          "y": 630,
+          "size": 44,
+          "color": "green"
+        },
+        {
+          "id": "next",
+          "type": "box",
+          "x": 1580,
+          "y": 840,
+          "width": 380,
+          "height": 130,
+          "color": "green",
+          "label": "its replacement"
+        },
+        {
+          "id": "l3",
+          "type": "arrow",
+          "from": "retired",
+          "to": "next",
+          "color": "orange",
+          "label": "points to",
+          "line": "dashed"
+        },
+        {
+          "id": "dead",
+          "type": "text",
+          "text": "no dead ends",
+          "x": 960,
+          "y": 860,
+          "size": 60,
+          "color": "yellow"
+        }
+      ],
+      "beats": [
+        {
+          "title": "How it stays alive",
+          "notes": "Now the important part: how it stays alive. First, every process has a life-cycle.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "head"
+            }
+          ],
+          "cue": 204.06
+        },
+        {
+          "title": "Draft",
+          "notes": "It starts as a draft. Only editors see it, so half-finished knowledge never reaches the people who would trust it.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "draft"
+            },
+            {
+              "do": "draw",
+              "target": "d-note"
+            }
+          ],
+          "cue": 210.35
+        },
+        {
+          "title": "Active",
+          "notes": "Once it's checked, it becomes active. That's what consumers see, and the only thing agents are given.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "l1",
+                "active"
+              ],
+              "stagger": 0.5
+            },
+            {
+              "do": "draw",
+              "target": "a-note"
+            }
+          ],
+          "cue": 218.01
+        },
+        {
+          "title": "Retired, not deleted",
+          "notes": "And when it's retired, it doesn't just vanish. It stays for reference, and points to its replacement. Nobody follows the old way by accident.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "l2",
+                "retired",
+                "l3",
+                "next"
+              ],
+              "stagger": 0.5
+            },
+            {
+              "do": "pop",
+              "target": "dead"
+            }
+          ],
+          "cue": 224.95
+        }
+      ]
+    },
+    {
+      "id": "reviews",
+      "title": "Nothing stays unchecked",
+      "elements": [
+        {
+          "id": "head",
+          "type": "text",
+          "text": "NOTHING STAYS UNCHECKED",
+          "x": 960,
+          "y": 105,
+          "size": 64,
+          "color": "white",
+          "style": "bold"
+        },
+        {
+          "id": "proc",
+          "type": "icon",
+          "icon": "file",
+          "x": 380,
+          "y": 520,
+          "size": 160,
+          "color": "cyan",
+          "label": "an active process"
+        },
+        {
+          "id": "clock",
+          "type": "icon",
+          "icon": "clock",
+          "x": 960,
+          "y": 280,
+          "size": 150,
+          "color": "orange",
+          "label": "review due"
+        },
+        {
+          "id": "every",
+          "type": "text",
+          "text": "every 3 to 24 months",
+          "x": 960,
+          "y": 460,
+          "size": 44,
+          "color": "orange"
+        },
+        {
+          "id": "owner",
+          "type": "icon",
+          "icon": "user",
+          "x": 1540,
+          "y": 520,
+          "size": 160,
+          "color": "pink",
+          "label": "its owner"
+        },
+        {
+          "id": "r1",
+          "type": "arrow",
+          "from": "proc",
+          "to": "clock",
+          "color": "white"
+        },
+        {
+          "id": "r2",
+          "type": "arrow",
+          "from": "clock",
+          "to": "owner",
+          "color": "orange"
+        },
+        {
+          "id": "still",
+          "type": "text",
+          "text": "still correct?",
+          "x": 1480,
+          "y": 330,
+          "size": 46,
+          "color": "orange"
+        },
+        {
+          "id": "r3",
+          "type": "arrow",
+          "from": {
+            "x": 1430,
+            "y": 600
+          },
+          "to": {
+            "x": 490,
+            "y": 600
+          },
+          "color": "green",
+          "label": "marked as reviewed"
+        },
+        {
+          "id": "cmd",
+          "type": "text",
+          "text": "npm run reviews",
+          "x": 500,
+          "y": 960,
+          "size": 44,
+          "color": "cyan",
+          "style": "code"
+        },
+        {
+          "id": "cmd-note",
+          "type": "text",
+          "text": "lists what's overdue, owner by owner",
+          "x": 1240,
+          "y": 960,
+          "size": 46,
+          "color": "white"
+        },
+        {
+          "id": "date",
+          "type": "text",
+          "text": "a date you can trust",
+          "x": 960,
+          "y": 770,
+          "size": 54,
+          "color": "yellow"
+        }
+      ],
+      "beats": [
+        {
+          "title": "An owner and an interval",
+          "notes": "Second: reviews. Every active process has an owner, and a review interval. Anything from three to twenty-four months.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "head"
+            },
+            {
+              "do": "draw",
+              "target": [
+                "proc",
+                "r1",
+                "clock",
+                "every"
+              ],
+              "stagger": 0.5
+            }
+          ],
+          "cue": 235.12
+        },
+        {
+          "title": "Still correct?",
+          "notes": "When the time is up, the owner sees a badge and a banner. Is this still correct?",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "r2",
+                "still",
+                "owner"
+              ],
+              "stagger": 0.5
+            }
+          ],
+          "cue": 243.87
+        },
+        {
+          "title": "One click",
+          "notes": "If it is: one click, marked as reviewed, and the clock starts again. If it isn't, they fix it first.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "r3"
+            },
+            {
+              "do": "flow",
+              "target": [
+                "r1",
+                "r2",
+                "r3"
+              ]
+            }
+          ],
+          "cue": 249.27
+        },
+        {
+          "title": "Reminders send themselves",
+          "notes": "A small command lists everything that's overdue, grouped by owner. Run it on a schedule, and the reminders send themselves.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "cmd"
+            },
+            {
+              "do": "draw",
+              "target": "cmd-note"
+            }
+          ],
+          "cue": 256.75
+        },
+        {
+          "title": "A date you can trust",
+          "notes": "So every process carries a date you can trust. And an overdue one is still shown, but with a warning.",
+          "actions": [
+            {
+              "do": "pop",
+              "target": "date"
+            },
+            {
+              "do": "circle",
+              "target": "date",
+              "color": "yellow"
+            }
+          ],
+          "cue": 265.26
+        }
+      ]
+    },
+    {
+      "id": "feedback",
+      "title": "Every reader is a sensor",
+      "elements": [
+        {
+          "id": "head",
+          "type": "text",
+          "text": "EVERY READER IS A SENSOR",
+          "x": 960,
+          "y": 105,
+          "size": 64,
+          "color": "white",
+          "style": "bold"
+        },
+        {
+          "id": "reader",
+          "type": "icon",
+          "icon": "user",
+          "x": 300,
+          "y": 440,
+          "size": 150,
+          "color": "pink",
+          "label": "someone following it"
+        },
+        {
+          "id": "step",
+          "type": "box",
+          "x": 960,
+          "y": 440,
+          "width": 400,
+          "height": 150,
+          "color": "cyan",
+          "label": "step 4:\nraise the request"
+        },
+        {
+          "id": "fixer",
+          "type": "icon",
+          "icon": "user",
+          "x": 1620,
+          "y": 440,
+          "size": 150,
+          "color": "pink",
+          "label": "the owner"
+        },
+        {
+          "id": "fl",
+          "type": "arrow",
+          "from": "reader",
+          "to": "step",
+          "color": "orange",
+          "label": "“this doesn't work”"
+        },
+        {
+          "id": "flag",
+          "type": "text",
+          "text": "flagged!",
+          "x": 960,
+          "y": 290,
+          "size": 56,
+          "color": "orange"
+        },
+        {
+          "id": "see",
+          "type": "arrow",
+          "from": "step",
+          "to": "fixer",
+          "color": "white",
+          "label": "open feedback"
+        },
+        {
+          "id": "fix",
+          "type": "arrow",
+          "from": {
+            "x": 1620,
+            "y": 640
+          },
+          "to": "step.bottom",
+          "color": "green",
+          "curve": 0.2
+        },
+        {
+          "id": "fix-l",
+          "type": "text",
+          "text": "corrects it, marks it fixed",
+          "x": 1330,
+          "y": 760,
+          "size": 44,
+          "color": "green"
+        },
+        {
+          "id": "bot",
+          "type": "icon",
+          "icon": "robot",
+          "x": 300,
+          "y": 840,
+          "size": 140,
+          "color": "green",
+          "label": "an agent"
+        },
+        {
+          "id": "bot-fl",
+          "type": "arrow",
+          "from": "bot",
+          "to": "step.bottom-left",
+          "color": "green",
+          "label": "report_problem",
+          "line": "dashed"
+        },
+        {
+          "id": "warn",
+          "type": "text",
+          "text": "the next reader is warned",
+          "x": 1300,
+          "y": 940,
+          "size": 52,
+          "color": "yellow"
+        }
+      ],
+      "beats": [
+        {
+          "title": "Who notices first",
+          "notes": "Third, and my favourite: feedback. The people who notice a stale step first are the ones following it.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "head"
+            },
+            {
+              "do": "draw",
+              "target": [
+                "step",
+                "reader"
+              ],
+              "stagger": 0.5
+            }
+          ],
+          "cue": 273.28
+        },
+        {
+          "title": "Flag it",
+          "notes": "So anyone can flag a step. This doesn't work. One sentence, that's all.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "fl"
+            },
+            {
+              "do": "flow",
+              "target": "fl",
+              "start": "with"
+            }
+          ],
+          "cue": 280.4
+        },
+        {
+          "title": "Everyone sees it",
+          "notes": "The step gets a red flag that everyone sees, on the map and in the library. The next reader is warned before they waste their time.",
+          "actions": [
+            {
+              "do": "recolor",
+              "target": "step",
+              "color": "orange"
+            },
+            {
+              "do": "pop",
+              "target": "flag"
+            },
+            {
+              "do": "pop",
+              "target": "warn"
+            }
+          ],
+          "cue": 286.33
+        },
+        {
+          "title": "The owner fixes it",
+          "notes": "The owner sees it, corrects the step, and marks it as fixed. The flag goes away.",
+          "actions": [
+            {
+              "do": "flow",
+              "target": "fl",
+              "on": false
+            },
+            {
+              "do": "draw",
+              "target": [
+                "see",
+                "fixer",
+                "fix",
+                "fix-l"
+              ],
+              "stagger": 0.5
+            },
+            {
+              "do": "erase",
+              "target": "flag"
+            },
+            {
+              "do": "recolor",
+              "target": "step",
+              "color": "cyan"
+            }
+          ],
+          "cue": 295.01
+        },
+        {
+          "title": "Agents too",
+          "notes": "Agents can do the same through MCP. So every reader, human or not, is a sensor for stale knowledge.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "bot",
+                "bot-fl"
+              ],
+              "stagger": 0.5
+            }
+          ],
+          "cue": 300.85
+        }
+      ]
+    },
+    {
+      "id": "authoring",
+      "title": "Writing it is cheap",
+      "elements": [
+        {
+          "id": "head",
+          "type": "text",
+          "text": "WRITING IT IS CHEAP",
+          "x": 960,
+          "y": 105,
+          "size": 64,
+          "color": "white",
+          "style": "bold"
+        },
+        {
+          "id": "notes",
+          "type": "icon",
+          "icon": "file",
+          "x": 190,
+          "y": 460,
+          "size": 150,
+          "color": "white",
+          "label": "email, wiki, notes"
+        },
+        {
+          "id": "prompt",
+          "type": "box",
+          "x": 640,
+          "y": 460,
+          "width": 440,
+          "height": 170,
+          "color": "cyan",
+          "label": "builds the prompt:\nrules + schema"
+        },
+        {
+          "id": "chat",
+          "type": "icon",
+          "icon": "chatbot",
+          "x": 1140,
+          "y": 460,
+          "size": 150,
+          "color": "green",
+          "label": "any chat assistant"
+        },
+        {
+          "id": "valid",
+          "type": "box",
+          "x": 1600,
+          "y": 460,
+          "width": 330,
+          "height": 220,
+          "color": "cyan",
+          "label": "valid?",
+          "shape": "diamond"
+        },
+        {
+          "id": "w1",
+          "type": "arrow",
+          "from": "notes",
+          "to": "prompt",
+          "color": "white",
+          "label": "paste"
+        },
+        {
+          "id": "w2",
+          "type": "arrow",
+          "from": "prompt",
+          "to": "chat",
+          "color": "white",
+          "label": "copy"
+        },
+        {
+          "id": "w3",
+          "type": "arrow",
+          "from": "chat",
+          "to": "valid",
+          "color": "white",
+          "label": "JSON"
+        },
+        {
+          "id": "w4",
+          "type": "arrow",
+          "from": "valid.top",
+          "to": "chat.top",
+          "color": "orange",
+          "label": "no: fix request",
+          "line": "dashed",
+          "curve": -0.5
+        },
+        {
+          "id": "result",
+          "type": "box",
+          "x": 1600,
+          "y": 860,
+          "width": 400,
+          "height": 130,
+          "color": "green",
+          "label": "map + checklist"
+        },
+        {
+          "id": "w5",
+          "type": "arrow",
+          "from": "valid.bottom",
+          "to": "result.top",
+          "color": "green",
+          "label": "yes"
+        },
+        {
+          "id": "mins",
+          "type": "text",
+          "text": "minutes, not an afternoon",
+          "x": 760,
+          "y": 860,
+          "size": 58,
+          "color": "yellow"
+        }
+      ],
+      "beats": [
+        {
+          "title": "It has to be cheap",
+          "notes": "All of this only works if writing a process is cheap. Otherwise, nobody does it.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "head"
+            }
+          ],
+          "cue": 309.83
+        },
+        {
+          "title": "Start with what you have",
+          "notes": "So you start with what you already have. An email, a wiki page, your notes. Paste it in.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "notes",
+                "w1",
+                "prompt"
+              ],
+              "stagger": 0.5
+            }
+          ],
+          "cue": 315.88
+        },
+        {
+          "title": "Any chat assistant",
+          "notes": "The app builds a prompt, with the rules and the schema. You copy it into whatever chat assistant your company allows. No integration, no API key.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "w2",
+                "chat"
+              ],
+              "stagger": 0.5
+            }
+          ],
+          "cue": 323.02
+        },
+        {
+          "title": "The checker",
+          "notes": "The answer comes back as JSON, and the checker reads it. An unknown team? A step that leads nowhere? A process that never ends? It catches those.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "w3",
+                "valid"
+              ],
+              "stagger": 0.5
+            }
+          ],
+          "cue": 333.6
+        },
+        {
+          "title": "Fix, or done",
+          "notes": "If something's wrong, you get a fix request to send to the same chat. If it's right, you have a map and a checklist. Minutes, not an afternoon.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "w4"
+            },
+            {
+              "do": "draw",
+              "target": [
+                "w5",
+                "result"
+              ],
+              "stagger": 0.5
+            },
+            {
+              "do": "pop",
+              "target": "mins"
+            }
+          ],
+          "cue": 344.68
+        }
+      ]
+    },
+    {
+      "id": "files",
+      "title": "Plain files, in git",
+      "elements": [
+        {
+          "id": "head",
+          "type": "text",
+          "text": "PLAIN FILES, IN GIT",
+          "x": 960,
+          "y": 105,
+          "size": 64,
+          "color": "white",
+          "style": "bold"
+        },
+        {
+          "id": "tree",
+          "type": "text",
+          "text": "processes/\n  request-gcp-project.json\n  onboard-site-to-akamai.json\ncatalog/\n  catalog.json\nfeedback/\n  request-gcp-project.json",
+          "x": 120,
+          "y": 540,
+          "size": 40,
+          "color": "cyan",
+          "style": "code",
+          "align": "start"
+        },
+        {
+          "id": "b1",
+          "type": "text",
+          "text": "every change is a commit",
+          "x": 1060,
+          "y": 360,
+          "size": 52,
+          "color": "white",
+          "align": "start"
+        },
+        {
+          "id": "b2",
+          "type": "text",
+          "text": "reviewed like code",
+          "x": 1060,
+          "y": 500,
+          "size": 52,
+          "color": "white",
+          "align": "start"
+        },
+        {
+          "id": "b3",
+          "type": "text",
+          "text": "checked on every push",
+          "x": 1060,
+          "y": 640,
+          "size": 52,
+          "color": "white",
+          "align": "start"
+        },
+        {
+          "id": "b4",
+          "type": "text",
+          "text": "a coding agent can edit it",
+          "x": 1060,
+          "y": 780,
+          "size": 52,
+          "color": "green",
+          "align": "start"
+        },
+        {
+          "id": "own",
+          "type": "text",
+          "text": "your knowledge, in your repository",
+          "x": 960,
+          "y": 960,
+          "size": 54,
+          "color": "yellow"
+        }
+      ],
+      "beats": [
+        {
+          "title": "One file per process",
+          "notes": "Where does it all live? In plain files. One JSON file per process, in a git repository.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "head"
+            },
+            {
+              "do": "draw",
+              "target": "tree"
+            }
+          ],
+          "cue": 355.49
+        },
+        {
+          "title": "Every change is a commit",
+          "notes": "That means every change is a commit. You can see who changed a step, when, and why.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "b1"
+            }
+          ],
+          "cue": 362.91
+        },
+        {
+          "title": "Reviewed and checked",
+          "notes": "Changes can be reviewed like code. And the same checker runs on every push, so a broken process never gets in.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "b2",
+                "b3"
+              ],
+              "stagger": 0.8
+            }
+          ],
+          "cue": 369.51
+        },
+        {
+          "title": "Agents can write it",
+          "notes": "And because they're just files, an AI coding assistant can edit them directly. The repository ships the skills that teach it how.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "b4"
+            }
+          ],
+          "cue": 377.78
+        },
+        {
+          "title": "Yours",
+          "notes": "Nothing is locked inside a tool. It's your knowledge, in your repository.",
+          "actions": [
+            {
+              "do": "pop",
+              "target": "own"
+            }
+          ],
+          "cue": 386.23
+        }
+      ]
+    },
+    {
+      "id": "mcp",
+      "title": "Agents read the same thing",
+      "elements": [
+        {
+          "id": "head",
+          "type": "text",
+          "text": "AGENTS READ THE SAME THING",
+          "x": 960,
+          "y": 105,
+          "size": 64,
+          "color": "white",
+          "style": "bold"
+        },
+        {
+          "id": "store",
+          "type": "icon",
+          "icon": "database",
+          "x": 330,
+          "y": 380,
+          "size": 150,
+          "color": "cyan",
+          "label": "the same files"
+        },
+        {
+          "id": "server",
+          "type": "box",
+          "x": 900,
+          "y": 380,
+          "width": 320,
+          "height": 160,
+          "color": "cyan",
+          "label": "MCP server"
+        },
+        {
+          "id": "ai",
+          "type": "icon",
+          "icon": "robot",
+          "x": 1520,
+          "y": 380,
+          "size": 160,
+          "color": "green",
+          "label": "any AI agent"
+        },
+        {
+          "id": "m1",
+          "type": "arrow",
+          "from": "store",
+          "to": "server",
+          "color": "white"
+        },
+        {
+          "id": "m2",
+          "type": "arrow",
+          "from": "server",
+          "to": "ai",
+          "color": "green",
+          "head": "both"
+        },
+        {
+          "id": "soon",
+          "type": "text",
+          "text": "next on our roadmap",
+          "x": 900,
+          "y": 240,
+          "size": 42,
+          "color": "orange"
+        },
+        {
+          "id": "t1",
+          "type": "text",
+          "text": "search_processes   find the right one",
+          "x": 300,
+          "y": 680,
+          "size": 36,
+          "color": "green",
+          "style": "code",
+          "align": "start"
+        },
+        {
+          "id": "t2",
+          "type": "text",
+          "text": "get_process        the full description",
+          "x": 300,
+          "y": 750,
+          "size": 36,
+          "color": "green",
+          "style": "code",
+          "align": "start"
+        },
+        {
+          "id": "t3",
+          "type": "text",
+          "text": "get_my_steps       only what I have to do",
+          "x": 300,
+          "y": 820,
+          "size": 36,
+          "color": "green",
+          "style": "code",
+          "align": "start"
+        },
+        {
+          "id": "t4",
+          "type": "text",
+          "text": "report_problem     flag what doesn't work",
+          "x": 300,
+          "y": 890,
+          "size": 36,
+          "color": "green",
+          "style": "code",
+          "align": "start"
+        },
+        {
+          "id": "fresh",
+          "type": "text",
+          "text": "it knows how fresh\nits knowledge is",
+          "x": 1560,
+          "y": 790,
+          "size": 52,
+          "color": "yellow"
+        }
+      ],
+      "beats": [
+        {
+          "title": "No second copy",
+          "notes": "Now the agents. They shouldn't scrape the app, and they shouldn't get their own copy. They read the same files, through an MCP server. The contract is fixed, and the server is the next thing we're building.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "head"
+            },
+            {
+              "do": "draw",
+              "target": [
+                "store",
+                "m1",
+                "server",
+                "m2",
+                "ai"
+              ],
+              "stagger": 0.5
+            },
+            {
+              "do": "pop",
+              "target": "soon"
+            }
+          ],
+          "cue": 392.45
+        },
+        {
+          "title": "Search and read",
+          "notes": "The contract is small. Search for a process. Get the full description.",
+          "actions": [
+            {
+              "do": "flow",
+              "target": "m2"
+            },
+            {
+              "do": "draw",
+              "target": [
+                "t1",
+                "t2"
+              ],
+              "stagger": 1
+            }
+          ],
+          "cue": 405.87
+        },
+        {
+          "title": "Only my steps",
+          "notes": "Or ask only for my steps: what I do, with which tool, and what I'm waiting for.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "t3"
+            }
+          ],
+          "cue": 411.09
+        },
+        {
+          "title": "Report a problem",
+          "notes": "And report a problem, exactly like the flag in the app.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "t4"
+            }
+          ],
+          "cue": 417.39
+        },
+        {
+          "title": "It knows how fresh",
+          "notes": "Agents never get drafts. Retired processes point to their replacement. And an overdue review arrives with a warning the agent can pass on. So the agent knows how fresh its knowledge is.",
+          "actions": [
+            {
+              "do": "pop",
+              "target": "fresh"
+            },
+            {
+              "do": "circle",
+              "target": "fresh",
+              "color": "yellow"
+            }
+          ],
+          "cue": 421.62
+        }
+      ]
+    },
+    {
+      "id": "skills",
+      "title": "From description to skill",
+      "elements": [
+        {
+          "id": "head",
+          "type": "text",
+          "text": "FROM DESCRIPTION TO SKILL",
+          "x": 960,
+          "y": 105,
+          "size": 64,
+          "color": "white",
+          "style": "bold"
+        },
+        {
+          "id": "what",
+          "type": "text",
+          "text": "the process says what",
+          "x": 400,
+          "y": 280,
+          "size": 46,
+          "color": "cyan"
+        },
+        {
+          "id": "stp",
+          "type": "box",
+          "x": 400,
+          "y": 440,
+          "width": 580,
+          "height": 170,
+          "color": "cyan",
+          "label": "step 3: add the project\nto the infrastructure repo"
+        },
+        {
+          "id": "gen",
+          "type": "icon",
+          "icon": "sparkles",
+          "x": 960,
+          "y": 440,
+          "size": 130,
+          "color": "yellow"
+        },
+        {
+          "id": "how",
+          "type": "text",
+          "text": "the skill does it",
+          "x": 1500,
+          "y": 280,
+          "size": 46,
+          "color": "green"
+        },
+        {
+          "id": "skill",
+          "type": "icon",
+          "icon": "file",
+          "x": 1500,
+          "y": 440,
+          "size": 150,
+          "color": "green",
+          "label": "a skill"
+        },
+        {
+          "id": "g1",
+          "type": "arrow",
+          "from": "stp",
+          "to": "gen",
+          "color": "white"
+        },
+        {
+          "id": "g2",
+          "type": "arrow",
+          "from": "gen",
+          "to": "skill",
+          "color": "white",
+          "label": "generated"
+        },
+        {
+          "id": "runner",
+          "type": "icon",
+          "icon": "robot",
+          "x": 1500,
+          "y": 820,
+          "size": 140,
+          "color": "green",
+          "label": "pull request opened"
+        },
+        {
+          "id": "g3",
+          "type": "arrow",
+          "from": "skill.bottom",
+          "to": "runner.top",
+          "color": "green",
+          "label": "an agent runs it"
+        },
+        {
+          "id": "g4",
+          "type": "arrow",
+          "from": "stp.bottom",
+          "to": {
+            "x": 400,
+            "y": 760
+          },
+          "color": "orange",
+          "label": "the step changes",
+          "line": "dashed"
+        },
+        {
+          "id": "follows",
+          "type": "text",
+          "text": "the skill is generated again",
+          "x": 520,
+          "y": 830,
+          "size": 54,
+          "color": "yellow"
+        },
+        {
+          "id": "never",
+          "type": "text",
+          "text": "it can't go stale",
+          "x": 520,
+          "y": 930,
+          "size": 54,
+          "color": "yellow"
+        }
+      ],
+      "beats": [
+        {
+          "title": "Steps without a person",
+          "notes": "Some steps don't need a person at all. Add a file to a repository. Open a pull request.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "head"
+            },
+            {
+              "do": "draw",
+              "target": "stp"
+            },
+            {
+              "do": "draw",
+              "target": "what"
+            }
+          ],
+          "cue": 435.4
+        },
+        {
+          "title": "What and how",
+          "notes": "A skill is a set of instructions an agent can run to do exactly that. The process says what must happen. The skill does it.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "skill"
+            },
+            {
+              "do": "draw",
+              "target": "how"
+            }
+          ],
+          "cue": 442.15
+        },
+        {
+          "title": "Generated when needed",
+          "notes": "And here's where we're taking it. Process Manager will generate the skill itself, from the description, whenever a step needs one.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "g1",
+                "gen",
+                "g2"
+              ],
+              "stagger": 0.4
+            },
+            {
+              "do": "flow",
+              "target": [
+                "g1",
+                "g2"
+              ]
+            }
+          ],
+          "cue": 451.61
+        },
+        {
+          "title": "Self-service",
+          "notes": "An agent picks it up and does the step in self-service. No ticket. No waiting for another team.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "g3",
+                "runner"
+              ],
+              "stagger": 0.5
+            }
+          ],
+          "cue": 459.83
+        },
+        {
+          "title": "A skill that can't go stale",
+          "notes": "And this is the real point. A hand-written skill goes stale, just like a wiki page. A generated one can't. When the process changes, the skill is generated again.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "g4"
+            },
+            {
+              "do": "pop",
+              "target": "follows"
+            },
+            {
+              "do": "pop",
+              "target": "never"
+            },
+            {
+              "do": "circle",
+              "target": "never",
+              "color": "yellow"
+            }
+          ],
+          "cue": 467.28
+        }
+      ]
+    },
+    {
+      "id": "agent",
+      "title": "Where this leads",
+      "elements": [
+        {
+          "id": "head",
+          "type": "text",
+          "text": "WHERE THIS LEADS",
+          "x": 960,
+          "y": 105,
+          "size": 64,
+          "color": "white",
+          "style": "bold"
+        },
+        {
+          "id": "me",
+          "type": "icon",
+          "icon": "user",
+          "x": 260,
+          "y": 340,
+          "size": 150,
+          "color": "pink",
+          "label": "you"
+        },
+        {
+          "id": "helper",
+          "type": "icon",
+          "icon": "robot",
+          "x": 880,
+          "y": 340,
+          "size": 150,
+          "color": "green",
+          "label": "your agent"
+        },
+        {
+          "id": "pm",
+          "type": "box",
+          "x": 1540,
+          "y": 340,
+          "width": 400,
+          "height": 150,
+          "color": "cyan",
+          "label": "Process Manager"
+        },
+        {
+          "id": "ask",
+          "type": "arrow",
+          "from": "me",
+          "to": "helper",
+          "color": "pink",
+          "label": "“I need a GCP project”"
+        },
+        {
+          "id": "look",
+          "type": "arrow",
+          "from": "helper",
+          "to": "pm",
+          "color": "green",
+          "label": "steps, tools, skills",
+          "head": "both"
+        },
+        {
+          "id": "does",
+          "type": "box",
+          "x": 880,
+          "y": 760,
+          "width": 540,
+          "height": 150,
+          "color": "green",
+          "label": "does your steps:\nthe form, the pull request"
+        },
+        {
+          "id": "d1",
+          "type": "arrow",
+          "from": "helper.bottom",
+          "to": "does.top",
+          "color": "green"
+        },
+        {
+          "id": "approve",
+          "type": "box",
+          "x": 240,
+          "y": 760,
+          "width": 300,
+          "height": 150,
+          "color": "pink",
+          "label": "you approve"
+        },
+        {
+          "id": "d2",
+          "type": "arrow",
+          "from": "does",
+          "to": "approve",
+          "color": "pink",
+          "label": "prepared"
+        },
+        {
+          "id": "others",
+          "type": "box",
+          "x": 1580,
+          "y": 760,
+          "width": 380,
+          "height": 150,
+          "color": "white",
+          "label": "other teams\ndo their part"
+        },
+        {
+          "id": "d3",
+          "type": "arrow",
+          "from": "does",
+          "to": "others",
+          "color": "white",
+          "label": "waits, tracks",
+          "line": "dashed"
+        },
+        {
+          "id": "rule",
+          "type": "text",
+          "text": "approvals stay with people",
+          "x": 960,
+          "y": 990,
+          "size": 56,
+          "color": "yellow"
+        }
+      ],
+      "beats": [
+        {
+          "title": "Say what you need",
+          "notes": "Put it all together, and this is where it leads. You say what you need. I need a GCP project.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "head"
+            },
+            {
+              "do": "draw",
+              "target": [
+                "me",
+                "ask",
+                "helper"
+              ],
+              "stagger": 0.5
+            }
+          ],
+          "cue": 479.56
+        },
+        {
+          "title": "The agent looks it up",
+          "notes": "Your agent looks the process up, and gets back the steps, the tools and the skills.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "look",
+                "pm"
+              ],
+              "stagger": 0.5
+            },
+            {
+              "do": "flow",
+              "target": "look"
+            }
+          ],
+          "cue": 486.41
+        },
+        {
+          "title": "It does your steps",
+          "notes": "It does your steps for you. The form. The pull request.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "d1",
+                "does"
+              ],
+              "stagger": 0.5
+            }
+          ],
+          "cue": 492.28
+        },
+        {
+          "title": "You approve",
+          "notes": "Then it stops, and asks you to approve what it prepared.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "d2",
+                "approve"
+              ],
+              "stagger": 0.5
+            }
+          ],
+          "cue": 497.04
+        },
+        {
+          "title": "Approvals stay with people",
+          "notes": "It never approves anything itself, and it never does another team's part. It waits, tracks, and reports back. Approvals stay with people.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": [
+                "d3",
+                "others"
+              ],
+              "stagger": 0.5
+            },
+            {
+              "do": "pop",
+              "target": "rule"
+            },
+            {
+              "do": "circle",
+              "target": "rule",
+              "color": "yellow"
+            }
+          ],
+          "cue": 500.99
+        }
+      ]
+    },
+    {
+      "id": "closing",
+      "title": "Knowledge that stays alive",
+      "elements": [
+        {
+          "id": "k1",
+          "type": "icon",
+          "icon": "file",
+          "x": 380,
+          "y": 300,
+          "size": 150,
+          "color": "cyan",
+          "label": "described once"
+        },
+        {
+          "id": "k2",
+          "type": "icon",
+          "icon": "clock",
+          "x": 960,
+          "y": 300,
+          "size": 150,
+          "color": "orange",
+          "label": "kept alive"
+        },
+        {
+          "id": "k3",
+          "type": "icon",
+          "icon": "robot",
+          "x": 1540,
+          "y": 300,
+          "size": 150,
+          "color": "green",
+          "label": "for people and agents"
+        },
+        {
+          "id": "title",
+          "type": "text",
+          "text": "PROCESS MANAGER",
+          "x": 960,
+          "y": 680,
+          "size": 120,
+          "color": "cyan",
+          "style": "bold"
+        },
+        {
+          "id": "sub",
+          "type": "text",
+          "text": "company knowledge that stays alive",
+          "x": 960,
+          "y": 860,
+          "size": 60,
+          "color": "white"
+        }
+      ],
+      "beats": [
+        {
+          "title": "Described once",
+          "notes": "So, that's Process Manager. Every process described once, precisely enough for a machine to act on.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "k1"
+            }
+          ],
+          "cue": 511.92
+        },
+        {
+          "title": "Kept alive",
+          "notes": "Kept alive by a life-cycle, by reviews, and by everyone who uses it.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "k2"
+            }
+          ],
+          "cue": 519.04
+        },
+        {
+          "title": "For people and agents",
+          "notes": "Read the same way by people in the app and by agents over MCP. And turned into skills when a step can run itself.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "k3"
+            }
+          ],
+          "cue": 524.4
+        },
+        {
+          "title": "Thanks",
+          "notes": "Company knowledge that stays alive. Thanks for watching.",
+          "actions": [
+            {
+              "do": "draw",
+              "target": "title"
+            },
+            {
+              "do": "draw",
+              "target": "sub"
+            }
+          ],
+          "cue": 532.72
+        }
+      ]
+    }
+  ],
+  "voiceover": {
+    "clips": [
+      {
+        "id": "gen-opening",
+        "scene": "opening",
+        "upload": "generated-opening.webm",
+        "sourceDuration": 28.407,
+        "offset": 0,
+        "lane": 0,
+        "trimStart": 0,
+        "trimEnd": 28.407,
+        "name": "generated voice · Is this still true?"
+      },
+      {
+        "id": "gen-cost",
+        "scene": "cost",
+        "upload": "generated-cost-mweg0nib.webm",
+        "sourceDuration": 27.107,
+        "offset": 29.357,
+        "lane": 0,
+        "trimStart": 0,
+        "trimEnd": 27.107,
+        "name": "generated voice · Stale knowledge costs twice"
+      },
+      {
+        "id": "gen-idea",
+        "scene": "idea",
+        "upload": "generated-idea.webm",
+        "sourceDuration": 29.407,
+        "offset": 57.414,
+        "lane": 0,
+        "trimStart": 0,
+        "trimEnd": 29.407,
+        "name": "generated voice · One source, three ways out"
+      },
+      {
+        "id": "gen-map",
+        "scene": "map",
+        "upload": "generated-map.webm",
+        "sourceDuration": 35.527,
+        "offset": 87.771,
+        "lane": 0,
+        "trimStart": 0,
+        "trimEnd": 35.527,
+        "name": "generated voice · A process is a map"
+      },
+      {
+        "id": "gen-views",
+        "scene": "views",
+        "upload": "generated-views.webm",
+        "sourceDuration": 32.307,
+        "offset": 124.248,
+        "lane": 0,
+        "trimStart": 0,
+        "trimEnd": 32.307,
+        "name": "generated voice · Two views of the same thing"
+      },
+      {
+        "id": "gen-precise",
+        "scene": "precise",
+        "upload": "generated-precise.webm",
+        "sourceDuration": 45.607,
+        "offset": 157.505,
+        "lane": 0,
+        "trimStart": 0,
+        "trimEnd": 45.607,
+        "name": "generated voice · Precise enough to act on"
+      },
+      {
+        "id": "gen-lifecycle",
+        "scene": "lifecycle",
+        "upload": "generated-lifecycle.webm",
+        "sourceDuration": 30.107,
+        "offset": 204.062,
+        "lane": 0,
+        "trimStart": 0,
+        "trimEnd": 30.107,
+        "name": "generated voice · Every process has a life"
+      },
+      {
+        "id": "gen-reviews",
+        "scene": "reviews",
+        "upload": "generated-reviews.webm",
+        "sourceDuration": 37.207,
+        "offset": 235.119,
+        "lane": 0,
+        "trimStart": 0,
+        "trimEnd": 37.207,
+        "name": "generated voice · Nothing stays unchecked"
+      },
+      {
+        "id": "gen-feedback",
+        "scene": "feedback",
+        "upload": "generated-feedback.webm",
+        "sourceDuration": 35.607,
+        "offset": 273.276,
+        "lane": 0,
+        "trimStart": 0,
+        "trimEnd": 35.607,
+        "name": "generated voice · Every reader is a sensor"
+      },
+      {
+        "id": "gen-authoring",
+        "scene": "authoring",
+        "upload": "generated-authoring.webm",
+        "sourceDuration": 44.707,
+        "offset": 309.833,
+        "lane": 0,
+        "trimStart": 0,
+        "trimEnd": 44.707,
+        "name": "generated voice · Writing it is cheap"
+      },
+      {
+        "id": "gen-files",
+        "scene": "files",
+        "upload": "generated-files.webm",
+        "sourceDuration": 36.007,
+        "offset": 355.49,
+        "lane": 0,
+        "trimStart": 0,
+        "trimEnd": 36.007,
+        "name": "generated voice · Plain files, in git"
+      },
+      {
+        "id": "gen-mcp",
+        "scene": "mcp",
+        "upload": "generated-mcp.webm",
+        "sourceDuration": 42.007,
+        "offset": 392.447,
+        "lane": 0,
+        "trimStart": 0,
+        "trimEnd": 42.007,
+        "name": "generated voice · Agents read the same thing"
+      },
+      {
+        "id": "gen-skills",
+        "scene": "skills",
+        "upload": "generated-skills.webm",
+        "sourceDuration": 43.207,
+        "offset": 435.404,
+        "lane": 0,
+        "trimStart": 0,
+        "trimEnd": 43.207,
+        "name": "generated voice · From description to skill"
+      },
+      {
+        "id": "gen-agent",
+        "scene": "agent",
+        "upload": "generated-agent.webm",
+        "sourceDuration": 31.407,
+        "offset": 479.561,
+        "lane": 0,
+        "trimStart": 0,
+        "trimEnd": 31.407,
+        "name": "generated voice · Where this leads"
+      },
+      {
+        "id": "gen-closing",
+        "scene": "closing",
+        "upload": "generated-closing.webm",
+        "sourceDuration": 24.907,
+        "offset": 511.918,
+        "lane": 0,
+        "trimStart": 0,
+        "trimEnd": 24.907,
+        "name": "generated voice · Knowledge that stays alive"
+      }
+    ]
+  }
+}
