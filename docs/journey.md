@@ -1360,3 +1360,16 @@ Jakub wanted to record a terminal sometimes, from Claude Code on his own compute
 ![Six of the scenes: one source and three ways out, a process as a map, feedback, writing with AI, from description to skill, where this leads](journey/148-process-manager-explainer.jpg)
 
 **Checked by:** `npm run check`; snapshots of every scene looked at and overlapping labels fixed (reviews, feedback, the fix-request loop, boxes too narrow for their text); `npm run voice -- time` for words against animation per beat.
+
+## Step 109: Process Manager: real walkthroughs for reading, reviewing, flagging and editing
+
+**Asked:** wherever the presentation talks about reading, editing, flagging and reviewing, show the interface itself: screen recordings with camera zooms and a walk through it, in the app's dark version.
+
+- **Four recordings** of Process Manager (run locally from its repository, dark theme, 3200×2000), each from a scenario in `scripts/scenarios/process-manager/`: `pm-read` (search, open, tick a prerequisite, the map, a step's details, the checklist, a tick), `pm-review` (what is due, the overdue banner, Mark as reviewed, the new date), `pm-flag` (the flag on a step, one sentence, where it shows, the owner marking it fixed), `pm-edit` (Editor, + on an arrow, the small form, the new step, an action, Save changes). `pm-helpers.mjs` has what they share (dark theme and mode before recording, a visible click, scrolling to something).
+- **Four scenes**: "Reading a process" replaces the scene with the light screenshot and drawn checklist; "Reviewing", "Flagging" and "Editing on the map" each follow the drawn scene that explains the idea. Each beat moves the recording one step (to a frame, or playing up to one), zooms the camera onto that part with the rest dimmed, and has one pinned caption; the window frame, so the app looks as it is.
+- **Voice** rebuilt: 18 scenes, about 11.5 minutes. The clips and the screenshot no longer used were removed.
+- **Fixed while building it:** a card below the window was clicked where it wasn't (scroll to it first); the first takes scrolled so the map was cut off; the edit take showed a flag left by the flagging take (the sample data is reset before each take); the pinned title sat on the zoomed interface (it fades out before the first zoom); the "flag on the map" beat pointed at a frame mid-scroll.
+
+![Six beats: the map with your lane first, a step's details, the overdue banner, the flag form, the flagged card in the library, the form on the map](journey/149-process-manager-walkthroughs.jpg)
+
+**Checked by:** frames pulled from every recording at its step times; a snapshot of every beat of the four scenes looked at; `npm run check`; `npm run voice -- time`. Not exported to MP4 (beat snapshots can show a recording a frame behind). Process Manager's repository left unchanged.
