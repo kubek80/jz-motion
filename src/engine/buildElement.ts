@@ -4,7 +4,8 @@ import { buildChart, type ChartNodes } from './chart';
 import type { CompiledElement, ElementState } from './compile';
 import { svgEl } from './dom';
 import { makeStroke, makeWrite } from './drawing';
-import { arrowCurve, arrowEnds, arrowHead, iconLabelSize, imageFrame, ISO_LABEL_SIZE } from './geometry';
+import { arrowPath } from './arrowPath';
+import { arrowEnds, arrowHead, iconLabelSize, imageFrame, ISO_LABEL_SIZE } from './geometry';
 import { frameShadow, phoneBody, phoneGlass, phoneSizes, windowChrome } from './imageFrames';
 import { projectIso, resolveIsoParts } from './iso';
 import { ICON_GRID, iconHeight, icons, type PartColor } from './library';
@@ -126,19 +127,17 @@ export function buildElement(ctx: BuildContext, el: CompiledElement, lookup: (id
     }
     case 'arrow': {
       const { start, end } = arrowEnds(el, lookup);
-      const { control, d } = arrowCurve(start, end, el.curve);
+      const { d, endFrom, startFrom, mid, dir } = arrowPath(start, end, el);
       const bold = el.weight === 'bold';
       const width = board.stroke * (bold ? 1.9 : 1);
       const shaft = stroke(d, width, fx, lineOf(el)) as SVGPathElement;
-      if (el.head === 'end' || el.head === 'both') stroke(arrowHead(end, control, bold ? 40 : 26), width);
-      if (el.head === 'start' || el.head === 'both') stroke(arrowHead(start, control, bold ? 40 : 26), width);
-      const mid = { x: 0.25 * start.x + 0.5 * control.x + 0.25 * end.x, y: 0.25 * start.y + 0.5 * control.y + 0.25 * end.y };
+      if (el.head === 'end' || el.head === 'both') stroke(arrowHead(end, endFrom, bold ? 40 : 26), width);
+      if (el.head === 'start' || el.head === 'both') stroke(arrowHead(start, startFrom, bold ? 40 : 26), width);
       pivot = mid;
       if (el.label) {
-        // Label sits on the upper side of the arrow (or the right side of a vertical one).
-        const len = Math.hypot(end.x - start.x, end.y - start.y) || 1;
-        let nx = -(end.y - start.y) / len;
-        let ny = (end.x - start.x) / len;
+        // Label sits on the upper side of the arrow where it is halfway (or the right side of a vertical stretch).
+        let nx = -dir.y;
+        let ny = dir.x;
         if (ny > 0 || (ny === 0 && nx < 0)) { nx = -nx; ny = -ny; }
         const vertical = Math.abs(nx) > 0.9;
         write(el.label, mid.x + nx * 34, mid.y + ny * 34, 40, vertical ? (nx > 0 ? 'start' : 'end') : 'middle', 'label');

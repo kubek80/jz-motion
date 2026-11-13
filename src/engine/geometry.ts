@@ -50,10 +50,7 @@ export function shapeBox(el: Element, lookup: (id: string) => Element | undefine
       return { x: el.x - el.rx, y: el.y - el.ry, width: el.rx * 2, height: el.ry * 2 };
     case 'arrow': {
       const { start, end } = arrowEnds(el, lookup);
-      return union([
-        { x: start.x, y: start.y, width: 0, height: 0 },
-        { x: end.x, y: end.y, width: 0, height: 0 },
-      ]);
+      return union([start, ...(el.via ?? []), end].map((p) => ({ x: p.x, y: p.y, width: 0, height: 0 })));
     }
   }
 }
@@ -144,6 +141,11 @@ function attachPoint(el: Element, anchor: AnchorName, lookup: (id: string) => El
   return p;
 }
 
+/** Where an arrow can attach to an element: each anchor and its point (for snapping an arrow's end in the editor). */
+export function anchorSpots(el: Element, lookup: (id: string) => Element | undefined): { anchor: AnchorName; x: number; y: number }[] {
+  return (Object.keys(outward) as AnchorName[]).filter((a) => a !== 'center').map((anchor) => ({ anchor, ...attachPoint(el, anchor, lookup) }));
+}
+
 /** Picks the side of `box` that faces `toward`. */
 function facingAnchor(box: Box, toward: Point): AnchorName {
   const c = center(box);
@@ -174,15 +176,9 @@ export function arrowEnds(arrow: ArrowElement, lookup: (id: string) => Element |
     const o = outward[anchor];
     return { x: p.x + o.x * ARROW_GAP, y: p.y + o.y * ARROW_GAP };
   };
-  return { start: resolve(a, roughB), end: resolve(b, roughA) };
-}
-
-/** Quadratic bezier for an arrow; `curve` bends it sideways. */
-export function arrowCurve(start: Point, end: Point, curve: number): { control: Point; d: string } {
-  const dx = end.x - start.x;
-  const dy = end.y - start.y;
-  const control = { x: (start.x + end.x) / 2 + dy * curve, y: (start.y + end.y) / 2 - dx * curve };
-  return { control, d: `M${start.x} ${start.y}Q${control.x} ${control.y} ${end.x} ${end.y}` };
+  // With knots, each end faces its nearest knot, so it leaves and arrives toward it.
+  const via = arrow.via ?? [];
+  return { start: resolve(a, via[0] ?? roughB), end: resolve(b, via[via.length - 1] ?? roughA) };
 }
 
 /** Two strokes of an arrow head at `tip`, pointing away from `from`. */

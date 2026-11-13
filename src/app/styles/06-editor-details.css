@@ -57,3 +57,7 @@ body.dragging { user-select: none; -webkit-user-select: none; }
 .frame-stepper select { font-size: 12px; padding: 2px 4px; }
 .frame-stepper .check { display: inline-flex; align-items: center; gap: 4px; color: var(--muted); }
 .frame-stepper .note { color: #3dff8b; }
+
+/* An arrow's knots in the side panel: one row each. */
+.knots { display: flex; flex-direction: column; gap: 4px; align-items: flex-start; }
+.knots .knot-row { align-items: center; }

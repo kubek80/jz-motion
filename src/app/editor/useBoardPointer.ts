@@ -1,12 +1,13 @@
 // Mouse and pen on the board in edit mode: picking elements (Shift adds), dragging them, resizing by a
-// corner handle, panning the empty board, wheel zoom, the arrow tool's two clicks, and double-click to
-// edit text in place. Handlers are made fresh each render, so they always see the current state.
+// corner handle, panning the empty board, wheel zoom, the arrow tool's two clicks, an arrow's ends and knots
+// (useArrowDrag), and double-click to edit text in place. Handlers are made fresh each render, so they always see the current state.
 import { useRef } from 'react';
 import type { Stage } from '../../engine';
 import type { Camera } from '../../engine/schema';
 import { addElement, uniqueId, updateElement, type Raw, type RawDoc } from './doc';
 import { resized, UNIFORM } from './elements';
 import type { Selection } from './types';
+import { useArrowDrag } from './useArrowDrag';
 
 interface Drag {
   pointer: number;
@@ -56,6 +57,7 @@ export function useBoardPointer({
 }: BoardPointerOptions) {
   const arrowTool = arrowFrom !== undefined;
   const drag = useRef<Drag | null>(null);
+  const arrowDrag = useArrowDrag({ stage, doc, sceneIndex, pickedEl, editable, ids, elements, update });
 
   const connect = (from: string, to: string) => {
     if (!doc) return;
@@ -68,6 +70,7 @@ export function useBoardPointer({
   const onDoubleClick = (e: React.MouseEvent) => {
     const s = stage.current;
     if (mode !== 'edit' || !s || arrowTool) return;
+    if (arrowDrag.doubleClick(s.boardPoint(e.clientX, e.clientY))) return;
     const hit = s.elementAt(s.boardPoint(e.clientX, e.clientY), editable);
     if (hit) startInline(hit);
   };
@@ -84,6 +87,8 @@ export function useBoardPointer({
       else if (hit !== arrowFrom) connect(arrowFrom, hit);
       return;
     }
+    // The selected arrow's ends and knots.
+    if (!e.shiftKey && arrowDrag.down(e, board)) return;
     const corner = canResize ? s.handleAt(board) : undefined;
     if (corner && pickedEl) {
       drag.current = {
@@ -117,12 +122,14 @@ export function useBoardPointer({
   };
 
   const onPointerMove = (e: React.PointerEvent) => {
+    if (arrowDrag.move(e)) return;
     const d = drag.current;
     const s = stage.current;
     if (s && !d && mode === 'edit') {
-      // Hover feedback: resize cursors over handles, a crosshair while connecting.
-      const corner = canResize ? s.handleAt(s.boardPoint(e.clientX, e.clientY)) : undefined;
-      (e.currentTarget as HTMLElement).style.cursor = arrowTool ? 'cell' : corner ? (corner === 'nw' || corner === 'se' ? 'nwse-resize' : 'nesw-resize') : '';
+      // Hover feedback: resize cursors over handles, a crosshair while connecting, a grab hand over an arrow's handles.
+      const at = s.boardPoint(e.clientX, e.clientY);
+      const corner = canResize ? s.handleAt(at) : undefined;
+      (e.currentTarget as HTMLElement).style.cursor = arrowTool ? 'cell' : corner ? (corner === 'nw' || corner === 'se' ? 'nwse-resize' : 'nesw-resize') : arrowDrag.hover(at) ? 'grab' : '';
     }
     if (!d || !s || d.pointer !== e.pointerId) return;
     if (d.resize) {
@@ -156,6 +163,7 @@ export function useBoardPointer({
   };
 
   const onPointerUp = (e: React.PointerEvent) => {
+    if (arrowDrag.up(e)) return;
     const d = drag.current;
     drag.current = null;
     document.body.classList.remove('dragging');
