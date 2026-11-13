@@ -1331,3 +1331,18 @@ Jakub wanted to record a terminal sometimes, from Claude Code on his own compute
 ![Adding a guest in 🧑 Avatar; their voice from a recording (30 s chosen); a take recorded across two people, cut into one clip per person](journey/146-podcast-guests.jpg)
 
 **Checked by:** in a browser: a guest added (an empty card, the note); a 40 s test video chosen, 30 s from 0:08 used as their voice (a 30 s sound-only sample kept, saved on the guest, his own avatar untouched); a take recorded with a fake microphone across Jakub, the guest and Jakub again, cut into three clips with their speakers and names, the cues where → was pressed; tests for cutting a take by speaker; typecheck, tests, build. A guest's styled picture wasn't drawn (a paid call). The test guest, presentation and files deleted after.
+
+## Step 107: The phone frame, and capturing in phone format
+
+**Asked:** to record an app in phone format and show it in a phone rather than a browser: just say "record it in phone format" and the skill handles it; the frame like a real phone, maybe with a subtle glass effect on the screen.
+
+- **`"frame": "phone"`** for pictures and recordings: a dark body with a metal edge catching the light and the side buttons, a soft shadow, rounded screen corners, the status bar (9:41, signal, Wi-Fi, battery) with the camera island in it above the app, and a faint glass sheen and reflection over the screen; a recording plays under the glass. It draws in like the window frame (the body appears, the screen wipes in).
+- **`--phone`** for `npm run snap` and `npm run record`: an iPhone's screen (390×844 points at 3×: 1170×2532 pixels), touch and a phone browser's identity, so sites show their phone layout; sharp enough to zoom into.
+- **The editor** puts a picture as tall as a phone's screen in the phone frame when it's added; the frame picker has a phone.
+- **The demo-interactions skill**: "phone format" means `--phone` and the phone frame, the size to use (height 2.164 × width) and how to scroll and tap in a scenario.
+- The window frame's drawing moved out of `buildElement.ts` into `imageFrames.ts` with the phone.
+- **Fixed while building it:** the status icons first sat under the island; a phone's status bar would have drawn the marker browser outline (that outline now only goes with the browser frame).
+
+![Two phones on the board (a screenshot, and a recording playing under the glass); a camera zoom into the top of one: status bar, island, metal edge, side buttons, glass](journey/147-phone-frame.jpg)
+
+**Checked by:** the app captured with `--phone` (a screenshot, and a scrolling recording at 1170×2532 in its phone layout); a scene with both in phone frames: snapshots, a camera zoom into the status bar, an export looked at frame by frame (the draw-in, the recording playing under the island and glass); typecheck, tests, build. The test presentation and its captures deleted after.

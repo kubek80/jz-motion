@@ -21,8 +21,8 @@ The rules every generator follows (the app's own models too) are in `docs/style.
 ```sh
 npm run check -- presentations/<id>.json          # valid? (also library/<name>.json; --library lists what can be drawn)
 npm run snapshot -- presentations/<id>.json       # PNGs of each scene in snapshots/<id>/ — look at them
-npm run snap -- <url> <name>                      # scripts/snap.mjs: screenshot a web page into the media library (WebP); prints its /media/… src
-npm run record -- <url> <name> <scenario.mjs>     # scripts/record.mjs: record a scripted interaction into the media library (WebM video)
+npm run snap -- <url> <name> [--phone]            # scripts/snap.mjs: screenshot a web page into the media library (WebP); prints its /media/… src; --phone: as on a phone, for the "phone" frame
+npm run record -- <url> <name> <scenario.mjs> [--phone]  # scripts/record.mjs: record a scripted interaction into the media library (WebM video)
 npm run terminal -- <steps.json|session.cast> <name>  # scripts/terminal.mjs: film a terminal session (commands typed and run, or an asciinema recording) into the media library
 npm run media -- import <file…>                   # add any picture, recording or sound to the media library (converted); prints its /media/… src
 npm run media -- frames <file>                    # a recording's frames (its distinct pictures), for play's goto / until

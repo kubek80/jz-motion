@@ -27,7 +27,7 @@ Read `docs/style.md` first (the big table of "which action, when" — the row fo
 ```
 
 - `src` must be a file in the media library (`/media/<file>`): see what is there in `media/index.json` (each entry has a `name`, a `kind` — picture or recording — and its `src`). New ones come in converted: the user pastes, drops or records them in the app, or you run `npm run snap` / `npm run record` / `npm run media -- import <file>`, which print the `src`. Never invent paths, and never copy files into `images/` (that folder is from before the media library).
-- `"frame": "browser"` makes it look like a window of your app, with the URL in the address bar — so the viewer knows what app this is. It is drawn in marker, in the element's colour. `"frame": "window"` is the neutral alternative: a solid dark title bar with the three coloured buttons, rounded corners and a soft shadow, as on a Mac; choose it when the person wants the app to look as it really is. Use the same one for every screenshot and recording in a presentation.
+- `"frame": "browser"` makes it look like a window of your app, with the URL in the address bar — so the viewer knows what app this is. It is drawn in marker, in the element's colour. `"frame": "window"` is the neutral alternative: a solid dark title bar with the three coloured buttons, rounded corners and a soft shadow, as on a Mac; choose it when the person wants the app to look as it really is. Use the same one for every screenshot and recording in a presentation. `"frame": "phone"` is for an app shown on a phone (see **Phone format** below).
 - `color` is the frame colour; use the scene's accent.
 
 ### 2. A camera zoom into the detail
@@ -106,6 +106,7 @@ Live in `scripts/scenarios/<name>.mjs`. Each exports `run(page)`; the browser is
 
 ### Recording at the right size
 
+- **Phone format**: when the person asks for the app on a phone (or "in phone format", a mobile site, a phone app's web version), capture with `--phone` (`npm run snap -- <url> <name> --phone`, `npm run record -- <url> <name> <scenario> --phone`): an iPhone's screen, 390×844 points at 3× (1170×2532 pixels), touch and a phone browser's identity, so the site shows its phone layout. Show it with `"frame": "phone"` at `height` = 2.164 × `width` (320 × 692 sits well beside a caption or another phone; up to about 400 × 866 on its own). In a scenario, phone pages scroll with `page.mouse.wheel` and tap with `page.tap(selector)` or clicks. Zoom the camera in on a phone as on any picture: its screen holds the detail (3× pixels).
 - Editor, Timing and anything with side panels: `--size 1600x1000` (3200×2000 pixels); at the default 1280×800 the board in the middle is tiny. The home screen and simple pages: the default.
 - Mock AI steps answer from the bundled examples: type a request that matches what comes back (the home box: something about jz-motion; the scene bar: "a new scene for the part about no Photoshop"), so what is typed and what appears agree.
 - Restore the demo copy before every take: a failed take leaves changes behind that show in the next one.

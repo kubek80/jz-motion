@@ -69,7 +69,8 @@ export class VideoPictures {
       video.load();
       return undefined;
     }
-    image.fx.appendChild(box);
+    // Under the frame's chrome (a phone's island and glass stay over the recording).
+    image.fx.insertBefore(box, image.chrome ?? null);
     const still = { epoch: 0, seekTo: 0, seq: 0, stopAt: -1, arrive: 0 };
     const v: VideoNodes = {
       src, video, copy, box, loop: o.loop, duration: Number.isFinite(video.duration) && video.duration > 0 ? video.duration : Infinity,

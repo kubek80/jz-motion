@@ -7,7 +7,7 @@
 // Captures are sharp enough for camera zooms (2560×1600 by default): see scripts/capturePage.mjs.
 //
 // Usage:
-//   node scripts/record.mjs <url> <name> <scenario.mjs> [--size WxH] [--zoom Z] [--scale S] [--fps N]
+//   node scripts/record.mjs <url> <name> <scenario.mjs> [--phone] [--size WxH] [--zoom Z] [--scale S] [--fps N]
 // or:
 //   npm run record -- <url> <name> <scenario>
 //
@@ -22,11 +22,11 @@
 import { chromium } from 'playwright';
 import { pathToFileURL } from 'node:url';
 import { resolve } from 'node:path';
-import { captureOptions, launchForRecording } from './capturePage.mjs';
+import { captureOptions, launchForRecording, SWITCHES } from './capturePage.mjs';
 import { importIntoMedia, screencast } from './screencast.mjs';
 
 const args = process.argv.slice(2);
-const posArgs = args.filter((a, i) => !a.startsWith('--') && !args[i - 1]?.startsWith('--'));
+const posArgs = args.filter((a, i) => !a.startsWith('--') && !(args[i - 1]?.startsWith('--') && !SWITCHES.has(args[i - 1])));
 const value = (name, fallback) => {
   const i = args.indexOf(`--${name}`);
   return i >= 0 ? args[i + 1] : fallback;
@@ -35,7 +35,7 @@ const url = posArgs[0];
 const name = posArgs[1];
 const scenario = posArgs[2];
 if (!url || !name || !scenario) {
-  console.error('usage: node scripts/record.mjs <url> <name> <scenario.mjs> [--size WxH] [--zoom Z] [--scale S] [--fps N]');
+  console.error('usage: node scripts/record.mjs <url> <name> <scenario.mjs> [--phone] [--size WxH] [--zoom Z] [--scale S] [--fps N]');
   process.exit(2);
 }
 const capture = captureOptions(value);
