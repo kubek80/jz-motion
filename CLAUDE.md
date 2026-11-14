@@ -45,6 +45,7 @@ Explainers about *any* app (including jz-motion itself) use `snap` and `record` 
 | `uploads/` | Voice recordings: narration, re-takes, generated narration (`generated-*`), Jakub's voice sample (`voice-sample-*`), with their transcripts; his avatar's photo and talking-head videos (`avatar-*`) | yes, with Git LFS (transcripts plain text); video uploaded to start a presentation is not |
 | `takes/`, `exports/`, `snapshots/` | Takes, videos, previews | no |
 | `voice/` | `my-voice.json`: Jakub's own voice for generated speech (the sample, which part, what is said in it, the cloning model, how to speak: a neutral British accent; never a key). `npm run voice` speaks in it by default. `my-avatar.json`: his avatars, for every presentation, and the one in use (each: the picture it comes from, its style: a cartoon talking head in a home studio, the photo, the fal.ai model, how it moves, and its voice; choosing one copies its voice into `my-voice.json`; set in 🧑 Avatar; a podcast's guests are avatars too, marked `guest`) | yes |
+| `brand/` | The channel's pictures: the YouTube banner (`youtube-banner.png`, 2560×1440, made by `node scripts/youtube-banner.mjs` from a fal.ai background and the logo) and its backgrounds | yes, with Git LFS |
 | `logs/` | `ai.jsonl`: every AI request, its reply and what came of it (read it when an AI change didn't do what was asked) | no |
 | `src/examples/` | Example presentations shipped with the app (`public/examples/` holds their pictures) | yes |
 
