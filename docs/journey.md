@@ -1397,3 +1397,15 @@ Jakub wanted to record a terminal sometimes, from Claude Code on his own compute
 ![Selecting an arrow (its ends and a ＋), dragging its end onto "Finish" (its anchors, the nearest larger, the new line dashed), a knot added over the box in the way (the panel listing it), the same with corners; below, as presented: a smooth route over and a cornered one round the bottom](journey/150-arrow-knots.jpg)
 
 **Checked by:** in a browser on a test presentation: selecting an arrow, dragging its end onto another box's bottom (it became `b.bottom`), dragging a ＋ to add a knot (it landed exactly where released), switching to corners, double-clicking the knot away; snapshots of a smooth and a cornered arrow; tests for the line through knots, corners, the heads' aim, halfway, and the ends facing their knots; typecheck, tests, build. The test presentation deleted after.
+
+## Step 112: A YouTube channel banner
+
+**Asked:** a channel banner for YouTube (several technical explainer videos coming), made with fal.
+
+- **The background** from fal.ai (an image model, 16:9, two variants for about 12¢): the board's look, a dark chalkboard with neon marker doodles of technical things (servers, databases, clouds, charts, gears, flowchart arrows) round the edges, the middle kept empty. The second variant was used (the first had made-up letters in a few doodles); both are kept in `brand/`.
+- **The lettering** isn't left to the image model (it garbles text): `scripts/youtube-banner.mjs` lays the jz-motion logo and the tagline ("Technical explainers, drawn live", "SOFTWARE · AI · SYSTEMS") over it in the app's own fonts and glow, at YouTube's 2560×1440, everything readable inside the 1546×423 strip every device shows, with a soft dark pool behind so it reads over any doodle. Change the words and run it again; the background stays.
+- Kept in `brand/` (Git LFS).
+
+![The banner, with the strip a phone shows (red) and the band a desktop shows (yellow); a TV shows it all](journey/151-youtube-banner.jpg)
+
+**Checked by:** looking at the whole banner and at the phone and desktop crops (logo and words clear of the edges); the script run from the project makes the same picture.

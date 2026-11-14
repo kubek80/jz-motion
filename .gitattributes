@@ -6,3 +6,6 @@ media/index.json !filter !diff !merge text
 # transcripts stay plain text.
 uploads/** filter=lfs diff=lfs merge=lfs -text
 uploads/*.transcript.json !filter !diff !merge text
+# The channel's pictures (YouTube banner and its backgrounds), the same way.
+brand/*.png filter=lfs diff=lfs merge=lfs -text
+brand/*.jpg filter=lfs diff=lfs merge=lfs -text
